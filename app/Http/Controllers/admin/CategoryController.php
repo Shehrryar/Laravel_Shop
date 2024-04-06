@@ -54,17 +54,11 @@ class CategoryController extends Controller
 
 
          if(!empty($request->image_id)){
+            
             $tempimage = TempImage::find($request->image_id);
             $extarray = explode('.', $tempimage->name);
-
-
-
             $ext = last($extarray);
-
             $new_image_name = $category->id.'.'.$ext;
-
-
-            
             $spath = public_path().'/temp/'.$tempimage->name;
 
             $dpath = public_path().'/upload/category/'.$new_image_name;

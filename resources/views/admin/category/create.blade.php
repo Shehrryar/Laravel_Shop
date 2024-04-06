@@ -152,6 +152,8 @@ $(document).ready(function(){
 	
 	});
 });
+
+
 Dropzone.autoDiscover = false;    
 const dropzone = $("#image").dropzone({ 
     init: function() {
