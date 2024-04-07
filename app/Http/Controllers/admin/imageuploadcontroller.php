@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\admin;
 // use Intervention\Image\Facades\Image as Image;
 use App\Http\Controllers\Controller;
-
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Http\Request;
 use App\Models\TempImage;
 class imageuploadcontroller extends Controller

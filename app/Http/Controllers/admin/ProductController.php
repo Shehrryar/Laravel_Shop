@@ -10,12 +10,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\TempImage;
-
+use App\Models\SubCategory;
 use Illuminate\Support\Facades\File;
-
-
-
-
 
 class ProductController extends Controller
 {
@@ -56,66 +52,108 @@ class ProductController extends Controller
         }
         $validator = Validator::make($request->all(),$values);
         if($validator->passes()){
-
-
             $product = new Product;
-
             $product->title = $request->title;
             $product->slug = $request->slug;
-
             $product->price = $request->price;
-
             $product->compare_price = $request->compare_price;
-
             $product->sku = $request->sku;
-
             $product->barcode = $request->barcode;
-
             $product->track_qty = $request->track_qty;
-
             $product->qty = $request->qty;
             $product->status = $request->status;
-
             $product->categories_id = $request->category;
-
             $product->sub_category_id = $request->sub_category;
-
             $product->brands_id = $request->brand;
-
             $product->is_featured = $request->is_featured;
-
             $product->save();
-
             /// save gallery pics
             if(!empty($request->image_array)){
                 foreach ($request->image_array as $temp_value) {
-
                     $tempimage = TempImage::find($temp_value);
                     $extarray = explode(',' , $tempimage->name);
                     $ext = last($extarray);
-
                     $productimage = new ProductImage();
                     $productimage->product_id = $product->id;
-
                     $new_image_name = $product->id.'-'.$productimage->id.'-'.time().'.'.$ext;
-
                     $productimage->image = $new_image_name;
                     $productimage->save();
-
                     $spath = public_path().'/temp/'.$tempimage->name;
                     $dpath = public_path().'/upload/products/'.$new_image_name;
                     File::copy($spath,$dpath);
                 }
-
             }
-
-            $request->session()->flash('sucess','product data is saved sucessufully');
+            $request->session()->flash('success','product data is saved sucessufully');
             return response()->json([
                 'status' => true,
                 'message' => "data is saved sucessufully",
             ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => false,
+                'error' => $validator->errors(),
+            ]);
+        }
+    }
+    public function edit($id, Request $request){
+        $product = Product::find($id);
+        if(empty($product)){
+            return redirect()->route('product.index')->with('error','product not found');
+        }
+        $productimage = ProductImage::where('product_id',$product->id)->get();
+        $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
+        $categories = Category::orderBy('name', 'ASC')->get();
+        $brands = Brand::orderBy('name', 'ASC')->get();
+        $data['categories'] = $categories;
+        $data['brands'] = $brands;
+        $data['product'] = $product;
+        $data['productimage'] = $productimage;
+        $data['subcategories'] = $subcategories;
 
 
+
+        return view('admin.products.edit', $data);
+    }
+    public function update($id, Request $request){
+
+        $product = Product::find($id);
+        $values = [
+            'title' => 'required',
+            'slug' => 'required|unique:products,slug,'.$product->id.',id',
+            'price' => 'required|numeric',
+            'sku' => 'required|unique:products,sku,'.$product->id.',id',
+            'track_qty' => 'required|in:Yes,No',
+            'category' => 'required|numeric',
+            'is_featured' => 'required|in:Yes,No',            
+        ];
+        if(!empty($request->track_qty) && $request->track_qty == 'Yes'){
+            $values['qty'] = 'required|numeric';
+        }
+        $validator = Validator::make($request->all(),$values);
+        if($validator->passes()){
+            $product->title = $request->title;
+            $product->slug = $request->slug;
+            $product->price = $request->price;
+            $product->compare_price = $request->compare_price;
+            $product->sku = $request->sku;
+            $product->barcode = $request->barcode;
+            $product->track_qty = $request->track_qty;
+            $product->qty = $request->qty;
+            $product->status = $request->status;
+            $product->categories_id = $request->category;
+            $product->sub_category_id = $request->sub_category;
+            $product->brands_id = $request->brand;
+            $product->is_featured = $request->is_featured;
+            $product->save();
+
+            $request->session()->flash('success','product data is updated sucessufully');
+
+            return response()->json([
+                'status' => true,
+                'message' => "data is updated sucessufully",
+            ]);
         }
         else
         {
