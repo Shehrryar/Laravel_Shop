@@ -95,7 +95,7 @@ $(document).ready(function(){
     dataType: 'json', // 'datatype' should be 'dataType'
     success: function(response) {
 
-    	// window.location.href= "{{route('categories.index')}}";
+    	window.location.href= "{{route('categories.index')}}";
     	if(response['status']==true){
 
     	}

@@ -10,7 +10,7 @@
             <h1>Create Product</h1>
         </div>
         <div class="col-sm-6 text-right">
-            <a href="products.html" class="btn btn-primary">Back</a>
+            <a href='{{route("product.index")}}' class="btn btn-primary">Back</a>
         </div>
     </div>
 </div>
@@ -157,7 +157,7 @@
                             <p class="error"></p>   
                         </div>
                         <div class="mb-3">
-                            <label for="category">Sub category</label>
+                            <label for="sub_category">Sub category</label>
                             <select name="sub_category" id="sub_category" class="form-control">
                                 <option value="">Select a Sub Category</option>
                             </select>
@@ -290,7 +290,7 @@
 
                 $.each(response['SubCategory'],function(key, item){
 
-                $("#sub_category").append(`<option = '${item.id}'>${item.name}</option>`)
+                $("#sub_category").append(`<option value ='${item.id}'>${item.name}</option>`)
 
 
                 });

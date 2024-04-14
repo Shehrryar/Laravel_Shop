@@ -11,6 +11,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\ProductSubCategoryController;
 use App\Http\Controllers\admin\ProductImageControlller;
+use App\Http\Controllers\FrontController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +24,10 @@ use App\Http\Controllers\admin\ProductImageControlller;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/',[FrontController::class,'index'])->name('front.home');
+
+
+
 Route::group(['prefix'=>'admin'],function(){
     Route::group(['middleware'=>'admin.guest'], function(){
         Route::get('/login',[AdminLoginController::class,'index'])->name('admin.login');
@@ -76,6 +78,8 @@ Route::group(['prefix'=>'admin'],function(){
      Route::put('/product/{productupadate}',[ProductController::class,'update'])->name('product.update');
      Route::post('/product-images/update',[ProductImageControlller::class,'update'])->name('product-images.update');
      Route::delete('/product-images',[ProductImageControlller::class,'destroy'])->name('product-images.destroy');
+     Route::delete('/product/{delete}',[ProductController::class,'delete'])->name('product.delete');
+
  });
 
 

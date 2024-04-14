@@ -70,21 +70,17 @@
 			</nav>
 			<!-- /.navbar -->
 			<!-- Main Sidebar Container -->
-
 			@include('admin.layout.sidebar')
-
 			<!-- Content Wrapper. Contains page content -->
 			<div class="content-wrapper">
 				<!-- Content Header (Page header) -->
-
 				@yield('content')
-
 				<!-- /.content -->
 			</div>
 			<!-- /.content-wrapper -->
 			<footer class="main-footer">
 				
-				<strong>Copyright &copy; 2014-2022 AmazingShop All rights reserved.
+				<strong>Copyright &copy; 2020-2024 Sheharyar Asif All rights reserved.
 			</footer>
 			
 		</div>

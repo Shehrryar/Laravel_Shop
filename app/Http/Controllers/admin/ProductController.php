@@ -29,8 +29,10 @@ class ProductController extends Controller
 
         $data = [];
         $categories = Category::orderBy('name', 'ASC')->get();
+        // $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
+        // $data['subcategories'] = $subcategories;
         $data['brands'] = $brands;
         return view('admin.products.create', $data);
     }
@@ -163,4 +165,38 @@ class ProductController extends Controller
             ]);
         }
     }
+
+ public function delete($id, Request $request)
+{
+    $product = Product::find($id);
+    
+    if (empty($product)){
+        $request->session()->flash('error','Product not found');
+        return response()->json([
+            'status'=> false,
+            'notfound'=>true
+        ]);
+    }
+    
+    // Retrieve product images
+    $productImages = ProductImage::where('product_id', $id)->get();
+    
+    if(!empty($productImages)){
+        foreach ($productImages as $image) {
+            // Delete image file
+            File::delete(public_path('/upload/products/'.$image->image));
+        }
+
+        ProductImage::where('product_id', $id)->delete();
+    }
+    $product->delete();
+    
+    $request->session()->flash('success','Product deleted successfully');
+    
+    return response()->json([
+        'status'=> true,
+        'message'=>'Product deleted successfully'
+    ]);
+}
+
 }
