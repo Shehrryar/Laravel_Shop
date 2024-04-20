@@ -32,15 +32,15 @@
 										</button>
 									</h2>
 									@else
-									<a href="#" class="nav-item nav-link">{{$cat->name}}</a>
+									<a href='{{route("front.shop",$cat->slug)}}'class="nav-item nav-link {{($categroy_selected == $cat->id) ? 'text-primary' : ''}}">{{$cat->name}}</a>
 									@endif
 									@if($cat->sub_category->isNotEmpty())
-									<div id="collapseOne-{{ $key }}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+									<div id="collapseOne-{{ $key }}" class="accordion-collapse collapse {{($categroy_selected == $cat->id) ? 'show' : ''}}" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
 										<div class="accordion-body">
 											<div class="navbar-nav">
 												
 												@foreach($cat->sub_category as $subcat)
-												<a href="" class="nav-item nav-link">{{$subcat->name}}</a> 
+												<a href='{{route("front.shop",[$cat->slug,$subcat->slug])}}' class="nav-item nav-link {{($subcategroy_selected == $subcat->id) ? 'text-primary' : ''}}">{{$subcat->name}}</a> 
 												@endforeach
 
 											</div>
@@ -59,14 +59,13 @@
 					<div class="sub-title mt-5">
 						<h2>Brand</h3>
 						</div>
-
 						<div class="card">
 							<div class="card-body">
 								@if($brands->isNotEmpty())
 								@foreach($brands as $bard)
 								<div class="form-check mb-2">
-									<input class="form-check-input" name="'brand[]" type="checkbox" value="{{$bard->id}}" id="brand-{{$bard->id}}">
-									<label class="form-check-label" for="flexCheckDefault">
+									<input class="form-check-input brand-label" name="brand[]" type="checkbox" value="{{$bard->id}}" id="brand-{{$bard->id}}" {{(in_array($bard->id,$brandsArray)) ? 'checked' : ''}} >
+									<label class="form-check-label" for="brand-{{$bard->id}}">
 										{{$bard->name}}
 									</label>
 								</div>  
@@ -179,4 +178,28 @@
 					</div>
 				</div>
 			</section>  
+			@endsection
+
+			@section('customJs')
+
+			<script>
+
+				$(".brand-label").change(function(){
+
+					apply_filter();
+				});
+
+
+				function apply_filter(){
+					var brands = [];
+					$(".brand-label").each(function(){
+						if($(this).is(":checked")==true){
+							brands.push($(this).val());
+						}
+					});
+					window.location.href= '{{url()->current()}}?'+'&brand='+brands.toString();
+				}
+
+			</script>
+
 			@endsection

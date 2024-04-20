@@ -26,7 +26,7 @@ use App\Http\Controllers\ShopController;
 */
 
 Route::get('/',[FrontController::class,'index'])->name('front.home');
-Route::get('/shop',[ShopController::class,'index'])->name('front.shop');
+Route::get('/shop/{cat_slug?}/{subcat_slug?}',[ShopController::class,'index'])->name('front.shop');
 
 
 
