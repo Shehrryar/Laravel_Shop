@@ -23,34 +23,53 @@ class ShopController extends Controller
         $products = Product::where('status',1);
 
         if(!empty($catslug)){
-                $categroy = Category::where('slug',$catslug)->first();
-                $products = $products->where('categories_id',$categroy->id);
-                $categroy_selected = $categroy->id;
+            $categroy = Category::where('slug',$catslug)->first();
+            $products = $products->where('categories_id',$categroy->id);
+            $categroy_selected = $categroy->id;
 
         }
 
         if(!empty($subcatslug)){
-                $subcategroy = SubCategory::where('slug',$subcatslug)->first();
-                $products = $products->where('sub_category_id',$subcategroy->id);
-                $subcategroy_selected = $subcategroy->id;
+            $subcategroy = SubCategory::where('slug',$subcatslug)->first();
+            $products = $products->where('sub_category_id',$subcategroy->id);
+            $subcategroy_selected = $subcategroy->id;
         }
 
-            if(!empty($request->get('brand'))){
-             $brandsArray = explode(',' ,$request->get('brand'));
-             $products = $products->whereIn('brands_id', $brandsArray);
-         }
-         $products = $products->orderBy('id','DESC');
-         $products = $products->get();
+        if(!empty($request->get('brand'))){
+           $brandsArray = explode(',' ,$request->get('brand'));
+           $products = $products->whereIn('brands_id', $brandsArray);
+       }
 
-         $data['categories'] = $categories;
-         $data['brands'] = $brands;
-         $data['products'] = $products;
-         $data['subcategroy_selected'] = $subcategroy_selected;
-         $data['categroy_selected'] = $categroy_selected;
-         $data['brandsArray'] = $brandsArray;
+       if($request->get('price_max') != '' && $request->get('price_min')){
+           $products = $products->whereBetween('price', [intval($request->get('price_min')),intval($request->get('price_max'))]);
+       }
 
+       if($request->get('sort') != ''){
+        if($request->get('sort') == 'latest'){
+           $products = $products->orderBy('id','DESC'); 
+       }elseif ($request->get('sort') == 'pricelow') {
+           $products = $products->orderBy('price','ASC'); 
+       }else{
+           $products = $products->orderBy('price','DESC'); 
 
-         return view('front.shop', $data);
-     }
+       }
+   }else{
+       $products = $products->orderBy('id','DESC'); 
+   }
+
+   $products = $products->get();
+
+   $data['categories'] = $categories;
+   $data['brands'] = $brands;
+   $data['products'] = $products;
+   $data['subcategroy_selected'] = $subcategroy_selected;
+   $data['categroy_selected'] = $categroy_selected;
+   $data['brandsArray'] = $brandsArray;
+   $data['price_max'] = intval($request->get('price_max'));
+   $data['price_min'] = intval($request->get('price_min'));
+   $data['sort'] = $request->get('sort');
+
+   return view('front.shop', $data);
+}
 
 }

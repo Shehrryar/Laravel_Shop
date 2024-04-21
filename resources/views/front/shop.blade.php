@@ -80,30 +80,7 @@
 
 							<div class="card">
 								<div class="card-body">
-									<div class="form-check mb-2">
-										<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-										<label class="form-check-label" for="flexCheckDefault">
-											$0-$100
-										</label>
-									</div>
-									<div class="form-check mb-2">
-										<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-										<label class="form-check-label" for="flexCheckChecked">
-											$100-$200
-										</label>
-									</div>                 
-									<div class="form-check mb-2">
-										<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-										<label class="form-check-label" for="flexCheckChecked">
-											$200-$500
-										</label>
-									</div> 
-									<div class="form-check mb-2">
-										<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-										<label class="form-check-label" for="flexCheckChecked">
-											$500+
-										</label>
-									</div>                 
+								    <input type="text" class="js-range-slider" name="my_range" value="" />                 
 								</div>
 							</div>
 						</div>
@@ -112,14 +89,14 @@
 								<div class="col-12 pb-1">
 									<div class="d-flex align-items-center justify-content-end mb-4">
 										<div class="ml-2">
-											<div class="btn-group">
-												<button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">Sorting</button>
-												<div class="dropdown-menu dropdown-menu-right">
-													<a class="dropdown-item" href="#">Latest</a>
-													<a class="dropdown-item" href="#">Price High</a>
-													<a class="dropdown-item" href="#">Price Low</a>
-												</div>
-											</div>                                    
+
+											<select id="sort" name="sort" class="form-control">
+												<option value="pricehigh" {{($sort=='pricehigh')? 'selected' : ''}}>Price High</option>
+												<option value="latest" {{($sort=='latest')? 'selected' : ''}}>Latest</option>
+												<option value="pricelow" {{($sort=='pricelow')? 'selected' : ''}}>Price Low</option>
+
+											</select>
+
 										</div>
 									</div>
 								</div>
@@ -184,12 +161,31 @@
 
 			<script>
 
+rangeSlider = $(".js-range-slider").ionRangeSlider({
+    type: "double",
+    min: 0,
+    max: 1000,
+    from: {{$price_min}},
+    stop: 10,
+    to: {{$price_max}},
+    skin: "round",
+    max_postfix: "+",
+    prefix: "$",
+    onFinish: function() {
+        apply_filter(); // Corrected function name
+    }
+});
+
+
+				var slider = $(".js-range-slider").data("ionRangeSlider");
+
 				$(".brand-label").change(function(){
 
 					apply_filter();
 				});
-
-
+				$("#sort").change(function(){
+					apply_filter();
+				});
 				function apply_filter(){
 					var brands = [];
 					$(".brand-label").each(function(){
@@ -197,7 +193,19 @@
 							brands.push($(this).val());
 						}
 					});
-					window.location.href= '{{url()->current()}}?'+'&brand='+brands.toString();
+					var url = '{{url()->current()}}?';
+										if(brands.lenght>0){
+						url +='&brand='+brands.toString();
+					}
+
+					url += '&price_min='+slider.result.from+'&price_max='+slider.result.to;
+
+
+					// sorting 
+
+					url += '&sort='+$('#sort').val(); 
+					window.location.href= url;
+
 				}
 
 			</script>
