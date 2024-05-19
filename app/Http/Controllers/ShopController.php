@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Models\Brand;
 use App\Models\SubCategory;
 
-
 class ShopController extends Controller
 {
     public function index(Request $request, $catslug = null, $subcatslug = null){
@@ -70,6 +69,10 @@ class ShopController extends Controller
    $data['sort'] = $request->get('sort');
 
    return view('front.shop', $data);
+}
+
+public function product($slug){
+    
 }
 
 }

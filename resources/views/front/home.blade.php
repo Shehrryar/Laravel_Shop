@@ -135,7 +135,7 @@
                         <div class="col-md-3">
                             <div class="card product-card">
                                 <div class="product-image position-relative">
-                                    <a href="" class="product-img">
+                                    <a href="{{route("front.product",$f_product->slug)}}" class="product-img">
 
                                         <!-- <img class="card-img-top" src="images/product-1.jpg')}}" alt=""> -->
                                         @if(!empty($images_prod))
@@ -180,7 +180,7 @@
                         <div class="col-md-3">
                             <div class="card product-card">
                                 <div class="product-image position-relative">
-                                    <a href="" class="product-img">
+                                    <a href='{{route("front.product",$late_prod->slug)}}' class="product-img">
                                         @if(!empty($images_prod))
                                         <img class="card-img-top" src="{{asset('upload/products/'.$images_prod->image)}}">
                                         @else

@@ -13,7 +13,6 @@ use App\Http\Controllers\admin\ProductSubCategoryController;
 use App\Http\Controllers\admin\ProductImageControlller;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,7 +26,7 @@ use App\Http\Controllers\ShopController;
 
 Route::get('/',[FrontController::class,'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}',[ShopController::class,'index'])->name('front.shop');
-
+Route::get('product/{slug}', [ShopController::class,'product'])->name('front.product');
 
 
 
