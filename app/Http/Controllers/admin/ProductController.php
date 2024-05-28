@@ -68,6 +68,9 @@ class ProductController extends Controller
             $product->sub_category_id = $request->sub_category;
             $product->brands_id = $request->brand;
             $product->is_featured = $request->is_featured;
+            $product->short_description = $request->short_description;
+            $product->description = $request->description;
+            $product->shipping_returns = $request->shipping_return;
             $product->save();
             /// save gallery pics
             if(!empty($request->image_array)){
@@ -148,6 +151,9 @@ class ProductController extends Controller
             $product->sub_category_id = $request->sub_category;
             $product->brands_id = $request->brand;
             $product->is_featured = $request->is_featured;
+            $product->short_description = $request->short_description;
+            $product->description = $request->description;
+            $product->shipping_returns = $request->shipping_return;
             $product->save();
 
             $request->session()->flash('success','product data is updated sucessufully');
