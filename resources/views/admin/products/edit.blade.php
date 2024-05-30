@@ -272,11 +272,8 @@
 
 
     $("#productform").submit(function(event){
-
         event.preventDefault();
-
         var formarray = $("#productform").serializeArray();
-
         $.ajax({
             url : '{{route("product.update", $product->id)}}',
             type: 'put',
@@ -293,20 +290,15 @@
                     $.each(errors, function(key, value){
                         $(`#${key}`).addClass("is-invalid").siblings('p').addClass('invalid-feedback').html(value);
                     });
-
                 }
             },
             error:function(){
                 console.log("something went wrong");
             }
-
         });
     });
     $("#category").change(function(){
-
         var category_id = $(this).val();
-
-
         $.ajax({
             url : '{{route("productsubcat.index")}}',
             type: 'get',
@@ -314,25 +306,15 @@
             dataType: 'json',
             success: function(response){
                 $("#sub_category").find("option").not(":first").remove();
-
                 $.each(response['SubCategory'],function(key, item){
-
                     $("#sub_category").append(`<option = '${item.id}'>${item.name}</option>`)
-
-
                 });
-
-
-
             },
             error:function(){
                 console.log("something went wrong");
             }
-
         });
-
     });
-
     Dropzone.autoDiscover = false;    
     const dropzone = $("#image").dropzone({ 
         url:  "{{route('product-images.update')}}",
@@ -374,8 +356,6 @@
             }
         });  
        }
-
    }
 </script>
-
 @endsection
