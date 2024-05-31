@@ -81,10 +81,8 @@ Route::group(['prefix'=>'admin'],function(){
      Route::post('/product-images/update',[ProductImageControlller::class,'update'])->name('product-images.update');
      Route::delete('/product-images',[ProductImageControlller::class,'destroy'])->name('product-images.destroy');
      Route::delete('/product/{delete}',[ProductController::class,'delete'])->name('product.delete');
+     Route::get('/get-products',[ProductController::class,'getProducts'])->name('product.getProducts');
 
  });
-
-
-
 });
 
