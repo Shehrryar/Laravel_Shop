@@ -73,6 +73,11 @@ class ProductController extends Controller
             $product->short_description = $request->short_description;
             $product->description = $request->description;
             $product->shipping_returns = $request->shipping_return;
+            if (!empty($request->related_product)) {
+                $product->related_products = implode(',', $request->related_product);
+            }else{
+                $product->related_products = '';
+            }
             $product->save();
             /// save gallery pics
             if (!empty($request->image_array)) {
@@ -160,6 +165,8 @@ class ProductController extends Controller
             $product->shipping_returns = $request->shipping_return;
             if (!empty($request->related_product)) {
                 $product->related_products = implode(',', $request->related_product);
+            }else{
+                $product->related_products = '';
             }
             $product->save();
             $request->session()->flash('success', 'product data is updated sucessufully');

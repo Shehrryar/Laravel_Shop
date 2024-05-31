@@ -67,16 +67,23 @@ class ShopController extends Controller
    $data['price_max'] = intval($request->get('price_max'));
    $data['price_min'] = intval($request->get('price_min'));
    $data['sort'] = $request->get('sort');
-
    return view('front.shop', $data);
 }
-
 public function product($slug){
     $product = Product::where('slug', $slug)->with('product_images')->first();
     if($product == NULL){
         abort(404);
     }
+
+    // fetch related products 
+    $related_products = [];
+    if($product != null){
+        $related_products = explode(',', $product->related_products);
+        $showrelatedproduct = Product::whereIn('id', $related_products)->with('product_images')->get();
+    }
+
     $data['product'] =  $product;
+    $data['showrelatedproduct'] =  $showrelatedproduct;
     return view('front.product', $data);
 }
 
