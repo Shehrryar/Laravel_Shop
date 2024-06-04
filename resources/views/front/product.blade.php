@@ -55,7 +55,8 @@
                     <h2 class="price ">{{$product->price}}</h2>
 
                     <p>{{$product->short_description}}</p>
-                    <a href="javascript:void(0)" onclick = "addToCart({{$product->id}})" class="btn btn-dark"><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
+                    <a href="javascript:void(0)" onclick="addToCart({{$product->id}})" class="btn btn-dark"><i
+                            class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                 </div>
             </div>
 
@@ -124,7 +125,7 @@
                                                 </a>
                                                 <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
                                                 <div class="product-action">
-                                                    <a class="btn btn-dark" href="#">
+                                                    <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$product->id}})">
                                                         <i class="fa fa-shopping-cart"></i> Add To Cart
                                                     </a>
                                                 </div>
@@ -150,24 +151,7 @@
 
 
 @section('customJs')
-<script type = "text/javascript" >
-
-
-function addToCart(id){
-
-
-
-    $.ajax({
-        url: '{{route("front.addToCart")}}', 
-        type : 'post',
-        data: {id:id},
-        dataType: 'Json',
-        success:function(response){ 
-
-        }
-    });
-}
+<script type="text/javascript">
 
 </script>
 @endsection
-
