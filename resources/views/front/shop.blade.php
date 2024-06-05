@@ -160,12 +160,8 @@ rangeSlider = $(".js-range-slider").ionRangeSlider({
         apply_filter(); // Corrected function name
     }
 });
-
-
 				var slider = $(".js-range-slider").data("ionRangeSlider");
-
 				$(".brand-label").change(function(){
-
 					apply_filter();
 				});
 				$("#sort").change(function(){
