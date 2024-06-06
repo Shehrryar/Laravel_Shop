@@ -33,6 +33,8 @@ Route::get('product/{slug}', [ShopController::class,'product'])->name('front.pro
 Route::get('/cart',[CartController::class,'cart'])->name('front.cart');
 Route::post('/add-to-cart',[CartController::class,'addToCart'])->name('front.addToCart');
 Route::post('/update-cart',[CartController::class,'updateCart'])->name('front.updateCart');
+Route::post('/delete-cart',[CartController::class,'deleteitem'])->name('front.deleteitem.cart');
+
 
 
 Route::group(['prefix'=>'admin'],function(){
