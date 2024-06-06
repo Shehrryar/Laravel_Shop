@@ -50,21 +50,37 @@ class CartController extends Controller
     }
     public function Cart()
     {
-        $cartcontent =  Cart::content();
+        $cartcontent = Cart::content();
         $data['cartcontent'] = $cartcontent;
         return view('front.cart', $data);
     }
 
-    public function updateCart(Request $request){
+    public function updateCart(Request $request)
+    {
 
         $iteminfo = Cart::get($request->rowid);
-        Cart::update($request->rowid,$request->qty);
 
-        $message = "Cart updated sucessfully";
-        session()->flash('success', $message);
+        $product = Product::find($iteminfo->id);
 
+        if ($product->track_qty == 'Yes') {
+            if ($product->qty <= $request->qty) {
+                Cart::update($request->rowid, $request->qty);
+                $message = "Cart updated sucessfully";
+                $status = True;
+                session()->flash('sucess', $message);
+
+            } else {
+                $message = "Requested qty('.$request->qty.') not available";
+                $status = false;
+            }
+        } else {
+            Cart::update($request->rowid, $request->qty);
+            $message = "Cart updated sucessfully";
+            $status = True;
+            session()->flash('sucess', $message);
+        }
         return response()->json([
-            'status' => true,
+            'status' => $status,
             'message' => $message
         ]);
     }
