@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,11 +22,17 @@ class AuthController extends Controller
         $validator= Validator::make($request->all(),[
             'name'=> 'required|min:3',
             'email'=> 'required|email|unique:users',
-            'password'=> 'required|min:5',
+            'password'=> 'required|min:5|confirmed',
         ]);
 
         if($validator->passes()){
-
+            $user =  new User();
+            $user->name = $request->name;
+            $user->emal = $request->email;
+            $user->phone = $request->phone;
+            $user->password = Hash::make($request->password);
+            $user->save();
+            session()->flash('success','')
         }
         else{
             return response()->json([
