@@ -38,7 +38,9 @@ Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.a
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.updateCart');
 Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.deleteitem.cart');
 
-Route::get('/register', [AuthController::class, 'register'])->name('account.register');
+Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
+Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
+
 
 
 
