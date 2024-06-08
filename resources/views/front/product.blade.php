@@ -149,9 +149,6 @@
 </section>
 @endsection
 
-
 @section('customJs')
-<script type="text/javascript">
 
-</script>
 @endsection

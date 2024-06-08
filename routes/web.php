@@ -14,11 +14,15 @@ use App\Http\Controllers\admin\ProductSubCategoryController;
 use App\Http\Controllers\admin\ProductImageControlller;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
+<<<<<<< Updated upstream
 use App\Http\Controllers\CartController;
 
 // 
 
 
+=======
+use App\Http\Controllers\CartController;  
+>>>>>>> Stashed changes
 /*
 |--------------------------------------------------------------------------
 | Web Routes
