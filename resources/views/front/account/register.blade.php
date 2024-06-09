@@ -35,7 +35,7 @@
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" placeholder="Confirm Password"
-                        id="password_confirmmation" name="password_confirmmation">
+                        id="password_confirmation" name="password_confirmation">
                     <p></p>
                 </div>
                 <div class="form-group small">
@@ -65,7 +65,6 @@
             success: function (response) {
                 if (response.status === false) {
                     var errors = response.errors;
-
                     if (errors.name) {
                         $('#name').siblings('p').addClass('invalid-feedback').html(errors.name);
                         $('#name').removeClass('is-valid').addClass('is-invalid'); // Added .removeClass('is-valid') here
@@ -99,6 +98,8 @@
 
                     $('#password').siblings('p').removeClass('invalid-feedback').html('');
                     $('#password').removeClass('is-invalid is-valid');
+
+                    window.location.href = "{{route('account.login')}}";
                 }
             }
             ,
