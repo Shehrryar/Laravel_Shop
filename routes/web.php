@@ -33,6 +33,7 @@ Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.updateCart');
 Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.deleteitem.cart');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 
 
 
@@ -42,9 +43,11 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');  
         Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
-        Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        
     });
     Route::group(['middleware' => 'auth'], function () {
+        Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::GET('/logout', [AuthController::class, 'logout'])->name('account.logout');
 
     });
 });
