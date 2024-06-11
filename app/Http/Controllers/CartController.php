@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Country;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 
 class CartController extends Controller
 {
@@ -129,6 +132,33 @@ class CartController extends Controller
             return redirect()->route('account.login');
         }
         session()->forget('url.intended');
-        return view('front.checkout');
+
+        $countries = Country::orderBy('name', 'ASC')->get();
+        return view('front.checkout',['countries'=>$countries]);
+    }
+
+    public function processCheckout(Request $request){
+        // apply validation
+
+        $validator = Validator::make($request->all(),[
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'email' => 'required',
+            'country' => 'required',
+            'address' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required',
+            'mobile' => 'required',
+
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'message' => 'please fix the error',
+                'errors' => $validator->errors()
+            ]);
+        }
+
     }
 }
