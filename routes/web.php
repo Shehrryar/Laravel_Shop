@@ -35,7 +35,7 @@ Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.
 Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.deleteitem.cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
-
+Route::post('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
 
 
 

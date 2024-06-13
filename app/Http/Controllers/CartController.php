@@ -135,9 +135,10 @@ class CartController extends Controller
             return redirect()->route('account.login');
         }
         session()->forget('url.intended');
-
+        $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
         $countries = Country::orderBy('name', 'ASC')->get();
-        return view('front.checkout',['countries'=>$countries]);
+        return view('front.checkout',['countries'=>$countries, 
+        'customerAddress' =>$customerAddress]);
     }
 
     public function processCheckout(Request $request){
@@ -209,6 +210,7 @@ class CartController extends Controller
 
             foreach (Cart::content() as $item) {
                 $orderitems =new OrderItem();
+
                 $orderitems->product_id = $item->id;
                 $orderitems->order_id = $order->id;
                 $orderitems->name = $item->name;
@@ -216,12 +218,13 @@ class CartController extends Controller
                 $orderitems->price = $item->price;
                 $orderitems->total = $item->price * $item->qty;
                 $orderitems->save();
-
-
                 session()->flash('success','You have successfully placed your order');
+                Cart::destroy();
+               
                 return response()->json([
                     'status' => true,
                     'message' => 'Order Saved Successfully',
+                    'orderId' => $order->id
                 ]);
             }
 
@@ -234,6 +237,6 @@ class CartController extends Controller
     }
 
     public function thankyou(){
-        
+        return view('front.thanks');
     }
 }
