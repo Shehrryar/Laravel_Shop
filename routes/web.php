@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\ShippingController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,9 @@ use App\Http\Controllers\admin\ProductImageControlller;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -108,6 +112,13 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/product-images', [ProductImageControlller::class, 'destroy'])->name('product-images.destroy');
         Route::delete('/product/{delete}', [ProductController::class, 'delete'])->name('product.delete');
         Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
+
+        // shipping Routes
+
+        Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
+        Route::post('/shipping/store', [ShippingController::class, 'store'])->name('shipping.store');
+
+
 
     });
 });
