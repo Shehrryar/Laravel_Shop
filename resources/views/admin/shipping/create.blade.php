@@ -64,19 +64,19 @@
                                 <th>Action</th>
                             </tr>
                             @if ($shipping_charges->isNotEmpty())
-                            @foreach ($shipping_charges as $charges)
-                            <tr>
+                                @foreach ($shipping_charges as $charges)
+                                    <tr>
 
-                                    <th>{{$charges->id}}</th>
-                                    <th>{{$charges->name}}</th>
-                                    <th>{{$charges->amount}}</th>
-                                    <th>
-                                        <a href="{{route('shipping.edit', $charges->id)}}" class="btn btn-primary" >Edit</a>
-                                        <a href="" class="btn btn-danger">Delete</a>
-                                    </th>
+                                        <th>{{$charges->id}}</th>
+                                        <th>{{$charges->name}}</th>
+                                        <th>{{$charges->amount}}</th>
+                                        <th>
+                                            <a href="{{route('shipping.edit', $charges->id)}}" class="btn btn-primary">Edit</a>
+                                            <a href="" class="btn btn-danger">Delete</a>
+                                        </th>
 
-                            </tr>
-                            @endforeach
+                                    </tr>
+                                @endforeach
                             @endif
                         </table>
 
@@ -112,6 +112,29 @@
             });
         });
     });
+
+
+    function delecategory(brnd_id) {
+
+        var delurl = '{{route("brands.delete", "ID")}}'.replace("ID", brnd_id);
+
+        if (confirm("Are you sure you want to delete " + brnd_id)) {
+            $.ajax({
+
+                url: delurl,
+                type: 'delete',
+                data: {}, // Use correct form ID
+                dataType: 'json', // 'datatype' should be 'dataType'
+                success: function (response) {
+
+                    if (response['status']) {
+                        window.location.href = "{{route('brands.index')}}";
+                    }
+                }
+
+            });
+        }
+    }
 
 </script>
 <!-- /.content -->
