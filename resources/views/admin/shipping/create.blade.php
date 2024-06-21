@@ -72,7 +72,7 @@
                                         <th>{{$charges->amount}}</th>
                                         <th>
                                             <a href="{{route('shipping.edit', $charges->id)}}" class="btn btn-primary">Edit</a>
-                                            <a href="" class="btn btn-danger">Delete</a>
+                                            <a href="javascript:void(0);" onclick="deleteshipping({{$charges->id}})" class="btn btn-danger">Delete</a>
                                         </th>
 
                                     </tr>
@@ -114,13 +114,12 @@
     });
 
 
-    function delecategory(brnd_id) {
+    function deleteshipping(shipping_id) {
 
-        var delurl = '{{route("brands.delete", "ID")}}'.replace("ID", brnd_id);
+        var delurl = '{{route("shipping.delete", "ID")}}'.replace("ID", shipping_id);
 
-        if (confirm("Are you sure you want to delete " + brnd_id)) {
+        if (confirm("Are you sure you want to delete " + shipping_id)) {
             $.ajax({
-
                 url: delurl,
                 type: 'delete',
                 data: {}, // Use correct form ID
@@ -128,7 +127,7 @@
                 success: function (response) {
 
                     if (response['status']) {
-                        window.location.href = "{{route('brands.index')}}";
+                        window.location.href = "{{route('shipping.create')}}";
                     }
                 }
 
