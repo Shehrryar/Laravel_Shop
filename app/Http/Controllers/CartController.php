@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Country;
+use App\Models\Shipping;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -137,14 +138,49 @@ class CartController extends Controller
         session()->forget('url.intended');
         $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
         $countries = Country::orderBy('name', 'ASC')->get();
-        return view('front.checkout',['countries'=>$countries, 
-        'customerAddress' =>$customerAddress]);
+
+
+        // Calculate shiping here
+
+        // echo "<pre>";
+        // print_r(Auth::user()->id);
+        // exit;
+
+        if (!empty($customerAddress->country_id)) {
+            $usercountry = $customerAddress->country_id;
+            $shipping_info = Shipping::where('country_id', $usercountry)->first();
+            $totalqty = 0;
+            $total_shipping = 0;
+            foreach (Cart::content() as $item) {
+                $totalqty += $item->qty;
+            }
+            $total_shipping = $totalqty * $shipping_info->amount;
+            return view(
+                'front.checkout',
+                [
+                    'countries' => $countries,
+                    'customerAddress' => $customerAddress,
+                    'total_shipping' => $total_shipping
+                ]
+            );
+        } else {
+            return view(
+                'front.checkout',
+                [
+                    'countries' => $countries,
+                    'customerAddress' => $customerAddress,
+                    'total_shipping' => ''
+                ]
+            );
+        }
+
     }
 
-    public function processCheckout(Request $request){
+    public function processCheckout(Request $request)
+    {
         // apply validation
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'firstname' => 'required|min:5',
             'lastname' => 'required',
             'email' => 'required|email',
@@ -156,7 +192,7 @@ class CartController extends Controller
             'mobile' => 'required',
 
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'message' => 'please fix the error',
@@ -165,26 +201,26 @@ class CartController extends Controller
         }
         $user = Auth::user();
         CustomerAddress::updateOrCreate(
-            ['user_id'=>$user->id],
+            ['user_id' => $user->id],
             [
-                'user_id'=>$user->id,
-                'firstname'=>$request->firstname,
-                'lastname'=>$request->lastname,
-                'email'=>$request->email,
-                'mobile'=>$request->mobile,
-                'address'=>$request->address,
-                'city'=>$request->city,
-                'apartment'=>$request->apartment,
-                'state'=>$request->state,
-                'zip'=>$request->zip,
-                'country_id'=>$request->country,
+                'user_id' => $user->id,
+                'firstname' => $request->firstname,
+                'lastname' => $request->lastname,
+                'email' => $request->email,
+                'mobile' => $request->mobile,
+                'address' => $request->address,
+                'city' => $request->city,
+                'apartment' => $request->apartment,
+                'state' => $request->state,
+                'zip' => $request->zip,
+                'country_id' => $request->country,
             ]
         );
 
-        if($request->payment_method == 'cod'){
+        if ($request->payment_method == 'cod') {
             $shipping = 0;
             $discount = 0;
-            $subtotal = Cart::subtotal(2,'.','');
+            $subtotal = Cart::subtotal(2, '.', '');
             $grandtotal = $subtotal + $shipping;
 
             $order = new Order();
@@ -209,7 +245,7 @@ class CartController extends Controller
             // store order item in the order item table
 
             foreach (Cart::content() as $item) {
-                $orderitems =new OrderItem();
+                $orderitems = new OrderItem();
 
                 $orderitems->product_id = $item->id;
                 $orderitems->order_id = $order->id;
@@ -218,9 +254,9 @@ class CartController extends Controller
                 $orderitems->price = $item->price;
                 $orderitems->total = $item->price * $item->qty;
                 $orderitems->save();
-                session()->flash('success','You have successfully placed your order');
+                session()->flash('success', 'You have successfully placed your order');
                 Cart::destroy();
-               
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Order Saved Successfully',
@@ -229,14 +265,54 @@ class CartController extends Controller
             }
 
 
-        }
-        else{
+        } else {
 
         }
 
     }
 
-    public function thankyou(){
+    public function getOrderSummary(Request $request)
+    {
+        if ($request->country_id > 0) {
+            $subtotal = Cart::subtotal(2, '.', '');
+            $shipping_info = Shipping::where('country_id', $request->country_id)->first();
+            $totalqty = 0;
+            foreach (Cart::content() as $item) {
+                $totalqty += $item->qty;
+            }
+            if ($shipping_info != null) {
+                $shipping_charge = $totalqty * $shipping_info->amount;
+                $grand_total = $subtotal + $shipping_charge;
+
+                return response()->json([
+                    'status' => true,
+                    'shipping_charge' => number_format($shipping_charge, 2),
+                    'grand_total' => number_format($grand_total, 2)
+                ]);
+            } else {
+                $shipping_charge = 10;
+                $grand_total = $subtotal + $shipping_charge;
+                return response()->json([
+                    'status' => true,
+                    'shipping_charge' => number_format($shipping_charge, 2),
+                    'grand_total' => number_format($grand_total, 2)
+                ]);
+
+            }
+        } else {
+
+            return response()->json([
+                'status' => true,
+                'shipping_charge' => number_format(0),
+                'grand_total' => number_format(Cart::subtotal(2, '.', ''), 2)
+            ]);
+
+
+        }
+    }
+
+    public function thankyou()
+    {
         return view('front.thanks');
     }
 }

@@ -40,6 +40,8 @@ Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
 Route::post('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
+Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
+
 
 
 
