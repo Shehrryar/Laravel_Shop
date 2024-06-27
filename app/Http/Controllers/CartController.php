@@ -160,7 +160,7 @@ class CartController extends Controller
                 [
                     'countries' => $countries,
                     'customerAddress' => $customerAddress,
-                    'total_shipping' => $total_shipping
+                    'total_shipping' => number_format($total_shipping, 2)
                 ]
             );
         } else {
@@ -218,10 +218,28 @@ class CartController extends Controller
         );
 
         if ($request->payment_method == 'cod') {
+ 
+
             $shipping = 0;
             $discount = 0;
             $subtotal = Cart::subtotal(2, '.', '');
-            $grandtotal = $subtotal + $shipping;
+
+
+            //calculate shipping 
+
+            $shipping_info = Shipping::where('country_id', $request->country)->first();
+            $totalqty = 0;
+            foreach (Cart::content() as $item) {
+                $totalqty += $item->qty;
+            }
+            if ($shipping_info != null) {
+                $shipping = $totalqty * $shipping_info->amount;
+                $grandtotal = $subtotal + $shipping;
+            } else {
+                $shipping = 10;
+                $grandtotal = $subtotal + $shipping;
+            }
+
 
             $order = new Order();
             $order->subtotal = $subtotal;

@@ -142,11 +142,11 @@
                             </div>
                             <div class="d-flex justify-content-between mt-2">
                                 <div class="h6"><strong>Shipping</strong></div>
-                                <div class="h6"><strong id="shipping_charges">${{number_format($total_shipping,2)}}</strong></div>
+                                <div class="h6"><strong id="shipping_charges">${{$total_shipping}}</strong></div>
                             </div>
                             <div class="d-flex justify-content-between mt-2 summery-end">
                                 <div class="h5"><strong>Total</strong></div>
-                                <div class="h5"><strong id="grand_total">${{Cart::subtotal() + number_format($total_shipping,2)}}</strong></div>
+                                <div class="h5"><strong id="grand_total">${{(float)Cart::subtotal() + (float)$total_shipping}}</strong></div>
                             </div>
                         </div>
                     </div>
