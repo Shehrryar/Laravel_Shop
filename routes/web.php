@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\DiscountCodeController;
 use App\Http\Controllers\admin\ShippingController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -123,6 +124,16 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/shipping/{id}', [ShippingController::class, 'update'])->name('shipping.update');
         Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
 
+
+
+        // Route for the discont coupon
+        
+
+        Route::get('/coupons/create', [DiscountCodeController::class, 'create'])->name('coupon.create');
+        Route::post('/coupons/store', [DiscountCodeController::class, 'store'])->name('coupon.store');
+        // Route::get('/shipping/{id}', [ShippingController::class, 'edit'])->name('shipping.edit');
+        // Route::put('/shipping/{id}', [ShippingController::class, 'update'])->name('shipping.update');
+        // Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
 
     });
 });
