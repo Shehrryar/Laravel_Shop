@@ -28,6 +28,8 @@ class DiscountCodeController extends Controller
         ]);
         if ($validator->passes()) {
 
+
+
             $discountcode = new DiscountCoupon();
             $discountcode->code = $request->code;
             $discountcode->name = $request->name;
@@ -35,7 +37,7 @@ class DiscountCodeController extends Controller
             $discountcode->max_user = $request->max_uses;
             $discountcode->max_user_user = $request->max_uses_user;
             $discountcode->type = $request->type;
-            $discountcode->discont_amount = $request->discont_amount;
+            $discountcode->discont_amount = $request->discount_amount;
             $discountcode->min_amount = $request->min_amount;
             $discountcode->status = $request->status;
             $discountcode->start_at = $request->start_at;
