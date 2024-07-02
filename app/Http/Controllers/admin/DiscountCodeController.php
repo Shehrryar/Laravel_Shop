@@ -10,9 +10,14 @@ use Illuminate\Support\Facades\Validator;
 
 class DiscountCodeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-
+        $DiscountCoupon = DiscountCoupon::latest();
+        if(!empty($request->get('keyword'))){
+            $DiscountCoupon = $DiscountCoupon->where('name','like','%'.$request->get('keyword').'%');
+        }
+        $DiscountCoupon = $DiscountCoupon->paginate(10);
+        return view('admin.discount_coupon.list', compact('DiscountCoupon'));
     }
     public function create()
     {
@@ -28,8 +33,6 @@ class DiscountCodeController extends Controller
         ]);
         if ($validator->passes()) {
 
-
-
             $discountcode = new DiscountCoupon();
             $discountcode->code = $request->code;
             $discountcode->name = $request->name;
@@ -40,7 +43,7 @@ class DiscountCodeController extends Controller
             $discountcode->discont_amount = $request->discount_amount;
             $discountcode->min_amount = $request->min_amount;
             $discountcode->status = $request->status;
-            $discountcode->start_at = $request->start_at;
+            $discountcode->start_at = $request->starts_at;
             $discountcode->expires_at = $request->expires_at;
             $discountcode->save();
 

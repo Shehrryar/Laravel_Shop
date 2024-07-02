@@ -139,7 +139,7 @@
 			</div>
 			<div class="pb-5 pt-3">
 				<button type="submit" id="getFormValuesButton" class="btn btn-primary">Create</button>
-				<a href='{{route("categories.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
+				<a href='{{route("coupon.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
 			</div>
 
 		</form>
@@ -163,7 +163,7 @@
 				dataType: 'json', // 'datatype' should be 'dataType'
 				success: function (response) {
 					if (response['status'] == true) {
-
+					window.location.href = "{{route('coupon.index')}}";
 					}
 					else {
 						var errors = response['errors'];
