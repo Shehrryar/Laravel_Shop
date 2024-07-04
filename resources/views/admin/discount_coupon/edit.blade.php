@@ -139,7 +139,7 @@
 				</div>
 			</div>
 			<div class="pb-5 pt-3">
-				<button type="submit" id="getFormValuesButton" class="btn btn-primary">Create</button>
+				<button type="submit" id="getFormValuesButton" class="btn btn-primary">Update</button>
 				<a href='{{route("coupon.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
 			</div>
 
@@ -158,8 +158,8 @@
 			$("#discout_form").submit(function (event) {
 			event.preventDefault();
 			$.ajax({
-				url: '{{route("coupon.store")}}',
-				type: 'POST',
+				url: '{{route("coupon.update", $coupon_edit->id)}}',
+				type: 'put',
 				data: $(this).serializeArray(), // Use correct form ID
 				dataType: 'json', // 'datatype' should be 'dataType'
 				success: function (response) {

@@ -73,12 +73,68 @@ class DiscountCodeController extends Controller
         }
         return view('admin.discount_coupon.edit', compact('coupon_edit'));
     }
-    public function update()
+    public function update(Request $request, $id)
     {
+        $discountcode = DiscountCoupon::find($id);
 
+        if($discountcode == null){
+            session()->flash('error', 'Record not found');
+            return response()->json([
+                'status' => true,
+                'message' => 'Record not found'
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'code' => 'required',
+            'type' => 'required',
+            'discount_amount' => 'required|numeric',
+            'status' => 'required',
+        ]);
+        if ($validator->passes()) {
+
+            $discountcode->code = $request->code;
+            $discountcode->name = $request->name;
+            $discountcode->description = $request->description;
+            $discountcode->max_user = $request->max_uses;
+            $discountcode->max_user_user = $request->max_uses_user;
+            $discountcode->type = $request->type;
+            $discountcode->discont_amount = $request->discount_amount;
+            $discountcode->min_amount = $request->min_amount;
+            $discountcode->status = $request->status;
+            $discountcode->start_at = $request->starts_at;
+            $discountcode->expires_at = $request->expires_at;
+            $discountcode->save();
+
+            $message = 'Discount Coupon updated successfully';
+            session()->flash('sucess', $message);
+            return response()->json([
+                'status' => true,
+                'message' => $message
+            ]);
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
     }
-    public function destroy()
+    public function destroy(Request $request, $id)
     {
+        $discountcode = DiscountCoupon::find($id);
+        if($discountcode == null){
+            session()->flash('error', 'Record not found');
+            return response()->json([
+                'status' => true,
+                'message' => 'Record not found'
+            ]);
+        }
+        $discountcode->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Record deleted successfully'
+        ]);
 
     }
 }
