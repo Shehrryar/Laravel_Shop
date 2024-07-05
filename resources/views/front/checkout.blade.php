@@ -151,6 +151,12 @@
                         </div>
                     </div>
 
+                    <div class="input-group apply-coupan mt-4">
+                        <input type="text" placeholder="Coupon Code" name="discount_code" id="discount_code" class="form-control">
+                        <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
+                    </div> 
+
+                    
                     <div class="card payment-form ">
                         <h3 class="card-title h5 mb-3">Payment Details</h3>
 
@@ -308,6 +314,23 @@
             }
         });
     });
+
+    $("#apply-discount").click(function() {
+        $.ajax({
+            url:'{{route('front.applydiscount')}}',
+            type:'post',
+            data:{
+                 code :$("#discount_code").val(),
+                 country : $("#country").val()
+            },
+            dataType:'json',
+            success:function(response){
+                
+                }
+        });
+    });
+
+
 
 
 </script>

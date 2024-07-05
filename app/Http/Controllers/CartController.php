@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomerAddress;
+use App\Models\DiscountCoupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -239,8 +240,6 @@ class CartController extends Controller
                 $shipping = 10;
                 $grandtotal = $subtotal + $shipping;
             }
-
-
             $order = new Order();
             $order->subtotal = $subtotal;
             $order->shipping = $shipping;
@@ -327,6 +326,21 @@ class CartController extends Controller
 
 
         }
+    }
+
+    public function apply_discount(Request $request){
+
+        $code = DiscountCoupon::where('code', $request->code);
+
+
+        if($code == null){
+            return response()->json([
+                'status' => false,
+                'message' => 'invalid discount coupon'
+            ]);
+            
+        }
+
     }
 
     public function thankyou()
