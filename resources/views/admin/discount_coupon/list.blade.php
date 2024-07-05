@@ -155,7 +155,7 @@
 				dataType: 'json', // 'datatype' should be 'dataType'
 				success: function (response) {
 					if (response['status']) {
-						window.location.href = "{{route('coupon.delete')}}";
+						window.location.href = "{{route('coupon.index')}}";
 					}
 				}
 			});

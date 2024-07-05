@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Country;
 use App\Models\Shipping;
+use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -328,10 +329,14 @@ class CartController extends Controller
         }
     }
 
+
     public function apply_discount(Request $request){
 
-        $code = DiscountCoupon::where('code', $request->code);
+        $code = DiscountCoupon::where('code', $request->code)->first();
 
+        // echo "<pre>";
+        // print_r($code);
+        // exit;
 
         if($code == null){
             return response()->json([
@@ -339,6 +344,34 @@ class CartController extends Controller
                 'message' => 'invalid discount coupon'
             ]);
             
+        }
+
+        $now = Carbon::now();
+
+
+
+
+        if($code->start_at != ""){
+            $start_date = Carbon::createFromFormat('Y-m-d H:i:s', $code->start_at);
+
+            if ($now->lt($start_date)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'invalid discount coupon'
+                ]);
+            }
+        }
+
+
+        if($code->expires_at != ""){
+            $expire_date = Carbon::createFromFormat('Y-m-d H:i:s', $code->expires_at);
+
+            if ($now->gt($expire_date)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'invalid discount coupon'
+                ]);
+            }
         }
 
     }
