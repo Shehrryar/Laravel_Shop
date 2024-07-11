@@ -44,6 +44,8 @@ Route::post('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('fro
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
 
 Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
+Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
+
 
 
 

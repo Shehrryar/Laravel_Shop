@@ -312,6 +312,8 @@ class CartController extends Controller
         // apply discount here
         $discount = 0;
 
+        $discountString = '';
+
         if (session()->has('code')) {
             $code = session()->get('code');
 
@@ -320,7 +322,15 @@ class CartController extends Controller
             } else {
                 $discount = $code->discont_amount;
             }
+
+            $discountString = '<div class="mt-4">
+            <strong>'.session()->get('code')->code.'</strong>
+            <a class="btn btn-sm btn-danger" id="remove-discount" ><i class="fa fa-times"></i></a>
+        </div>';
+    
         }
+
+
 
         if ($request->country_id > 0) {
             $shipping_info = Shipping::where('country_id', $request->country_id)->first();
@@ -336,6 +346,7 @@ class CartController extends Controller
                     'status' => true,
                     'discount' => $discount,
                     'shipping_charge' => number_format($shipping_charge, 2),
+                    'discountString'=>$discountString,
                     'grand_total' => number_format($grand_total, 2)
                 ]);
             } else {
@@ -344,6 +355,8 @@ class CartController extends Controller
                 return response()->json([
                     'status' => true,
                     'discount' => $discount,
+                    'discountString'=>$discountString,
+
                     'shipping_charge' => number_format($shipping_charge, 2),
                     'grand_total' => number_format($grand_total, 2)
                 ]);
@@ -354,6 +367,7 @@ class CartController extends Controller
             return response()->json([
                 'status' => true,
                 'discount' => $discount,
+                'discountString'=>$discountString,
                 'shipping_charge' => number_format(0),
                 'grand_total' => number_format($subtotal - $discount, 2)
             ]);
@@ -412,6 +426,14 @@ class CartController extends Controller
 
         return $this->getOrderSummary($request);
 
+    }
+
+
+    public function removecoupon(Request $request){
+        session()->forget('code');
+
+
+        return $this->getOrderSummary($request);
     }
 
     public function thankyou()

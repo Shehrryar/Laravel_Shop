@@ -160,7 +160,19 @@
                     <div class="input-group apply-coupan mt-4">
                         <input type="text" placeholder="Coupon Code" name="discount_code" id="discount_code" class="form-control">
                         <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
-                    </div> 
+                    </div>
+                    
+                    @if (Session::has('code'))
+                    
+                    <div id="discount-account-wrapper">
+                    <div class="mt-4">
+                        <strong>{{Session::get('code')->code}}</strong>
+                        <a class="btn btn-sm btn-danger" id="remove-discount" ><i class="fa fa-times"></i></a>
+                    </div>
+                    @endif
+                    </div>
+                    
+
 
                     
                     <div class="card payment-form ">
@@ -335,14 +347,36 @@
                     $('#shipping_charges').html(response.shipping_charge);
                     $('#grand_total').html(response.grand_total);
                     $('#dicount_coupon').html(response.discount);
-
-
-                    
-
+                    $('#discount-account-wrapper').html(response.discountString);
                 }
                 }
         });
     });
+
+
+    $('body').on('click', "#")
+
+    $("#remove-discount").click(function() {
+        $.ajax({
+            url:'{{route('front.removediscount')}}',
+            type:'post',
+            data:{
+                 country_id : $("#country").val()
+            },
+            dataType:'json',
+            success:function(response){
+                if(response.status == true){
+                    $('#shipping_charges').html(response.shipping_charge);
+                    $('#grand_total').html(response.grand_total);
+                    $('#dicount_coupon').html(response.discount);
+                    $('#discount-account-wrapper').html('');
+                }
+                }
+        });
+    });
+
+
+    
 
 
 
