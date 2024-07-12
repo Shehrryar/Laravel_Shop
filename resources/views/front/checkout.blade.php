@@ -170,16 +170,17 @@
                             class="form-control">
                         <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
                     </div>
+                    <span class="text-danger" id="coupon-error-message"></span>
 
                     @if (Session::has('code'))
-
                         <div id="discount-account-wrapper">
                             <div class="mt-4">
-                                <strong>{{Session::get('code')->code}}</strong>
+                                <strong id="coupon-error-message" >{{Session::get('code')->code}}</strong>
                                 <a class="btn btn-sm btn-danger" id="remove-discount"><i class="fa fa-times"></i></a>
                             </div>
-                    @endif
                     </div>
+                    @endif
+
 
 
 
@@ -362,8 +363,7 @@
                     $('#discount-account-wrapper').html(response.discountString);
                 }
                 else{
-
-                    $('#discount-account-wrapper').html(response.message);
+                    $('#coupon-error-message').html(response.message);
                 }
             }
         });
