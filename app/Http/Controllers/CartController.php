@@ -170,7 +170,7 @@ class CartController extends Controller
             foreach (Cart::content() as $item) {
                 $totalqty += $item->qty;
             }
-            $total_shipping = $totalqty * $shipping_info->amount;
+            $total_shipping = $totalqty * $shipping_info->amount; 
             $grand_total = ($subtotal - $discount) + $total_shipping;
 
         } else {

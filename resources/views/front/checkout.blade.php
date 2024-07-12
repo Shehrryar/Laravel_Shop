@@ -342,7 +342,10 @@
         });
     });
 
-    $("#apply-discount").click(function () {
+    // $("#apply-discount").click(function () {
+
+
+    $('body').on('click', "#apply-discount", function () {
         $.ajax({
             url: '{{route('front.applydiscount')}}',
             type: 'post',
@@ -357,6 +360,10 @@
                     $('#grand_total').html(response.grand_total);
                     $('#dicount_coupon').html(response.discount);
                     $('#discount-account-wrapper').html(response.discountString);
+                }
+                else{
+
+                    $('#discount-account-wrapper').html(response.message);
                 }
             }
         });
