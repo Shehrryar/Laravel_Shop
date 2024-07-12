@@ -28,14 +28,16 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="firstname" id="firstname" class="form-control"
-                                            placeholder="First Name" value = "{{!empty($customerAddress) ? $customerAddress->firstname : ''}}" >
+                                            placeholder="First Name"
+                                            value="{{!empty($customerAddress) ? $customerAddress->firstname : ''}}">
                                         <p></p>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="lastname" id="lastname" class="form-control"
-                                            placeholder="Last Name" value="{{!empty($customerAddress) ? $customerAddress->lastname : ''}}" >
+                                            placeholder="Last Name"
+                                            value="{{!empty($customerAddress) ? $customerAddress->lastname : ''}}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -43,7 +45,8 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="email" id="email" class="form-control"
-                                            placeholder="Email" value="{{!empty($customerAddress) ? $customerAddress->email : ''}}">
+                                            placeholder="Email"
+                                            value="{{!empty($customerAddress) ? $customerAddress->email : ''}}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -54,7 +57,8 @@
                                             <option value="">Select a Country</option>
                                             @if ($countries->isNotEmpty())
                                                 @foreach ($countries as $country)
-                                                    <option {{!empty($customerAddress) &&  $customerAddress->country_id ==  $country->id? 'selected' : ''}} value="{{$country->id}}">{{$country->name}}</option>
+                                                    <option {{!empty($customerAddress) && $customerAddress->country_id == $country->id ? 'selected' : ''}}
+                                                        value="{{$country->id}}">{{$country->name}}</option>
                                                 @endforeach
                                             @endif
                                         </select>
@@ -73,14 +77,15 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="apartment" id="apartment" class="form-control"
-                                            placeholder="Apartment, suite, unit, etc. (optional)" value="{{!empty($customerAddress) ? $customerAddress->apartment : ''}}" >
+                                            placeholder="Apartment, suite, unit, etc. (optional)"
+                                            value="{{!empty($customerAddress) ? $customerAddress->apartment : ''}}">
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <input type="text" name="city" id="city" class="form-control"
-                                            placeholder="City" value="{{!empty($customerAddress) ? $customerAddress->city : ''}}">
+                                        <input type="text" name="city" id="city" class="form-control" placeholder="City"
+                                            value="{{!empty($customerAddress) ? $customerAddress->city : ''}}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -88,14 +93,16 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <input type="text" name="state" id="state" class="form-control"
-                                            placeholder="State" value="{{!empty($customerAddress) ? $customerAddress->state : ''}}">
+                                            placeholder="State"
+                                            value="{{!empty($customerAddress) ? $customerAddress->state : ''}}">
                                         <p></p>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <input type="text" name="zip" id="zip" class="form-control" placeholder="Zip" value="{{!empty($customerAddress) ? $customerAddress->zip : ''}}">
+                                        <input type="text" name="zip" id="zip" class="form-control" placeholder="Zip"
+                                            value="{{!empty($customerAddress) ? $customerAddress->zip : ''}}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -103,7 +110,8 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="mobile" id="mobile" class="form-control"
-                                            placeholder="Mobile No." value="{{!empty($customerAddress) ? $customerAddress->mobile : ''}}">
+                                            placeholder="Mobile No."
+                                            value="{{!empty($customerAddress) ? $customerAddress->mobile : ''}}">
                                         <p></p>
                                     </div>
                                 </div>
@@ -138,7 +146,7 @@
 
                             <div class="d-flex justify-content-between summery-end">
                                 <div class="h6"><strong>Discount</strong></div>
-                                <div class="h6"><strong id="dicount_coupon" >${{$discount}}</strong></div>
+                                <div class="h6"><strong id="dicount_coupon">${{$discount}}</strong></div>
                             </div>
 
                             <div class="d-flex justify-content-between summery-end">
@@ -158,23 +166,24 @@
                     </div>
 
                     <div class="input-group apply-coupan mt-4">
-                        <input type="text" placeholder="Coupon Code" name="discount_code" id="discount_code" class="form-control">
+                        <input type="text" placeholder="Coupon Code" name="discount_code" id="discount_code"
+                            class="form-control">
                         <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
                     </div>
-                    
+
                     @if (Session::has('code'))
-                    
-                    <div id="discount-account-wrapper">
-                    <div class="mt-4">
-                        <strong>{{Session::get('code')->code}}</strong>
-                        <a class="btn btn-sm btn-danger" id="remove-discount" ><i class="fa fa-times"></i></a>
-                    </div>
+
+                        <div id="discount-account-wrapper">
+                            <div class="mt-4">
+                                <strong>{{Session::get('code')->code}}</strong>
+                                <a class="btn btn-sm btn-danger" id="remove-discount"><i class="fa fa-times"></i></a>
+                            </div>
                     @endif
                     </div>
-                    
 
 
-                    
+
+
                     <div class="card payment-form ">
                         <h3 class="card-title h5 mb-3">Payment Details</h3>
 
@@ -306,77 +315,83 @@
                         $('#mobile').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
 
                     }
-                } 
-                else{
+                }
+                else {
                     window.location.href = "{{ route('front.home') }}";
+
+                }
+            }
+        });
+    });
+
+    $("#country").change(function () {
+        $.ajax({
+            url: '{{route('front.getOrderSummary')}}',
+            type: 'post',
+            data: {
+                country_id: $(this).val()
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.status == true) {
+                    $('#shipping_charges').html(response.shipping_charge);
+                    $('#grand_total').html(response.grand_total);
+
+                }
+            }
+        });
+    });
+
+    $("#apply-discount").click(function () {
+        $.ajax({
+            url: '{{route('front.applydiscount')}}',
+            type: 'post',
+            data: {
+                code: $("#discount_code").val(),
+                country_id: $("#country").val()
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.status == true) {
+                    $('#shipping_charges').html(response.shipping_charge);
+                    $('#grand_total').html(response.grand_total);
+                    $('#dicount_coupon').html(response.discount);
+                    $('#discount-account-wrapper').html(response.discountString);
+                }
+            }
+        });
+    });
+
+
+    $('body').on('click', "#remove-discount", function () {
+        $.ajax({
+            url: '{{route('front.removediscount')}}',
+            type: 'post',
+            data: {
+                country_id: $("#country").val()
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.status == true) {
+                    $('#shipping_charges').html(response.shipping_charge);
+                    $('#grand_total').html(response.grand_total);
+                    $('#dicount_coupon').html(response.discount);
+                    $('#discount-account-wrapper').html('');
+                    $('#discount_code').val('');
+
+
                     
                 }
             }
         });
     });
 
-    $("#country").change(function(){
-        $.ajax({
-            url:'{{route('front.getOrderSummary')}}',
-            type:'post',
-            data:{
-                country_id:$(this).val()
-            },
-            dataType:'json',
-            success:function(response){
-                if(response.status == true){
-                    $('#shipping_charges').html(response.shipping_charge);
-                    $('#grand_total').html(response.grand_total);
+    // $("#remove-discount").click(function() {
 
-                }
-            }
-        });
-    });
-
-    $("#apply-discount").click(function() {
-        $.ajax({
-            url:'{{route('front.applydiscount')}}',
-            type:'post',
-            data:{
-                 code :$("#discount_code").val(),
-                 country_id : $("#country").val()
-            },
-            dataType:'json',
-            success:function(response){
-                if(response.status == true){
-                    $('#shipping_charges').html(response.shipping_charge);
-                    $('#grand_total').html(response.grand_total);
-                    $('#dicount_coupon').html(response.discount);
-                    $('#discount-account-wrapper').html(response.discountString);
-                }
-                }
-        });
-    });
+    // });
 
 
-    $('body').on('click', "#")
 
-    $("#remove-discount").click(function() {
-        $.ajax({
-            url:'{{route('front.removediscount')}}',
-            type:'post',
-            data:{
-                 country_id : $("#country").val()
-            },
-            dataType:'json',
-            success:function(response){
-                if(response.status == true){
-                    $('#shipping_charges').html(response.shipping_charge);
-                    $('#grand_total').html(response.grand_total);
-                    $('#dicount_coupon').html(response.discount);
-                    $('#discount-account-wrapper').html('');
-                }
-                }
-        });
-    });
-
-
-    
 
 
 

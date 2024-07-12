@@ -241,7 +241,24 @@ class CartController extends Controller
 
             $shipping = 0;
             $discount = 0;
+            $discountcodeid = '';
+            $promocode = '';
+
             $subtotal = Cart::subtotal(2, '.', '');
+
+
+            if (session()->has('code')) {
+                $code = session()->get('code');
+
+                if ($code->type == 'percent') {
+                    $discount = ($code->discont_amount / 100) * $subtotal;
+                } else {
+                    $discount = $code->discont_amount;
+                }
+
+                $discountcodeid = $code->id;
+                $promocode = $code->code;
+            }
 
 
             //calculate shipping 
@@ -253,15 +270,21 @@ class CartController extends Controller
             }
             if ($shipping_info != null) {
                 $shipping = $totalqty * $shipping_info->amount;
-                $grandtotal = $subtotal + $shipping;
+                $grandtotal = ($subtotal - $discount) + $shipping;
             } else {
                 $shipping = 10;
-                $grandtotal = $subtotal + $shipping;
+                $grandtotal = ($subtotal - $discount) + $shipping;
             }
+
+
             $order = new Order();
             $order->subtotal = $subtotal;
             $order->shipping = $shipping;
             $order->grandtotal = $grandtotal;
+            $order->discount = $discount;
+
+            $order->coupon_code = $promocode;            
+
             $order->firstname = $request->firstname;
             $order->user_id = $user->id;
             $order->lastname = $request->lastname;
@@ -324,10 +347,10 @@ class CartController extends Controller
             }
 
             $discountString = '<div class="mt-4">
-            <strong>'.session()->get('code')->code.'</strong>
+            <strong>' . session()->get('code')->code . '</strong>
             <a class="btn btn-sm btn-danger" id="remove-discount" ><i class="fa fa-times"></i></a>
         </div>';
-    
+
         }
 
 
@@ -346,7 +369,7 @@ class CartController extends Controller
                     'status' => true,
                     'discount' => $discount,
                     'shipping_charge' => number_format($shipping_charge, 2),
-                    'discountString'=>$discountString,
+                    'discountString' => $discountString,
                     'grand_total' => number_format($grand_total, 2)
                 ]);
             } else {
@@ -355,7 +378,7 @@ class CartController extends Controller
                 return response()->json([
                     'status' => true,
                     'discount' => $discount,
-                    'discountString'=>$discountString,
+                    'discountString' => $discountString,
 
                     'shipping_charge' => number_format($shipping_charge, 2),
                     'grand_total' => number_format($grand_total, 2)
@@ -367,7 +390,7 @@ class CartController extends Controller
             return response()->json([
                 'status' => true,
                 'discount' => $discount,
-                'discountString'=>$discountString,
+                'discountString' => $discountString,
                 'shipping_charge' => number_format(0),
                 'grand_total' => number_format($subtotal - $discount, 2)
             ]);
@@ -429,7 +452,8 @@ class CartController extends Controller
     }
 
 
-    public function removecoupon(Request $request){
+    public function removecoupon(Request $request)
+    {
         session()->forget('code');
 
 
