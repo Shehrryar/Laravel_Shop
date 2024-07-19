@@ -42,7 +42,6 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checko
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
 Route::post('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
-
 Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 
@@ -140,4 +139,3 @@ Route::group(['prefix' => 'admin'], function () {
 
     });
 });
-
