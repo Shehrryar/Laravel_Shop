@@ -182,9 +182,6 @@
                     @endif
 
 
-
-
-
                     <div class="card payment-form ">
                         <h3 class="card-title h5 mb-3">Payment Details</h3>
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
 
 
@@ -82,5 +83,14 @@ class AuthController extends Controller
     public function logout(){
         Auth::logout();
         return redirect()->route('account.login')->with('success','Your successfully logout');
+    }
+
+
+    public function github(){
+        return Socialite::driver('github')->redirect();
+    }
+
+    public function processGithub(){
+        
     }
 }

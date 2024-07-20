@@ -52,6 +52,12 @@ Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');  
+        
+        Route::GET('/register/github', [AuthController::class, 'github'])->name('account.github');
+        Route::GET('/register/github/process', [AuthController::class, 'processGithub'])->name('account.processGithub');
+        
+        
+        
         Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
         
