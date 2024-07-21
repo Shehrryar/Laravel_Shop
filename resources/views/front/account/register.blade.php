@@ -43,13 +43,14 @@
                 </div>
                 <button type="submit" class="btn btn-dark btn-block btn-lg" value="Register">Register</button>
                 <div class="form-row my-2" >
-                    <a href="{{route('account.github')}}" class="btn btn-secondary btn-block" > Sign in with Github</a>
+                    <a href="{{route('auth.github')}}" class="btn btn-secondary btn-block" > Sign in with Github</a>
                 </div>
             </form>
             <div class="text-center small">Already have an account? <a href="login.php">Login Now</a></div>
         </div>
     </div>
 </section>
+
 
 @endsection
 

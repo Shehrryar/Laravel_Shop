@@ -18,6 +18,7 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
 
+use Laravel\Socialite\Facades\Socialite;
 
 
 /*
@@ -53,8 +54,17 @@ Route::group(['prefix' => 'account'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');  
         
-        Route::GET('/register/github', [AuthController::class, 'github'])->name('account.github');
-        Route::GET('/register/github/process', [AuthController::class, 'processGithub'])->name('account.processGithub');
+ 
+        Route::get('/auth/redirect', function () {
+            return Socialite::driver('github')->redirect();
+        })->name('auth.github'); 
+        Route::get('/auth/callback', function () {
+
+            $user = Socialite::driver('github')->user();
+            echo "<pre>";
+            print_r($user);
+            exit;
+        });
         
         
         
