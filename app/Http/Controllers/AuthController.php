@@ -86,11 +86,16 @@ class AuthController extends Controller
     }
 
 
-    public function github(){
+    public function githubRedirect(){
         return Socialite::driver('github')->redirect();
     }
 
-    public function processGithub(){
-        
+
+    public function githubCallback(){
+        $user = Socialite::driver('github')->user();
+        echo "<pre>";
+        print_r($user);
+        exit;
     }
+
 }

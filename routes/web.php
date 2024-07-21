@@ -54,17 +54,11 @@ Route::group(['prefix' => 'account'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');  
         
- 
-        Route::get('/auth/redirect', function () {
-            return Socialite::driver('github')->redirect();
-        })->name('auth.github'); 
-        Route::get('/auth/callback', function () {
+        Route::GET('/auth/redirect', [AuthController::class, 'githubRedirect'])->name('auth.github');
+        Route::GET('/auth/callback', [AuthController::class, 'githubCallback'])->name('auth.githubcallback');
 
-            $user = Socialite::driver('github')->user();
-            echo "<pre>";
-            print_r($user);
-            exit;
-        });
+        
+
         
         
         
