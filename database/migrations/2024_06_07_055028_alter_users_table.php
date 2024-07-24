@@ -15,9 +15,7 @@ return new class extends Migration
             $table->string('phone')->nullable()->after('email');
             $table->string('github_id')->nullable()->after('phone');
             $table->string('facebook_id')->nullable()->after('github_id');
-            $table->string('google_id')->nullable()->after('facebook_id');
-
-        
+            $table->string('google_id')->nullable()->after('facebook_id');        
         });
     }
 
