@@ -45,6 +45,15 @@
                 <div class="form-row my-2" >
                     <a href="{{route('auth.github')}}" class="btn btn-secondary btn-block" > Sign in with Github</a>
                 </div>
+
+                <div class="form-row my-2" >
+                    <a href="{{route('auth.facebook')}}" class="btn btn-secondary btn-block" > Sign in with Facebook</a>
+                </div>
+
+                <div class="form-row my-2" >
+                    <a href="{{route('auth.google')}}" class="btn btn-secondary btn-block" > Sign in with Google</a>
+                </div>
+
             </form>
             <div class="text-center small">Already have an account? <a href="login.php">Login Now</a></div>
         </div>

@@ -52,25 +52,34 @@ Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
-        Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');  
-        
+        Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
+
+        // Register with Githud
         Route::GET('/auth/redirect', [AuthController::class, 'githubRedirect'])->name('auth.github');
         Route::GET('/auth/callback', [AuthController::class, 'githubCallback'])->name('auth.githubcallback');
 
-        
+        // Register with facebook
+        Route::GET('/auth/redirect/facebook', [AuthController::class, 'facbookRedirect'])->name('auth.facebook');
+        Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
 
-        
-        
-        
+        // Register with Google
+        Route::GET('/auth/redirect/google', [AuthController::class, 'googleRedirect'])->name('auth.google');
+        Route::GET('/auth/callback/google', [AuthController::class, 'googleCallback'])->name('auth.googlecallback');
+
+
         Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
-        
+
     });
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/logout', [AuthController::class, 'logout'])->name('account.logout');
 
     });
+
+
+
+
 });
 
 
