@@ -61,8 +61,9 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+        
         if ($validator->passes()) {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+            if (Auth::attempt(['email' => $request->email, 'google_id' => $request->password], $request->get('remember'))) {
                 if (session()->has('url.intended')) {
                     return redirect(session()->get('url.intended'));
                 }
@@ -119,5 +120,38 @@ class AuthController extends Controller
                 'message' => $message
             ]);
         }
+    }
+
+
+    public function googleRedirect(){
+        return Socialite::driver('google')->redirect();
+        
+    }
+
+    public function googleCallback(){
+        $googleUser = Socialite::driver('google')->user();
+        $emailExists = User::where('email', $googleUser->email)->exists();
+
+
+
+
+        if ($emailExists) {
+            $message = 'The email is Already Exist';
+            session()->flash('error', $message);
+            return redirect()->route('account.login');
+        } else {
+            $user = new User();
+            $user->google_id  = $googleUser->id;
+            $user->name = $googleUser->name;
+            $user->email = $googleUser->email;
+            $user->password = Hash::make('12345678');
+            $user->token = $googleUser->token;
+            $user->save();
+            $message = 'You have been registered Successfully';
+            session()->flash('success', $message);
+            return redirect()->route('account.login');
+        }
+
+        
     }
 }

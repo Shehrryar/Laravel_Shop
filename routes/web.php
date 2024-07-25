@@ -58,10 +58,6 @@ Route::group(['prefix' => 'account'], function () {
         Route::GET('/auth/redirect', [AuthController::class, 'githubRedirect'])->name('auth.github');
         Route::GET('/auth/callback', [AuthController::class, 'githubCallback'])->name('auth.githubcallback');
 
-        // Register with facebook
-        Route::GET('/auth/redirect/facebook', [AuthController::class, 'facbookRedirect'])->name('auth.facebook');
-        Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
-
         // Register with Google
         Route::GET('/auth/redirect/google', [AuthController::class, 'googleRedirect'])->name('auth.google');
         Route::GET('/auth/callback/google', [AuthController::class, 'googleCallback'])->name('auth.googlecallback');
