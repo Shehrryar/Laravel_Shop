@@ -127,31 +127,26 @@ class AuthController extends Controller
         return Socialite::driver('google')->redirect();
         
     }
-
     public function googleCallback(){
         $googleUser = Socialite::driver('google')->user();
         $emailExists = User::where('email', $googleUser->email)->exists();
-
-
-
-
-        if ($emailExists) {
-            $message = 'The email is Already Exist';
-            session()->flash('error', $message);
-            return redirect()->route('account.login');
-        } else {
-            $user = new User();
-            $user->google_id  = $googleUser->id;
-            $user->name = $googleUser->name;
-            $user->email = $googleUser->email;
-            $user->password = Hash::make('12345678');
-            $user->token = $googleUser->token;
-            $user->save();
-            $message = 'You have been registered Successfully';
-            session()->flash('success', $message);
-            return redirect()->route('account.login');
-        }
-
         
+        if ($emailExists) {
+            session()->flash('error', 'The email already exists');
+            return redirect()->route('account.login');
+        } 
+
+        $user = User::create([
+            'google_id' => $googleUser->id,
+            'name' => $googleUser->name,
+            'email' => $googleUser->email,
+            'password' => Hash::make('12345678'),
+            'token' => $googleUser->token,
+        ]);
+    
+        Auth::login($user);
+        session()->flash('success', 'Welcome to the Dashboard');
+        return redirect()->route('front.home');
     }
+    
 }
