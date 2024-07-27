@@ -125,7 +125,6 @@ class AuthController extends Controller
 
     public function googleRedirect(){
         return Socialite::driver('google')->redirect();
-        
     }
     public function googleCallback(){
         $googleUser = Socialite::driver('google')->user();
@@ -143,7 +142,6 @@ class AuthController extends Controller
             'password' => Hash::make('12345678'),
             'token' => $googleUser->token,
         ]);
-    
         Auth::login($user);
         session()->flash('success', 'Welcome to the Dashboard');
         return redirect()->route('front.home');
