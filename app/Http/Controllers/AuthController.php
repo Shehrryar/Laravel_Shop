@@ -97,53 +97,63 @@ class AuthController extends Controller
     }
     public function githubCallback()
     {
-        $githubUser = Socialite::driver('github')->user();
-        // Check if the email exists
-        $emailExists = User::where('email', $githubUser->email)->exists();
-
-        if ($emailExists) {
-            $message = 'The email is Already Exist';
-            session()->flash('success', $message);
-            return redirect()->route('account.login')->with('success', $message);
-        } else {
-            $user = new User();
-            $user->github_id = $githubUser->id;
-            $user->name = $githubUser->name;
-            $user->email = $githubUser->email;
-            $user->password = Hash::make('12345678');
-            $user->token = $githubUser->token;
-            $user->save();
-            $message = 'You have been registered Successfully';
-            session()->flash('success', $message);
-            return response()->json([
-                'status' => true,
-                'message' => $message
-            ]);
+        $gitUser = Socialite::driver('github')->stateless()->user();
+        $userExists = User::where('email', $gitUser->email)
+        ->first();
+        if ($userExists && $userExists->role == 2) {
+            session()->flash('error', 'The email already exists for admin');
+            return redirect()->route('admin.login');
         }
+        else if($userExists && $userExists->role == 1){
+            if($userExists->google_id == $gitUser->id){
+                Auth::login($userExists);
+                session()->flash('success', 'Welcome to the Dashboard');
+                return redirect()->route('front.home');
+            }
+            session()->flash('error', 'Account already exist enter your Email and Password');
+            return redirect()->route('account.login');
+        }
+        $user = new User();
+        $user->github_id = $gitUser->id;
+        $user->name = $gitUser->name;
+        $user->email = $gitUser->email;
+        $user->password = Hash::make('12345678');
+        $user->token = $gitUser->token;
+        $user->save();
+        Auth::login($user);
+        session()->flash('success', 'Your account is created successfully');
+        return redirect()->route('front.home');
     }
-
 
     public function googleRedirect(){
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
     public function googleCallback(){
-        $googleUser = Socialite::driver('google')->user();
-        $emailExists = User::where('email', $googleUser->email)->exists();
-        
-        if ($emailExists) {
-            session()->flash('error', 'The email already exists');
+        $googleUser = Socialite::driver('google')->stateless()->user();
+        $userExists = User::where('email', $googleUser->email)
+        ->first();
+        if ($userExists && $userExists->role == 2) {
+            session()->flash('error', 'The email already exists for admin');
+            return redirect()->route('admin.login');
+        }
+        else if($userExists && $userExists->role == 1){
+            if($userExists->google_id == $googleUser->id){
+                Auth::login($userExists);
+                session()->flash('success', 'Welcome to the Dashboard');
+                return redirect()->route('front.home');
+            }
+            session()->flash('error', 'Account already exist enter your Email and Password');
             return redirect()->route('account.login');
-        } 
-
-        $user = User::create([
-            'google_id' => $googleUser->id,
-            'name' => $googleUser->name,
-            'email' => $googleUser->email,
-            'password' => Hash::make('12345678'),
-            'token' => $googleUser->token,
-        ]);
+        }
+        $user = new User();
+        $user->google_id = $googleUser->id;
+        $user->name = $googleUser->name;
+        $user->email = $googleUser->email;
+        $user->password = Hash::make('12345678');
+        $user->token = $googleUser->token;
+        $user->save();
         Auth::login($user);
-        session()->flash('success', 'Welcome to the Dashboard');
+        session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
     

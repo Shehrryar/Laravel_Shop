@@ -4,7 +4,6 @@ use App\Http\Controllers\admin\DiscountCodeController;
 use App\Http\Controllers\admin\ShippingController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\CategoryController;
@@ -17,7 +16,6 @@ use App\Http\Controllers\admin\ProductImageControlller;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
-
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -47,8 +45,6 @@ Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name(
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 
 
-
-
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
@@ -61,8 +57,7 @@ Route::group(['prefix' => 'account'], function () {
         // Register with Google
         Route::GET('/auth/redirect/google', [AuthController::class, 'googleRedirect'])->name('auth.google');
         Route::GET('/auth/callback/google', [AuthController::class, 'googleCallback'])->name('auth.googlecallback');
-
-
+        
         Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
 
@@ -70,12 +65,7 @@ Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/logout', [AuthController::class, 'logout'])->name('account.logout');
-
     });
-
-
-
-
 });
 
 

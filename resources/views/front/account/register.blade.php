@@ -42,11 +42,10 @@
                     <a href="#" class="forgot-link">Forgot Password?</a>
                 </div>
                 <button type="submit" class="btn btn-dark btn-block btn-lg" value="Register">Register</button>
-                <div class="form-row my-2" >
-                    <a href="{{route('auth.github')}}" class="btn btn-secondary btn-block" > Sign in with Github</a>
-                </div>
-                <div class="form-row my-2" >
-                    <a href="{{route('auth.google')}}" class="btn btn-secondary btn-block" > Sign in with Google</a>
+                <hr>
+                <div class="form-group social-login">
+                    <a href="{{route('auth.google')}}" class="btn btn-success">Login with Google</a>
+                    <a href="{{route('auth.github')}}" class="btn btn-primary">Login with GitHub</a>
                 </div>
 
             </form>
