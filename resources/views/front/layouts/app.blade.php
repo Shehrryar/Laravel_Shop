@@ -117,11 +117,19 @@
                         @endif
                     </ul>
                 </div>
-                <div class="right-nav py-0">
-                    <a href="{{route(('front.cart'))}}" class="ml-3 d-flex pt-2">
+                <div class="right-nav py-0 d-flex align-items-center " >
+                <select style="margin-right: 20px;"; name="locale" id="languageDropdown" class="form-control">
+                        @foreach (config('app.locales') as $locale)
+                            <option value="{{ $locale }}">
+                                {{ strtoupper($locale) }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <a href="{{route(('front.cart'))}}" class="ml-3 d-flex pt-2 ml-3">
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </a>
                 </div>
+
             </nav>
         </div>
     </header>
@@ -145,7 +153,6 @@
         </footer>
 
 
-
         <!-- Modal -->
         <div class="modal fade" id="wishlist_model" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
@@ -160,7 +167,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                     </div>
                 </div>
             </div>
@@ -218,24 +225,23 @@
 
 
         function addToWishlist(id) {
-    $.ajax({
-        url: '{{route("front.addtowishlist")}}',
-        type: 'post',
-        data: {
-            id: id
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (response.status == true) {
-                $("#wishlist_model .modal-body").html(response.message);
-                $("#wishlist_model").modal('show');
-            } else {
-                window.location.href = "{{route('account.login')}}";
-            }
+            $.ajax({
+                url: '{{route("front.addtowishlist")}}',
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == true) {
+                        $("#wishlist_model .modal-body").html(response.message);
+                        $("#wishlist_model").modal('show');
+                    } else {
+                        window.location.href = "{{route('account.login')}}";
+                    }
+                }
+            });
         }
-    });
-}
-
         </script>
 
         @yield('customJs')
