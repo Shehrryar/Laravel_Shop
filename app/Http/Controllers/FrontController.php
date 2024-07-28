@@ -29,14 +29,28 @@ class FrontController extends Controller
             ]);
         }
 
-        $wishlist = new Wishlist();
-        $wishlist->user_id = Auth::user()->id; 
-        $wishlist->product_id = $request->id; 
-        $wishlist->save();
+
+        $product = Product::where('id',$request->id)->first();
+        if($product == null){
+            return response()->json([
+                'status'=>true,
+                'message'=> '<div class = "alert alert-danger">Product not found.</div>'
+            ]);
+        }
+
+        $wishlist = Wishlist::updateOrCreate(
+            [   
+                'user_id' => Auth::user()->id,
+                'product_id'=>$request->id
+            ],
+            [   
+                'user_id' => Auth::user()->id,
+                'product_id'=>$request->id
+            ]);
 
         return response()->json([
             'status'=>true,
-            'message'=> 'Product is added to the Wishlist'
+            'message'=> '<div class = "alert alert-success"><strong>"'.$product->title.'"</strong> is added to the Wishlist.</div>'
         ]);
 
 
