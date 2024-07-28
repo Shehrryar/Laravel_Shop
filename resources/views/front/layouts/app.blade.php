@@ -97,24 +97,25 @@
           				<a class="nav-link active" aria-current="page" href="index.php" title="Products">Home</a>
                      </li> -->
                         @if(getcategories()->isNotEmpty())
-                            @foreach(getcategories() as $category)
-                                <li class="nav-item dropdown">
-                                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        {{$category->name}}
-                                    </button>
-                                    @if($category->sub_category->isNotEmpty())
-                                        <ul class="dropdown-menu dropdown-menu-dark">
-                                            @foreach($category->sub_category as $subcategory)
-                                                <li><a class="dropdown-item nav-link"
-                                                        href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{$subcategory->name}}</a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
+                        @foreach(getcategories() as $category)
+                        <li class="nav-item dropdown">
+                            <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                {{$category->name}}
+                            </button>
+                            @if($category->sub_category->isNotEmpty())
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                @foreach($category->sub_category as $subcategory)
+                                <li><a class="dropdown-item nav-link"
+                                        href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{$subcategory->name}}</a>
                                 </li>
-                            @endforeach
-                        @endif		                    </ul>
+                                @endforeach
+                            </ul>
+                            @endif
+                        </li>
+                        @endforeach
+                        @endif
+                    </ul>
                 </div>
                 <div class="right-nav py-0">
                     <a href="{{route(('front.cart'))}}" class="ml-3 d-flex pt-2">
@@ -151,43 +152,63 @@
 
         <script src="{{asset('front-assets/js/custom.js')}}"></script>
         <script>
-            window.onscroll = function () { myFunction() };
+        window.onscroll = function() {
+            myFunction()
+        };
 
-            var navbar = document.getElementById("navbar");
-            var sticky = navbar.offsetTop;
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
 
-            function myFunction() {
-                if (window.pageYOffset >= sticky) {
-                    navbar.classList.add("sticky")
-                } else {
-                    navbar.classList.remove("sticky");
-                }
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
             }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+
+        function addToCart(id) {
+
+            $.ajax({
+                url: '{{route("front.addToCart")}}',
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'Json',
+                success: function(response) {
+                    if (response.status == true) {
+                        window.location.href = "{{route('front.cart')}}";
+                    } else {
+                        alert(respons.message);
+                    }
                 }
             });
+        }
 
 
-            function addToCart(id) {
+        function addToWishlist(id) {
 
-                $.ajax({
-                    url: '{{route("front.addToCart")}}', 
-            type: 'post',
-                    data: { id: id },
-                    dataType: 'Json',
-                    success: function (response) {
-                        if (response.status == true) {
-                            window.location.href = "{{route('front.cart')}}";
-                        }
-                        else {
-                            alert(respons.message);
-                        }
+            $.ajax({
+                url: '{{route("front.addtowishlist")}}',
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'Json',
+                success: function(response) {
+                    if (response.status == true) {} else {
+                        window.location.href = "{{route('account.login')}}";
                     }
-                });
-            }
-
+                }
+            });
+        }
         </script>
 
         @yield('customJs')
