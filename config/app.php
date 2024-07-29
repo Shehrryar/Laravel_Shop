@@ -84,18 +84,8 @@ return [
     |
     */
 
-
-<<<<<<< Updated upstream
     'locale' => 'en',
-=======
 
-    // 'locale' =>  'ur',
-
-
-    'locales' => ['en', 'ur'],
-
-
->>>>>>> Stashed changes
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
