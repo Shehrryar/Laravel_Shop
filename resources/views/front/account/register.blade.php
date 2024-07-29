@@ -5,8 +5,8 @@
     <div class="container">
         <div class="light-font">
             <ol class="breadcrumb primary-color mb-0">
-                <li class="breadcrumb-item"><a class="white-text" href="#">Home</a></li>
-                <li class="breadcrumb-item">Register</li>
+                <li class="breadcrumb-item"><a class="white-text" href="#">{{trans("Home")}}</a></li>
+                <li class="breadcrumb-item">{{trans("Register")}}</li>
             </ol>
         </div>
     </div>
@@ -16,40 +16,40 @@
     <div class="container">
         <div class="login-form">
             <form name="registerationForm" id="registerationForm" action="post">
-                <h4 class="modal-title">Register Now</h4>
+                <h4 class="modal-title">{{trans("Register Now")}}</h4>
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Name" id="name" name="name">
+                    <input type="text" class="form-control" placeholder="{{trans("Name")}}" id="name" name="name">
                     <p></p>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Email" id="email" name="email">
+                    <input type="text" class="form-control" placeholder="{{trans("Email")}}" id="email" name="email">
                     <p></p>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Phone" id="phone" name="phone">
+                    <input type="text" class="form-control" placeholder="{{trans("Phone")}}" id="phone" name="phone">
                     <p></p>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Password" id="password" name="password">
+                    <input type="password" class="form-control" placeholder="{{trans("Password")}}" id="password" name="password">
                     <p></p>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Confirm Password"
+                    <input type="password" class="form-control" placeholder="{{trans("Confirm Password")}}"
                         id="password_confirmation" name="password_confirmation">
                     <p></p>
                 </div>
                 <div class="form-group small">
-                    <a href="#" class="forgot-link">Forgot Password?</a>
+                    <a href="#" class="forgot-link">{{trans("Forgot Password?")}}</a>
                 </div>
-                <button type="submit" class="btn btn-dark btn-block btn-lg" value="Register">Register</button>
+                <button type="submit" class="btn btn-dark btn-block btn-lg" value="Register">{{trans("Register")}}</button>
                 <hr>
                 <div class="form-group social-login">
-                    <a href="{{route('auth.google')}}" class="btn btn-success">Login with Google</a>
-                    <a href="{{route('auth.github')}}" class="btn btn-primary">Login with GitHub</a>
+                    <a href="{{route('auth.google')}}" class="btn btn-success">{{trans("Login with Google")}}</a>
+                    <a href="{{route('auth.github')}}" class="btn btn-primary">{{trans("Login with GitHub")}}</a>
                 </div>
 
             </form>
-            <div class="text-center small">Already have an account? <a href="login.php">Login Now</a></div>
+            <div class="text-center small">{{trans("Already have an account?")}} <a href="login.php">{{trans("Login Now")}}</a></div>
         </div>
     </div>
 </section>

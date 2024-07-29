@@ -16,6 +16,8 @@ use App\Http\Controllers\admin\ProductImageControlller;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\LocalizationController;
+
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -44,10 +46,15 @@ Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->n
 Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
+Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
+
+
+
 
 
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
+
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
 
@@ -58,7 +65,7 @@ Route::group(['prefix' => 'account'], function () {
         // Register with Google
         Route::GET('/auth/redirect/google', [AuthController::class, 'googleRedirect'])->name('auth.google');
         Route::GET('/auth/callback/google', [AuthController::class, 'googleCallback'])->name('auth.googlecallback');
-        
+
         Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
 

@@ -4,8 +4,8 @@
 	<div class="container">
 		<div class="light-font">
 			<ol class="breadcrumb primary-color mb-0">
-				<li class="breadcrumb-item"><a class="white-text" href="#">Home</a></li>
-				<li class="breadcrumb-item active">Shop</li>
+				<li class="breadcrumb-item"><a class="white-text" href="#">{{trans("Home")}}</a></li>
+				<li class="breadcrumb-item active">{{trans("Shop")}}</li>
 			</ol>
 		</div>
 	</div>
@@ -16,7 +16,7 @@
 		<div class="row">            
 			<div class="col-md-3 sidebar">
 				<div class="sub-title">
-					<h2>Categories</h3>
+					<h2>{{trans("Categories")}}</h3>
 					</div>
 
 					<div class="card">
@@ -28,11 +28,11 @@
 									@if($cat->sub_category->isNotEmpty())
 									<h2 class="accordion-header" id="headingOne">
 										<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target= "#collapseOne-{{ $key }}" aria-expanded="false" aria-controls= "collapseOne-{{ $key }}">
-											{{$cat->name}}
+											{{trans($cat->name)}}
 										</button>
 									</h2>
 									@else
-									<a href='{{route("front.shop",$cat->slug)}}'class="nav-item nav-link {{($categroy_selected == $cat->id) ? 'text-primary' : ''}}">{{$cat->name}}</a>
+									<a href='{{route("front.shop",$cat->slug)}}'class="nav-item nav-link {{($categroy_selected == $cat->id) ? 'text-primary' : ''}}">{{trans($cat->name)}}</a>
 									@endif
 									@if($cat->sub_category->isNotEmpty())
 									<div id="collapseOne-{{ $key }}" class="accordion-collapse collapse {{($categroy_selected == $cat->id) ? 'show' : ''}}" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
@@ -40,7 +40,7 @@
 											<div class="navbar-nav">
 												
 												@foreach($cat->sub_category as $subcat)
-												<a href='{{route("front.shop",[$cat->slug,$subcat->slug])}}' class="nav-item nav-link {{($subcategroy_selected == $subcat->id) ? 'text-primary' : ''}}">{{$subcat->name}}</a> 
+												<a href='{{route("front.shop",[$cat->slug,$subcat->slug])}}' class="nav-item nav-link {{($subcategroy_selected == $subcat->id) ? 'text-primary' : ''}}">{{trans($subcat->name)}}</a> 
 												@endforeach
 
 											</div>
@@ -57,7 +57,7 @@
 					</div>
 
 					<div class="sub-title mt-5">
-						<h2>Brand</h3>
+						<h2>{{trans("Brand")}}</h3>
 						</div>
 						<div class="card">
 							<div class="card-body">
@@ -66,7 +66,7 @@
 								<div class="form-check mb-2">
 									<input class="form-check-input brand-label" name="brand[]" type="checkbox" value="{{$bard->id}}" id="brand-{{$bard->id}}" {{(in_array($bard->id,$brandsArray)) ? 'checked' : ''}} >
 									<label class="form-check-label" for="brand-{{$bard->id}}">
-										{{$bard->name}}
+										{{trans($bard->name)}}
 									</label>
 								</div>  
 								@endforeach
@@ -75,7 +75,7 @@
 						</div>
 
 						<div class="sub-title mt-5">
-							<h2>Price</h3>
+							<h2>{{trans("Price")}}</h3>
 							</div>
 
 							<div class="card">
@@ -119,12 +119,12 @@
 
 											<div class="product-action">
 												<a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$prod->id}})">
-													<i class="fa fa-shopping-cart"></i> Add To Cart
+													<i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
 												</a>                            
 											</div>
 										</div>                        
 										<div class="card-body text-center mt-3">
-											<a class="h6 link" href="product.php">{{$prod->title}}</a>
+											<a class="h6 link" href="product.php">{{trans($prod->title)}}</a>
 											<div class="price mt-2">
 												<span class="h5"><strong>{{$prod->price}}</strong></span>
 												<span class="h6 text-underline"><del>{{$prod->compared_price}}</del></span>

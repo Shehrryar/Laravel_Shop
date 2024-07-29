@@ -6,9 +6,9 @@
     <div class="container">
         <div class="light-font">
             <ol class="breadcrumb primary-color mb-0">
-                <li class="breadcrumb-item"><a class="white-text" href="{{route(('front.home'))}}">Home</a></li>
-                <li class="breadcrumb-item"><a class="white-text" href="{{route(('front.shop'))}}">Shop</a></li>
-                <li class="breadcrumb-item">Cart</li>
+                <li class="breadcrumb-item"><a class="white-text" href="{{route(('front.home'))}}">{{trans("Home")}}</a></li>
+                <li class="breadcrumb-item"><a class="white-text" href="{{route(('front.shop'))}}">{{trans("Shop")}}</a></li>
+                <li class="breadcrumb-item">{{trans("Cart")}}</li>
             </ol>
         </div>
     </div>
@@ -19,7 +19,7 @@
         <div class="row">
             @if(Session::has('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{Session::get('success')}}
+                    {{trans(Session::get('success'))}}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
 
@@ -37,11 +37,11 @@
                         <table class="table" id="cart">
                             <thead>
                                 <tr>
-                                    <th>Item</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th>Remove</th>
+                                    <th>{{trans("Item")}}</th>
+                                    <th>{{trans("Price")}}</th>
+                                    <th>{{trans("Quantity")}}</th>
+                                    <th>{{trans("Total")}}</th>
+                                    <th>{{trans("Remove")}}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,7 +55,7 @@
                                                     <img src="{{asset('admin-assets\img\default-150x150.png')}}">
                                                 @endif
 
-                                                <h2>{{$item->name}}</h2>
+                                                <h2>{{trans($item->name)}}</h2>
                                             </div>
                                         </td>
                                         <td>{{$item->price}}</td>
@@ -95,17 +95,17 @@
 
                         <div class="card-body">
                         <div class="sub-title">
-                            <h2 class="bg-white">Cart Summery</h3>
+                            <h2 class="bg-white">{{trans("Cart Summery")}}</h3>
                         </div>
                             <div class="d-flex justify-content-between pb-2">
-                                <div>Subtotal</div>
+                                <div>{{trans("Subtotal")}}</div>
                                 <div>{{Cart::Subtotal()}}</div>
                             </div>
 
 
 
                             <div class="pt-5">
-                                <a href="{{route('front.checkout')}}" class="btn-dark btn btn-block w-100">Proceed to Checkout</a>
+                                <a href="{{route('front.checkout')}}" class="btn-dark btn btn-block w-100">{{trans("Proceed to Checkout")}}</a>
                             </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                 </div>
             @else
                 <div class="col-md-12">
-                    <h1>Cart is empty</h1>
+                    <h1>{{trans("Cart is empty")}}</h1>
                 </div>
             @endif          </div>
     </div>
