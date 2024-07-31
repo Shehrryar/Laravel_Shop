@@ -120,7 +120,7 @@
                         <li class="nav-item dropdown">
                             <select id="languageSelect" class="form-control">
                                 <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
-                                    {{trans("English")}}
+                                {{trans('English') }}
                                 </option>
                                 <option value="ur" {{ app()->getLocale() == 'ur' ? 'selected' : '' }}>
                                     {{trans("Urdu")}}
@@ -227,8 +227,7 @@
                     }
                 });
             }
-
-
+            
             function addToWishlist(id) {
                 $.ajax({
                     url: '{{route("front.addtowishlist")}}',
@@ -248,12 +247,12 @@
                 });
             }
 
-            var languageSelect = document.getElementById('languageSelect');
-
-            languageSelect.addEventListener('change', function () {
+            document.getElementById('languageSelect').addEventListener('change', function () {
                 var selectedLanguage = this.value;
                 // Redirect to the selected language URL
-                window.location.href = '/lang/' + selectedLanguage;
+                var url = "{{ route('front.localizationcontroller', ':locale') }}";
+                url = url.replace(':locale', selectedLanguage);
+                window.location.href = url;
             });
         </script>
 

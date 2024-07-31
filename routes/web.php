@@ -46,6 +46,9 @@ Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->n
 Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
+
+
+
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
 
 
@@ -70,6 +73,7 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
 
     });
+
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/mywishlist', [AuthController::class, 'wishlist'])->name('account.wishlist');
@@ -89,6 +93,10 @@ Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => 'admin.auth'], function () {
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
+
+        //Localization for admin
+        
+        Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('admin.localizationcontroller');
 
         // category routes
 
