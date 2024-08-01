@@ -33,7 +33,7 @@
 							<p id="para_name"></p>
 						</div>
 
-
+						
 						<div class="col-md-6">
 							<div class="mb-3">
 								<label for="slug">Slug</label>
