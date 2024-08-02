@@ -46,6 +46,37 @@
     <!-- Fav Icon -->
     <link rel="shortcut icon" type="image/x-icon" href="#" />
     <meta name="csrf-token" content="{{csrf_token()}}">
+
+    <style>
+    .notification {
+        background-color: #555;
+        color: white;
+        text-decoration: none;
+        padding: 15px 26px;
+        position: relative;
+        display: inline-block;
+        border-radius: 2px;
+    }
+
+    .notification:hover {
+        background: red;
+    }
+
+    .notification .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        background: red;
+        color: white;
+    }
+
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+    </style>
 </head>
 
 <body data-instant-intensity="mousedown">
@@ -93,23 +124,23 @@
           				<a class="nav-link active" aria-current="page" href="index.php" title="Products">Home</a>
                      </li> -->
                         @if(getcategories()->isNotEmpty())
-                            @foreach(getcategories() as $category)
-                                <li class="nav-item dropdown">
-                                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        {{trans($category->name)}}
-                                    </button>
-                                    @if($category->sub_category->isNotEmpty())
-                                        <ul class="dropdown-menu dropdown-menu-dark">
-                                            @foreach($category->sub_category as $subcategory)
-                                                <li><a class="dropdown-item nav-link"
-                                                        href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{trans($subcategory->name)}}</a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
+                        @foreach(getcategories() as $category)
+                        <li class="nav-item dropdown">
+                            <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                {{trans($category->name)}}
+                            </button>
+                            @if($category->sub_category->isNotEmpty())
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                @foreach($category->sub_category as $subcategory)
+                                <li><a class="dropdown-item nav-link"
+                                        href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{trans($subcategory->name)}}</a>
                                 </li>
-                            @endforeach
+                                @endforeach
+                            </ul>
+                            @endif
+                        </li>
+                        @endforeach
                         @endif
                     </ul>
                 </div>
@@ -120,7 +151,7 @@
                         <li class="nav-item dropdown">
                             <select id="languageSelect" class="form-control">
                                 <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
-                                {{trans('English') }}
+                                    {{trans('English') }}
                                 </option>
                                 <option value="ur" {{ app()->getLocale() == 'ur' ? 'selected' : '' }}>
                                     {{trans("Urdu")}}
@@ -130,9 +161,9 @@
                     </ul>
 
 
-                    <a href="{{route(('front.cart'))}}" class="d-flex" style="    margin-left: 10px;">
-                    <i class="fa-solid fa-cart-shopping" style="font-size: 29px;"> </i>
-                    <span class="badge">{{Cart::count()}}</span>
+                    <a href="{{route(('front.cart'))}}" class="d-flex notification" style="margin-left: 10px;">
+                        <i class="fa-solid fa-cart-shopping" style="font-size: 29px;"></i>
+                        <span class="badge">{{Cart::count()}}</span>
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </a>
                 </div>
@@ -190,72 +221,72 @@
 
         <script src="{{asset('front-assets/js/custom.js')}}"></script>
         <script>
-            window.onscroll = function () {
-                myFunction()
-            };
+        window.onscroll = function() {
+            myFunction()
+        };
 
-            var navbar = document.getElementById("navbar");
-            var sticky = navbar.offsetTop;
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
 
-            function myFunction() {
-                if (window.pageYOffset >= sticky) {
-                    navbar.classList.add("sticky")
-                } else {
-                    navbar.classList.remove("sticky");
-                }
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
             }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+
+        function addToCart(id) {
+
+            $.ajax({
+                url: '{{route("front.addToCart")}}',
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'Json',
+                success: function(response) {
+                    if (response.status == true) {
+                        window.location.href = "{{route('front.cart')}}";
+                    } else {
+                        alert(respons.message);
+                    }
                 }
             });
+        }
 
-
-            function addToCart(id) {
-
-                $.ajax({
-                    url: '{{route("front.addToCart")}}',
-                    type: 'post',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'Json',
-                    success: function (response) {
-                        if (response.status == true) {
-                            window.location.href = "{{route('front.cart')}}";
-                        } else {
-                            alert(respons.message);
-                        }
+        function addToWishlist(id) {
+            $.ajax({
+                url: '{{route("front.addtowishlist")}}',
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == true) {
+                        $("#wishlist_model .modal-body").html(response.message);
+                        $("#wishlist_model").modal('show');
+                    } else {
+                        window.location.href = "{{route('account.login')}}";
                     }
-                });
-            }
-            
-            function addToWishlist(id) {
-                $.ajax({
-                    url: '{{route("front.addtowishlist")}}',
-                    type: 'post',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status == true) {
-                            $("#wishlist_model .modal-body").html(response.message);
-                            $("#wishlist_model").modal('show');
-                        } else {
-                            window.location.href = "{{route('account.login')}}";
-                        }
-                    }
-                });
-            }
-
-            document.getElementById('languageSelect').addEventListener('change', function () {
-                var selectedLanguage = this.value;
-                // Redirect to the selected language URL
-                var url = "{{ route('front.localizationcontroller', ':locale') }}";
-                url = url.replace(':locale', selectedLanguage);
-                window.location.href = url;
+                }
             });
+        }
+
+        document.getElementById('languageSelect').addEventListener('change', function() {
+            var selectedLanguage = this.value;
+            // Redirect to the selected language URL
+            var url = "{{ route('front.localizationcontroller', ':locale') }}";
+            url = url.replace(':locale', selectedLanguage);
+            window.location.href = url;
+        });
         </script>
 
         @yield('customJs')
