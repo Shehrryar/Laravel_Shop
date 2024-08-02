@@ -16,4 +16,18 @@ function getProductImage($product_id){
 }
 
 
+if (!function_exists('transAdmin')) {
+    function transAdmin($key, $replace = [], $locale = null)
+    {
+        return trans("admin::" . $key, $replace, $locale);
+    }
+}
+
+if (!function_exists('transFront')) {
+    function transFront($key, $replace = [], $locale = null)
+    {
+        return trans("front::" . $key, $replace, $locale);
+    }
+}
+
 ?>

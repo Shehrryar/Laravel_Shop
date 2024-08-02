@@ -151,10 +151,10 @@
                         <li class="nav-item dropdown">
                             <select id="languageSelect" class="form-control">
                                 <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
-                                    {{trans('English') }}
+                                    {{transFront('English') }}
                                 </option>
                                 <option value="ur" {{ app()->getLocale() == 'ur' ? 'selected' : '' }}>
-                                    {{trans("Urdu")}}
+                                    {{transFront("Urdu")}}
                                 </option>
                             </select>
                         </li>

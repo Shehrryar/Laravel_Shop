@@ -24,5 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+        $this->loadTranslationsFrom(resource_path('lang/admin'), 'admin');
+        $this->loadTranslationsFrom(resource_path('lang/front'), 'front');
     }
 }
