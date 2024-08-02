@@ -131,6 +131,8 @@
 
 
                     <a href="{{route(('front.cart'))}}" class="d-flex" style="    margin-left: 10px;">
+                    <i class="fa-solid fa-cart-shopping" style="font-size: 29px;"> </i>
+                    <span class="badge">{{Cart::count()}}</span>
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </a>
                 </div>
