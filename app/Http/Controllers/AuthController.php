@@ -158,6 +158,39 @@ class AuthController extends Controller
         return redirect()->route('front.home');
     }
 
+
+    public function facebookRedirect(){
+        return Socialite::driver('facebook')->stateless()->redirect();
+    }
+    public function facebookCallback(){
+        $facebookUser = Socialite::driver('facebook')->stateless()->user();
+        $userExists = User::where('email', $facebookUser->email)
+        ->first();
+        if ($userExists && $userExists->role == 2) {
+            session()->flash('error', 'The email already exists for admin');
+            return redirect()->route('admin.login');
+        }
+        else if($userExists && $userExists->role == 1){
+            if($userExists->facebook_id == $facebookUser->id){
+                Auth::login($userExists);
+                session()->flash('success', 'Welcome to the Dashboard');
+                return redirect()->route('front.home');
+            }
+            session()->flash('error', 'Account already exist enter your Email and Password');
+            return redirect()->route('account.login');
+        }
+        $user = new User();
+        $user->facebook_id = $facebookUser->id;
+        $user->name = $facebookUser->name;
+        $user->email = $facebookUser->email;
+        $user->password = Hash::make('12345678');
+        $user->token = $facebookUser->token;
+        $user->save();
+        Auth::login($user);
+        session()->flash('success', 'Your account is created successfully');
+        return redirect()->route('front.home');
+    }
+
     public function wishlist(){
        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
        $data = [];

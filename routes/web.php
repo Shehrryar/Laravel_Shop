@@ -17,7 +17,7 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\LocalizationController;
-
+use App\Http\Controllers\admin\LanguageController;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -69,6 +69,10 @@ Route::group(['prefix' => 'account'], function () {
         Route::GET('/auth/redirect/google', [AuthController::class, 'googleRedirect'])->name('auth.google');
         Route::GET('/auth/callback/google', [AuthController::class, 'googleCallback'])->name('auth.googlecallback');
 
+        // Register with Facebook
+        Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
+        Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
+        
         Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
 
@@ -126,6 +130,16 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/brands/{brandedit}/edit', [BrandController::class, 'edit'])->name('brands.edit');
         Route::put('/brands/{brandupadate}', [BrandController::class, 'update'])->name('brands.update');
         Route::delete('/brands/{brandelete}', [BrandController::class, 'destroy'])->name('brands.delete');
+
+
+        //these routes is for creating languages
+
+        Route::get('/language', [LanguageController::class, 'index'])->name('language.index');
+        Route::get('/language/create', [LanguageController::class, 'create'])->name('language.create');
+        Route::post('/language/store', [LanguageController::class, 'store'])->name('language.store');
+        Route::get('/language/{languageedit}/edit', [LanguageController::class, 'edit'])->name('language.edit');
+        Route::put('/language/{languageupadate}', [LanguageController::class, 'update'])->name('language.update');
+        Route::delete('/language/{langdelete}', [LanguageController::class, 'destroy'])->name('language.delete');
 
         // these routes are for the Products
 

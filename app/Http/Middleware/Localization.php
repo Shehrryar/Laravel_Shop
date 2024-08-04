@@ -23,20 +23,7 @@ class Localization
             if (session()->has('locale')) {
                 $locale = session()->get('locale');
                 App::setLocale($locale);
-            }
-    
-            if ($request->is('admin/*')) {
-                $path = resource_path('lang/admin/' . App::getLocale() . '.json');
-            } else {
-                $path = resource_path('lang/front/' . App::getLocale() . '.json');
-
-            }
-    
-            if (File::exists($path)) {
-                $translations = json_decode(File::get($path), true);
-                Lang::setLoaded([App::getLocale() => $translations]);
-            }
-    
+            }    
             return $next($request);
         }
 }

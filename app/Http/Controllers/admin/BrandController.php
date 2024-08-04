@@ -109,7 +109,7 @@ class BrandController extends Controller
         }
     }
 
-         public function destroy($brnd_id, Request $request){
+    public function destroy($brnd_id, Request $request){
         $brnd_del = Brand::find($brnd_id);
         if(empty($brnd_del)){
             $request->session()->flash("Error","brand not found");

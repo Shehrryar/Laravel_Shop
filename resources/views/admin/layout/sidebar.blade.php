@@ -79,7 +79,7 @@
 
 				
 				<li class="nav-item">
-					<a href="users.html" class="nav-link">
+					<a href="{{route('language.index')}}" class="nav-link">
 						<i class="nav-icon fas fa-globe"></i>
 						<p>Language</p>
 					</a>

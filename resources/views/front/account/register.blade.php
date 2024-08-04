@@ -45,7 +45,7 @@
                 <hr>
                 <div class="form-group social-login">
                     <a href="{{route('auth.google')}}" class="btn btn-success">{{trans("Login with Google")}}</a>
-                    <a href="{{route('auth.github')}}" class="btn btn-primary">{{trans("Login with GitHub")}}</a>
+                    <a href="{{route('auth.facebook')}}" class="btn btn-primary">{{trans("Login with Facebook")}}</a>
                 </div>
 
             </form>
