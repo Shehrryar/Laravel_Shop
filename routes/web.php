@@ -46,13 +46,7 @@ Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->n
 Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
-
-
-
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
-
-
-
 
 
 Route::group(['prefix' => 'account'], function () {
