@@ -8,7 +8,6 @@ use App\Models\Language;
 
 class LanguageController extends Controller
 {
-
     public function index(Request $request){
         $language = Language::latest('id');
         if(!empty($request->get('keyword'))){

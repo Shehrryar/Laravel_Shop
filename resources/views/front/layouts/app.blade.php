@@ -150,12 +150,17 @@
                         <!-- Authentication Links -->
                         <li class="nav-item dropdown">
                             <select id="languageSelect" class="form-control">
-                                <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
-                                    {{trans('English') }}
+                                @php
+                                $languages = \App\Models\Language::all();
+                                @endphp
+                                @foreach ($languages as $language)
+                                @if ($language->status == 1)
+                                <option value="{{ $language->Isocode }}"
+                                    {{ app()->getLocale() == $language->Isocode ? 'selected' : '' }}>
+                                    {{ trans($language->name) }}
                                 </option>
-                                <option value="ur" {{ app()->getLocale() == 'ur' ? 'selected' : '' }}>
-                                    {{trans("Urdu")}}
-                                </option>
+                                @endif
+                                @endforeach
                             </select>
                         </li>
                     </ul>
@@ -261,7 +266,7 @@
             });
         }
 
-        function addToWishlist(id) {
+        function addToWishlist(id, element) {
             $.ajax({
                 url: '{{route("front.addtowishlist")}}',
                 type: 'post',
@@ -271,6 +276,7 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == true) {
+                        $(element).find('i').removeClass('far').addClass('fas red-heart');
                         $("#wishlist_model .modal-body").html(response.message);
                         $("#wishlist_model").modal('show');
                     } else {
