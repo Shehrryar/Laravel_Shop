@@ -190,7 +190,7 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-
+    
     public function wishlist(){
        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
        $data = [];

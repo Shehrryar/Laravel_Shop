@@ -73,6 +73,7 @@
 
 @section('customJs')
 <script>
+    
 function remove_product(id) {
     $.ajax({
         url: '{{route("account.remove_product_from_wislist")}}',
