@@ -203,9 +203,11 @@
                                <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
                                @endif
                            </a>
-                           <a onclick="addToWishlist({{$f_product->id}}, this)" class="whishlist" href="javascript:void(0)"><i
-                                   class="far fa-heart"></i></a>
+                           <a onclick="addToWishlist({{$f_product->id}}, this)" class="whishlist" href="javascript:void(0)">
+                           <i class="fas fa-heart"></i>
 
+
+                        </a>
                            <div class="product-action">
                                <a class="btn btn-dark" href="javascript:void(0)"
                                    onclick="addToCart({{$late_prod->id}})">
