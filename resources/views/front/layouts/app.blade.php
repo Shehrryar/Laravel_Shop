@@ -266,7 +266,9 @@
             });
         }
 
-        function addToWishlist(id, element) {
+        function addToWishlist(id) {
+            // Correct the variable name to 'wishlistid'
+            let wishlistid = "#whishkist" + id; // Add '#' to use as an ID selector
             $.ajax({
                 url: '{{route("front.addtowishlist")}}',
                 type: 'post',
@@ -276,15 +278,19 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == true) {
-                        $(element).find('i').removeClass('far').addClass('fas red-heart');
+                        // Use the correct ID selector to find the icon and update classes
+                        console.log($(wishlistid).find('i'));
+
                         $("#wishlist_model .modal-body").html(response.message);
                         $("#wishlist_model").modal('show');
                     } else {
+                        // Redirect to login if not successful
                         window.location.href = "{{route('account.login')}}";
                     }
                 }
             });
         }
+
 
         document.getElementById('languageSelect').addEventListener('change', function() {
             var selectedLanguage = this.value;
