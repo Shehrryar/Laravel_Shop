@@ -145,9 +145,7 @@
             @foreach($featured_products as $f_product)
 
             @php
-            $images_prod = $f_product->product_images()->first()
-            @endphp
-            @php
+            $images_prod = $f_product->product_images()->first();
             $inWishlist = $wishlist->contains('product_id', $f_product->id);
             @endphp
             <div class="col-md-3">
@@ -163,10 +161,12 @@
                             @endif
                         </a>
                         <a onclick="addToWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="addwishlist{{$f_product->id}}" class="far fa-heart" style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                            <i id="addwishlist{{$f_product->id}}" class="far fa-heart"
+                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
                         </a>
                         <a onclick="removefromWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="removewishlist{{$f_product->id}}" class="fas fa-heart" style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                            <i id="removewishlist{{$f_product->id}}" class="fas fa-heart"
+                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
                         </a>
                         <div class="product-action">
                             <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$f_product->id}})">
@@ -197,9 +197,7 @@
         <div class="row pb-3">
             @foreach($latest_product as $late_prod)
             @php
-            $images_prod = $late_prod->product_images()->first()
-            @endphp
-            @php
+            $images_prod = $late_prod->product_images()->first();
             $inWishlist = $wishlist->contains('product_id', $late_prod->id);
             @endphp
             <div class="col-md-3">
@@ -213,10 +211,12 @@
                             @endif
                         </a>
                         <a onclick="addToWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="addwishlist{{ $late_prod->id }}" class="far fa-heart" style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                            <i id="addwishlist{{ $late_prod->id }}" class="far fa-heart"
+                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
                         </a>
                         <a onclick="removefromWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="removewishlist{{$late_prod->id}}" class="fas fa-heart" style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                            <i id="removewishlist{{$late_prod->id}}" class="fas fa-heart"
+                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
                         </a>
 
                         <div class="product-action">
