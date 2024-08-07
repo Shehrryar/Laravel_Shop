@@ -142,9 +142,9 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <div class="custom-control custom-checkbox">
-                                            <input type="hidden" id="track_qty" name="track_qty" value="No">
+                                            <input type="hidden" id="track_qty" name="track_qty" value="0">
                                             <input class="custom-control-input" type="checkbox" id="track_qty"
-                                                name="track_qty" value="Yes" {{($product->track_qty == 'Yes') ? 'checked' : ''}}>
+                                                name="track_qty" value="1" {{($product->track_qty == 'Yes') ? 'checked' : ''}}>
                                             <label for="track_qty" class="custom-control-label">Track Quantity</label>
                                             <p class="error"></p>
 
@@ -233,9 +233,8 @@
                             <h2 class="h4 mb-3">Featured product</h2>
                             <div class="mb-3">
                                 <select name="is_featured" id="is_featured" class="form-control">
-                                    <option {{($product->is_featured == 'Yes') ? 'selected' : ''}} value="Yes">Yes
-                                    </option>
-                                    <option {{($product->is_featured == 'No') ? 'selected' : ''}} value="No">No</option>
+                                <option {{($product->is_featured == true) ? 'selected' : ''}} value="1">Yes</option>
+                                <option {{($product->is_featured == false) ? 'selected' : ''}} value="0">No</option>
 
                                 </select>
                                 <p class="error"></p>

@@ -14,32 +14,19 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-
             $table->string('slug');
-
             $table->string('description')->nullable();
-
             $table->double('price',10,2);
-
             $table->double('compare_price', 10, 2)->nullable();
-
             $table->foreignId('categories_id',10,2)->constrained()->onDelete('cascade');
-
-
             $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->onDelete('cascade');
-
             $table->foreignId('brands_id',10,2)->nullable()->constrained()->onDelete('cascade');
-            $table->enum('is_featured',['Yes','No'])->default('No');
+            $table->boolean('is_featured');
             $table->string('sku');
             $table->string('barcode')->nullable();
-
-            $table->enum('track_qty',['Yes','No'])->default('Yes');
-
+            $table->boolean('track_qty');
             $table->integer('qty')->nullable();
-
-            $table->integer('status');
-
-
+            $table->boolean('status');
             $table->timestamps();
         });
     }

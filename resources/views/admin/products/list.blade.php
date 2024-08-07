@@ -161,9 +161,8 @@ function importproductfile() {
         contentType: false,
         dataType: 'json', // 'datatype' should be 'dataType'
         success: function(response) {
-
-            if (response['status']) {
-                
+            if (response['status'] == true) {
+                window.location.href = "{{route('product.index')}}";
             }
         }
 

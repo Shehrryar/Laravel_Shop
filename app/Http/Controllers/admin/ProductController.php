@@ -46,9 +46,9 @@ class ProductController extends Controller
             'slug' => 'required|unique:products',
             'price' => 'required|numeric',
             'sku' => 'required|unique:products',
-            'track_qty' => 'required|in:Yes,No',
+            'track_qty' => 'required|in:1,0',
             'category' => 'required|numeric',
-            'is_featured' => 'required|in:Yes,No',
+            'is_featured' => 'required|in:1,0',
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
@@ -138,9 +138,9 @@ class ProductController extends Controller
             'slug' => 'required|unique:products,slug,' . $product->id . ',id',
             'price' => 'required|numeric',
             'sku' => 'required|unique:products,sku,' . $product->id . ',id',
-            'track_qty' => 'required|in:Yes,No',
+            'track_qty' => 'required|in:1,0',
             'category' => 'required|numeric',
-            'is_featured' => 'required|in:Yes,No',
+            'is_featured' => 'required|in:1,0',
         ];
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
             $values['qty'] = 'required|numeric';
@@ -249,22 +249,44 @@ class ProductController extends Controller
         }
 
         $filePath = $file->getRealPath();
-        $file = fopen($filePath, 'r');
-        $header = fgetcsv($file);
+        $fileData = array_map('str_getcsv', file($filePath));
+        $header = array_shift($fileData);
 
-        while ($columns = fgetcsv($file)) {
-            $data = array_combine($header, $columns);
+        for ($i = 0; $i < count($fileData); $i++) {
+            $data = array_combine($header, $fileData[$i]);
 
+            $data = array_map(function($value) {
+                return $value === 'NULL' ? null : $value;
+            }, $data);
+            $data['is_featured'] = $data['is_featured'] === 'Yes' ? true : false;
+            $data['track_qty'] = $data['track_qty'] === 'Yes' ? true : false;
+            $data['status'] = $data['status'] === '1' ? true : false;
             Product::updateOrCreate(
-                ['name' => $data['name']],
+                ['title' => $data['title']],
                 [
+                    'slug' => $data['slug'],
                     'description' => $data['description'],
+                    'short_description' => $data['short_description'],
+                    'shipping_returns' => $data['shipping_returns'],
+                    'related_products' => $data['related_products'],
                     'price' => $data['price'],
-                    'quantity' => $data['quantity']
+                    'compare_price' => $data['compare_price'],
+                    'categories_id' => $data['categories_id'],
+                    'sub_category_id' => $data['sub_category_id'],
+                    'brands_id' => $data['brands_id'],
+                    'is_featured' => $data['is_featured'] === 'Yes' ? true : false,
+                    'sku' => $data['sku'],
+                    'barcode' => $data['barcode'],
+                    'track_qty' => $data['track_qty'] === 'Yes' ? true : false,
+                    'qty' => $data['qty'],
+                    'status' => $data['status'] === '1' ? true : false,
                 ]
             );
         }
-
+        return response()->json([
+            'status' => true,
+            'message' => 'Prodcuts are import successfully'
+        ]);
 
     }
 
