@@ -233,4 +233,39 @@ class ProductController extends Controller
         ]);
     }
 
+    function importProducts(Request $request){
+        $file = $request->file('file');
+
+        $validator = Validator::make(
+            ['file' => $file],
+            ['file' => 'required|mimes:csv,txt']
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator,
+                'status' => 'false'
+            ]);
+        }
+
+        $filePath = $file->getRealPath();
+        $file = fopen($filePath, 'r');
+        $header = fgetcsv($file);
+
+        while ($columns = fgetcsv($file)) {
+            $data = array_combine($header, $columns);
+
+            Product::updateOrCreate(
+                ['name' => $data['name']],
+                [
+                    'description' => $data['description'],
+                    'price' => $data['price'],
+                    'quantity' => $data['quantity']
+                ]
+            );
+        }
+
+
+    }
+
 }

@@ -148,6 +148,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/product-images', [ProductImageControlller::class, 'destroy'])->name('product-images.destroy');
         Route::delete('/product/{delete}', [ProductController::class, 'delete'])->name('product.delete');
         Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
+        Route::post('/import-products', [ProductController::class, 'importProducts'])->name('product.importProducts');
+
 
         // shipping Routes
 
