@@ -49,6 +49,10 @@ Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
 
 
+Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
+
+
+
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
 

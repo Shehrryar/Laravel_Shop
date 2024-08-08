@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\SubCategory;
+use Illuminate\Support\Facades\Validator;
 
 class ShopController extends Controller
 {
@@ -85,6 +86,23 @@ public function product($slug){
     $data['product'] =  $product;
     $data['showrelatedproduct'] =  $showrelatedproduct;
     return view('front.product', $data);
+}
+
+public function productRating(Request $request){
+
+    $validator = Validator::make($request->all(),[
+        'name'=>'required|min:5',
+        'email'=>'required|email',
+        'review'=>'required',
+        'rating'=>'required',
+    ]);
+
+    if($validator->fails()){
+        return response()->json([
+            'status'=>false,
+            'errors'=>$validator->errors()
+        ]);
+    }
 }
 
 }
