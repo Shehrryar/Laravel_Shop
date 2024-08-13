@@ -15,17 +15,18 @@
 
 <section class="section-7 pt-3 mb-3">
     <div class="container">
+        @include('front.account.common.message')
         <div class="row ">
             <div class="col-md-5">
                 <div id="product-carousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner bg-light">
                         @if($product->product_images)
-                            @foreach($product->product_images as $key => $productImage)
-                                <div class="carousel-item {{($key == 0) ? 'active' : ''}} ">
-                                    <img class="w-100 h-100" src="{{asset('upload/products/' . $productImage->image)}}"
-                                        alt="Image">
-                                </div>
-                            @endforeach
+                        @foreach($product->product_images as $key => $productImage)
+                        <div class="carousel-item {{($key == 0) ? 'active' : ''}} ">
+                            <img class="w-100 h-100" src="{{asset('upload/products/' . $productImage->image)}}"
+                                alt="Image">
+                        </div>
+                        @endforeach
                         @endif
                     </div>
                     <a class="carousel-control-prev" href="#product-carousel" data-bs-slide="prev">
@@ -50,7 +51,7 @@
                         <small class="pt-1">(99 Reviews)</small>
                     </div>
                     @if($product->compare_price > 0)
-                        <h2 class="price text-secondary"><del>{{$product->compare_price}}</del></h2>
+                    <h2 class="price text-secondary"><del>{{$product->compare_price}}</del></h2>
                     @endif
                     <h2 class="price ">{{$product->price}}</h2>
 
@@ -92,38 +93,46 @@
                             <div class="col-md-8">
                                 <div class="row">
                                     <form action="" name="productratingform" id="productratingform" method="Post">
-                                    <h3 class="h4 pb-3">Write a Review</h3>
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label for="name">Name</label>
-                                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
-                                    <p></p>
-                                    </div>
-                                    <div class="form-group col-md-6 mb-3">
-                                        <label for="email">Email</label>
-                                        <input type="text" class="form-control" name="email" id="email" placeholder="Email">
-                                        <p></p>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="rating">Rating</label>
-                                        <br>
-                                        <div class="rating" style="width: 10rem">
-                                            <input id="rating-5" type="radio" name="rating" value="5"/><label for="rating-5"><i class="fas fa-3x fa-star"></i></label>
-                                            <input id="rating-4" type="radio" name="rating" value="4"  /><label for="rating-4"><i class="fas fa-3x fa-star"></i></label>
-                                            <input id="rating-3" type="radio" name="rating" value="3"/><label for="rating-3"><i class="fas fa-3x fa-star"></i></label>
-                                            <input id="rating-2" type="radio" name="rating" value="2"/><label for="rating-2"><i class="fas fa-3x fa-star"></i></label>
-                                            <input id="rating-1" type="radio" name="rating" value="1"/><label for="rating-1"><i class="fas fa-3x fa-star"></i></label>
+                                        <h3 class="h4 pb-3">Write a Review</h3>
+                                        <div class="form-group col-md-6 mb-3">
+                                            <label for="name">Name</label>
+                                            <input type="text" class="form-control" name="name" id="name"
+                                                placeholder="Name">
+                                            <p></p>
                                         </div>
-                                    <p></p>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="">How was your overall experience?</label>
-                                        <textarea name="review"  id="review" class="form-control" cols="30" rows="10" placeholder="How was your overall experience?"></textarea>
-                                        <p></p>
-                                    
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-dark">Submit</button>
-                                    </div>
+                                        <div class="form-group col-md-6 mb-3">
+                                            <label for="email">Email</label>
+                                            <input type="text" class="form-control" name="email" id="email"
+                                                placeholder="Email">
+                                            <p></p>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="rating">Rating</label>
+                                            <br>
+                                            <div id="rating" class="rating" style="width: 10rem">
+                                                <input id="rating-5" type="radio" name="rating" value="5" /><label
+                                                    for="rating-5"><i class="fas fa-3x fa-star"></i></label>
+                                                <input id="rating-4" type="radio" name="rating" value="4" /><label
+                                                    for="rating-4"><i class="fas fa-3x fa-star"></i></label>
+                                                <input id="rating-3" type="radio" name="rating" value="3" /><label
+                                                    for="rating-3"><i class="fas fa-3x fa-star"></i></label>
+                                                <input id="rating-2" type="radio" name="rating" value="2" /><label
+                                                    for="rating-2"><i class="fas fa-3x fa-star"></i></label>
+                                                <input id="rating-1" type="radio" name="rating" value="1" /><label
+                                                    for="rating-1"><i class="fas fa-3x fa-star"></i></label>
+                                            </div>
+                                            <p></p>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="">How was your overall experience?</label>
+                                            <textarea name="review" id="review" class="form-control" cols="30" rows="10"
+                                                placeholder="How was your overall experience?"></textarea>
+                                            <p></p>
+
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-dark">Submit</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -138,7 +147,7 @@
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
-                                                
+
                                                 <div class="front-stars" style="width: 70%">
                                                     <i class="fa fa-star" aria-hidden="true"></i>
                                                     <i class="fa fa-star" aria-hidden="true"></i>
@@ -147,13 +156,16 @@
                                                     <i class="fa fa-star" aria-hidden="true"></i>
                                                 </div>
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div class="pt-2 ps-2">(03 Reviews)</div>
                                     </div>
-                                    
+
                                 </div>
+                                @if ($product->product_ratings->isNotEmpty())
+                                @foreach ($product->product_ratings as $rating)
+                                
                                 <div class="rating-group mb-4">
-                                   <span> <strong>Mohit Singh </strong></span>
+                                    <span> <strong>{{$rating->username}} </strong></span>
                                     <div class="star-rating mt-2" title="70%">
                                         <div class="back-stars">
                                             <i class="fa fa-star" aria-hidden="true"></i>
@@ -170,39 +182,13 @@
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                             </div>
                                         </div>
-                                    </div>   
+                                    </div>
                                     <div class="my-3">
-                                        <p>I went with the blue model for my new apartment and an very pleased with the purchase. I'm definitely someone not used to paying this much for furniture, and I am also anxious about buying online, but I am very happy with the quality of this couch. For me, it is the perfect mix of cushy firmness, and it arrived defect free. It really is well made and hopefully will be my main couch for a long time. I paid for the extra delivery & box removal, and had an excellent experience as well. I do tend move my own furniture, but with an online purchase this expensive, that helped relieved my anxiety about having a item this big open up in my space without issues. If you need a functional sectional couch and like the feel of leather, this really is a great choice.
-
-                                    </p>
+                                        <p>{{$rating->comment}}</p>
                                     </div>
                                 </div>
-
-                                <div class="rating-group mb-4">
-                                    <span class="author"><strong>Mohit Singh </strong></span>
-                                    <div class="star-rating mt-2" >
-                                        <div class="back-stars">
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            
-                                            <div class="front-stars" style="width: 100%">
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                            </div>
-                                        </div>
-                                    </div>   
-                                    <div class="my-3">
-                                        <p>I went with the blue model for my new apartment and an very pleased with the purchase. I'm definitely someone not used to paying this much for furniture, and I am also anxious about buying online, but I am very happy with the quality of this couch. For me, it is the perfect mix of cushy firmness, and it arrived defect free. It really is well made and hopefully will be my main couch for a long time. I paid for the extra delivery & box removal, and had an excellent experience as well. I do tend move my own furniture, but with an online purchase this expensive, that helped relieved my anxiety about having a item this big open up in my space without issues. If you need a functional sectional couch and like the feel of leather, this really is a great choice.
-
-                                    </p>
-                                    </div>
-                                </div>
+                                @endforeach
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -220,42 +206,42 @@
         <div class="col-md-12">
             <div id="related-products" class="carousel">
                 @if(!empty($showrelatedproduct))
-                            @foreach ($showrelatedproduct as $relatedproduct)                    
+                @foreach ($showrelatedproduct as $relatedproduct)
 
-                                        @php
-                                            $images_prod = $relatedproduct->product_images()->first()
-                                        @endphp
-                                        <div class="card product-card">
-                                            <div class="product-image position-relative">
-                                                <a href="" class="product-img">
+                @php
+                $images_prod = $relatedproduct->product_images()->first()
+                @endphp
+                <div class="card product-card">
+                    <div class="product-image position-relative">
+                        <a href="" class="product-img">
 
-                                                    <!-- <img class="card-img-top" src="images/product-1.jpg" alt=""> -->
-                                                    @if(!empty($images_prod))
-                                                        <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
-                                                    @else
-                                                        <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
-                                                    @endif
+                            <!-- <img class="card-img-top" src="images/product-1.jpg" alt=""> -->
+                            @if(!empty($images_prod))
+                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
+                            @else
+                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
+                            @endif
 
-                                                </a>
-                                                <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
-                                                <div class="product-action">
-                                                    <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$product->id}})">
-                                                        <i class="fa fa-shopping-cart"></i> Add To Cart
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="card-body text-center mt-3">
-                                                <a class="h6 link" href="">{{$relatedproduct->title}}</a>
-                                                <div class="price mt-2">
-                                                    <span class="h5"><strong>{{$relatedproduct->price}}</strong></span>
-                                                    @if($relatedproduct->compare_price > 0)
-                                                        <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}</del></span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
+                        </a>
+                        <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
+                        <div class="product-action">
+                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$product->id}})">
+                                <i class="fa fa-shopping-cart"></i> Add To Cart
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body text-center mt-3">
+                        <a class="h6 link" href="">{{$relatedproduct->title}}</a>
+                        <div class="price mt-2">
+                            <span class="h5"><strong>{{$relatedproduct->price}}</strong></span>
+                            @if($relatedproduct->compare_price > 0)
+                            <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}</del></span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
 
-                            @endforeach
+                @endforeach
                 @endif
             </div>
         </div>
@@ -266,44 +252,53 @@
 @section('customJs')
 
 <script>
-
 $("#productratingform").submit(function(event) {
     event.preventDefault();
-    
+
     $.ajax({
         url: '{{ route("front.productRating", $product->id) }}',
         type: 'post',
         data: $(this).serializeArray(),
         dataType: 'json',
         success: function(response) {
-            var errors = response.errors;
-            
-            if (errors && errors.name) {
-                $("#name").addClass('is-invalid').siblings("p").addClass('invalid-feedback').html(errors.name);
-            } else {
-                $("#name").removeClass('is-invalid').siblings("p").removeClass('invalid-feedback').html('');
-            }
+            if (response.status == false) {
+                var errors = response.errors;
+                if (errors && errors.name) {
+                    $("#name").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.name);
+                } else {
+                    $("#name").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
+                }
 
-            if (errors && errors.email) {
-                $("#email").addClass('is-invalid').siblings("p").addClass('invalid-feedback').html(errors.email);
-            } else {
-                $("#email").removeClass('is-invalid').siblings("p").removeClass('invalid-feedback').html('');
-            }
+                if (errors && errors.email) {
+                    $("#email").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.email);
+                } else {
+                    $("#email").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
+                }
 
-            if (errors && errors.rating) {
-                $("#rating").addClass('is-invalid').siblings("p").addClass('invalid-feedback').html(errors.rating);
-            } else {
-                $("#rating").removeClass('is-invalid').siblings("p").removeClass('invalid-feedback').html('');
-            }
+                if (errors && errors.rating) {
+                    $("#rating").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.rating);
+                } else {
+                    $("#rating").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
+                }
 
-            if (errors && errors.review) {
-                $("#review").addClass('is-invalid').siblings("p").addClass('invalid-feedback').html(errors.review);
+                if (errors && errors.review) {
+                    $("#review").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.review);
+                } else {
+                    $("#review").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
+                }
             } else {
-                $("#review").removeClass('is-invalid').siblings("p").removeClass('invalid-feedback').html('');
+                window.location.href = "{{route('front.product', $product->slug)}}";
             }
         }
     });
 });
-  
 </script>
 @endsection

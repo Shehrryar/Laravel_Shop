@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductRating;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -71,7 +72,9 @@ class ShopController extends Controller
    return view('front.shop', $data);
 }
 public function product($slug){
-    $product = Product::where('slug', $slug)->with('product_images')->first();
+    $product = Product::where('slug', $slug)
+    ->withCount('product_ratings')->withSum('product_ratings','rating')->with('product_images')->first();    
+    
     if($product == NULL){
         abort(404);
     }
@@ -88,12 +91,12 @@ public function product($slug){
     return view('front.product', $data);
 }
 
-public function productRating(Request $request){
+public function productRating(Request $request, $id){
 
     $validator = Validator::make($request->all(),[
         'name'=>'required|min:5',
         'email'=>'required|email',
-        'review'=>'required',
+        'review'=>'required|min:10',
         'rating'=>'required',
     ]);
 
@@ -103,6 +106,31 @@ public function productRating(Request $request){
             'errors'=>$validator->errors()
         ]);
     }
+
+    $count = ProductRating::where('email', $request->email)->count();
+    if($count >0){
+        session()->flash('error', 'You already rate this product');
+        return response()->json([
+            'status'=>true,
+            'message'=>'You already rate this product'
+        ]);
+    }
+
+    $productrating = new ProductRating();
+    $productrating->product_id= $id;
+    $productrating->username= $request->name;
+    $productrating->email= $request->email;
+    $productrating->comment= $request->review;
+    $productrating->rating= $request->rating;
+    $productrating->status= 0;
+    $productrating->save();
+    
+    session()->flash('success', 'Thanks for your rating');
+    return response()->json([
+        'status'=>true,
+        'message'=>'Thanks for your rating'
+    ]);
+
 }
 
 }
