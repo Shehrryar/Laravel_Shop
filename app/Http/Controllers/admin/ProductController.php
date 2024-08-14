@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Brand;
@@ -12,7 +10,6 @@ use App\Models\ProductImage;
 use App\Models\TempImage;
 use App\Models\SubCategory;
 use Illuminate\Support\Facades\File;
-
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -131,7 +128,6 @@ class ProductController extends Controller
     }
     public function update($id, Request $request)
     {
-
         $product = Product::find($id);
         $values = [
             'title' => 'required',
