@@ -41,14 +41,31 @@
                 <div class="bg-light right">
                     <h1>{{$product->title}}</h1>
                     <div class="d-flex mb-3">
-                        <div class="text-primary mr-2">
+                        <!-- <div class="text-primary mr-2">
                             <small class="fas fa-star"></small>
                             <small class="fas fa-star"></small>
                             <small class="fas fa-star"></small>
                             <small class="fas fa-star-half-alt"></small>
                             <small class="far fa-star"></small>
-                        </div>
-                        <small class="pt-1">(99 Reviews)</small>
+                        </div> -->
+                        <div class="star-rating product mt-2" title="">
+                                            <div class="back-stars">
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+
+                                                <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                        <small class="pt-2 ps-1">({{$product->product_ratings_count}} Reviews)</small>
                     </div>
                     @if($product->compare_price > 0)
                     <h2 class="price text-secondary"><del>{{$product->compare_price}}</del></h2>
@@ -94,18 +111,18 @@
                                 <div class="row">
                                     <form action="" name="productratingform" id="productratingform" method="Post">
                                         <h3 class="h4 pb-3">Write a Review</h3>
-                                        <div class="form-group col-md-6 mb-3">
+                                        <!-- <div class="form-group col-md-6 mb-3">
                                             <label for="name">Name</label>
                                             <input type="text" class="form-control" name="name" id="name"
                                                 placeholder="Name">
                                             <p></p>
-                                        </div>
-                                        <div class="form-group col-md-6 mb-3">
+                                        </div> -->
+                                        <!-- <div class="form-group col-md-6 mb-3">
                                             <label for="email">Email</label>
                                             <input type="text" class="form-control" name="email" id="email"
                                                 placeholder="Email">
                                             <p></p>
-                                        </div>
+                                        </div> -->
                                         <div class="form-group mb-3">
                                             <label for="rating">Rating</label>
                                             <br>
@@ -139,8 +156,8 @@
                             <div class="col-md-12 mt-5">
                                 <div class="overall-rating mb-3">
                                     <div class="d-flex">
-                                        <h1 class="h3 pe-3">4.0</h1>
-                                        <div class="star-rating mt-2" title="70%">
+                                        <h1 class="h3 pe-3">{{$avg_rating}}</h1>
+                                        <div class="star-rating mt-2" title="">
                                             <div class="back-stars">
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
@@ -148,7 +165,7 @@
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
 
-                                                <div class="front-stars" style="width: 70%">
+                                                <div class="front-stars" style="width: {{$avg_rating_per}}%">
                                                     <i class="fa fa-star" aria-hidden="true"></i>
                                                     <i class="fa fa-star" aria-hidden="true"></i>
                                                     <i class="fa fa-star" aria-hidden="true"></i>
@@ -157,7 +174,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="pt-2 ps-2">(03 Reviews)</div>
+                                        <div class="pt-2 ps-2">({{$product->product_ratings_count}} Reviews)</div>
                                     </div>
 
                                 </div>
