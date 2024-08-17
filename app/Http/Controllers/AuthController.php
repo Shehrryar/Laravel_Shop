@@ -216,6 +216,12 @@ class AuthController extends Controller
             ]);
         }
     }
+
+    public function order(){
+        $user = Auth::user();
+        Order::where('user');
+        return view('front.account.order');
+    }
     
     
 }
