@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\CustomerAddress;
 use App\Models\DiscountCoupon;
 use App\Models\Order;
@@ -14,8 +13,6 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
-
 class CartController extends Controller
 {
     public function addToCart(Request $request)
@@ -455,8 +452,6 @@ class CartController extends Controller
     public function removecoupon(Request $request)
     {
         session()->forget('code');
-
-
         return $this->getOrderSummary($request);
     }
 

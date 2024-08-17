@@ -17,7 +17,7 @@ class FrontController extends Controller
         if(!empty(Auth::user())){
         $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
-        $product = Product::where('is_featured','Yes')->where('status',1)->get();
+        $product = Product::where('is_featured',1)->where('status',1)->get();
         $latest_product = Product::OrderBy('id','DESC')->where('status',1)->take(8)->get();
         $data['wishlist'] = $wishlist;
         $data['featured_products'] = $product;

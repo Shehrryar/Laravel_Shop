@@ -17,19 +17,14 @@ class ShopController extends Controller
         $subcategroy_selected = "";
         $categroy_selected = "";
         $brandsArray = [];
-
         $categories = Category::orderBy('name','DESC')->with('sub_category')->where('status',1)->get();
         $brands = Brand::orderBy('name','DESC')->where('status',1)->get();
-
         $products = Product::where('status',1);
-
         if(!empty($catslug)){
             $categroy = Category::where('slug',$catslug)->first();
             $products = $products->where('categories_id',$categroy->id);
             $categroy_selected = $categroy->id;
-
         }
-
         if(!empty($subcatslug)){
             $subcategroy = SubCategory::where('slug',$subcatslug)->first();
             $products = $products->where('sub_category_id',$subcategroy->id);
@@ -40,11 +35,9 @@ class ShopController extends Controller
            $brandsArray = explode(',' ,$request->get('brand'));
            $products = $products->whereIn('brands_id', $brandsArray);
        }
-
        if($request->get('price_max') != '' && $request->get('price_min')){
            $products = $products->whereBetween('price', [intval($request->get('price_min')),intval($request->get('price_max'))]);
        }
-
        if($request->get('sort') != ''){
         if($request->get('sort') == 'latest'){
            $products = $products->orderBy('id','DESC'); 
@@ -52,7 +45,6 @@ class ShopController extends Controller
            $products = $products->orderBy('price','ASC'); 
        }else{
            $products = $products->orderBy('price','DESC'); 
-
        }
    }else{
        $products = $products->orderBy('id','DESC'); 
@@ -88,6 +80,12 @@ public function product($slug){
 
     $data['product'] =  $product;
     $data['showrelatedproduct'] =  $showrelatedproduct;
+    $avgrating = '0.00';
+    if($product->product_ratings_count>0){
+        $avgrating = $product->product_ratings_sum_rating/$product->product_ratings_count;
+    }
+    $data['avgrating'] =  $avgrating;
+    $data['countrating'] =  $product->product_ratings_count;
     return view('front.product', $data);
 }
 
@@ -107,7 +105,7 @@ public function productRating(Request $request, $id){
         ]);
     }
 
-    $count = ProductRating::where('email', $request->email)->count();
+    $count = ProductRating::where('email', $request->email)->where('product_id',$id)->count();    
     if($count >0){
         session()->flash('error', 'You already rate this product');
         return response()->json([
@@ -115,7 +113,6 @@ public function productRating(Request $request, $id){
             'message'=>'You already rate this product'
         ]);
     }
-
     $productrating = new ProductRating();
     $productrating->product_id= $id;
     $productrating->username= $request->name;
@@ -124,7 +121,6 @@ public function productRating(Request $request, $id){
     $productrating->rating= $request->rating;
     $productrating->status= 0;
     $productrating->save();
-    
     session()->flash('success', 'Thanks for your rating');
     return response()->json([
         'status'=>true,
