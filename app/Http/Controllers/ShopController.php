@@ -20,14 +20,6 @@ class ShopController extends Controller
         $subcategroy_selected = "";
         $categroy_selected = "";
         $brandsArray = [];
-<<<<<<< HEAD
-        $categories = Category::orderBy('name','DESC')->with('sub_category')->where('status',1)->get();
-        $brands = Brand::orderBy('name','DESC')->where('status',1)->get();
-        $products = Product::where('status',1);
-        if(!empty($catslug)){
-            $categroy = Category::where('slug',$catslug)->first();
-            $products = $products->where('categories_id',$categroy->id);
-=======
 
         $categories = Category::orderBy('name', 'DESC')->with('sub_category')->where('status', 1)->get();
         $brands = Brand::orderBy('name', 'DESC')->where('status', 1)->get();
@@ -37,36 +29,8 @@ class ShopController extends Controller
         if (!empty($catslug)) {
             $categroy = Category::where('slug', $catslug)->first();
             $products = $products->where('categories_id', $categroy->id);
->>>>>>> eafa94e0c7dd8bbee58e32f3b0c60703ff19ca13
             $categroy_selected = $categroy->id;
         }
-<<<<<<< HEAD
-        if(!empty($subcatslug)){
-            $subcategroy = SubCategory::where('slug',$subcatslug)->first();
-            $products = $products->where('sub_category_id',$subcategroy->id);
-            $subcategroy_selected = $subcategroy->id;
-        }
-
-        if(!empty($request->get('brand'))){
-           $brandsArray = explode(',' ,$request->get('brand'));
-           $products = $products->whereIn('brands_id', $brandsArray);
-       }
-       if($request->get('price_max') != '' && $request->get('price_min')){
-           $products = $products->whereBetween('price', [intval($request->get('price_min')),intval($request->get('price_max'))]);
-       }
-       if($request->get('sort') != ''){
-        if($request->get('sort') == 'latest'){
-           $products = $products->orderBy('id','DESC'); 
-       }elseif ($request->get('sort') == 'pricelow') {
-           $products = $products->orderBy('price','ASC'); 
-       }else{
-           $products = $products->orderBy('price','DESC'); 
-       }
-   }else{
-       $products = $products->orderBy('id','DESC'); 
-   }
-=======
-
         if (!empty($subcatslug)) {
             $subcategroy = SubCategory::where('slug', $subcatslug)->first();
             $products = $products->where('sub_category_id', $subcategroy->id);
@@ -94,7 +58,6 @@ class ShopController extends Controller
         } else {
             $products = $products->orderBy('id', 'DESC');
         }
->>>>>>> eafa94e0c7dd8bbee58e32f3b0c60703ff19ca13
 
         $products = $products->paginate(6);
 
@@ -146,37 +109,9 @@ class ShopController extends Controller
 
     public function productRating(Request $request, $id)
     {
-
-<<<<<<< HEAD
-    $data['product'] =  $product;
-    $data['showrelatedproduct'] =  $showrelatedproduct;
-    $avgrating = '0.00';
-    if($product->product_ratings_count>0){
-        $avgrating = $product->product_ratings_sum_rating/$product->product_ratings_count;
-    }
-    $data['avgrating'] =  $avgrating;
-    $data['countrating'] =  $product->product_ratings_count;
-    return view('front.product', $data);
-}
-
-public function productRating(Request $request, $id){
-
-    $validator = Validator::make($request->all(),[
-        'name'=>'required|min:5',
-        'email'=>'required|email',
-        'review'=>'required|min:10',
-        'rating'=>'required',
-    ]);
-
-    if($validator->fails()){
-        return response()->json([
-            'status'=>false,
-            'errors'=>$validator->errors()
-=======
         $validator = Validator::make($request->all(), [
             'review' => 'required|min:10',
             'rating' => 'required',
->>>>>>> eafa94e0c7dd8bbee58e32f3b0c60703ff19ca13
         ]);
 
         if ($validator->fails()) {
@@ -218,31 +153,4 @@ public function productRating(Request $request, $id){
         }
     }
 
-<<<<<<< HEAD
-    $count = ProductRating::where('email', $request->email)->where('product_id',$id)->count();    
-    if($count >0){
-        session()->flash('error', 'You already rate this product');
-        return response()->json([
-            'status'=>true,
-            'message'=>'You already rate this product'
-        ]);
-    }
-    $productrating = new ProductRating();
-    $productrating->product_id= $id;
-    $productrating->username= $request->name;
-    $productrating->email= $request->email;
-    $productrating->comment= $request->review;
-    $productrating->rating= $request->rating;
-    $productrating->status= 0;
-    $productrating->save();
-    session()->flash('success', 'Thanks for your rating');
-    return response()->json([
-        'status'=>true,
-        'message'=>'Thanks for your rating'
-    ]);
-
-}
-
-=======
->>>>>>> eafa94e0c7dd8bbee58e32f3b0c60703ff19ca13
 }

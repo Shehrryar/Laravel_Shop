@@ -14,7 +14,7 @@
 <section class=" section-11 ">
     <div class="container  mt-5">
         <div class="row">
-                @include('front.account.sidebar.sidebar')
+            @include('front.account.sidebar.sidebar')
             <div class="col-md-9">
                 <div class="card">
                     <div class="card-header">
@@ -32,50 +32,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @if ($orders->isNotEmpty())
+                                    @foreach ($orders as $order)
+
                                     <tr>
                                         <td>
-                                            <a href="order-detail.php">OR756374</a>
+                                            <a href="{{route('account.orderdetail',$order->id)}}">{{$order->id}}</a>
                                         </td>
-                                        <td>11 Nav, 2022</td>
+                                        <td>{{\Carbon\Carbon::parse($order->created_at)->format('d M, Y')}}</td>
                                         <td>
-                                            <span class="badge bg-success">Delivered</span>
+                                            @if ($order->status == 'pending')
+                                            <span class="badge bg-danger">Pending</span>
+                                            @elseif($order->status == 'shipped')
+                                            <span class="badge bg-info">Shipped</span>
+                                            @else
+                                            <span class="badge bg-success">Delivered </span>
+                                            @endif
 
                                         </td>
-                                        <td>$400</td>
+                                        <td>${{number_format($order->grandtotal)}}</td>
                                     </tr>
+                                    @endforeach
+                                    @else
                                     <tr>
-                                        <td>
-                                            <a href="order-detail.php">OR756374</a>
-                                        </td>
-                                        <td>10 Oct, 2022</td>
-                                        <td>
-                                            <span class="badge bg-success">Delivered</span>
-
-                                        </td>
-                                        <td>$400</td>
+                                        <td colspan="3">Orders not found</td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="order-detail.php">OR756374</a>
-                                        </td>
-                                        <td>02 Sep, 2022</td>
-                                        <td>
-                                            <span class="badge bg-success">Delivered</span>
-
-                                        </td>
-                                        <td>$400</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="order-detail.php">OR756374</a>
-                                        </td>
-                                        <td>01 Dec, 2022</td>
-                                        <td>
-                                            <span class="badge bg-success">Delivered</span>
-
-                                        </td>
-                                        <td>$400</td>
-                                    </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>

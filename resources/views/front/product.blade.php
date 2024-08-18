@@ -47,10 +47,6 @@
                             <small class="fas fa-star"></small>
                             <small class="fas fa-star-half-alt"></small>
                             <small class="far fa-star"></small>
-<<<<<<< HEAD
-                        </div>
-                        <small class="pt-1">({{$countrating}} Reviews)</small>
-=======
                         </div> -->
                         <div class="star-rating product mt-2" title="">
                                             <div class="back-stars">
@@ -70,7 +66,6 @@
                                             </div>
                                         </div>
                         <small class="pt-2 ps-1">({{$product->product_ratings_count}} Reviews)</small>
->>>>>>> eafa94e0c7dd8bbee58e32f3b0c60703ff19ca13
                     </div>
                     @if($product->compare_price > 0)
                     <h2 class="price text-secondary"><del>{{$product->compare_price}}</del></h2>
@@ -161,13 +156,8 @@
                             <div class="col-md-12 mt-5">
                                 <div class="overall-rating mb-3">
                                     <div class="d-flex">
-<<<<<<< HEAD
-                                        <h1 class="h3 pe-3">{{$avgrating}}</h1>
-                                        <div class="star-rating mt-2" title="70%">
-=======
                                         <h1 class="h3 pe-3">{{$avg_rating}}</h1>
                                         <div class="star-rating mt-2" title="">
->>>>>>> eafa94e0c7dd8bbee58e32f3b0c60703ff19ca13
                                             <div class="back-stars">
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
@@ -184,11 +174,7 @@
                                                 </div>
                                             </div>
                                         </div>
-<<<<<<< HEAD
-                                        <div class="pt-2 ps-2">({{$countrating}} Reviews)</div>
-=======
                                         <div class="pt-2 ps-2">({{$product->product_ratings_count}} Reviews)</div>
->>>>>>> eafa94e0c7dd8bbee58e32f3b0c60703ff19ca13
                                     </div>
 
                                 </div>

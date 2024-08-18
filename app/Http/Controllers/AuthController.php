@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -219,9 +221,20 @@ class AuthController extends Controller
 
     public function order(){
         $user = Auth::user();
-        Order::where('user');
-        return view('front.account.order');
+        $orders = Order::where('user_id', $user->id)->orderby('created_at','DESC')->get();
+        $data['orders'] = $orders;
+        return view('front.account.order', $data);
     }
-    
+
+
+    public function orderdetail($id){
+        $user = Auth::user();
+        $order = Order::where('user_id', $user->id)->where('id',$id)->first();
+        $orderitems = OrderItem::where('order_id', $id)->get();
+        $data['order'] = $order; 
+        $data['orderitems'] = $orderitems; 
+
+        return view('front.account.orderdetail', $data);
+    }
     
 }

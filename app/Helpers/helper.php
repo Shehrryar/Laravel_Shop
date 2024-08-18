@@ -16,6 +16,8 @@ function getProductImage($product_id){
 }
 
 
+
+
 if (!function_exists('transAdmin')) {
     function transAdmin($key, $replace = [], $locale = null)
     {
@@ -29,5 +31,7 @@ if (!function_exists('transFront')) {
         return trans("front::" . $key, $replace, $locale);
     }
 }
+
+
 
 ?>

@@ -18,6 +18,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\admin\LanguageController;
+use App\Http\Controllers\admin\OrderController;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -79,6 +80,7 @@ Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/my-orders', [AuthController::class, 'order'])->name('account.orders');
+        Route::GET('/order-detail/{orderid}', [AuthController::class, 'orderdetail'])->name('account.orderdetail');
         Route::GET('/mywishlist', [AuthController::class, 'wishlist'])->name('account.wishlist');
         Route::POST('/remove-product-from-wishlist', [AuthController::class, 'remove_product_from_wishlist'])->name('account.remove_product_from_wislist');
         Route::GET('/logout', [AuthController::class, 'logout'])->name('account.logout');
@@ -164,6 +166,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/shipping/{id}', [ShippingController::class, 'update'])->name('shipping.update');
         Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
 
+
+         // Order Routes
+
+         Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
+         Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
 
 
         // Route for the discont coupon

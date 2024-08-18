@@ -161,12 +161,17 @@ class CartController extends Controller
 
         if (!empty($customerAddress->country_id)) {
             $usercountry = $customerAddress->country_id;
+            
             $shipping_info = Shipping::where('country_id', $usercountry)->first();
             $totalqty = 0;
             $total_shipping = 0;
             foreach (Cart::content() as $item) {
                 $totalqty += $item->qty;
             }
+
+            // echo "<pre>";
+            // print_r($usercountry);
+            // exit;
             $total_shipping = $totalqty * $shipping_info->amount; 
             $grand_total = ($subtotal - $discount) + $total_shipping;
 
@@ -279,9 +284,9 @@ class CartController extends Controller
             $order->shipping = $shipping;
             $order->grandtotal = $grandtotal;
             $order->discount = $discount;
-
             $order->coupon_code = $promocode;            
-
+            $order->payment_status = 'not paid';            
+            $order->status = 'pending';            
             $order->firstname = $request->firstname;
             $order->user_id = $user->id;
             $order->lastname = $request->lastname;
