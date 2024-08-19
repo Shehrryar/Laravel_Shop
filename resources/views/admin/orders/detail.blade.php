@@ -26,11 +26,17 @@
                             <div class="col-sm-4 invoice-col">
                                 <h1 class="h5 mb-3">Shipping Address</h1>
                                 <address>
-                                    <strong>{{$order->firstname." ".$order->lastname}}</strong>
+                                    <strong>{{$order->firstname . " " . $order->lastname}}</strong>
                                     <br>{{$order->address}}<br>
                                     {{$order->city}}, {{$order->zip}}, {{$order->countryName}}<br>
                                     {{$order->email}}
                                 </address>
+                                <strong>Shipped Date : </strong>
+                                @if (!empty($order->shipping_date))
+                                    {{\Carbon\Carbon::parse($order->shipping_date)->format('d M, Y')}}
+                                @else
+                                    N/A
+                                @endif
                             </div>
 
 
@@ -39,14 +45,16 @@
                                 <!-- <b>Invoice #007612</b><br>
                                 <br> -->
                                 <b>Order ID:</b> {{$order->id}}<br>
-                                <b>Total:</b> ${{number_format($order->grandtotal,2)}}<br>
+                                <b>Total:</b> ${{number_format($order->grandtotal, 2)}}<br>
                                 <b>Status:</b>
                                 @if ($order->status == 'pending')
-                                <span class="badge bg-danger">Pending</span>
+                                    <span class="badge bg-danger">Pending</span>
                                 @elseif($order->status == 'shipped')
-                                <span class="badge bg-info">Shipped</span>
+                                    <span class="badge bg-info">Shipped</span>
+                                @elseif($order->status == 'delivered')
+                                    <span class="badge bg-success">Delivered </span>
                                 @else
-                                <span class="badge bg-success">Delivered </span>
+                                    <span class="badge bg-danger">Cancelled </span>
                                 @endif
                                 <br>
                             </div>
@@ -65,30 +73,30 @@
                             <tbody>
 
                                 @foreach ($orderitems as $item)
-                                <tr>
-                                    <th>{{$item->name}}</th>
-                                    <th>{{number_format($item->price,2)}}</th>
-                                    <th>{{number_format($item->qty,2)}}</th>
-                                    <th>{{number_format($item->total,2)}}</th>
-                                </tr>
+                                    <tr>
+                                        <th>{{$item->name}}</th>
+                                        <th>{{number_format($item->price, 2)}}</th>
+                                        <th>{{number_format($item->qty, 2)}}</th>
+                                        <th>{{number_format($item->total, 2)}}</th>
+                                    </tr>
                                 @endforeach
                                 <tr>
                                     <th colspan="3" class="text-right">Subtotal:</th>
-                                    <td>{{number_format($order->subtotal,2)}}</td>
+                                    <td>{{number_format($order->subtotal, 2)}}</td>
                                 </tr>
 
                                 <tr>
                                     <th colspan="3" class="text-right">Discount:</th>
-                                    <td>{{number_format($order->discount,2)}}</td>
+                                    <td>{{number_format($order->discount, 2)}}</td>
                                 </tr>
 
                                 <tr>
                                     <th colspan="3" class="text-right">Shipping:</th>
-                                    <td>{{number_format($order->shipping,2)}}</td>
+                                    <td>{{number_format($order->shipping, 2)}}</td>
                                 </tr>
                                 <tr>
                                     <th colspan="3" class="text-right">Grand Total:</th>
-                                    <td>{{number_format($order->grandtotal,2)}}</td>
+                                    <td>{{number_format($order->grandtotal, 2)}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -116,7 +124,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="">Shipped Date</label>
-                                <input value="{{ $order->shipped_date ? \Carbon\Carbon::parse($order->shipped_date)->format('Y-m-d\TH:i') : '' }}" class="form-control" type="datetime-local" name="shipped_date" id="shipped_date">
+                                <input value="{{ $order->shipped_date}}" class="form-control" type="datetime-local"
+                                    name="shipped_date" id="shipped_date">
                             </div>
                             <div class="mb-3">
                                 <button class="btn btn-primary">Update</button>
@@ -150,11 +159,11 @@
     $("#changeorderstatusform").submit(function (event) {
         event.preventDefault();
         $.ajax({
-            url:'{{route('order.changeorderstatus', $order->id)}}',
-            type:'post',
-            data:$(this).serializeArray(),
-            dataType:'json',
-            success:function(response){
+            url: '{{route('order.changeorderstatus', $order->id)}}',
+            type: 'post',
+            data: $(this).serializeArray(),
+            dataType: 'json',
+            success: function (response) {
                 window.location.href = '{{route("order.detail", $order->id)}}';
             }
 
