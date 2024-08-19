@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::table('orders', function (Blueprint $table) {
+            $table->timestamp('shipping_date')->nullable()->after('status');
+        });
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('orders', function (Blueprint $table) {
+            $table->removeColumn('shipping_date');
+        });
     }
 };

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
-
 class OrderController extends Controller
 {
     public function index(Request $request){
@@ -32,5 +31,18 @@ class OrderController extends Controller
         $orderitems = OrderItem::where('order_id', $orderid)->get();
         return view('admin.orders.detail', 
         ['order'=>$order, 'orderitems'=> $orderitems]);
+    }
+
+    public function changeOrderStatus(Request $request, $id){
+        $order = Order::find($id);
+        $order->status = $request->status;
+        $order->shipping_date = $request->shipped_date;
+        $order->save();
+        $message = 'Order status changed successfully';
+        session()->flash('success', $message);
+        return response()->json([
+            'status'=>true,
+            'message'=> $message
+        ]);
     }
 }

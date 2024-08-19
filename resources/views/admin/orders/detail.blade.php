@@ -17,6 +17,7 @@
 <section class="content">
     <!-- Default box -->
     <div class="container-fluid">
+        @include('admin.message')
         <div class="row">
             <div class="col-md-9">
                 <div class="card">
@@ -65,7 +66,7 @@
 
                                 @foreach ($orderitems as $item)
                                 <tr>
-                                    <th>{{$item->name,2}}</th>
+                                    <th>{{$item->name}}</th>
                                     <th>{{number_format($item->price,2)}}</th>
                                     <th>{{number_format($item->qty,2)}}</th>
                                     <th>{{number_format($item->total,2)}}</th>
@@ -96,22 +97,32 @@
             </div>
             <div class="col-md-3">
                 <div class="card">
-                    <div class="card-body">
-                        <h2 class="h4 mb-3">Order Status</h2>
-                        <div class="mb-3">
-                            <select name="status" id="status" class="form-control">
-                                <option value="delivered" {{($order->status == 'delivered') ? 'selected' : ''}}>Delivered</option>
-                                <option value="pending" {{($order->status == 'pending') ? 'selected' : ''}}>Pending
-                                </option>
-                                <option value="shipped" {{($order->status == 'shipped') ? 'selected' : ''}}>Shipped
-                                </option>
-                                <!-- <option value="" >Cancelled</option> -->
-                            </select>
+                    <form action="" id="changeorderstatusform" name="changeorderstatusform" method="post">
+                        <div class="card-body">
+                            <h2 class="h4 mb-3">Order Status</h2>
+                            <div class="mb-3">
+                                <select name="status" id="status" class="form-control">
+                                    <option value="delivered" {{($order->status == 'delivered') ? 'selected' : ''}}>
+                                        Delivered</option>
+                                    <option value="pending" {{($order->status == 'pending') ? 'selected' : ''}}>Pending
+                                    </option>
+                                    <option value="shipped" {{($order->status == 'shipped') ? 'selected' : ''}}>Shipped
+                                    </option>
+                                    <option value="cancelled" {{($order->status == 'cancelled') ? 'selected' : ''}}>
+                                        Cancelled
+                                    </option>
+                                    <!-- <option value="" >Cancelled</option> -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="">Shipped Date</label>
+                                <input value="{{ $order->shipped_date ? \Carbon\Carbon::parse($order->shipped_date)->format('Y-m-d\TH:i') : '' }}" class="form-control" type="datetime-local" name="shipped_date" id="shipped_date">
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-primary">Update</button>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <button class="btn btn-primary">Update</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="card">
                     <div class="card-body">
@@ -134,4 +145,20 @@
 </section>
 @endsection
 @section('customjs')
+
+<script>
+    $("#changeorderstatusform").submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            url:'{{route('order.changeorderstatus', $order->id)}}',
+            type:'post',
+            data:$(this).serializeArray(),
+            dataType:'json',
+            success:function(response){
+                window.location.href = '{{route("order.detail", $order->id)}}';
+            }
+
+        });
+    });
+</script>
 @endsection

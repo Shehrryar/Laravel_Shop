@@ -171,6 +171,8 @@ Route::group(['prefix' => 'admin'], function () {
 
          Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
          Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
+         Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
+
 
 
         // Route for the discont coupon

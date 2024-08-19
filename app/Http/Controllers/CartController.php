@@ -237,10 +237,7 @@ class CartController extends Controller
                 'country_id' => $request->country,
             ]
         );
-
         if ($request->payment_method == 'cod') {
-
-
             $shipping = 0;
             $discount = 0;
             $discountcodeid = '';
@@ -306,7 +303,6 @@ class CartController extends Controller
 
             foreach (Cart::content() as $item) {
                 $orderitems = new OrderItem();
-
                 $orderitems->product_id = $item->id;
                 $orderitems->order_id = $order->id;
                 $orderitems->name = $item->name;
@@ -314,16 +310,14 @@ class CartController extends Controller
                 $orderitems->price = $item->price;
                 $orderitems->total = $item->price * $item->qty;
                 $orderitems->save();
-                session()->flash('success', 'You have successfully placed your order');
-                Cart::destroy();
-
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Order Saved Successfully',
-                    'orderId' => $order->id
-                ]);
             }
-
+            Cart::destroy();
+            session()->flash('success', 'You have successfully placed your order');
+            return response()->json([
+                'status' => true,
+                'message' => 'Order Saved Successfully',
+                'orderId' => $order->id
+            ]);
 
         } else {
 

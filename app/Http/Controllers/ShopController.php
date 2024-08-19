@@ -10,8 +10,6 @@ use App\Models\Brand;
 use App\Models\SubCategory;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-
-
 class ShopController extends Controller
 {
     public function index(Request $request, $catslug = null, $subcatslug = null)
@@ -134,7 +132,6 @@ class ShopController extends Controller
             $productrating->product_id = $id;
             $productrating->username = Auth::user()->name;
             $productrating->email = Auth::user()->email;
-            ;
             $productrating->comment = $request->review;
             $productrating->rating = $request->rating;
             $productrating->status = 0;
