@@ -1,12 +1,7 @@
 @extends('front.layouts.app')
 @section('content')
 
-@if(Session::has('success'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{Session::get('success')}}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-@endif
+
 
 <section class="section-1">
     <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel"
@@ -116,21 +111,21 @@
         </div>
         <div class="row pb-3">
             @if(getcategories()->isNotEmpty())
-            @foreach(getcategories() as $category)
-            <div class="col-lg-3">
-                <div class="cat-card">
-                    <div class="left">
-                        <img src='{{asset("upload/category/" . $category->image)}}' alt="" class="img-fluid">
-                    </div>
-                    <div class="right">
-                        <div class="cat-data">
-                            <h2>{{trans($category->name)}}</h2>
-                            <!-- <p>100 Products</p> -->
+                @foreach(getcategories() as $category)
+                    <div class="col-lg-3">
+                        <div class="cat-card">
+                            <div class="left">
+                                <img src='{{asset("upload/category/" . $category->image)}}' alt="" class="img-fluid">
+                            </div>
+                            <div class="right">
+                                <div class="cat-data">
+                                    <h2>{{trans($category->name)}}</h2>
+                                    <!-- <p>100 Products</p> -->
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            @endforeach
+                @endforeach
             @endif
         </div>
     </div>
@@ -142,48 +137,56 @@
         </div>
         <div class="row pb-3">
             @if($featured_products->isNotEmpty())
-            @foreach($featured_products as $f_product)
+                    @foreach($featured_products as $f_product)
 
-            @php
-            $images_prod = $f_product->product_images()->first();
-            $inWishlist = $wishlist->contains('product_id', $f_product->id);
-            @endphp
-            <div class="col-md-3">
-                <div class="card product-card">
-                    <div class="product-image position-relative">
-                        <a href="{{route("front.product", $f_product->slug)}}" class="product-img">
+                            @php
+                                $images_prod = $f_product->product_images()->first();
+                                $inWishlist = $wishlist->contains('product_id', $f_product->id);
+                            @endphp
+                            <div class="col-md-3">
+                                <div class="card product-card">
+                                    <div class="product-image position-relative">
+                                        <a href="{{route("front.product", $f_product->slug)}}" class="product-img">
 
-                            <!-- <img class="card-img-top" src="images/product-1.jpg')}}" alt=""> -->
-                            @if(!empty($images_prod))
-                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
-                            @else
-                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
-                            @endif
-                        </a>
-                        <a onclick="addToWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="addwishlist{{$f_product->id}}" class="far fa-heart"
-                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
-                        </a>
-                        <a onclick="removefromWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="removewishlist{{$f_product->id}}" class="fas fa-heart"
-                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
-                        </a>
-                        <div class="product-action">
-                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$f_product->id}})">
-                                <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body text-center mt-3">
-                        <a class="h6 link" href="product.php">{{trans($f_product->title)}}</a>
-                        <div class="price mt-2">
-                            <span class="h5"><strong>{{$f_product->price}}</strong></span>
-                            <span class="h6 text-underline"><del>{{$f_product->compare_price}}</del></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+                                            <!-- <img class="card-img-top" src="images/product-1.jpg')}}" alt=""> -->
+                                            @if(!empty($images_prod))
+                                                <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
+                                            @else
+                                                <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
+                                            @endif
+                                        </a>
+                                        <a onclick="addToWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
+                                            <i id="addwishlist{{$f_product->id}}" class="far fa-heart"
+                                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                                        </a>
+                                        <a onclick="removefromWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
+                                            <i id="removewishlist{{$f_product->id}}" class="fas fa-heart"
+                                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                                        </a>
+
+
+                                        <div class="product-action">
+                                            @if ($f_product->qty > 0)
+                                                <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$f_product->id}})">
+                                                    <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
+                                                </a>
+                                            @else
+                                                <a class="btn btn-dark" href="javascript:void(0)">
+                                                    <i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="card-body text-center mt-3">
+                                        <a class="h6 link" href="product.php">{{trans($f_product->title)}}</a>
+                                        <div class="price mt-2">
+                                            <span class="h5"><strong>{{$f_product->price}}</strong></span>
+                                            <span class="h6 text-underline"><del>{{$f_product->compare_price}}</del></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    @endforeach
             @endif
         </div>
     </div>
@@ -196,44 +199,50 @@
         </div>
         <div class="row pb-3">
             @foreach($latest_product as $late_prod)
-            @php
-            $images_prod = $late_prod->product_images()->first();
-            $inWishlist = $wishlist->contains('product_id', $late_prod->id);
-            @endphp
-            <div class="col-md-3">
-                <div class="card product-card">
-                    <div class="product-image position-relative">
-                        <a href='{{route("front.product", $late_prod->slug)}}' class="product-img">
-                            @if(!empty($images_prod))
-                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
-                            @else
-                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
-                            @endif
-                        </a>
-                        <a onclick="addToWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="addwishlist{{ $late_prod->id }}" class="far fa-heart"
-                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
-                        </a>
-                        <a onclick="removefromWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
-                            <i id="removewishlist{{$late_prod->id}}" class="fas fa-heart"
-                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
-                        </a>
+                        @php
+                            $images_prod = $late_prod->product_images()->first();
+                            $inWishlist = $wishlist->contains('product_id', $late_prod->id);
+                        @endphp
+                        <div class="col-md-3">
+                            <div class="card product-card">
+                                <div class="product-image position-relative">
+                                    <a href='{{route("front.product", $late_prod->slug)}}' class="product-img">
+                                        @if(!empty($images_prod))
+                                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
+                                        @else
+                                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
+                                        @endif
+                                    </a>
+                                    <a onclick="addToWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
+                                        <i id="addwishlist{{ $late_prod->id }}" class="far fa-heart"
+                                            style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                                    </a>
+                                    <a onclick="removefromWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
+                                        <i id="removewishlist{{$late_prod->id}}" class="fas fa-heart"
+                                            style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                                    </a>
 
-                        <div class="product-action">
-                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$late_prod->id}})">
-                                <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
-                            </a>
+                                    <div class="product-action">
+                                        @if ($late_prod->qty > 0)
+                                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$late_prod->id}})">
+                                                <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
+                                            </a>
+                                        @else
+                                            <a class="btn btn-dark" href="javascript:void(0)">
+                                                <i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="card-body text-center mt-3">
+                                    <a class="h6 link" href="product.php">{{trans($late_prod->title)}}</a>
+                                    <div class="price mt-2">
+                                        <span class="h5"><strong>{{$late_prod->price}}</strong></span>
+                                        <span class="h6 text-underline"><del>{{$late_prod->compare_price}}</del></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body text-center mt-3">
-                        <a class="h6 link" href="product.php">{{trans($late_prod->title)}}</a>
-                        <div class="price mt-2">
-                            <span class="h5"><strong>{{$late_prod->price}}</strong></span>
-                            <span class="h6 text-underline"><del>{{$late_prod->compare_price}}</del></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
             @endforeach
         </div>
     </div>

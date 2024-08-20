@@ -13,4 +13,8 @@ class LocalizationController extends Controller
         return redirect()->back();
     }
 
+
+    public function dashborad(){
+        return view('admin.dashboard.list');
+    }
 }

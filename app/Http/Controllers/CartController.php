@@ -98,7 +98,6 @@ class CartController extends Controller
 
     public function deleteitem(Request $request)
     {
-
         $iteminfo = Cart::get($request->rowid);
         if ($iteminfo == null) {
             $error_message = 'item not found';
@@ -109,7 +108,6 @@ class CartController extends Controller
             ]);
         } else {
             Cart::remove($request->rowid);
-
             $message = 'item removed successfully';
             session()->flash('success', $message);
             return response()->json([
@@ -161,7 +159,7 @@ class CartController extends Controller
 
         if (!empty($customerAddress->country_id)) {
             $usercountry = $customerAddress->country_id;
-            
+
             $shipping_info = Shipping::where('country_id', $usercountry)->first();
             $totalqty = 0;
             $total_shipping = 0;
@@ -172,7 +170,7 @@ class CartController extends Controller
             // echo "<pre>";
             // print_r($usercountry);
             // exit;
-            $total_shipping = $totalqty * $shipping_info->amount; 
+            $total_shipping = $totalqty * $shipping_info->amount;
             $grand_total = ($subtotal - $discount) + $total_shipping;
 
         } else {
@@ -281,9 +279,9 @@ class CartController extends Controller
             $order->shipping = $shipping;
             $order->grandtotal = $grandtotal;
             $order->discount = $discount;
-            $order->coupon_code = $promocode;            
-            $order->payment_status = 'not paid';            
-            $order->status = 'pending';            
+            $order->coupon_code = $promocode;
+            $order->payment_status = 'not paid';
+            $order->status = 'pending';
             $order->firstname = $request->firstname;
             $order->user_id = $user->id;
             $order->lastname = $request->lastname;
@@ -310,9 +308,18 @@ class CartController extends Controller
                 $orderitems->price = $item->price;
                 $orderitems->total = $item->price * $item->qty;
                 $orderitems->save();
+
+                // Updat product stock
+
+                $productData = Product::find($item->id);
+                $currentQuantity = $productData->qty;
+                $updatedquantity = $currentQuantity - $item->qty;
+                $productData->qty = $updatedquantity;
+                $productData->save();
+
             }
-            Cart::destroy();
             session()->flash('success', 'You have successfully placed your order');
+            Cart::destroy();
             return response()->json([
                 'status' => true,
                 'message' => 'Order Saved Successfully',

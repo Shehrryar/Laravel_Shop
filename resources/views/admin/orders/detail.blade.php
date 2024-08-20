@@ -134,6 +134,7 @@
                     </form>
                 </div>
                 <div class="card">
+                    <form action="" method="post" name="sentInvoiceEmail" id="sentInvoiceEmail" >
                     <div class="card-body">
                         <h2 class="h4 mb-3">Send Inovice Email</h2>
                         <div class="mb-3">
@@ -146,6 +147,7 @@
                             <button class="btn btn-primary">Send</button>
                         </div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -169,5 +171,22 @@
 
         });
     });
+
+    $("#sentInvoiceEmail").submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            url: '{{route('order.sendinvoiceemail', $order->id)}}',
+            type: 'post',
+            data: $(this).serializeArray(),
+            dataType: 'json',
+            success: function (response) {
+            }
+
+        });
+    });
+
+    
+
+
 </script>
 @endsection

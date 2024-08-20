@@ -42,7 +42,9 @@ Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.
 Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.deleteitem.cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
+
 Route::post('/thanks/{orderId}', [CartController::class, 'thankyou'])->name('front.thankyou');
+
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
 Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
@@ -172,6 +174,7 @@ Route::group(['prefix' => 'admin'], function () {
          Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
          Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
          Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
+         Route::post('/orders/sent-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('order.sendinvoiceemail');
 
 
 
@@ -183,6 +186,13 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/coupons/{id}/edit', [DiscountCodeController::class, 'edit'])->name('coupon.edit');
         Route::put('/coupons/{id}/update', [DiscountCodeController::class, 'update'])->name('coupon.update');
         Route::delete('/coupons/{id}/delete', [DiscountCodeController::class, 'destroy'])->name('coupon.delete');
+
+
+
+
+        // dashboard
+        Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
+
 
     });
 });

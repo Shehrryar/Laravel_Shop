@@ -13,6 +13,18 @@
     </div>
 </section>
 
+@if(Session::has('success'))
+    <div class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Success
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="#">{{ Session::get('success') }}</a></li>
+        </ul>
+    </div>
+@endif
+
 <section class="section-9 pt-4">
     <form action="" id="order_form" method="post">
         <div class="container">
@@ -175,10 +187,10 @@
                     @if (Session::has('code'))
                         <div id="discount-account-wrapper">
                             <div class="mt-4">
-                                <strong id="coupon-error-message" >{{Session::get('code')->code}}</strong>
+                                <strong id="coupon-error-message">{{Session::get('code')->code}}</strong>
                                 <a class="btn btn-sm btn-danger" id="remove-discount"><i class="fa fa-times"></i></a>
                             </div>
-                    </div>
+                        </div>
                     @endif
 
 
@@ -315,8 +327,9 @@
                     }
                 }
                 else {
-                    window.location.href = "{{ route('front.home') }}";
-
+                    let orderId = response.orderId;
+                    let baseUrl = "{{ route('front.thankyou') }}";
+                    window.location.href = baseUrl + "?orderId=" + orderId;
                 }
             }
         });
@@ -359,7 +372,7 @@
                     $('#dicount_coupon').html(response.discount);
                     $('#discount-account-wrapper').html(response.discountString);
                 }
-                else{
+                else {
                     $('#coupon-error-message').html(response.message);
                 }
             }
@@ -384,7 +397,7 @@
                     $('#discount_code').val('');
 
 
-                    
+
                 }
             }
         });

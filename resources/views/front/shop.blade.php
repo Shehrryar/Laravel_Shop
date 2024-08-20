@@ -118,9 +118,16 @@
 											<a onclick = "addToWishlist({{$prod->id}})" class="whishlist" href="javascript:void(0)"><i class="far fa-heart"></i></a>                                                        
 
 											<div class="product-action">
+												@if ($prod->qty>0)
+												
 												<a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$prod->id}})">
 													<i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
-												</a>                            
+												</a>
+												@else
+												<a class="btn btn-dark" href="javascript:void(0)">
+													<i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
+												</a>
+												@endif
 											</div>
 										</div>                        
 										<div class="card-body text-center mt-3">
