@@ -100,8 +100,6 @@ class ShopController extends Controller
         $data['showrelatedproduct'] = $showrelatedproduct;
         $data['avg_rating'] = $avg_rating;
         $data['avg_rating_per'] = $avg_rating_per;
-
-
         return view('front.product', $data);
     }
 

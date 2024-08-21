@@ -12,48 +12,51 @@ use Illuminate\Support\Facades\App;
 
 class FrontController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $wishlist = collect();
-        if(!empty(Auth::user())){
-        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
+        if (!empty(Auth::user())) {
+            $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
-        $product = Product::where('is_featured',1)->where('status',1)->get();
-        $latest_product = Product::OrderBy('id','DESC')->where('status',1)->take(8)->get();
+        $product = Product::where('is_featured', 1)->withCount('product_ratings')->withSum('product_ratings', 'rating')->where('status', 1)->get();
+        $latest_product = Product::OrderBy('id', 'DESC')->where('status', 1)->withCount('product_ratings')->withSum('product_ratings', 'rating')->take(8)->get();
         $data['wishlist'] = $wishlist;
         $data['featured_products'] = $product;
         $data['latest_product'] = $latest_product;
         return view('front.home', $data);
     }
-    public function addToWishlist(Request $request){
-        if(Auth::check()== false){
-            session(['url.intended'=>url()->previous()]);
+    public function addToWishlist(Request $request)
+    {
+        if (Auth::check() == false) {
+            session(['url.intended' => url()->previous()]);
             return response()->json([
-                'status'=>false
+                'status' => false
             ]);
         }
 
 
-        $product = Product::where('id',$request->id)->first();
-        if($product == null){
+        $product = Product::where('id', $request->id)->first();
+        if ($product == null) {
             return response()->json([
-                'status'=>true,
-                'message'=> '<div class = "alert alert-danger">Product not found.</div>'
+                'status' => true,
+                'message' => '<div class = "alert alert-danger">Product not found.</div>'
             ]);
         }
 
         $wishlist = Wishlist::updateOrCreate(
-            [   
+            [
                 'user_id' => Auth::user()->id,
-                'product_id'=>$request->id
+                'product_id' => $request->id
             ],
-            [   
+            [
                 'user_id' => Auth::user()->id,
-                'product_id'=>$request->id
-            ]);
+                'product_id' => $request->id
+            ]
+        );
 
         return response()->json([
-            'status'=>true,
-            'message'=> '<div class = "alert alert-success"><strong>"'.$product->title.'"</strong> is added to the Wishlist.</div>'
+            'status' => true,
+            'message' => '<div class = "alert alert-success"><strong>"' . $product->title . '"</strong> is added to the Wishlist.</div>'
         ]);
 
 

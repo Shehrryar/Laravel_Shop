@@ -1,6 +1,22 @@
 @extends('front.layouts.app')
 @section('content')
 
-<section>Thank you</section>
-<h1>Your Order is added successfully</h1>
+@endsection
+
+@section('customJs')
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Your Order has been added successfully!',
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Continue',
+        cancelButtonText: 'Close',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '{{route('front.home')}}'; 
+        }
+    });
+</script>
+
 @endsection

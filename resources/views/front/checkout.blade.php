@@ -327,9 +327,7 @@
                     }
                 }
                 else {
-                    let orderId = response.orderId;
-                    let baseUrl = "{{ route('front.thankyou') }}";
-                    window.location.href = baseUrl + "?orderId=" + orderId;
+                    window.location.href = "{{ route('front.thankyou') }}";
                 }
             }
         });

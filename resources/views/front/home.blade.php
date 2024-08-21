@@ -183,6 +183,36 @@
                                             <span class="h5"><strong>{{$f_product->price}}</strong></span>
                                             <span class="h6 text-underline"><del>{{$f_product->compare_price}}</del></span>
                                         </div>
+
+                                        <!-- this portion is for the product rating -->
+
+                                        @php
+                                            $avg_rating_per = 0;
+                                            if ($f_product->product_ratings_count > 0) {
+                                                $avg_rating = number_format(($f_product->product_ratings_sum_rating / $f_product->product_ratings_count), 2);
+                                                $avg_rating_per = ($avg_rating * 100) / 5;
+                                            }
+                                         @endphp
+                                        <div style="display: flex; justify-content: center;">
+                                            <div class="star-rating product mt-2" title="">
+                                                <div class="back-stars">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+
+                                                    <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <small class="pt-2 ps-1">({{$f_product->product_ratings_count}} Reviews)</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -240,6 +270,35 @@
                                         <span class="h5"><strong>{{$late_prod->price}}</strong></span>
                                         <span class="h6 text-underline"><del>{{$late_prod->compare_price}}</del></span>
                                     </div>
+
+                                    <!-- this portion for the product rating -->
+                                    @php
+                                        $avg_rating_per = 0;
+                                        if ($late_prod->product_ratings_count > 0) {
+                                            $avg_rating = number_format(($late_prod->product_ratings_sum_rating / $late_prod->product_ratings_count), 2);
+                                            $avg_rating_per = ($avg_rating * 100) / 5;
+                                        }
+                                     @endphp
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class="star-rating product mt-2" title="">
+                                            <div class="back-stars">
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+
+                                                <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <small class="pt-2 ps-1">({{$late_prod->product_ratings_count}} Reviews)</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -248,41 +307,5 @@
     </div>
 </section>
 </main>
-<footer class="bg-dark mt-5">
-    <div class="container pb-5 pt-3">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="footer-card">
-                    <h3>Get In Touch</h3>
-                    <p>No dolore ipsum accusam no lorem. <br>
-                        123 Street, New York, USA <br>
-                        exampl@example.com <br>
-                        000 000 0000</p>
-                </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="footer-card">
-                    <h3>Important Links</h3>
-                    <ul>
-                        <li><a href="about-us.php" title="About">About</a></li>
-                        <li><a href="contact-us.php" title="Contact Us">Contact Us</a></li>
-                        <li><a href="#" title="Privacy">Privacy</a></li>
-                        <li><a href="#" title="Privacy">Terms & Conditions</a></li>
-                        <li><a href="#" title="Privacy">Refund Policy</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="footer-card">
-                    <h3>My Account</h3>
-                    <ul>
-                        <li><a href="#" title="Sell">Login</a></li>
-                        <li><a href="#" title="Advertise">Register</a></li>
-                        <li><a href="#" title="Contact Us">My Orders</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            @endsection
+ @endsection
