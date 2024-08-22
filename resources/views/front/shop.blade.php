@@ -157,10 +157,10 @@
 
 rangeSlider = $(".js-range-slider").ionRangeSlider({
     type: "double",
-    min: 0,
+    min: 1,
     max: 1000,
     from: {{$price_min}},
-    stop: 10,
+    step: 10,
     to: {{$price_max}},
     skin: "round",
     max_postfix: "+",
