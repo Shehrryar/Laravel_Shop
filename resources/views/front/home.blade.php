@@ -111,21 +111,21 @@
         </div>
         <div class="row pb-3">
             @if(getcategories()->isNotEmpty())
-                @foreach(getcategories() as $category)
-                    <div class="col-lg-3">
-                        <div class="cat-card">
-                            <div class="left">
-                                <img src='{{asset("upload/category/" . $category->image)}}' alt="" class="img-fluid">
-                            </div>
-                            <div class="right">
-                                <div class="cat-data">
-                                    <h2>{{trans($category->name)}}</h2>
-                                    <!-- <p>100 Products</p> -->
-                                </div>
-                            </div>
+            @foreach(getcategories() as $category)
+            <div class="col-lg-3">
+                <div class="cat-card">
+                    <div class="left">
+                        <img src='{{asset("upload/category/" . $category->image)}}' alt="" class="img-fluid">
+                    </div>
+                    <div class="right">
+                        <div class="cat-data">
+                            <h2>{{trans($category->name)}}</h2>
+                            <!-- <p>100 Products</p> -->
                         </div>
                     </div>
-                @endforeach
+                </div>
+            </div>
+            @endforeach
             @endif
         </div>
     </div>
@@ -137,88 +137,89 @@
         </div>
         <div class="row pb-3">
             @if($featured_products->isNotEmpty())
-                    @foreach($featured_products as $f_product)
+            @foreach($featured_products as $f_product)
 
-                            @php
-                                $images_prod = $f_product->product_images()->first();
-                                $inWishlist = $wishlist->contains('product_id', $f_product->id);
-                            @endphp
-                            <div class="col-md-3">
-                                <div class="card product-card">
-                                    <div class="product-image position-relative">
-                                        <a href="{{route("front.product", $f_product->slug)}}" class="product-img">
+            @php
+            $images_prod = $f_product->product_images()->first();
+            $inWishlist = $wishlist->contains('product_id', $f_product->id);
+            @endphp
+            <div class="col-md-3">
+                <div class="card product-card">
+                    <div class="product-image position-relative">
+                        <a href="{{route("front.product", $f_product->slug)}}" class="product-img">
 
-                                            <!-- <img class="card-img-top" src="images/product-1.jpg')}}" alt=""> -->
-                                            @if(!empty($images_prod))
-                                                <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
-                                            @else
-                                                <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
-                                            @endif
-                                        </a>
-                                        <a onclick="addToWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
-                                            <i id="addwishlist{{$f_product->id}}" class="far fa-heart"
-                                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
-                                        </a>
-                                        <a onclick="removefromWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
-                                            <i id="removewishlist{{$f_product->id}}" class="fas fa-heart"
-                                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
-                                        </a>
+                            <!-- <img class="card-img-top" src="images/product-1.jpg')}}" alt=""> -->
+                            @if(!empty($images_prod))
+                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
+                            @else
+                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
+                            @endif
+                        </a>
+                        <a onclick="addToWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
+                            <i id="addwishlist{{$f_product->id}}" class="far fa-heart"
+                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                        </a>
+                        <a onclick="removefromWishlist({{$f_product->id}})" class="whishlist" href="javascript:void(0)">
+                            <i id="removewishlist{{$f_product->id}}" class="redhearticon fas fa-heart"
+                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                        </a>
 
 
-                                        <div class="product-action">
-                                            @if ($f_product->qty > 0)
-                                                <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$f_product->id}})">
-                                                    <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
-                                                </a>
-                                            @else
-                                                <a class="btn btn-dark" href="javascript:void(0)">
-                                                    <i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="card-body text-center mt-3">
-                                        <a class="h6 link" href="product.php">{{trans($f_product->title)}}</a>
-                                        <div class="price mt-2">
-                                            <span class="h5"><strong>{{$f_product->price}}$</strong></span>
-                                            @if($f_product->compare_price > 0)
-                                            <span class="h6 text-underline"><del>{{$f_product->compare_price}}$</del></span>
-                                            @endif
-                                        </div>
+                        <div class="product-action">
+                            @if ($f_product->qty > 0)
+                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$f_product->id}})">
+                                <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
+                            </a>
+                            @else
+                            <a class="btn btn-dark" href="javascript:void(0)">
+                                <i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="card-body text-center mt-3">
+                        <a class="h6 link" href="product.php">{{trans($f_product->title)}}</a>
+                        <div class="price mt-2">
+                            <span class="h5"><strong>{{$f_product->price}}$</strong></span>
+                            @if($f_product->compare_price > 0)
+                            <span class="h6 text-underline"><del>{{$f_product->compare_price}}$</del></span>
+                            @endif
+                        </div>
 
-                                        <!-- this portion is for the product rating -->
+                        <!-- this portion is for the product rating -->
 
-                                        @php
-                                            $avg_rating_per = 0;
-                                            if ($f_product->product_ratings_count > 0) {
-                                                $avg_rating = number_format(($f_product->product_ratings_sum_rating / $f_product->product_ratings_count), 2);
-                                                $avg_rating_per = ($avg_rating * 100) / 5;
-                                            }
-                                         @endphp
-                                        <div style="display: flex; justify-content: center;">
-                                            <div class="star-rating product mt-2" title="">
-                                                <div class="back-stars">
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                        @php
+                        $avg_rating_per = 0;
+                        if ($f_product->product_ratings_count > 0) {
+                        $avg_rating = number_format(($f_product->product_ratings_sum_rating /
+                        $f_product->product_ratings_count), 2);
+                        $avg_rating_per = ($avg_rating * 100) / 5;
+                        }
+                        @endphp
+                        <div style="display: flex; justify-content: center;">
+                            <div class="star-rating product mt-2" title="">
+                                <div class="back-stars">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
 
-                                                    <div class="front-stars" style="width: {{$avg_rating_per}}%">
-                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <small class="pt-2 ps-1">({{$f_product->product_ratings_count}} Reviews)</small>
-                                        </div>
+                                    <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
                                     </div>
                                 </div>
                             </div>
-                    @endforeach
+                            <small class="pt-2 ps-1">({{$f_product->product_ratings_count}} Reviews)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
             @endif
         </div>
     </div>
@@ -231,85 +232,87 @@
         </div>
         <div class="row pb-3">
             @foreach($latest_product as $late_prod)
+            @php
+            $images_prod = $late_prod->product_images()->first();
+            $inWishlist = $wishlist->contains('product_id', $late_prod->id);
+            @endphp
+            <div class="col-md-3">
+                <div class="card product-card">
+                    <div class="product-image position-relative">
+                        <a href='{{route("front.product", $late_prod->slug)}}' class="product-img">
+                            @if(!empty($images_prod))
+                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
+                            @else
+                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
+                            @endif
+                        </a>
+                        <a onclick="addToWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
+                            <i id="addwishlist{{ $late_prod->id }}" class="far fa-heart"
+                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                        </a>
+                        <a onclick="removefromWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
+                            <i id="removewishlist{{$late_prod->id}}" class="redhearticon fas fa-heart"
+                                style="{{ $inWishlist ? '' : 'display:none;'}}"></i>
+
+                        </a>
+
+                        <div class="product-action">
+                            @if ($late_prod->qty > 0)
+                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$late_prod->id}})">
+                                <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
+                            </a>
+                            @else
+                            <a class="btn btn-dark" href="javascript:void(0)">
+                                <i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="card-body text-center mt-3">
+                        <a class="h6 link" href="product.php">{{trans($late_prod->title)}}</a>
+                        <div class="price mt-2">
+                            <span class="h5"><strong>{{$late_prod->price}}$</strong></span>
+                            @if($late_prod->compare_price > 0)
+                            <span class="h6 text-underline"><del>{{$late_prod->compare_price}}$</del></span>
+                            @endif
+                        </div>
+
+                        <!-- this portion for the product rating -->
                         @php
-                            $images_prod = $late_prod->product_images()->first();
-                            $inWishlist = $wishlist->contains('product_id', $late_prod->id);
+                        $avg_rating_per = 0;
+                        if ($late_prod->product_ratings_count > 0) {
+                        $avg_rating = number_format(($late_prod->product_ratings_sum_rating /
+                        $late_prod->product_ratings_count), 2);
+                        $avg_rating_per = ($avg_rating * 100) / 5;
+                        }
                         @endphp
-                        <div class="col-md-3">
-                            <div class="card product-card">
-                                <div class="product-image position-relative">
-                                    <a href='{{route("front.product", $late_prod->slug)}}' class="product-img">
-                                        @if(!empty($images_prod))
-                                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
-                                        @else
-                                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
-                                        @endif
-                                    </a>
-                                    <a onclick="addToWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
-                                        <i id="addwishlist{{ $late_prod->id }}" class="far fa-heart"
-                                            style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
-                                    </a>
-                                    <a onclick="removefromWishlist({{$late_prod->id}})" class="whishlist" href="javascript:void(0)">
-                                        <i id="removewishlist{{$late_prod->id}}" class="fas fa-heart"
-                                            style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
-                                    </a>
+                        <div style="display: flex; justify-content: center;">
+                            <div class="star-rating product mt-2" title="">
+                                <div class="back-stars">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
 
-                                    <div class="product-action">
-                                        @if ($late_prod->qty > 0)
-                                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$late_prod->id}})">
-                                                <i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
-                                            </a>
-                                        @else
-                                            <a class="btn btn-dark" href="javascript:void(0)">
-                                                <i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
-                                            </a>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="card-body text-center mt-3">
-                                    <a class="h6 link" href="product.php">{{trans($late_prod->title)}}</a>
-                                    <div class="price mt-2">
-                                        <span class="h5"><strong>{{$late_prod->price}}$</strong></span>
-                                        @if($late_prod->compare_price > 0)
-                                        <span class="h6 text-underline"><del>{{$late_prod->compare_price}}$</del></span>
-                                        @endif
-                                    </div>
-
-                                    <!-- this portion for the product rating -->
-                                    @php
-                                        $avg_rating_per = 0;
-                                        if ($late_prod->product_ratings_count > 0) {
-                                            $avg_rating = number_format(($late_prod->product_ratings_sum_rating / $late_prod->product_ratings_count), 2);
-                                            $avg_rating_per = ($avg_rating * 100) / 5;
-                                        }
-                                     @endphp
-                                    <div style="display: flex; justify-content: center;">
-                                        <div class="star-rating product mt-2" title="">
-                                            <div class="back-stars">
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-
-                                                <div class="front-stars" style="width: {{$avg_rating_per}}%">
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <small class="pt-2 ps-1">({{$late_prod->product_ratings_count}} Reviews)</small>
+                                    <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
                                     </div>
                                 </div>
                             </div>
+                            <small class="pt-2 ps-1">({{$late_prod->product_ratings_count}} Reviews)</small>
                         </div>
+                    </div>
+                </div>
+            </div>
             @endforeach
         </div>
     </div>
 </section>
 </main>
 
- @endsection
+@endsection

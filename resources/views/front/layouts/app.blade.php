@@ -311,10 +311,8 @@
                 }
             });
         }
-
+        $('.redhearticon').css({'color': 'red'});
         function addToWishlist(id) {
-
-
             var addwishlistid = "#addwishlist" + id;
             var removewishlistid = "#removewishlist" + id;
 
@@ -330,7 +328,10 @@
                         // Hide the add to wishlist icon
                         $(addwishlistid).hide();
                         // Show the remove from wishlist icon
-                        $(removewishlistid).css('display', 'block');
+                        $(removewishlistid).css({
+                            'display': 'block',
+                            'color': 'red'
+                        });
                         // Update the modal with the response message
                         $("#wishlist_model .modal-body").html(response.message);
                         // Show the modal
@@ -347,8 +348,6 @@
 
             var addwishlistid = "#addwishlist" + id;
             var removewishlistid = "#removewishlist" + id;
-
-
             $.ajax({
                 url: '{{route("account.remove_product_from_wislist")}}',
                 type: 'post',

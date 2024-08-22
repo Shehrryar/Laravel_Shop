@@ -67,11 +67,8 @@ class CartController extends Controller
 
     public function updateCart(Request $request)
     {
-
         $iteminfo = Cart::get($request->rowid);
-
         $product = Product::find($iteminfo->id);
-
         if ($product->track_qty == 'Yes') {
             if ($request->qty <= $product->qty) {
                 Cart::update($request->rowid, $request->qty);
