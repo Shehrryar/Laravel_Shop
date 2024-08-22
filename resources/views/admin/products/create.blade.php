@@ -213,8 +213,8 @@
                             <h2 class="h4 mb-3">Featured product</h2>
                             <div class="mb-3">
                                 <select name="is_featured" id="is_featured" class="form-control">
-                                    <option value="No">No</option>
-                                    <option value="Yes">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
                                 </select>
                                 <p class="error"></p>
                             </div>
