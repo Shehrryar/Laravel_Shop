@@ -68,9 +68,9 @@
                         <small class="pt-2 ps-1">({{$product->product_ratings_count}} Reviews)</small>
                     </div>
                     @if($product->compare_price > 0)
-                        <h2 class="price text-secondary"><del>{{$product->compare_price}}</del></h2>
+                        <h2 class="price text-secondary"><del>{{$product->compare_price}}$</del></h2>
                     @endif
-                    <h2 class="price ">{{$product->price}}</h2>
+                    <h2 class="price ">{{$product->price}}$</h2>
                     <p>{{$product->short_description}}</p>
                     @if ($product->qty > 0)
                         <a href="javascript:void(0)" onclick="addToCart({{$product->id}})" class="btn btn-dark"><i
@@ -262,9 +262,9 @@
                                             <div class="card-body text-center mt-3">
                                                 <a class="h6 link" href="">{{$relatedproduct->title}}</a>
                                                 <div class="price mt-2">
-                                                    <span class="h5"><strong>{{$relatedproduct->price}}</strong></span>
+                                                    <span class="h5"><strong>{{$relatedproduct->price}}$</strong></span>
                                                     @if($relatedproduct->compare_price > 0)
-                                                        <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}</del></span>
+                                                        <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}$</del></span>
                                                     @endif
                                                 </div>
                                             </div>

@@ -133,8 +133,10 @@
 										<div class="card-body text-center mt-3">
 											<a class="h6 link" href="product.php">{{trans($prod->title)}}</a>
 											<div class="price mt-2">
-												<span class="h5"><strong>{{$prod->price}}</strong></span>
-												<span class="h6 text-underline"><del>{{$prod->compared_price}}</del></span>
+												<span class="h5"><strong>{{$prod->price}}$</strong></span>
+												@if ($prod->compared_price> 0)
+												<span class="h6 text-underline"><del>{{$prod->compared_price}}</del></span>	
+												@endif
 											</div>
 										</div>                        
 									</div>                                               
@@ -167,34 +169,32 @@ rangeSlider = $(".js-range-slider").ionRangeSlider({
         apply_filter(); // Corrected function name
     }
 });
-				var slider = $(".js-range-slider").data("ionRangeSlider");
-				$(".brand-label").change(function(){
-					apply_filter();
+var slider = $(".js-range-slider").data("ionRangeSlider");
+$(".brand-label").change(function(){
+	apply_filter();
 				});
-				$("#sort").change(function(){
-					apply_filter();
+$("#sort").change(function(){
+	apply_filter();
 				});
-				function apply_filter(){
-					var brands = [];
-					$(".brand-label").each(function(){
-						if($(this).is(":checked")==true){
-							brands.push($(this).val());
-						}
-					});
-					var url = '{{url()->current()}}?';
-										if(brands.lenght>0){
-						url +='&brand='+brands.toString();
-					}
 
-					url += '&price_min='+slider.result.from+'&price_max='+slider.result.to;
+		
+function apply_filter(){
+	var brands = [];
+	$(".brand-label").each(function(){
+	if($(this).is(":checked")==true){
+	brands.push($(this).val());
+			}
+		});
+	var url = '{{url()->current()}}?';
+	if(brands.length > 0){
+		url +='&brand='+brands.toString();
+	}
 
+	url += '&price_min='+slider.result.from+'&price_max='+slider.result.to; 
+	url += '&sort='+$('#sort').val(); 
+	window.location.href= url;
 
-					// sorting 
-
-					url += '&sort='+$('#sort').val(); 
-					window.location.href= url;
-
-				}
+}
 
 
 		function addToWishlist(id) {
