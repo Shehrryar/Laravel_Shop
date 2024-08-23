@@ -21,12 +21,12 @@
                 <div id="product-carousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner bg-light">
                         @if($product->product_images)
-                            @foreach($product->product_images as $key => $productImage)
-                                <div class="carousel-item {{($key == 0) ? 'active' : ''}} ">
-                                    <img class="w-100 h-100" src="{{asset('upload/products/' . $productImage->image)}}"
-                                        alt="Image">
-                                </div>
-                            @endforeach
+                        @foreach($product->product_images as $key => $productImage)
+                        <div class="carousel-item {{($key == 0) ? 'active' : ''}} ">
+                            <img class="w-100 h-100" src="{{asset('upload/products/' . $productImage->image)}}"
+                                alt="Image">
+                        </div>
+                        @endforeach
                         @endif
                     </div>
                     <a class="carousel-control-prev" href="#product-carousel" data-bs-slide="prev">
@@ -68,15 +68,15 @@
                         <small class="pt-2 ps-1">({{$product->product_ratings_count}} Reviews)</small>
                     </div>
                     @if($product->compare_price > 0)
-                        <h2 class="price text-secondary"><del>{{$product->compare_price}}$</del></h2>
+                    <h2 class="price text-secondary"><del>{{$product->compare_price}}$</del></h2>
                     @endif
                     <h2 class="price ">{{$product->price}}$</h2>
                     <p>{{$product->short_description}}</p>
                     @if ($product->qty > 0)
-                        <a href="javascript:void(0)" onclick="addToCart({{$product->id}})" class="btn btn-dark"><i
-                                class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
+                    <a href="javascript:void(0)" onclick="addToCart({{$product->id}})" class="btn btn-dark"><i
+                            class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                     @else
-                        <a href="javascript:void(0)"><i class="fas fa-shopping-cart"></i> &nbsp;Out of Stock</a>
+                    <a href="javascript:void(0)"><i class="fas fa-shopping-cart"></i> &nbsp;Out of Stock</a>
                     @endif
                 </div>
             </div>
@@ -182,35 +182,35 @@
 
                                 </div>
                                 @if ($product->product_ratings->isNotEmpty())
-                                                            @foreach ($product->product_ratings as $rating)
-                                                                                        @php
-                                                                                            $ratingper = ($rating->rating * 100) / 5
-                                                                                        @endphp
+                                @foreach ($product->product_ratings as $rating)
+                                @php
+                                $ratingper = ($rating->rating * 100) / 5
+                                @endphp
 
-                                                                                        <div class="rating-group mb-4">
-                                                                                            <span> <strong>{{$rating->username}} </strong></span>
-                                                                                            <div class="star-rating mt-2" title="">
-                                                                                                <div class="back-stars">
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                <div class="rating-group mb-4">
+                                    <span> <strong>{{$rating->username}} </strong></span>
+                                    <div class="star-rating mt-2" title="">
+                                        <div class="back-stars">
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
 
-                                                                                                    <div class="front-stars" style="width:{{$ratingper}}%">
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="my-3">
-                                                                                                <p>{{$rating->comment}}</p>
-                                                                                            </div>
-                                                                                        </div>
-                                                            @endforeach
+                                            <div class="front-stars" style="width:{{$ratingper}}%">
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="my-3">
+                                        <p>{{$rating->comment}}</p>
+                                    </div>
+                                </div>
+                                @endforeach
                                 @endif
                             </div>
                         </div>
@@ -229,48 +229,87 @@
         <div class="col-md-12">
             <div id="related-products" class="carousel">
                 @if(!empty($showrelatedproduct))
-                            @foreach ($showrelatedproduct as $relatedproduct)
+                @foreach ($showrelatedproduct as $relatedproduct)
 
-                                        @php
-                                            $images_prod = $relatedproduct->product_images()->first()
-                                        @endphp
-                                        <div class="card product-card">
-                                            <div class="product-image position-relative">
-                                                <a href="" class="product-img">
+                @php
+                $images_prod = $relatedproduct->product_images()->first();
+                $inWishlist = $wishlist->contains('product_id', $relatedproduct->id);
+                @endphp
+                <div class="card product-card">
+                    <div class="product-image position-relative">
+                        <a href="{{route("front.product", $relatedproduct->slug)}}" class="product-img">
 
-                                                    <!-- <img class="card-img-top" src="images/product-1.jpg" alt=""> -->
-                                                    @if(!empty($images_prod))
-                                                        <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
-                                                    @else
-                                                        <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
-                                                    @endif
+                            <!-- <img class="card-img-top" src="images/product-1.jpg" alt=""> -->
+                            @if(!empty($images_prod))
+                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
+                            @else
+                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
+                            @endif
 
-                                                </a>
-                                                <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
-                                                <div class="product-action">
-                                                    @if ($relatedproduct->qty > 0)
-                                                        <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$product->id}})">
-                                                            <i class="fa fa-shopping-cart"></i> Add To Cart
-                                                        </a>
-                                                    @else
-                                                        <a class="btn btn-dark" href="javascript:void(0)">
-                                                            <i class="fa fa-shopping-cart"></i> Out of Stock
-                                                        </a>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            <div class="card-body text-center mt-3">
-                                                <a class="h6 link" href="">{{$relatedproduct->title}}</a>
-                                                <div class="price mt-2">
-                                                    <span class="h5"><strong>{{$relatedproduct->price}}$</strong></span>
-                                                    @if($relatedproduct->compare_price > 0)
-                                                        <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}$</del></span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
+                        </a>
 
-                            @endforeach
+                        <a onclick="addToWishlist({{$relatedproduct->id}})" class="whishlist" href="javascript:void(0)">
+                            <i id="addwishlist{{$relatedproduct->id}}" class="far fa-heart"
+                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                        </a>
+                        <a onclick="removefromWishlist({{$relatedproduct->id}})" class="whishlist"
+                            href="javascript:void(0)">
+                            <i id="removewishlist{{$relatedproduct->id}}" class="redhearticon fas fa-heart"
+                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                        </a>
+
+                        <div class="product-action">
+                            @if ($relatedproduct->qty > 0)
+                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$product->id}})">
+                                <i class="fa fa-shopping-cart"></i> Add To Cart
+                            </a>
+                            @else
+                            <a class="btn btn-dark" href="javascript:void(0)">
+                                <i class="fa fa-shopping-cart"></i> Out of Stock
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="card-body text-center mt-3">
+                        <a class="h6 link" href="">{{$relatedproduct->title}}</a>
+                        <div class="price mt-2">
+                            <span class="h5"><strong>{{$relatedproduct->price}}$</strong></span>
+                            @if($relatedproduct->compare_price > 0)
+                            <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}$</del></span>
+                            @endif
+                        </div>
+                        @php
+                        $avg_rating_per = 0;
+                        if ($relatedproduct->product_ratings_count > 0) {
+                        $avg_rating = number_format(($relatedproduct->product_ratings_sum_rating /
+                        $relatedproduct->product_ratings_count), 2);
+                        $avg_rating_per = ($avg_rating * 100) / 5;
+                        }
+                        @endphp
+                        <div style="display: flex; justify-content: center;">
+                            <div class="star-rating product mt-2" title="">
+                                <div class="back-stars">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+
+                                    <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="pt-2 ps-1">({{$relatedproduct->product_ratings_count}} Reviews)</small>
+                        </div>
+                    </div>
+                </div>
+
+                @endforeach
                 @endif
             </div>
         </div>
@@ -281,53 +320,53 @@
 @section('customJs')
 
 <script>
-    $("#productratingform").submit(function (event) {
-        event.preventDefault();
+$("#productratingform").submit(function(event) {
+    event.preventDefault();
 
-        $.ajax({
-            url: '{{ route("front.productRating", $product->id) }}',
-            type: 'post',
-            data: $(this).serializeArray(),
-            dataType: 'json',
-            success: function (response) {
-                if (response.status == false) {
-                    var errors = response.errors;
-                    if (errors && errors.name) {
-                        $("#name").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.name);
-                    } else {
-                        $("#name").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
-                    }
-
-                    if (errors && errors.email) {
-                        $("#email").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.email);
-                    } else {
-                        $("#email").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
-                    }
-
-                    if (errors && errors.rating) {
-                        $("#rating").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.rating);
-                    } else {
-                        $("#rating").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
-                    }
-
-                    if (errors && errors.review) {
-                        $("#review").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.review);
-                    } else {
-                        $("#review").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
-                    }
+    $.ajax({
+        url: '{{ route("front.productRating", $product->id) }}',
+        type: 'post',
+        data: $(this).serializeArray(),
+        dataType: 'json',
+        success: function(response) {
+            if (response.status == false) {
+                var errors = response.errors;
+                if (errors && errors.name) {
+                    $("#name").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.name);
                 } else {
-                    window.location.href = "{{route('front.product', $product->slug)}}";
+                    $("#name").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
                 }
+
+                if (errors && errors.email) {
+                    $("#email").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.email);
+                } else {
+                    $("#email").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
+                }
+
+                if (errors && errors.rating) {
+                    $("#rating").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.rating);
+                } else {
+                    $("#rating").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
+                }
+
+                if (errors && errors.review) {
+                    $("#review").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                        .html(errors.review);
+                } else {
+                    $("#review").removeClass('is-invalid').siblings("p").removeClass(
+                        'invalid-feedback').html('');
+                }
+            } else {
+                window.location.href = "{{route('front.product', $product->slug)}}";
             }
-        });
+        }
     });
+});
 </script>
 @endsection

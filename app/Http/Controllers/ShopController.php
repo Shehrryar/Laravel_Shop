@@ -8,6 +8,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\SubCategory;
+use App\Models\Wishlist;
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 class ShopController extends Controller
@@ -57,6 +59,10 @@ class ShopController extends Controller
             $products = $products->orderBy('id', 'DESC');
         }
         $products = $products->paginate(10);
+        $wishlist = collect();
+        if (!empty(Auth::user())) {
+            $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
+        }
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['products'] = $products;
@@ -66,6 +72,7 @@ class ShopController extends Controller
         $data['price_max'] = intval($request->get('price_max'));
         $data['price_min'] = intval($request->get('price_min'));
         $data['sort'] = $request->get('sort');
+        $data['wishlist'] = $wishlist;
         return view('front.shop', $data);
     }
     public function product($slug)
@@ -81,7 +88,7 @@ class ShopController extends Controller
         $related_products = [];
         if ($product != null) {
             $related_products = explode(',', $product->related_products);
-            $showrelatedproduct = Product::whereIn('id', $related_products)->with('product_images')->get();
+            $showrelatedproduct = Product::whereIn('id', $related_products)->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
         }
         $avg_rating = '0.00';
         if ($product->product_ratings_count > 0) {
@@ -93,8 +100,13 @@ class ShopController extends Controller
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
             $avg_rating_per = ($avg_rating*100)/5;
         }
+        $wishlist = collect();
+        if (!empty(Auth::user())) {
+            $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
+        }
 
         $data['product'] = $product;
+        $data['wishlist'] = $wishlist;
         $data['showrelatedproduct'] = $showrelatedproduct;
         $data['avg_rating'] = $avg_rating;
         $data['avg_rating_per'] = $avg_rating_per;

@@ -50,34 +50,34 @@
     <meta name="csrf-token" content="{{csrf_token()}}">
 
     <style>
-    .notification {
-        background-color: #555;
-        color: white;
-        text-decoration: none;
-        padding: 15px 26px;
-        position: relative;
-        display: inline-block;
-        border-radius: 2px;
-    }
+        .notification {
+            background-color: #555;
+            color: white;
+            text-decoration: none;
+            padding: 15px 26px;
+            position: relative;
+            display: inline-block;
+            border-radius: 2px;
+        }
 
-    .notification:hover {
-        background: red;
-    }
+        .notification:hover {
+            background: red;
+        }
 
-    .notification .badge {
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        padding: 5px 10px;
-        border-radius: 50%;
-        background: red;
-        color: white;
-    }
+        .notification .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            padding: 5px 10px;
+            border-radius: 50%;
+            background: red;
+            color: white;
+        }
 
-    .d-flex {
-        display: flex;
-        align-items: center;
-    }
+        .d-flex {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 
@@ -94,9 +94,9 @@
                 <div class="col-lg-6 col-6 text-left  d-flex justify-content-end align-items-center">
 
                     @if (Auth::check())
-                    <a href="{{route('account.profile')}}" class="nav-link text-dark">My Account</a>
+                        <a href="{{route('account.profile')}}" class="nav-link text-dark">My Account</a>
                     @else
-                    <a href="{{route('account.login')}}" class="nav-link text-dark">Login</a>
+                        <a href="{{route('account.login')}}" class="nav-link text-dark">Login</a>
                     @endif
 
                     <form action="">
@@ -132,24 +132,24 @@
           				<a class="nav-link active" aria-current="page" href="index.php" title="Products">Home</a>
                      </li> -->
                         @if(getcategories()->isNotEmpty())
-                        @foreach(getcategories() as $category)
-                        <li class="nav-item dropdown">
-                            <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
-                                onclick="show_category('{{ route('front.shop', [$category->slug]) }}')">
-                                {{ trans($category->name) }}
-                            </button>
+                            @foreach(getcategories() as $category)
+                                <li class="nav-item dropdown">
+                                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                                        onclick="show_category('{{ route('front.shop', [$category->slug]) }}')">
+                                        {{ trans($category->name) }}
+                                    </button>
 
-                            @if($category->sub_category->isNotEmpty())
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                @foreach($category->sub_category as $subcategory)
-                                <li><a class="dropdown-item nav-link"
-                                        href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{trans($subcategory->name)}}</a>
+                                    @if($category->sub_category->isNotEmpty())
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            @foreach($category->sub_category as $subcategory)
+                                                <li><a class="dropdown-item nav-link"
+                                                        href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{trans($subcategory->name)}}</a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
                                 </li>
-                                @endforeach
-                            </ul>
-                            @endif
-                        </li>
-                        @endforeach
+                            @endforeach
                         @endif
                     </ul>
                 </div>
@@ -160,15 +160,14 @@
                         <li class="nav-item dropdown">
                             <select id="languageSelect" class="form-control">
                                 @php
-                                $languages = \App\Models\Language::all();
+                                    $languages = \App\Models\Language::all();
                                 @endphp
                                 @foreach ($languages as $language)
-                                @if ($language->status == 1)
-                                <option value="{{ $language->Isocode }}"
-                                    {{ app()->getLocale() == $language->Isocode ? 'selected' : '' }}>
-                                    {{ trans($language->name) }}
-                                </option>
-                                @endif
+                                    @if ($language->status == 1)
+                                        <option value="{{ $language->Isocode }}" {{ app()->getLocale() == $language->Isocode ? 'selected' : '' }}>
+                                            {{ trans($language->name) }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                         </li>
@@ -272,134 +271,127 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
-        window.onscroll = function() {
-            myFunction()
-        };
+            window.onscroll = function () {
+                myFunction()
+            };
 
-        var navbar = document.getElementById("navbar");
-        var sticky = navbar.offsetTop;
+            var navbar = document.getElementById("navbar");
+            var sticky = navbar.offsetTop;
 
-        function myFunction() {
-            if (window.pageYOffset >= sticky) {
-                navbar.classList.add("sticky")
-            } else {
-                navbar.classList.remove("sticky");
+            function myFunction() {
+                if (window.pageYOffset >= sticky) {
+                    navbar.classList.add("sticky")
+                } else {
+                    navbar.classList.remove("sticky");
+                }
             }
-        }
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+
+            function addToCart(id) {
+
+                $.ajax({
+                    url: '{{route("front.addToCart")}}',
+                    type: 'post',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'Json',
+                    success: function (response) {
+                        if (response.status == true) {
+                            window.location.href = "{{route('front.cart')}}";
+                        } else {
+                            alert(respons.message);
+                        }
+                    }
+                });
             }
-        });
 
+            $('.redhearticon').css({ 'color': 'red' });
 
-        function addToCart(id) {
-
-            $.ajax({
-                url: '{{route("front.addToCart")}}',
-                type: 'post',
-                data: {
-                    id: id
-                },
-                dataType: 'Json',
-                success: function(response) {
-                    if (response.status == true) {
-                        window.location.href = "{{route('front.cart')}}";
-                    } else {
-                        alert(respons.message);
+            function addToWishlist(id) {
+                var addwishlistid = "#addwishlist" + id;
+                var removewishlistid = "#removewishlist" + id;
+                $.ajax({
+                    url: '{{ route("front.addtowishlist") }}',
+                    type: 'post',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status == true) {
+                            $(addwishlistid).css('display', 'none');
+                            $(removewishlistid).css('display', 'block');
+                            $("#wishlist_model .modal-body").html(response.message);
+                            $("#wishlist_model").modal('show');
+                        } else {
+                            // Redirect to login if not successful
+                            window.location.href = "{{ route('account.login') }}";
+                        }
                     }
-                }
-            });
-        }
-        $('.redhearticon').css({'color': 'red'});
-        function addToWishlist(id) {
-            var addwishlistid = "#addwishlist" + id;
-            var removewishlistid = "#removewishlist" + id;
+                });
+            }
 
-            $.ajax({
-                url: '{{ route("front.addtowishlist") }}',
-                type: 'post',
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == true) {
-                        // Hide the add to wishlist icon
-                        $(addwishlistid).hide();
-                        // Show the remove from wishlist icon
-                        $(removewishlistid).css({
-                            'display': 'block',
-                            'color': 'red'
-                        });
-                        // Update the modal with the response message
-                        $("#wishlist_model .modal-body").html(response.message);
-                        // Show the modal
-                        $("#wishlist_model").modal('show');
-                    } else {
-                        // Redirect to login if not successful
-                        window.location.href = "{{ route('account.login') }}";
+            function removefromWishlist(id) {
+                var addwishlistid = "#addwishlist" + id;
+                var removewishlistid = "#removewishlist" + id;
+                $.ajax({
+                    url: '{{route("account.remove_product_from_wislist")}}',
+                    type: 'post',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status == true) {
+
+                            $(addwishlistid).css('display', 'block');
+                            $(removewishlistid).css('display', 'none');
+
+                        }
                     }
-                }
-            });
-        }
-
-        function removefromWishlist(id) {
-
-            var addwishlistid = "#addwishlist" + id;
-            var removewishlistid = "#removewishlist" + id;
-            $.ajax({
-                url: '{{route("account.remove_product_from_wislist")}}',
-                type: 'post',
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == true) {
-
-                        $(addwishlistid).show();
-                        $(removewishlistid).css('display', 'none');
-
-                    }
-                }
-            });
-        }
+                });
+            }
 
 
-        document.getElementById('languageSelect').addEventListener('change', function() {
-            var selectedLanguage = this.value;
-            // Redirect to the selected language URL
-            var url = "{{ route('front.localizationcontroller', ':locale') }}";
-            url = url.replace(':locale', selectedLanguage);
-            window.location.href = url;
-        });
-
-
-        var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
-
-        // Loop through each item and add event listeners
-        dropdownItems.forEach(function(dropdown) {
-            dropdown.addEventListener('mouseenter', function() {
-                var dropdownMenu = this.querySelector('.dropdown-menu');
-                if (dropdownMenu) {
-                    dropdownMenu.classList.add('show');
-                }
-            });
-
-            dropdown.addEventListener('mouseleave', function() {
-                var dropdownMenu = this.querySelector('.dropdown-menu');
-                if (dropdownMenu) {
-                    dropdownMenu.classList.remove('show');
-                }
-            });
-        });
-
-        function show_category(url) {
-            if (url) {
+            document.getElementById('languageSelect').addEventListener('change', function () {
+                var selectedLanguage = this.value;
+                // Redirect to the selected language URL
+                var url = "{{ route('front.localizationcontroller', ':locale') }}";
+                url = url.replace(':locale', selectedLanguage);
                 window.location.href = url;
+            });
+
+
+            var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
+
+            // Loop through each item and add event listeners
+            dropdownItems.forEach(function (dropdown) {
+                dropdown.addEventListener('mouseenter', function () {
+                    var dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add('show');
+                    }
+                });
+
+                dropdown.addEventListener('mouseleave', function () {
+                    var dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.remove('show');
+                    }
+                });
+            });
+
+            function show_category(url) {
+                if (url) {
+                    window.location.href = url;
+                }
             }
-        }
         </script>
 
         @yield('customJs')
