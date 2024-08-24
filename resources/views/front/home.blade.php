@@ -221,6 +221,9 @@
             </div>
             @endforeach
             @endif
+            <div class="col-md-12 pt-5">
+						{{$featured_products->withQueryString()->links()}}
+			</div>
         </div>
     </div>
 </section>
@@ -310,6 +313,9 @@
                 </div>
             </div>
             @endforeach
+            <div class="col-md-12 pt-5">
+						{{$latest_product->withQueryString()->links()}}
+			</div>
         </div>
     </div>
 </section>

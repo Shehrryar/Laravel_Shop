@@ -18,10 +18,19 @@ class FrontController extends Controller
         if (!empty(Auth::user())) {
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
-        $product = Product::where('is_featured', 1)->withCount('product_ratings')->withSum('product_ratings', 'rating')->where('status', 1)->get();
-        $latest_product = Product::OrderBy('id', 'DESC')->where('status', 1)->withCount('product_ratings')->withSum('product_ratings', 'rating')->take(8)->get();
+        $featured_products = Product::where('is_featured', 1)
+                    ->where('status', 1)
+                    ->withCount('product_ratings')
+                    ->withSum('product_ratings', 'rating')
+                    ->paginate(8);
+
+        $latest_product = Product::orderBy('id', 'DESC')
+                        ->where('status', 1)
+                        ->withCount('product_ratings')
+                        ->withSum('product_ratings', 'rating')
+                        ->paginate(8);
         $data['wishlist'] = $wishlist;
-        $data['featured_products'] = $product;
+        $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
         return view('front.home', $data);
     }

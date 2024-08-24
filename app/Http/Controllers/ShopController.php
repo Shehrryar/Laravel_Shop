@@ -56,7 +56,7 @@ class ShopController extends Controller
 
             }
         } else {
-            $products = $products->orderBy('id', 'DESC');
+            $products = $products->withCount('product_ratings')->withSum('product_ratings', 'rating')->orderBy('id', 'DESC');
         }
         $products = $products->paginate(10);
         $wishlist = collect();

@@ -155,6 +155,35 @@
 																		<span class="h6 text-underline"><del>{{$prod->compared_price}}</del></span>
 																	@endif
 																</div>
+
+																<div style="display: flex; justify-content: center;">
+																@php
+																	$avg_rating_per = 0;
+																	if ($prod->product_ratings_count > 0) {
+																	$avg_rating = number_format(($prod->product_ratings_sum_rating /
+																	$prod->product_ratings_count), 2);
+																	$avg_rating_per = ($avg_rating * 100) / 5;
+																	}
+																@endphp
+																	<div class="star-rating product mt-2" title="">
+																		<div class="back-stars">
+																			<i class="fa fa-star" aria-hidden="true"></i>
+																			<i class="fa fa-star" aria-hidden="true"></i>
+																			<i class="fa fa-star" aria-hidden="true"></i>
+																			<i class="fa fa-star" aria-hidden="true"></i>
+																			<i class="fa fa-star" aria-hidden="true"></i>
+
+																			<div class="front-stars" style="width: {{$avg_rating_per}}%">
+																				<i class="fa fa-star" aria-hidden="true"></i>
+																				<i class="fa fa-star" aria-hidden="true"></i>
+																				<i class="fa fa-star" aria-hidden="true"></i>
+																				<i class="fa fa-star" aria-hidden="true"></i>
+																				<i class="fa fa-star" aria-hidden="true"></i>
+																			</div>
+																		</div>
+																	</div>
+																	<small class="pt-2 ps-1">({{$prod->product_ratings_count}} Reviews)</small>
+																</div>
 															</div>
 														</div>
 													</div>
