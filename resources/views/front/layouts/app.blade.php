@@ -78,6 +78,30 @@
             display: flex;
             align-items: center;
         }
+        
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        .dropdown-submenu>.dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            /* Show the submenu to the right */
+            margin-top: -1px;
+        }
+
+        .dropdown-submenu-left>.dropdown-menu {
+            left: auto;
+            right: 100%;
+            /* Show the submenu to the left */
+        }
+
+        /* Show the submenu on hover */
+        .dropdown-submenu:hover>.dropdown-menu {
+            display: block;
+        }
     </style>
 </head>
 
@@ -128,30 +152,31 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!-- <li class="nav-item">
-          				<a class="nav-link active" aria-current="page" href="index.php" title="Products">Home</a>
-                     </li> -->
                         @if(getcategories()->isNotEmpty())
                             @foreach(getcategories() as $category)
                                 <li class="nav-item dropdown">
-                                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
-                                        onclick="show_category('{{ route('front.shop', [$category->slug]) }}')">
+                                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
                                         {{ trans($category->name) }}
                                     </button>
 
                                     @if($category->sub_category->isNotEmpty())
                                         <ul class="dropdown-menu dropdown-menu-dark">
                                             @foreach($category->sub_category as $subcategory)
-                                                <li>
+                                                <li class="dropdown-submenu">
                                                     <a class="dropdown-item nav-link"
-                                                        href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{trans($subcategory->name)}}</a>
+                                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug]) }}">
+                                                        {{ trans($subcategory->name) }}
+                                                    </a>
 
                                                     @if($subcategory->sub_sub_category->isNotEmpty()) <!-- Check for SubSubCategory -->
                                                         <ul class="dropdown-menu dropdown-menu-dark">
                                                             @foreach($subcategory->sub_sub_category as $subSubCategory)
-                                                                <li><a class="dropdown-item nav-link"
-                                                                        href="{{route('front.shop', [$category->slug, $subcategory->slug, $subSubCategory->slug])}}">
-                                                                        {{ trans($subSubCategory->name) }}</a>
+                                                                <li>
+                                                                    <a class="dropdown-item nav-link"
+                                                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug, $subSubCategory->slug]) }}">
+                                                                        {{ trans($subSubCategory->name) }}
+                                                                    </a>
                                                                 </li>
                                                             @endforeach
                                                         </ul>
@@ -165,6 +190,7 @@
                         @endif
                     </ul>
                 </div>
+
                 <div class="right-nav py-0 d-flex align-items-center ">
 
                     <ul class="navbar-nav ml-auto">
@@ -380,23 +406,50 @@
             });
 
 
-            var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
-            // Loop through each item and add event listeners
-            dropdownItems.forEach(function (dropdown) {
-                dropdown.addEventListener('mouseenter', function () {
-                    var dropdownMenu = this.querySelector('.dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.add('show');
-                    }
+            document.addEventListener('DOMContentLoaded', function () {
+                var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
+
+                // Loop through each dropdown item and add event listeners
+                dropdownItems.forEach(function (dropdown) {
+                    dropdown.addEventListener('mouseenter', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.add('show');
+                            dropdown.classList.add('show');
+                        }
+                    });
+
+                    dropdown.addEventListener('mouseleave', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.remove('show');
+                            dropdown.classList.remove('show');
+                        }
+                    });
                 });
 
-                dropdown.addEventListener('mouseleave', function () {
-                    var dropdownMenu = this.querySelector('.dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.remove('show');
-                    }
+                var subDropdownItems = document.querySelectorAll('.dropdown-submenu');
+
+                // Loop through each sub-dropdown item and add event listeners
+                subDropdownItems.forEach(function (subDropdown) {
+                    subDropdown.addEventListener('mouseenter', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.add('show');
+                            subDropdown.classList.add('show');
+                        }
+                    });
+
+                    subDropdown.addEventListener('mouseleave', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.remove('show');
+                            subDropdown.classList.remove('show');
+                        }
+                    });
                 });
             });
+
 
             function show_category(url) {
                 if (url) {
