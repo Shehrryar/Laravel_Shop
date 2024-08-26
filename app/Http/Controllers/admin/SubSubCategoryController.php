@@ -44,8 +44,6 @@ class SubSubCategoryController extends Controller
     }
     public function store(Request $request){
 
-        print_r($request->all());
-        exit;
         $validater = Validator::make($request->all(),[
             'name'=>'required',
             'slug'=>'required|unique:sub_sub_categories',

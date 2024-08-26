@@ -24,6 +24,22 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
+
+					<div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Name">
+
+                            </div>
+                            <p id="para_name"></p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email">Slug</label>
+                                <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug">
+                            </div>
+                            <p id="para_slug"></p>
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <label for="name">Category</label>
@@ -40,7 +56,7 @@
                             <p id="para_cat"></p>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="mb-3">
                                 <label for="name">Sub Category</label>
                                 <select name="subcategory" id="subcategory" class="form-control">
@@ -55,24 +71,6 @@
                             </div>
                             <p id="para_cat"></p>
                         </div>
-
-
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="name">Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Name">
-
-                            </div>
-                            <p id="para_name"></p>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="email">Slug</label>
-                                <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug">
-
-                            </div>
-                            <p id="para_slug"></p>
 
                         </div>
                         <div class="col-md-6">
