@@ -8,18 +8,19 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\SubCategory;
+use App\Models\SubSubCategory;
 use App\Models\Wishlist;
-
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 class ShopController extends Controller
 {
-    public function index(Request $request, $catslug = null, $subcatslug = null)
+    public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null )
     {
 
         $subcategroy_selected = "";
         $categroy_selected = "";
         $brandsArray = [];
+        $subsubcategroy_selected = "";
 
         $categories = Category::orderBy('name', 'DESC')->with('sub_category')->where('status', 1)->get();
         $brands = Brand::orderBy('name', 'DESC')->where('status', 1)->get();
@@ -35,6 +36,11 @@ class ShopController extends Controller
             $subcategroy = SubCategory::where('slug', $subcatslug)->first();
             $products = $products->where('sub_category_id', $subcategroy->id);
             $subcategroy_selected = $subcategroy->id;
+        }
+        if (!empty($subsubcatslug)) {
+            $subsubcategroy = SubSubCategory::where('slug', $subsubcatslug)->first();
+            $products = $products->where('sub_sub_category_id', $subsubcategroy->id);
+            $subsubcategroy_selected = $subsubcategroy->id;
         }
 
         if (!empty($request->get('brand'))) {
@@ -67,6 +73,7 @@ class ShopController extends Controller
         $data['brands'] = $brands;
         $data['products'] = $products;
         $data['subcategroy_selected'] = $subcategroy_selected;
+        $data['subsubcategroy_selected'] = $subsubcategroy_selected;
         $data['categroy_selected'] = $categroy_selected;
         $data['brandsArray'] = $brandsArray;
         $data['price_max'] = intval($request->get('price_max'));

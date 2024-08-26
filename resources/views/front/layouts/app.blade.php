@@ -142,8 +142,20 @@
                                     @if($category->sub_category->isNotEmpty())
                                         <ul class="dropdown-menu dropdown-menu-dark">
                                             @foreach($category->sub_category as $subcategory)
-                                                <li><a class="dropdown-item nav-link"
+                                                <li>
+                                                    <a class="dropdown-item nav-link"
                                                         href="{{route('front.shop', [$category->slug, $subcategory->slug])}}">{{trans($subcategory->name)}}</a>
+
+                                                    @if($subcategory->sub_sub_category->isNotEmpty()) <!-- Check for SubSubCategory -->
+                                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                                            @foreach($subcategory->sub_sub_category as $subSubCategory)
+                                                                <li><a class="dropdown-item nav-link"
+                                                                        href="{{route('front.shop', [$category->slug, $subcategory->slug, $subSubCategory->slug])}}">
+                                                                        {{ trans($subSubCategory->name) }}</a>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -369,7 +381,6 @@
 
 
             var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
-
             // Loop through each item and add event listeners
             dropdownItems.forEach(function (dropdown) {
                 dropdown.addEventListener('mouseenter', function () {
