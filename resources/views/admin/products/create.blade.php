@@ -1,8 +1,5 @@
 @extends('admin.layout.app')
-
 @section('content')
-
-
 <section class="content-header">
     <div class="container-fluid my-2">
         <div class="row mb-2">
@@ -41,7 +38,6 @@
                                         <input type="text" name="slug" id="slug" class="form-control"
                                             placeholder="Slug">
                                         <p class="error"></p>
-
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -79,7 +75,6 @@
                         </div>
                     </div>
                     <div class="row" id="productgallery">
-
                     </div>
                     <div class="card mb-3">
                         <div class="card-body">
@@ -116,7 +111,6 @@
                                         <label for="sku">SKU (Stock Keeping Unit)</label>
                                         <input type="text" name="sku" id="sku" class="form-control" placeholder="sku">
                                         <p class="error"></p>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -134,7 +128,6 @@
                                                 name="track_qty" value="1" checked>
                                             <label for="track_qty" class="custom-control-label">Track Quantity</label>
                                             <p class="error"></p>
-
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -166,15 +159,10 @@
                                 <label for="category">Category</label>
                                 <select name="category" id="category" class="form-control">
                                     <option value="">Select a Category</option>
-
                                     @if($categories->isNotEmpty())
-
                                         @foreach($categories as $cati_data)
-
                                             <option value="{{$cati_data->id}}">{{$cati_data->name}}</option>
-
                                         @endforeach
-
                                     @endif
                                 </select>
                                 <p class="error"></p>
@@ -185,6 +173,13 @@
                                     <option value="">Select a Sub Category</option>
                                 </select>
                             </div>
+
+                            <div class="mb-3">
+                                <label for="subsub_category">Sub category</label>
+                                <select name="subsub_category" id="subsub_category" class="form-control">
+                                    <option value="">Select a Sub SubCategory</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="card mb-3">
@@ -193,15 +188,10 @@
                             <div class="mb-3">
                                 <select name="brand" id="brand" class="form-control">
                                     <option value="">Select the Brand</option>
-
                                     @if($brands->isNotEmpty())
-
                                         @foreach($brands as $brandi)
-
                                             <option value="{{$brandi->id}}">{{$brandi->name}}</option>
-
                                         @endforeach
-
                                     @endif 
 
                                </select>
@@ -220,8 +210,6 @@
                             </div>
                         </div>
                     </div>
-
-
                     <div class="card mb-3">
                         <div class="card-body">
                             <h2 class="h4 mb-3">Related product</h2>
@@ -233,29 +221,19 @@
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
-
             <div class="pb-5 pt-3">
                 <button type="submit" class="btn btn-primary">Add New</button>
                 <a href='{{route("product.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
             </div>
         </div>
-
     </form>
     <!-- /.card -->
 </section>
-
-
 @endsection
-
 @section('customjs') 
-
 <script>
-
     $('.releated-product').select2({
         ajax: {
             url: '{{ route("product.getProducts") }}',
@@ -270,14 +248,9 @@
             }
         }
     });
-
     $("#title").change(function () {
-
         var element = $(this).val();
-
         $("button[type=submit]").prop('disabled', true);
-
-
         $.ajax({
             url: '{{route("getslug")}}',
             type: 'get',
@@ -285,26 +258,17 @@
             dataType: 'json', // 'datatype' should be 'dataType'
             success: function (response) {
                 $("button[type=submit]").prop('disabled', false);
-
                 if (response['status'] == true) {
-
                     $("#slug").val(response['slug']);
                 } else {
                     console.log("there is not response");
                 }
             },
-
         });
-
     });
-
-
     $("#productform").submit(function (event) {
-
         event.preventDefault();
-
         var formarray = $("#productform").serializeArray();
-
         $.ajax({
             url: '{{route("product.store")}}',
             type: 'post',
@@ -321,20 +285,17 @@
                     $.each(errors, function (key, value) {
                         $(`#${key}`).addClass("is-invalid").siblings('p').addClass('invalid-feedback').html(value);
                     });
-
                 }
             },
             error: function () {
                 console.log("something went wrong");
             }
-
         });
     });
+
+
     $("#category").change(function () {
-
         var category_id = $(this).val();
-
-
         $.ajax({
             url: '{{route("productsubcat.index")}}',
             type: 'get',
@@ -342,24 +303,36 @@
             dataType: 'json',
             success: function (response) {
                 $("#sub_category").find("option").not(":first").remove();
-
                 $.each(response['SubCategory'], function (key, item) {
-
                     $("#sub_category").append(`<option value ='${item.id}'>${item.name}</option>`)
-
-
                 });
-
-
-
             },
             error: function () {
                 console.log("something went wrong");
             }
-
         });
-
     });
+
+
+    $("#sub_category").change(function () {
+        var subcategory_id = $(this).val();
+        $.ajax({
+            url: '{{route("productsubcat.subcategory")}}',
+            type: 'get',
+            data: { subcategory_id: subcategory_id },
+            dataType: 'json',
+            success: function (response) {
+                $("#subsub_category").find("option").not(":first").remove();
+                $.each(response['SubSubCategory'], function (key, item) {
+                    $("#subsub_category").append(`<option value ='${item.id}'>${item.name}</option>`)
+                });
+            },
+            error: function () {
+                console.log("something went wrong");
+            }
+        });
+    });
+
 
     Dropzone.autoDiscover = false;
     const dropzone = $("#image").dropzone({
@@ -372,7 +345,6 @@
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }, success: function (file, response) {
             $("#image_id").val(response.image_id);
-
             var html = `<div class="card" id="image_row_${response['image_id']}" style="width: 18rem;">
      <input type="hidden" name="image_array[]" value="${response['image_id']}">
   <img class="card-img-top" src="${response['imagepath']}" alt="Card image cap">
@@ -380,20 +352,14 @@
     <a href="javascript:void(0)" onclick="delete_image(${response['image_id']})" class="btn btn-danger">Delete</a>
   </div>
 </div>`;
-
             $('#productgallery').append(html);
         },
         complete: function (file) {
             this.removeFile(file);
         }
-
     });
-
     function delete_image(id) {
         $("#image_row_" + id).remove();
     }
-
-
 </script>
-
 @endsection

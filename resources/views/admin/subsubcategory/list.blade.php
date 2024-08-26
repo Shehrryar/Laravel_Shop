@@ -70,7 +70,7 @@
 										<tr>
 											<td>{{ $scatname->id}}</td>
 											<td>{{ $scatname->name}}</td>
-											<th>Sub Category</th>
+											<td>{{ $scatname->subcatname}}</td>
 											<td>{{ $scatname->catnami}}</td>
 											<td>{{ $scatname->slug}}</td>
 

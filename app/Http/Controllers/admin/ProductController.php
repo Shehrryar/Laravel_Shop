@@ -65,6 +65,7 @@ class ProductController extends Controller
             $product->status = $request->status;
             $product->categories_id = $request->category;
             $product->sub_category_id = $request->sub_category;
+            $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
             $product->is_featured = $request->is_featured;
             $product->short_description = $request->short_description;
@@ -154,6 +155,7 @@ class ProductController extends Controller
             $product->status = $request->status;
             $product->categories_id = $request->category;
             $product->sub_category_id = $request->sub_category;
+            $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
             $product->is_featured = $request->is_featured;
             $product->short_description = $request->short_description;
@@ -269,6 +271,7 @@ class ProductController extends Controller
                     'compare_price' => $data['compare_price'],
                     'categories_id' => $data['categories_id'],
                     'sub_category_id' => $data['sub_category_id'],
+                    'sub_sub_category_id' => $data['sub_sub_category_id'],
                     'brands_id' => $data['brands_id'],
                     'is_featured' => $data['is_featured'] === 'Yes' ? true : false,
                     'sku' => $data['sku'],

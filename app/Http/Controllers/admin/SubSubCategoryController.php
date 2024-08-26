@@ -1,17 +1,14 @@
 <?php
-
 namespace App\Http\Controllers\admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\SubCategory;
+use Illuminate\Support\Facades\Validator;
 use App\Models\SubSubCategory;
-
 class SubSubCategoryController extends Controller
 {
     public function index(Request $request){
-        
         $subsubcategories = SubSubCategory::select(
             'sub_sub_categories.*',  
             'sub_categories.name as subcatname',  
@@ -20,8 +17,6 @@ class SubSubCategoryController extends Controller
         ->leftJoin('sub_categories', 'sub_categories.id', '=', 'sub_sub_categories.subcategory_id') 
         ->leftJoin('categories', 'categories.id', '=', 'sub_categories.category_id')  
         ->latest('sub_sub_categories.id')->paginate(10);
-    
-    
         if(!empty($request->get('keyword'))){
             $subsubcategories = $subsubcategories->where('sub_categories.name','like','%'.$request->get('keyword').'%');
         }
@@ -39,11 +34,9 @@ class SubSubCategoryController extends Controller
         $subcat_data = SubCategory::orderBy('name','ASC')->get();
         $data['cat_data']= $cat_data;
         $data['subcat_data']= $subcat_data;
-
         return view('admin.subsubcategory.create', $data);
     }
     public function store(Request $request){
-
         $validater = Validator::make($request->all(),[
             'name'=>'required',
             'slug'=>'required|unique:sub_sub_categories',
@@ -52,7 +45,6 @@ class SubSubCategoryController extends Controller
             'status'=>'required',
         ]);
         if($validater->passes()){
-
             $subsubcategory = new SubSubCategory();
             $subsubcategory->name = $request->name;
             $subsubcategory->slug = $request->slug;
@@ -72,6 +64,5 @@ class SubSubCategoryController extends Controller
                 'error'=>$validater->errors()
             ]);
         }
-
     }
 }

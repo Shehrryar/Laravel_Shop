@@ -21,8 +21,6 @@ use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\admin\LanguageController;
 use App\Http\Controllers\admin\OrderController;
 use Laravel\Socialite\Facades\Socialite;
-
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,16 +41,12 @@ Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.
 Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.deleteitem.cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
-
 Route::get('/thanks', [CartController::class, 'thankyou'])->name('front.thankyou');
-
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
 Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
-
-
 Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
 
 
@@ -127,7 +121,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/subcategory/{subcategory}', [SubCategoryController::class, 'destroy'])->name('subcategory.delete');
 
 
-                // sub-category routes
+        // sub-category routes
 
         Route::get('/subsubcategory', [SubSubCategoryController::class, 'index'])->name('subsubcategories.index');
         Route::get('/subsubcategory/create', [SubSubCategoryController::class, 'create'])->name('subsubcategory.create');
@@ -162,6 +156,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
         Route::post('/product', [ProductController::class, 'store'])->name('product.store');
         Route::get('/product_subcatageries', [ProductSubCategoryController::class, 'index'])->name('productsubcat.index');
+        Route::get('/product_subsubcatageries', [ProductSubCategoryController::class, 'subcategory'])->name('productsubcat.subcategory');
+
         Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
         Route::put('/product/{productupadate}', [ProductController::class, 'update'])->name('product.update');
         Route::post('/product-images/update', [ProductImageControlller::class, 'update'])->name('product-images.update');
@@ -197,8 +193,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/coupons/{id}/edit', [DiscountCodeController::class, 'edit'])->name('coupon.edit');
         Route::put('/coupons/{id}/update', [DiscountCodeController::class, 'update'])->name('coupon.update');
         Route::delete('/coupons/{id}/delete', [DiscountCodeController::class, 'destroy'])->name('coupon.delete');
-
-
 
 
         // dashboard

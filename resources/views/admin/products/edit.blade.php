@@ -348,6 +348,7 @@
             }
         });
     });
+
     $("#category").change(function () {
         var category_id = $(this).val();
         $.ajax({
@@ -366,6 +367,7 @@
             }
         });
     });
+    
     Dropzone.autoDiscover = false;
     const dropzone = $("#image").dropzone({
         url: "{{route('product-images.update')}}",

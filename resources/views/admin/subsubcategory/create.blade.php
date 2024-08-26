@@ -69,7 +69,7 @@
 
                                 </select>
                             </div>
-                            <p id="para_cat"></p>
+                            <p id="para_subcat"></p>
                         </div>
 
                         </div>
@@ -126,6 +126,12 @@ $(document).ready(function() {
                         // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
                         $('#para_cat').html(errors['category']);
                     }
+                    if (errors['subcategory']) {
+                        // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
+                        $('#para_subcat').html(errors['subcategory']);
+                    }
+
+                    
                 }
             },
             error: function(jqXHR, exception) {
