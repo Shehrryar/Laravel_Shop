@@ -69,6 +69,10 @@ class ShopController extends Controller
         if (!empty(Auth::user())) {
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
+        if (empty($request->get('price_max'))) {
+            $request->merge(['price_max' => 1000]);
+        }
+        
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['products'] = $products;

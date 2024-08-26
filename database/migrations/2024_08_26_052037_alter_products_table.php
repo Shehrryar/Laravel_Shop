@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->foreignId('sub_sub_category_id')
                 ->nullable()
                 ->constrained('sub_sub_categories')
-                ->onDelete('cascade')
+                ->cascadeOnDelete()
                 ->after('sub_category_id');
         });
     }

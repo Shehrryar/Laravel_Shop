@@ -155,7 +155,8 @@
                         @if(getcategories()->isNotEmpty())
                             @foreach(getcategories() as $category)
                                 <li class="nav-item dropdown">
-                                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
+                                    
+                                    <button onclick="show_category('{{ route('front.shop', $category->slug) }}')" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
                                         aria-expanded="false">
                                         {{ trans($category->name) }}
                                     </button>

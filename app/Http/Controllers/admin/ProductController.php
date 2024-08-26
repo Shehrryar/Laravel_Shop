@@ -25,7 +25,6 @@ class ProductController extends Controller
     }
     public function create()
     {
-
         $data = [];
         $categories = Category::orderBy('name', 'ASC')->get();
         // $subcategories = SubCategory::where('category_id', $product->categories_id)->get();

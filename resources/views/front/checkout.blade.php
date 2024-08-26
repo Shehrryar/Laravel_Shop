@@ -24,7 +24,6 @@
         </ul>
     </div>
 @endif
-
 <section class="section-9 pt-4">
     <form action="" id="order_form" method="post">
         <div class="container">
