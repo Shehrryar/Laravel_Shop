@@ -8,7 +8,7 @@
 	<div class="container-fluid my-2">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1>Create Sub Category</h1>
+				<h1>Create Sub SubCategory</h1>
 			</div>
 			<div class="col-sm-6 text-right">
 				<a href="{{route('subcategories.index')}}" class="btn btn-primary">Back</a>
@@ -39,9 +39,25 @@
 								</select>
 							</div>
 							<p id="para_cat"></p>
-
-
 						</div>
+
+						<div class="col-md-6" >
+						<div class="mb-3">
+								<label for="name">Sub Category</label>
+								<select name="category" id="category" class="form-control">
+									<option value="">Select a SubCategory</option>
+									@if($subcat_data->isNotEmpty())
+									@foreach($subcat_data as $subcati_data)
+									<option value="{{$subcati_data->id}}">{{$subcati_data->name}}</option>
+									@endforeach
+									@endif
+
+								</select>
+							</div>
+							<p id="para_cat"></p>
+						</div>
+
+
 						<div class="col-md-6">
 							<div class="mb-3">
 								<label for="name">Name</label>

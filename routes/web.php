@@ -9,6 +9,7 @@ use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\imageuploadcontroller;
 use App\Http\Controllers\admin\SubCategoryController;
+use App\Http\Controllers\admin\SubSubCategoryController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\ProductSubCategoryController;
@@ -125,6 +126,16 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/subcategory/{subcategory}', [SubCategoryController::class, 'update'])->name('subcategory.update');
         Route::delete('/subcategory/{subcategory}', [SubCategoryController::class, 'destroy'])->name('subcategory.delete');
 
+
+                // sub-category routes
+
+        Route::get('/subsubcategory', [SubSubCategoryController::class, 'index'])->name('subsubcategories.index');
+        Route::get('/subsubcategory/create', [SubSubCategoryController::class, 'create'])->name('subsubcategory.create');
+        // Route::post('/subcategory/store', [SubSubCategoryController::class, 'store'])->name('subcategory.store');
+        // Route::get('/subcategory/{subcatedit}/edit', [SubSubCategoryController::class, 'edit'])->name('subcategory.edit');
+        // Route::put('/subcategory/{subcategory}', [SubSubCategoryController::class, 'update'])->name('subcategory.update');
+        // Route::delete('/subcategory/{subcategory}', [SubSubCategoryController::class, 'destroy'])->name('subcategory.delete');
+                
         // these route for the brand
 
         Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');

@@ -10,7 +10,7 @@
 								<h1>Sub Sub Categories</h1>
 							</div>
 							<div class="col-sm-6 text-right">
-								<a href='{{route("subcategory.create")}}' class="btn btn-primary">New Sub Category</a>
+								<a href='{{route("subsubcategory.create")}}' class="btn btn-primary">New Sub SubCategory</a>
 							</div>
 						</div>
 					</div>
@@ -26,9 +26,9 @@
 
 							<div class="card-header">
 
-								<div class="card-title">
+								<!-- <div class="card-title">
 							<button class="btn btn-default" type="button" onclick="window.location.href='{{route("subcategories.index")}}'">Reset</button>
-								</div>
+								</div> -->
 
 
 								<div class="card-tools">
@@ -53,6 +53,7 @@
 										<tr>
 											<th width="60">ID</th>
 											<th>Name</th>
+											<th>Sub Category</th>
 											<th>Category</th>
 											<th>Slug</th>
 											<th width="100">Status</th>
@@ -61,14 +62,15 @@
 									</thead>
 									<tbody>
 
-										@if($subcategories->isNotEmpty())
+										@if($subsubcategories->isNotEmpty())
 
-										@foreach($subcategories as $scatname)
+										@foreach($subsubcategories as $scatname)
 
 										
 										<tr>
 											<td>{{ $scatname->id}}</td>
 											<td>{{ $scatname->name}}</td>
+											<th>Sub Category</th>
 											<td>{{ $scatname->catnami}}</td>
 											<td>{{ $scatname->slug}}</td>
 
@@ -112,7 +114,7 @@
 							</div>
 							<div class="card-footer clearfix">
 
-								 {{ $subcategories->links() }}
+								 {{ $subsubcategories->links() }}
 							</div>
 						</div>
 					</div>
