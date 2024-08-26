@@ -42,4 +42,38 @@ class SubSubCategoryController extends Controller
 
         return view('admin.subsubcategory.create', $data);
     }
+    public function store(Request $request){
+
+        print_r($request->all());
+        exit;
+        $validater = Validator::make($request->all(),[
+            'name'=>'required',
+            'slug'=>'required|unique:sub_sub_categories',
+            'category'=>'required',
+            'subcategory'=>'required',
+            'status'=>'required',
+        ]);
+        if($validater->passes()){
+
+            $subsubcategory = new SubSubCategory();
+            $subsubcategory->name = $request->name;
+            $subsubcategory->slug = $request->slug;
+            $subsubcategory->category_id = $request->category;
+            $subsubcategory->subcategory_id = $request->subcategory;
+            $subsubcategory->status = $request->status;
+            $subsubcategory->save();
+            $request->session()->flash("success","Sub SubCatagory is added");
+            return response()->json([
+                'status'=>true,
+                'message'=> 'Sub SubCatagory is added'
+            ]);
+        }
+        else{
+            return response([
+                'status'=>false,
+                'error'=>$validater->errors()
+            ]);
+        }
+
+    }
 }
