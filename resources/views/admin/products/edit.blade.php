@@ -1,8 +1,5 @@
 @extends('admin.layout.app')
-
 @section('content')
-
-
 <section class="content-header">
     <div class="container-fluid my-2">
         <div class="row mb-2">
@@ -41,7 +38,6 @@
                                         <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug"
                                             value="{{$product->slug}}">
                                         <p class="error"></p>
-
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -129,7 +125,6 @@
                                         <input type="text" name="sku" id="sku" class="form-control" placeholder="sku"
                                             value="{{$product->sku}}">
                                         <p class="error"></p>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -147,7 +142,6 @@
                                                 name="track_qty" value="1" {{($product->track_qty == 'Yes') ? 'checked' : ''}}>
                                             <label for="track_qty" class="custom-control-label">Track Quantity</label>
                                             <p class="error"></p>
-
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -179,34 +173,35 @@
                                 <label for="category">Category</label>
                                 <select name="category" id="category" class="form-control">
                                     <option value="">Select a Category</option>
-
                                     @if($categories->isNotEmpty())
-
                                         @foreach($categories as $cati_data)
-
                                             <option {{($product->categories_id == $cati_data->id) ? 'selected' : ''}}
                                                 value="{{$cati_data->id}}">{{$cati_data->name}}</option>
-
                                         @endforeach
-
                                     @endif
                                 </select>
                                 <p class="error"></p>
                             </div>
                             <div class="mb-3">
-                                <label for="category">Sub category</label>
+                                <label for="category">Level 2 Subcategory</label>
                                 <select name="sub_category" id="sub_category" class="form-control">
-                                    <option value="">Select a Sub Category</option>
+                                    <option value="">Select a Level 2 Subcategory</option>
                                     @if($subcategories->isNotEmpty())
-
                                         @foreach($subcategories as $subcati_data)
-
                                             <option {{($product->sub_category_id == $subcati_data->id) ? 'selected' : ''}}
                                                 value="{{$subcati_data->id}}">{{$subcati_data->name}}</option>
-
                                         @endforeach
-
                                     @endif
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="subsub_category">Level 3 Subcategory</label>
+                                <select name="subsub_category" id="subsub_category" class="form-control">
+                                    <option value="">Select a Level 3 Subcategory</option>
+                                    @foreach($susubcategories as $subsubcati_data)
+                                        <option {{($product->sub_sub_category_id == $subsubcati_data->id) ? 'selected' : ''}}
+                                            value="{{$subsubcati_data->id}}">{{$subsubcati_data->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -223,7 +218,6 @@
                                                 value="{{$brandi->id}}">{{$brandi->name}}</option>
                                         @endforeach
                                     @endif 
-
                                 </select>
                             </div>
                         </div>
@@ -233,15 +227,13 @@
                             <h2 class="h4 mb-3">Featured product</h2>
                             <div class="mb-3">
                                 <select name="is_featured" id="is_featured" class="form-control">
-                                <option {{($product->is_featured == true) ? 'selected' : ''}} value="1">Yes</option>
-                                <option {{($product->is_featured == false) ? 'selected' : ''}} value="0">No</option>
-
+                                    <option {{($product->is_featured == true) ? 'selected' : ''}} value="1">Yes</option>
+                                    <option {{($product->is_featured == false) ? 'selected' : ''}} value="0">No</option>
                                 </select>
                                 <p class="error"></p>
                             </div>
                         </div>
                     </div>
-
                     <div class="card mb-3">
                         <div class="card-body">
                             <h2 class="h4 mb-3">Related product</h2>
@@ -256,28 +248,19 @@
                             </div>
                         </div>
                     </div>
-
-                    
                 </div>
             </div>
-
             <div class="pb-5 pt-3">
                 <button type="submit" class="btn btn-primary">Update</button>
                 <a href='{{route("product.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
             </div>
         </div>
-
     </form>
     <!-- /.card -->
 </section>
-
-
 @endsection
-
 @section('customjs') 
-
 <script>
-
     $('.releated-product').select2({
         ajax: {
             url: '{{ route("product.getProducts") }}',
@@ -292,15 +275,9 @@
             }
         }
     });
-
-
     $("#title").change(function () {
-
         var element = $(this).val();
-
         $("button[type=submit]").prop('disabled', true);
-
-
         $.ajax({
             url: '{{route("getslug")}}',
             type: 'get',
@@ -308,20 +285,14 @@
             dataType: 'json', // 'datatype' should be 'dataType'
             success: function (response) {
                 $("button[type=submit]").prop('disabled', false);
-
                 if (response['status'] == true) {
-
                     $("#slug").val(response['slug']);
                 } else {
                     console.log("there is not response");
                 }
             },
-
         });
-
     });
-
-
     $("#productform").submit(function (event) {
         event.preventDefault();
         var formarray = $("#productform").serializeArray();
@@ -348,7 +319,6 @@
             }
         });
     });
-
     $("#category").change(function () {
         var category_id = $(this).val();
         $.ajax({
@@ -367,12 +337,11 @@
             }
         });
     });
-    
     Dropzone.autoDiscover = false;
     const dropzone = $("#image").dropzone({
         url: "{{route('product-images.update')}}",
         maxFiles: 10,
-        params: { 'product_id': '{{$product->id}}'},
+        params: { 'product_id': '{{$product->id}}' },
         paramName: 'image',
         addRemoveLinks: true,
         acceptedFiles: "image/jpeg,image/png,image/gif",

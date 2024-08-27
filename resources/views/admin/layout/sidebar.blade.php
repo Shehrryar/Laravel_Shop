@@ -27,13 +27,13 @@
 				<li class="nav-item">
 					<a href="{{route('subcategories.index')}}" class="nav-link">
 						<i class="nav-icon fas fa-file-alt"></i>
-						<p>Sub Category</p>
+						<p>Sub Category Level 2</p>
 					</a>
 				</li>
 				<li class="nav-item">
 					<a href="{{route('subsubcategories.index')}}" class="nav-link">
 						<i class="nav-icon fas fa-file-alt"></i>
-						<p>Sub Sub Category</p>
+						<p>Sub Category Level 3</p>
 					</a>
 				</li>
 

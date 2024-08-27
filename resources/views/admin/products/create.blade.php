@@ -168,14 +168,14 @@
                                 <p class="error"></p>
                             </div>
                             <div class="mb-3">
-                                <label for="sub_category">Sub category</label>
+                                <label for="sub_category">Level 2 Subcategory</label>
                                 <select name="sub_category" id="sub_category" class="form-control">
                                     <option value="">Select a Sub Category</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label for="subsub_category">Sub category</label>
+                                <label for="subsub_category">Level 3 Subcategory</label>
                                 <select name="subsub_category" id="subsub_category" class="form-control">
                                     <option value="">Select a Sub SubCategory</option>
                                 </select>
@@ -194,7 +194,7 @@
                                         @endforeach
                                     @endif 
 
-                               </select>
+                                </select>
                             </div>
                         </div>
                     </div>

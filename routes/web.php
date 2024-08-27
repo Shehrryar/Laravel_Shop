@@ -126,9 +126,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/subsubcategory', [SubSubCategoryController::class, 'index'])->name('subsubcategories.index');
         Route::get('/subsubcategory/create', [SubSubCategoryController::class, 'create'])->name('subsubcategory.create');
         Route::post('/subsubcategory/store', [SubSubCategoryController::class, 'store'])->name('subsubcategory.store');   
-        // Route::get('/subcategory/{subcatedit}/edit', [SubSubCategoryController::class, 'edit'])->name('subcategory.edit');
-        // Route::put('/subcategory/{subcategory}', [SubSubCategoryController::class, 'update'])->name('subcategory.update');
-        // Route::delete('/subcategory/{subcategory}', [SubSubCategoryController::class, 'destroy'])->name('subcategory.delete');
+        Route::get('/subsubcategory/{subcatedit}/edit', [SubSubCategoryController::class, 'edit'])->name('subsubcategory.edit');
+        Route::put('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'update'])->name('subsubcategory.update');
+        Route::delete('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'destroy'])->name('subsubcategory.delete');
                 
         // these route for the brand
 

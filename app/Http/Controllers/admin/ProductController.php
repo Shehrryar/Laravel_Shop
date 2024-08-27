@@ -117,6 +117,8 @@ class ProductController extends Controller
         }
         $productimage = ProductImage::where('product_id', $product->id)->get();
         $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
+        $susubcategories = SubSubCategory::where('subcategory_id', $product->sub_category_id)->get();
+
         $categories = Category::orderBy('name', 'ASC')->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
@@ -124,6 +126,7 @@ class ProductController extends Controller
         $data['product'] = $product;
         $data['productimage'] = $productimage;
         $data['subcategories'] = $subcategories;
+        $data['susubcategories'] = $susubcategories;
         $data['showrelatedproduct'] = $showrelatedproduct;
         return view('admin.products.edit', $data);
     }
