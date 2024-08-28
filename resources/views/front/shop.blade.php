@@ -26,7 +26,7 @@
 								@foreach ($categories as $key => $cat)
 									<div class="accordion-item">
 										@if($cat->sub_category->isNotEmpty())
-											<h2 class="accordion-header" id="headingOne">
+											<h2 class="accordion-header" id="headingOne-{{ $key }}">
 												<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
 													data-bs-target="#collapseOne-{{ $key }}" aria-expanded="false"
 													aria-controls="collapseOne-{{ $key }}">
@@ -37,27 +37,56 @@
 											<a href='{{route("front.shop", $cat->slug)}}'
 												class="nav-item nav-link {{($categroy_selected == $cat->id) ? 'text-primary' : ''}}">{{trans($cat->name)}}</a>
 										@endif
+
 										@if($cat->sub_category->isNotEmpty())
 											<div id="collapseOne-{{ $key }}"
 												class="accordion-collapse collapse {{($categroy_selected == $cat->id) ? 'show' : ''}}"
-												aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+												aria-labelledby="headingOne-{{ $key }}" data-bs-parent="#accordionExample">
 												<div class="accordion-body">
-													<div class="navbar-nav">
+													<div class="accordion accordion-flush" id="accordionSubExample-{{ $key }}">
+														@foreach($cat->sub_category as $subcatKey => $subcat)
+															<div class="accordion-item">
+																@if($subcat->sub_sub_category->isNotEmpty())
+																	<h2 class="accordion-header"
+																		id="headingTwo-{{ $key }}-{{ $subcatKey }}">
+																		<button style="padding-left: 24px;" class="accordion-button collapsed" type="button"
+																			data-bs-toggle="collapse"
+																			data-bs-target="#collapseTwo-{{ $key }}-{{ $subcatKey }}"
+																			aria-expanded="false"
+																			aria-controls="collapseTwo-{{ $key }}-{{ $subcatKey }}">
+																			{{trans($subcat->name)}}
+																		</button>
+																	</h2>
 
-														@foreach($cat->sub_category as $subcat)
-															<a href='{{route("front.shop", [$cat->slug, $subcat->slug])}}'
-																class="nav-item nav-link {{($subcategroy_selected == $subcat->id) ? 'text-primary' : ''}}">{{trans($subcat->name)}}</a>
+																	<div id="collapseTwo-{{ $key }}-{{ $subcatKey }}"
+																		class="push_right accordion-collapse collapse {{($subcategroy_selected == $subcat->id) ? 'show' : ''}}"
+																		aria-labelledby="headingTwo-{{ $key }}-{{ $subcatKey }}"
+																		data-bs-parent="#accordionSubExample-{{ $key }}">
+																		<div class="accordion-body">
+																			<div class="navbar-nav">
+																				@foreach($subcat->sub_sub_category as $subsubcat)
+																					<a style="padding-left: 66px;" href='{{route("front.shop", [$cat->slug, $subcat->slug, $subsubcat->slug])}}'
+																						class="adjust_side nav-item nav-link {{($subsubcategroy_selected == $subsubcat->id) ? 'text-primary' : ''}}">{{trans($subsubcat->name)}}</a>
+																				@endforeach
+																			</div>
+																		</div>
+																	</div>
+																@else
+																	<a href='{{route("front.shop", [$cat->slug, $subcat->slug])}}'
+																		class="nav-item nav-link {{($subcategroy_selected == $subcat->id) ? 'text-primary' : ''}}">{{trans($subcat->name)}}</a>
+																@endif
+															</div>
 														@endforeach
-
 													</div>
 												</div>
 											</div>
-										@endif 
+										@endif
 									</div>
-
 								@endforeach
-							@endif  
+							@endif
 						</div>
+
+
 					</div>
 				</div>
 
@@ -99,7 +128,8 @@
 									<option value="pricehigh" {{($sort == 'pricehigh') ? 'selected' : ''}}>Price High
 									</option>
 									<option value="latest" {{($sort == 'latest') ? 'selected' : ''}}>Latest</option>
-									<option value="pricelow" {{($sort == 'pricelow') ? 'selected' : ''}}>Price Low</option>
+									<option value="pricelow" {{($sort == 'pricelow') ? 'selected' : ''}}>Price Low
+									</option>
 
 								</select>
 
@@ -110,7 +140,7 @@
 									@foreach($products as $prod)
 													@php
 														$images_prod = $prod->product_images()->first();
-            											$inWishlist = $wishlist->contains('product_id', $prod->id);
+														$inWishlist = $wishlist->contains('product_id', $prod->id);
 													@endphp
 													<div class="col-md-4">
 														<div class="card product-card">
@@ -123,8 +153,7 @@
 																	@endif
 																</a>
 
-																<a onclick="addToWishlist({{$prod->id}})" class="whishlist"
-																	href="javascript:void(0)">
+																<a onclick="addToWishlist({{$prod->id}})" class="whishlist" href="javascript:void(0)">
 																	<i id="addwishlist{{$prod->id}}" class="far fa-heart"
 																		style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
 																</a>
@@ -158,14 +187,14 @@
 																</div>
 
 																<div style="display: flex; justify-content: center;">
-																@php
-																	$avg_rating_per = 0;
-																	if ($prod->product_ratings_count > 0) {
-																	$avg_rating = number_format(($prod->product_ratings_sum_rating /
-																	$prod->product_ratings_count), 2);
-																	$avg_rating_per = ($avg_rating * 100) / 5;
-																	}
-																@endphp
+																	@php
+																		$avg_rating_per = 0;
+																		if ($prod->product_ratings_count > 0) {
+																			$avg_rating = number_format(($prod->product_ratings_sum_rating /
+																				$prod->product_ratings_count), 2);
+																			$avg_rating_per = ($avg_rating * 100) / 5;
+																		}
+																	@endphp
 																	<div class="star-rating product mt-2" title="">
 																		<div class="back-stars">
 																			<i class="fa fa-star" aria-hidden="true"></i>
