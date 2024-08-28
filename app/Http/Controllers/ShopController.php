@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\ProductRating;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -16,7 +14,6 @@ class ShopController extends Controller
 {
     public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null )
     {
-
         $subcategroy_selected = "";
         $categroy_selected = "";
         $brandsArray = [];
