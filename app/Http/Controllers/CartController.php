@@ -315,6 +315,7 @@ class CartController extends Controller
                 $productData->save();
 
             }
+            orderEmail($order->id);
             session()->flash('success', 'You have successfully placed your order');
             Cart::destroy();
             return response()->json([

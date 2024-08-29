@@ -49,7 +49,8 @@
 																@if($subcat->sub_sub_category->isNotEmpty())
 																	<h2 class="accordion-header"
 																		id="headingTwo-{{ $key }}-{{ $subcatKey }}">
-																		<button style="padding-left: 24px;" class="accordion-button collapsed" type="button"
+																		<button style="padding-left: 24px;"
+																			class="accordion-button collapsed" type="button"
 																			data-bs-toggle="collapse"
 																			data-bs-target="#collapseTwo-{{ $key }}-{{ $subcatKey }}"
 																			aria-expanded="false"
@@ -65,7 +66,8 @@
 																		<div class="accordion-body">
 																			<div class="navbar-nav">
 																				@foreach($subcat->sub_sub_category as $subsubcat)
-																					<a style="padding-left: 66px;" href='{{route("front.shop", [$cat->slug, $subcat->slug, $subsubcat->slug])}}'
+																					<a style="padding-left: 66px;"
+																						href='{{route("front.shop", [$cat->slug, $subcat->slug, $subsubcat->slug])}}'
 																						class="adjust_side nav-item nav-link {{($subsubcategroy_selected == $subsubcat->id) ? 'text-primary' : ''}}">{{trans($subsubcat->name)}}</a>
 																				@endforeach
 																			</div>
@@ -105,7 +107,8 @@
 									</label>
 								</div>
 							@endforeach
-						@endif  					</div>
+						@endif  
+			</div>
 				</div>
 
 				<div class="sub-title mt-5">
@@ -152,6 +155,7 @@
 																		<img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
 																	@endif
 																</a>
+																<div class="discount-badge">20% OFF</div>
 
 																<a onclick="addToWishlist({{$prod->id}})" class="whishlist" href="javascript:void(0)">
 																	<i id="addwishlist{{$prod->id}}" class="far fa-heart"
@@ -162,21 +166,17 @@
 																	<i id="removewishlist{{$prod->id}}" class="redhearticon fas fa-heart"
 																		style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
 																</a>
-
-																<div class="product-action">
-																	@if ($prod->qty > 0)
-
-																		<a class="btn btn-dark" href="javascript:void(0)"
-																			onclick="addToCart({{$prod->id}})">
-																			<i class="fa fa-shopping-cart"></i> {{trans("Add To Cart")}}
-																		</a>
-																	@else
-																		<a class="btn btn-dark" href="javascript:void(0)">
-																			<i class="fa fa-shopping-cart"></i> {{trans("Out of Stock")}}
-																		</a>
-																	@endif
-																</div>
 															</div>
+															<hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
+															@if ($prod->qty > 0)
+																<a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$prod->id}})">
+																	<i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
+																</a>
+															@else
+																<a class="btn btn-dark" href="javascript:void(0)" disabled>
+																	<i class="fa fa-shopping-cart"></i> {{trans('Out of Stock')}}
+																</a>
+															@endif
 															<div class="card-body text-center mt-3">
 																<a class="h6 link" href="product.php">{{trans($prod->title)}}</a>
 																<div class="price mt-2">

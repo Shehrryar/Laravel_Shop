@@ -68,9 +68,9 @@ class ProductController extends Controller
             $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
             $product->is_featured = $request->is_featured;
-            $product->short_description = $request->short_description;
-            $product->description = $request->description;
-            $product->shipping_returns = $request->shipping_return;
+            $product->short_description = strip_tags($request->short_description);
+            $product->description = strip_tags($request->description);
+            $product->shipping_returns = strip_tags($request->shipping_return);
             if (!empty($request->related_product)) {
                 $product->related_products = implode(',', $request->related_product);
             }else{
@@ -161,9 +161,9 @@ class ProductController extends Controller
             $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
             $product->is_featured = $request->is_featured;
-            $product->short_description = $request->short_description;
-            $product->description = $request->description;
-            $product->shipping_returns = $request->shipping_return;
+            $product->short_description = strip_tags($request->short_description);
+            $product->description = strip_tags($request->description);
+            $product->shipping_returns = strip_tags($request->shipping_return);
             if (!empty($request->related_product)) {
                 $product->related_products = implode(',', $request->related_product);
             }else{
