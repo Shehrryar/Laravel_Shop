@@ -40,7 +40,8 @@
             color: #fff;
         }
 
-        table th, table td {
+        table th,
+        table td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -54,7 +55,8 @@
             text-align: right;
         }
 
-        .total-row th, .total-row td {
+        .total-row th,
+        .total-row td {
             font-size: 16px;
             font-weight: bold;
             color: #333;
@@ -67,9 +69,21 @@
 </head>
 
 <body>
-    <h1>Thanks for your order!</h1>
-    <h2>Your Order ID is: {{$mailData['order']->id}}</h2>
+    @if($mailData['userType'] == 'customer')
+        <h1>Thanks for your order!</h1>
+        <h2>Your Order ID is: {{$mailData['order']->id}}</h2>
+    @else
+        <h1>You have received an Order!</h1>
+        <h2>Order ID : {{$mailData['order']->id}}</h2>
+    @endif
 
+    <address>
+        <strong>{{$mailData['order']->firstname . " " . $mailData['order']->lastname}}</strong>
+        <br>{{$mailData['order']->address}}<br>
+        {{$mailData['order']->city}}, {{$mailData['order']->zip}},
+        {{country($mailData['order']->countryName)}}<br>
+        {{$mailData['order']->email}}
+    </address>
     <h2>Products</h2>
     <table class="table table-striped">
         <thead>
