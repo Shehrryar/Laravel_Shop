@@ -79,7 +79,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a style = "margin-left: 28px;" href="{{ route('coupon.index') }}" class="nav-link">
+                            <a style = "margin-left: 28px;" href="{{ route('discount.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Discount</p>
                             </a>

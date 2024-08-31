@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\DiscountCodeController;
+use App\Http\Controllers\admin\DiscountController;
 use App\Http\Controllers\admin\ShippingController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -198,6 +199,15 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/coupons/{id}/delete', [DiscountCodeController::class, 'destroy'])->name('coupon.delete');
 
 
+        // Route for the discounts
+        Route::get('/discount/index', [DiscountController::class, 'index'])->name('discount.index');
+        Route::get('/discount/create', [DiscountController::class, 'create'])->name('discount.create');
+        Route::post('/discount/store', [DiscountController::class, 'store'])->name('discount.store');
+        Route::get('/discount/{id}/edit', [DiscountController::class, 'edit'])->name('discount.edit');
+        Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
+        Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
+
+                
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
 

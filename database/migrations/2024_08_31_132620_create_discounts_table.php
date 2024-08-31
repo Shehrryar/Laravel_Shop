@@ -11,28 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sub_sub_categories', function (Blueprint $table) {
+        Schema::create('discounts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-
-            $table->string('slug');
-
-            $table->integer('status');
-
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-
-            $table->foreignId('subcategory_id')->constrained()->onDelete('cascade');
-
-
+            $table->decimal('value', 8, 2); // Percentage or fixed value
+            $table->enum('type', ['percentage', 'fixed']);
+            $table->json('product_ids')->nullable(); // Store product IDs as JSON array
+            $table->json('category_ids')->nullable(); // Store category IDs as JSON array
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('sub_sub_categories');
+        Schema::dropIfExists('discounts');
     }
 };
