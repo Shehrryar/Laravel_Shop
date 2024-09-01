@@ -7,8 +7,7 @@ use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
-
-
+use App\Models\Discount;
 
 class FrontController extends Controller
 {
@@ -29,7 +28,13 @@ class FrontController extends Controller
                         ->withCount('product_ratings')
                         ->withSum('product_ratings', 'rating')
                         ->paginate(8);
+        $discount = Discount::where('status', 1)->get();
+
+        // echo "<pre>";
+        // print_r($discount);
+        // exit;
         $data['wishlist'] = $wishlist;
+        $data['discount'] = $discount;
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
         return view('front.home', $data);

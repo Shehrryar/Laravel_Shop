@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\CustomerAddress;
 use App\Models\DiscountCoupon;
+use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -24,8 +25,14 @@ class CartController extends Controller
                 'message' => 'Product not Found'
             ]);
         }
+        $discountprice = getDiscountedPrice($request->id, Discount::get(), $request->actual_price);
+        if($discountprice['discounted_price']!=0){
+            $price = $discountprice['discounted_price'];
+        }
+        else{
+            $price = $discountprice['actual_price'];
+        }
         if (Cart::count() > 0) {
-
             $cartcontent = Cart::content();
             $productAlreadyExist = false;
 
@@ -34,9 +41,8 @@ class CartController extends Controller
                     $productAlreadyExist = true;
                 }
             }
-
             if ($productAlreadyExist == false) {
-                Cart::add($product->id, $product->title, 1, $product->price, ['productImage' => (!empty($product->product_images)) ? $product->product_images->first() : '']);
+                Cart::add($product->id, $product->title, 1, $price, ['productImage' => (!empty($product->product_images)) ? $product->product_images->first() : '']);
                 $status = true;
                 $message = $product->title . " Added in the Cart";
                 session()->flash('success', $message);
@@ -45,9 +51,9 @@ class CartController extends Controller
                 $status = false;
                 $message = $product->title . " Already added in the Cart";
             }
-
         } else {
-            Cart::add($product->id, $product->title, 1, $product->price, ['productImage' => (!empty($product->product_images)) ? $product->product_images->first() : '']);
+
+            Cart::add($product->id, $product->title, 1, $price, ['productImage' => (!empty($product->product_images)) ? $product->product_images->first() : '']);
             $status = true;
             $message = $product->title . " Added to the Cart";
             session()->flash('success', $message);
@@ -60,8 +66,13 @@ class CartController extends Controller
     }
     public function Cart()
     {
+        $discount = Discount::where('status',1)->get();
         $cartcontent = Cart::content();
+        // echo "<pre>";
+        // print_r($cartcontent);
+        // exit;
         $data['cartcontent'] = $cartcontent;
+        $data['discount'] = $discount;
         return view('front.cart', $data);
     }
 
@@ -83,7 +94,7 @@ class CartController extends Controller
             }
         } else {
             Cart::update($request->rowid, $request->qty);
-            $message = "Cart updated sucessfully";
+            $message = "Cart updated successfully";
             $status = True;
             session()->flash('success', $message);
         }

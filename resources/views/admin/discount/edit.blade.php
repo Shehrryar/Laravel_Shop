@@ -36,7 +36,8 @@
                             <div class="mb-3">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control">
-                                    <option {{($discount_edit->status == 1) ? 'selected' : ''}} value="1">Active</option>
+                                    <option {{($discount_edit->status == 1) ? 'selected' : ''}} value="1">Active
+                                    </option>
                                     <option {{($discount_edit->status == 0) ? 'selected' : ''}} value="0">Block</option>
                                 </select>
 
@@ -55,28 +56,34 @@
                             </div>
                         </div> -->
 
+                        @php
+                        $product_array = explode(',', $discount_edit->product_ids);
+                        @endphp
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="select_product">Select Products</label>
                                 <select multiple id="select_product[]" name="select_product[]" class="form-control">
                                     @if ($products->isNotEmpty())
                                     @foreach ($products as $product)
-                                    <option value="{{$product->id}}"> {{ $product->title }}</option>
+                                    <option value="{{ $product->id }}"
+                                        {{ in_array($product->id, $product_array) ? 'selected' : '' }}>
+                                        {{ $product->title }}
+                                    </option>
                                     @endforeach
                                     @endif
                                 </select>
                                 <p id="para_products"></p>
-
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="type">Type</label>
                                 <select id="type" name="type" class="form-control">
-								<option {{($discount_edit->type == 'percentage') ? 'selected' : ''}} value="Percent">Percent</option>
-								<option {{($discount_edit->type == 'fixed') ? 'selected' : ''}} value="Fixed">Fixed</option>
-                                    <option value="percentage">Percent</option>
-                                    <option value="fixed">Fixed</option>
+                                    <option {{($discount_edit->type == 'percentage') ? 'selected' : ''}}
+                                        value="percentage">Percent</option>
+                                    <option {{($discount_edit->type == 'fixed') ? 'selected' : ''}} value="fixed">Fixed
+                                    </option>
                                 </select>
                                 <p id="para_type"></p>
 
@@ -105,7 +112,7 @@
                             <div class="mb-3">
                                 <label for="starts_at">Starts At</label>
                                 <input type="date" name="starts_at" id="starts_at" class="form-control"
-                                    placeholder="Starts At" value = "{{$discount_edit->start_at}}">
+                                    placeholder="Starts At" value="{{$discount_edit->start_at}}">
                                 <p id="para_starts_at"></p>
                             </div>
                         </div>
@@ -114,7 +121,7 @@
                             <div class="mb-3">
                                 <label for="expires_at">Expires At</label>
                                 <input type="date" name="expires_at" id="expires_at" class="form-control"
-                                    placeholder="Expires At" value = "{{$discount_edit->expires_at}}">
+                                    placeholder="Expires At" value="{{$discount_edit->expires_at}}">
                                 <p id="para_expires_at"></p>
                             </div>
                         </div>
@@ -146,12 +153,12 @@ $(document).ready(function() {
 
         $.ajax({
             url: '{{route("discount.update", $discount_edit->id)}}',
-            type: 'POST',
+            type: 'PUT',
             data: $(this).serializeArray(), // Use correct form ID
             dataType: 'json', // 'datatype' should be 'dataType'
             success: function(response) {
                 if (response['status'] == true) {
-
+                    window.location.href = "{{route('discount.index')}}";
                 } else {
                     var errors = response['errors'];
                     if (errors['code']) {

@@ -84,6 +84,39 @@ class DiscountController extends Controller
     }
     
 
+    public function update(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'discount_name'=>'required',
+            'type' => 'required',
+            'select_product' => 'required|array',
+            'discount_amount' => 'required|numeric',
+            'status' => 'required',
+        ]);
+        $discount_edit = Discount::find($id);    
+        if ($validator->passes()) {
+            $discount_edit->name = $request->discount_name;
+            $discount_edit->type = $request->type;
+            $discount_edit->value = $request->discount_amount;
+            $discount_edit->product_ids = implode(',' , $request->select_product);
+            $discount_edit->status = $request->status;
+            $discount_edit->start_at = $request->starts_at;
+            $discount_edit->expires_at = $request->expires_at;
+            $discount_edit->save();
+
+            $message = 'Discount Updated successfully';
+            session()->flash('success', $message);
+            return response()->json([
+                'status' => true,
+                'message' => $message
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+    }
+
     public function destroy(Request $request, $id)
     {
         $discount = Discount::find($id);

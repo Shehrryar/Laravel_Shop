@@ -50,129 +50,127 @@
     <meta name="csrf-token" content="{{csrf_token()}}">
 
     <style>
-        .notification {
-            /* background-color: #555; */
-            color: white;
-            text-decoration: none;
-            padding: 9px 13px;
-            position: relative;
-            display: inline-block;
-            border-radius: 2px;
-        }
+    .notification {
+        /* background-color: #555; */
+        color: white;
+        text-decoration: none;
+        padding: 9px 13px;
+        position: relative;
+        display: inline-block;
+        border-radius: 2px;
+    }
 
-        .notification:hover {
-            background: gray;
-        }
+    .notification:hover {
+        background: gray;
+    }
 
-        .notification .badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            padding: 5px 10px;
-            border-radius: 50%;
-            background: red;
-            color: white;
-        }
+    .notification .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        background: red;
+        color: white;
+    }
 
-        .d-flex {
-            display: flex;
-            align-items: center;
-        }
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
 
-        .dropdown-submenu {
-            position: relative;
-        }
+    .dropdown-submenu {
+        position: relative;
+    }
 
-        .dropdown-submenu>.dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 100%;
-            /* Show the submenu to the right */
-            margin-top: -1px;
-        }
+    .dropdown-submenu>.dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        /* Show the submenu to the right */
+        margin-top: -1px;
+    }
 
-        .dropdown-submenu-left>.dropdown-menu {
-            left: auto;
-            right: 100%;
-            /* Show the submenu to the left */
-        }
+    .dropdown-submenu-left>.dropdown-menu {
+        left: auto;
+        right: 100%;
+        /* Show the submenu to the left */
+    }
 
-        /* Show the submenu on hover */
-        .dropdown-submenu:hover>.dropdown-menu {
-            display: block;
-        }
+    /* Show the submenu on hover */
+    .dropdown-submenu:hover>.dropdown-menu {
+        display: block;
+    }
 
-        /* Add to Cart Button */
-        .product-action .btn-dark {
-            background: linear-gradient(45deg, #6b8e23, #4caf50);
-            /* Gradient background */
-            color: white;
-            /* White text color */
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: none;
-            /* Remove border */
-            border-radius: 5px;
-            /* Rounded corners */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            /* Light shadow for depth */
-            transition: background 0.3s ease, transform 0.3s ease;
-            /* Smooth transitions */
-        }
+    /* Add to Cart Button */
+    .product-action .btn-dark {
+        background: linear-gradient(45deg, #6b8e23, #4caf50);
+        /* Gradient background */
+        color: white;
+        /* White text color */
+        font-size: 16px;
+        font-weight: bold;
+        padding: 10px 20px;
+        border: none;
+        /* Remove border */
+        border-radius: 5px;
+        /* Rounded corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* Light shadow for depth */
+        transition: background 0.3s ease, transform 0.3s ease;
+        /* Smooth transitions */
+    }
 
-        /* Hover effect */
-        .product-action .btn-dark:hover {
-            background: linear-gradient(45deg, #4caf50, #388e3c);
-            /* Darker green gradient */
-            transform: translateY(-2px);
-            /* Slightly raise the button */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-            /* Increase shadow on hover */
-        }
+    /* Hover effect */
+    .product-action .btn-dark:hover {
+        background: linear-gradient(45deg, #4caf50, #388e3c);
+        /* Darker green gradient */
+        transform: translateY(-2px);
+        /* Slightly raise the button */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        /* Increase shadow on hover */
+    }
 
-        /* Active state */
-        .product-action .btn-dark:active {
-            transform: translateY(0);
-            /* Reset the translation */
-            box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
-            /* Slightly reduce shadow */
-        }
+    /* Active state */
+    .product-action .btn-dark:active {
+        transform: translateY(0);
+        /* Reset the translation */
+        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+        /* Slightly reduce shadow */
+    }
 
-        /* Icon styling */
-        .product-action .btn-dark i {
-            margin-right: 8px;
-            /* Space between icon and text */
-            font-size: 18px;
-        }
+    /* Icon styling */
+    .product-action .btn-dark i {
+        margin-right: 8px;
+        /* Space between icon and text */
+        font-size: 18px;
+    }
 
-        /* Discount Badge */
-        .discount-badge {
-            position: absolute;
-            top: 10px;
-            /* Position it near the top */
-            left: 10px;
-            /* Position it near the left */
-            background-color: #ff4d4d;
-            /* Bright red background for visibility */
-            color: white;
-            /* White text for contrast */
-            padding: 5px 10px;
-            /* Some padding for better appearance */
-            font-size: 14px;
-            /* Font size for readability */
-            font-weight: bold;
-            /* Bold text to stand out */
-            border-radius: 5px;
-            /* Rounded corners */
-            z-index: 10;
-            /* Ensure it stays on top of other content */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            /* Subtle shadow for depth */
-        }
-
-        
+    /* Discount Badge */
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        /* Position it near the top */
+        left: 10px;
+        /* Position it near the left */
+        background-color: #ff4d4d;
+        /* Bright red background for visibility */
+        color: white;
+        /* White text for contrast */
+        padding: 5px 10px;
+        /* Some padding for better appearance */
+        font-size: 14px;
+        /* Font size for readability */
+        font-weight: bold;
+        /* Bold text to stand out */
+        border-radius: 5px;
+        /* Rounded corners */
+        z-index: 10;
+        /* Ensure it stays on top of other content */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        /* Subtle shadow for depth */
+    }
     </style>
 </head>
 
@@ -189,9 +187,9 @@
                 <div class="col-lg-6 col-6 text-left  d-flex justify-content-end align-items-center">
 
                     @if (Auth::check())
-                        <a href="{{route('account.profile')}}" class="nav-link text-dark">My Account</a>
+                    <a href="{{route('account.profile')}}" class="nav-link text-dark">My Account</a>
                     @else
-                        <a href="{{route('account.login')}}" class="nav-link text-dark">Login</a>
+                    <a href="{{route('account.login')}}" class="nav-link text-dark">Login</a>
                     @endif
 
                     <form action="">
@@ -224,42 +222,42 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         @if(getcategories()->isNotEmpty())
-                            @foreach(getcategories() as $category)
-                                <li class="nav-item dropdown">
+                        @foreach(getcategories() as $category)
+                        <li class="nav-item dropdown">
 
-                                    <button onclick="show_category('{{ route('front.shop', $category->slug) }}')"
-                                        class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        {{ trans($category->name) }}
-                                    </button>
+                            <button onclick="show_category('{{ route('front.shop', $category->slug) }}')"
+                                class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ trans($category->name) }}
+                            </button>
 
-                                    @if($category->sub_category->isNotEmpty())
-                                        <ul class="dropdown-menu dropdown-menu-dark">
-                                            @foreach($category->sub_category as $subcategory)
-                                                <li class="dropdown-submenu">
-                                                    <a class="dropdown-item nav-link"
-                                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug]) }}">
-                                                        {{ trans($subcategory->name) }}
-                                                    </a>
+                            @if($category->sub_category->isNotEmpty())
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                @foreach($category->sub_category as $subcategory)
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item nav-link"
+                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug]) }}">
+                                        {{ trans($subcategory->name) }}
+                                    </a>
 
-                                                    @if($subcategory->sub_sub_category->isNotEmpty())
-                                                        <!-- Check for SubSubCategory -->
-                                                        <ul class="dropdown-menu dropdown-menu-dark">
-                                                            @foreach($subcategory->sub_sub_category as $subSubCategory)
-                                                                <li>
-                                                                    <a class="dropdown-item nav-link"
-                                                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug, $subSubCategory->slug]) }}">
-                                                                        {{ trans($subSubCategory->name) }}
-                                                                    </a>
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @endif
-                                                </li>
-                                            @endforeach
-                                        </ul>
+                                    @if($subcategory->sub_sub_category->isNotEmpty())
+                                    <!-- Check for SubSubCategory -->
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        @foreach($subcategory->sub_sub_category as $subSubCategory)
+                                        <li>
+                                            <a class="dropdown-item nav-link"
+                                                href="{{ route('front.shop', [$category->slug, $subcategory->slug, $subSubCategory->slug]) }}">
+                                                {{ trans($subSubCategory->name) }}
+                                            </a>
+                                        </li>
+                                        @endforeach
+                                    </ul>
                                     @endif
                                 </li>
-                            @endforeach
+                                @endforeach
+                            </ul>
+                            @endif
+                        </li>
+                        @endforeach
                         @endif
                     </ul>
                 </div>
@@ -271,14 +269,15 @@
                         <li class="nav-item dropdown">
                             <select id="languageSelect" class="form-control">
                                 @php
-                                    $languages = \App\Models\Language::all();
+                                $languages = \App\Models\Language::all();
                                 @endphp
                                 @foreach ($languages as $language)
-                                    @if ($language->status == 1)
-                                        <option value="{{ $language->Isocode }}" {{ app()->getLocale() == $language->Isocode ? 'selected' : '' }}>
-                                            {{ trans($language->name) }}
-                                        </option>
-                                    @endif
+                                @if ($language->status == 1)
+                                <option value="{{ $language->Isocode }}"
+                                    {{ app()->getLocale() == $language->Isocode ? 'selected' : '' }}>
+                                    {{ trans($language->name) }}
+                                </option>
+                                @endif
                                 @endforeach
                             </select>
                         </li>
@@ -382,155 +381,157 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
-            window.onscroll = function () {
-                myFunction()
-            };
+        window.onscroll = function() {
+            myFunction()
+        };
 
-            var navbar = document.getElementById("navbar");
-            var sticky = navbar.offsetTop;
+        var navbar = document.getElementById("navbar");
+        var sticky = navbar.offsetTop;
 
-            function myFunction() {
-                if (window.pageYOffset >= sticky) {
-                    navbar.classList.add("sticky")
-                } else {
-                    navbar.classList.remove("sticky");
-                }
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add("sticky")
+            } else {
+                navbar.classList.remove("sticky");
             }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+
+        function addToCart(id, discount_val, discount_price, actual_price) {
+            $.ajax({
+                url: '{{ route("front.addToCart") }}',
+                type: 'POST',
+                data: {
+                    id: id,
+                    discount_val: discount_val,
+                    discount_price: discount_price,
+                    actual_price: actual_price
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === true) {
+                        window.location.href = "{{ route('front.cart') }}";
+                    } else {
+                        alert(response.message);
+                    }
+                },
+            });
+        }
+
+        $('.redhearticon').css({
+            'color': 'red'
+        });
+
+        function addToWishlist(id) {
+            var addwishlistid = "#addwishlist" + id;
+            var removewishlistid = "#removewishlist" + id;
+            $.ajax({
+                url: '{{ route("front.addtowishlist") }}',
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == true) {
+                        $(addwishlistid).css('display', 'none');
+                        $(removewishlistid).css('display', 'block');
+                        $("#wishlist_model .modal-body").html(response.message);
+                        $("#wishlist_model").modal('show');
+                    } else {
+                        // Redirect to login if not successful
+                        window.location.href = "{{ route('account.login') }}";
+                    }
                 }
             });
+        }
+
+        function removefromWishlist(id) {
+            var addwishlistid = "#addwishlist" + id;
+            var removewishlistid = "#removewishlist" + id;
+            $.ajax({
+                url: '{{route("account.remove_product_from_wislist")}}',
+                type: 'post',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == true) {
+
+                        $(addwishlistid).css('display', 'block');
+                        $(removewishlistid).css('display', 'none');
+
+                    }
+                }
+            });
+        }
 
 
-            function addToCart(id) {
+        document.getElementById('languageSelect').addEventListener('change', function() {
+            var selectedLanguage = this.value;
+            // Redirect to the selected language URL
+            var url = "{{ route('front.localizationcontroller', ':locale') }}";
+            url = url.replace(':locale', selectedLanguage);
+            window.location.href = url;
+        });
 
-                $.ajax({
-                    url: '{{route("front.addToCart")}}',
-                    type: 'post',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'Json',
-                    success: function (response) {
-                        if (response.status == true) {
-                            window.location.href = "{{route('front.cart')}}";
-                        } else {
-                            alert(respons.message);
-                        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
+
+            // Loop through each dropdown item and add event listeners
+            dropdownItems.forEach(function(dropdown) {
+                dropdown.addEventListener('mouseenter', function() {
+                    var dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add('show');
+                        dropdown.classList.add('show');
                     }
                 });
-            }
 
-            $('.redhearticon').css({
-                'color': 'red'
+                dropdown.addEventListener('mouseleave', function() {
+                    var dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.remove('show');
+                        dropdown.classList.remove('show');
+                    }
+                });
             });
 
-            function addToWishlist(id) {
-                var addwishlistid = "#addwishlist" + id;
-                var removewishlistid = "#removewishlist" + id;
-                $.ajax({
-                    url: '{{ route("front.addtowishlist") }}',
-                    type: 'post',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status == true) {
-                            $(addwishlistid).css('display', 'none');
-                            $(removewishlistid).css('display', 'block');
-                            $("#wishlist_model .modal-body").html(response.message);
-                            $("#wishlist_model").modal('show');
-                        } else {
-                            // Redirect to login if not successful
-                            window.location.href = "{{ route('account.login') }}";
-                        }
+            var subDropdownItems = document.querySelectorAll('.dropdown-submenu');
+
+            // Loop through each sub-dropdown item and add event listeners
+            subDropdownItems.forEach(function(subDropdown) {
+                subDropdown.addEventListener('mouseenter', function() {
+                    var dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add('show');
+                        subDropdown.classList.add('show');
                     }
                 });
-            }
 
-            function removefromWishlist(id) {
-                var addwishlistid = "#addwishlist" + id;
-                var removewishlistid = "#removewishlist" + id;
-                $.ajax({
-                    url: '{{route("account.remove_product_from_wislist")}}',
-                    type: 'post',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status == true) {
-
-                            $(addwishlistid).css('display', 'block');
-                            $(removewishlistid).css('display', 'none');
-
-                        }
+                subDropdown.addEventListener('mouseleave', function() {
+                    var dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.remove('show');
+                        subDropdown.classList.remove('show');
                     }
                 });
-            }
+            });
+        });
 
 
-            document.getElementById('languageSelect').addEventListener('change', function () {
-                var selectedLanguage = this.value;
-                // Redirect to the selected language URL
-                var url = "{{ route('front.localizationcontroller', ':locale') }}";
-                url = url.replace(':locale', selectedLanguage);
+        function show_category(url) {
+            if (url) {
                 window.location.href = url;
-            });
-
-
-            document.addEventListener('DOMContentLoaded', function () {
-                var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
-
-                // Loop through each dropdown item and add event listeners
-                dropdownItems.forEach(function (dropdown) {
-                    dropdown.addEventListener('mouseenter', function () {
-                        var dropdownMenu = this.querySelector('.dropdown-menu');
-                        if (dropdownMenu) {
-                            dropdownMenu.classList.add('show');
-                            dropdown.classList.add('show');
-                        }
-                    });
-
-                    dropdown.addEventListener('mouseleave', function () {
-                        var dropdownMenu = this.querySelector('.dropdown-menu');
-                        if (dropdownMenu) {
-                            dropdownMenu.classList.remove('show');
-                            dropdown.classList.remove('show');
-                        }
-                    });
-                });
-
-                var subDropdownItems = document.querySelectorAll('.dropdown-submenu');
-
-                // Loop through each sub-dropdown item and add event listeners
-                subDropdownItems.forEach(function (subDropdown) {
-                    subDropdown.addEventListener('mouseenter', function () {
-                        var dropdownMenu = this.querySelector('.dropdown-menu');
-                        if (dropdownMenu) {
-                            dropdownMenu.classList.add('show');
-                            subDropdown.classList.add('show');
-                        }
-                    });
-
-                    subDropdown.addEventListener('mouseleave', function () {
-                        var dropdownMenu = this.querySelector('.dropdown-menu');
-                        if (dropdownMenu) {
-                            dropdownMenu.classList.remove('show');
-                            subDropdown.classList.remove('show');
-                        }
-                    });
-                });
-            });
-
-
-            function show_category(url) {
-                if (url) {
-                    window.location.href = url;
-                }
             }
+        }
         </script>
 
         @yield('customJs')

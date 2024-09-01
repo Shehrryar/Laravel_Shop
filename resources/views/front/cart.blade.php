@@ -43,6 +43,7 @@
                             <tr>
                                 <th>{{trans("Item")}}</th>
                                 <th>{{trans("Price")}}</th>
+                                <th>{{trans("Discount")}}</th>
                                 <th>{{trans("Quantity")}}</th>
                                 <th>{{trans("Total")}}</th>
                                 <th>{{trans("Remove")}}</th>
@@ -62,7 +63,16 @@
                                         <h2>{{trans($item->name)}}</h2>
                                     </div>
                                 </td>
+                                @php
+                                    $getprice = getDiscountedPrice($item->id,$discount, $item->price);
+                                @endphp
                                 <td>{{$item->price}}</td>
+
+                                @if ($getprice['discount_value'] !=0)                                
+                                    <td>{{$getprice['discount_value']}}%</td>
+                                @else
+                                <td>0%</td>
+                                @endif
                                 <td>
                                     <div class="input-group quantity mx-auto" style="width: 100px;">
                                         <div class="input-group-btn">
