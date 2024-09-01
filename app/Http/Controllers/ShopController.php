@@ -8,6 +8,7 @@ use App\Models\Brand;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\Wishlist;
+use App\Models\Discount;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 class ShopController extends Controller
@@ -70,6 +71,7 @@ class ShopController extends Controller
             $request->merge(['price_max' => 1000]);
         }
         
+        $discount = Discount::get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['products'] = $products;
@@ -81,23 +83,31 @@ class ShopController extends Controller
         $data['price_min'] = intval($request->get('price_min'));
         $data['sort'] = $request->get('sort');
         $data['wishlist'] = $wishlist;
+        $data['discount'] = $discount;
+
         return view('front.shop', $data);
     }
     public function product($slug)
     {
         $product = Product::where('slug', $slug)
             ->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->first();
-
         if ($product == NULL) {
             abort(404);
         }
 
-        // fetch related products 
-        $related_products = [];
-        if ($product != null) {
-            $related_products = explode(',', $product->related_products);
-            $showrelatedproduct = Product::whereIn('id', $related_products)->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
+        // fetch products according to the category
+        if($product != Null){
+            $samcatproduct = Product::where('categories_id', $product->categories_id)
+            ->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
         }
+        // fetch related products 
+        // $related_products = [];
+        // if ($product != null) {
+        //     $related_products = explode(',', $product->related_products);
+        //     $showrelatedproduct = Product::whereIn('id', $related_products)->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
+        // }
+
+
         $avg_rating = '0.00';
         if ($product->product_ratings_count > 0) {
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
@@ -112,12 +122,14 @@ class ShopController extends Controller
         if (!empty(Auth::user())) {
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
-
+        $discount = Discount::get();
         $data['product'] = $product;
         $data['wishlist'] = $wishlist;
-        $data['showrelatedproduct'] = $showrelatedproduct;
+        $data['showrelatedproduct'] = $samcatproduct;
         $data['avg_rating'] = $avg_rating;
         $data['avg_rating_per'] = $avg_rating_per;
+        $data['discount'] = $discount;
+
         return view('front.product', $data);
     }
 

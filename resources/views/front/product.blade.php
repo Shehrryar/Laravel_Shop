@@ -12,7 +12,6 @@
         </div>
     </div>
 </section>
-
 <section class="section-7 pt-3 mb-3">
     <div class="container">
         @include('front.account.common.message')
@@ -39,7 +38,15 @@
             </div>
             <div class="col-md-7">
                 <div class="bg-light right">
-                    <h1>{{$product->title}}</h1>
+                @php
+                    $getprice = getDiscountedPrice($product->id,$discount, $product->price);
+                @endphp
+                @if ($getprice['discount_value'] !=0)
+                    <div style = "display:flex;"><h1>{{$product->title}}</h1><div class="discount-banner" >{{ $getprice['discount_value'] }}% OFF</div></div>
+                @else
+                <h1>{{$product->title}}</h1>
+                @endif
+                   
                     <div class="d-flex mb-3">
                         <!-- <div class="text-primary mr-2">
                             <small class="fas fa-star"></small>
@@ -66,14 +73,16 @@
                             </div>
                         </div>
                         <small class="pt-2 ps-1">({{$product->product_ratings_count}} Reviews)</small>
-                    </div>
-                    @if($product->compare_price > 0)
-                    <h2 class="price text-secondary"><del>{{$product->compare_price}}$</del></h2>
+                    </div>                    
+                    @if ($getprice['discounted_price'] !=0)
+                        <span class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
+                        <span class="h5"><del>{{$getprice['actual_price']}}$</del></span>
+                    @else
+                        <span class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
                     @endif
-                    <h2 class="price ">{{$product->price}}$</h2>
                     <p>{{$product->short_description}}</p>
                     @if ($product->qty > 0)
-                    <a href="javascript:void(0)" onclick="addToCart({{$product->id}})" class="btn btn-dark"><i
+                    <a href="javascript:void(0)" onclick="addToCart({{ $product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})" class="btn btn-dark"><i
                             class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                     @else
                     <a href="javascript:void(0)"><i class="fas fa-shopping-cart"></i> &nbsp;Out of Stock</a>
@@ -182,11 +191,10 @@
 
                                 </div>
                                 @if ($product->product_ratings->isNotEmpty())
-                                @foreach ($product->product_ratings as $rating)
-                                @php
-                                $ratingper = ($rating->rating * 100) / 5
-                                @endphp
-
+                                    @foreach ($product->product_ratings as $rating)
+                                        @php
+                                        $ratingper = ($rating->rating * 100) / 5
+                                        @endphp
                                 <div class="rating-group mb-4">
                                     <span> <strong>{{$rating->username}} </strong></span>
                                     <div class="star-rating mt-2" title="">
@@ -230,7 +238,6 @@
             <div id="related-products" class="carousel">
                 @if(!empty($showrelatedproduct))
                 @foreach ($showrelatedproduct as $relatedproduct)
-
                 @php
                 $images_prod = $relatedproduct->product_images()->first();
                 $inWishlist = $wishlist->contains('product_id', $relatedproduct->id);
@@ -238,16 +245,16 @@
                 <div class="card product-card">
                     <div class="product-image position-relative">
                         <a href="{{route("front.product", $relatedproduct->slug)}}" class="product-img">
-
                             <!-- <img class="card-img-top" src="images/product-1.jpg" alt=""> -->
                             @if(!empty($images_prod))
                             <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
                             @else
                             <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
                             @endif
-
                         </a>
-
+                        @if ($getprice['discount_value'] !=0)
+                            <div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
+                            @endif
                         <a onclick="addToWishlist({{$relatedproduct->id}})" class="whishlist" href="javascript:void(0)">
                             <i id="addwishlist{{$relatedproduct->id}}" class="far fa-heart"
                                 style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
@@ -257,19 +264,20 @@
                             <i id="removewishlist{{$relatedproduct->id}}" class="redhearticon fas fa-heart"
                                 style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
                         </a>
-
-                        <div class="product-action">
-                            @if ($relatedproduct->qty > 0)
-                            <a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$product->id}})">
-                                <i class="fa fa-shopping-cart"></i> Add To Cart
-                            </a>
-                            @else
-                            <a class="btn btn-dark" href="javascript:void(0)">
-                                <i class="fa fa-shopping-cart"></i> Out of Stock
-                            </a>
-                            @endif
-                        </div>
                     </div>
+
+                    <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
+                    @if ($relatedproduct->qty > 0)
+                    <a style = "width: 100%;" class="btn btn-dark" href="javascript:void(0)" onclick='addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
+                        <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
+                    </a>
+                    @else
+                    <a class="btn btn-dark" href="javascript:void(0)" disabled>
+                        <i class="fa fa-shopping-cart"></i> {{trans('Out of Stock')}}
+                    </a>
+                    @endif
+
+
                     <div class="card-body text-center mt-3">
                         <a class="h6 link" href="">{{$relatedproduct->title}}</a>
                         <div class="price mt-2">
@@ -281,9 +289,9 @@
                         @php
                         $avg_rating_per = 0;
                         if ($relatedproduct->product_ratings_count > 0) {
-                        $avg_rating = number_format(($relatedproduct->product_ratings_sum_rating /
-                        $relatedproduct->product_ratings_count), 2);
-                        $avg_rating_per = ($avg_rating * 100) / 5;
+                            $avg_rating = number_format(($relatedproduct->product_ratings_sum_rating /
+                            $relatedproduct->product_ratings_count), 2);
+                            $avg_rating_per = ($avg_rating * 100) / 5;
                         }
                         @endphp
                         <div style="display: flex; justify-content: center;">
@@ -294,7 +302,6 @@
                                     <i class="fa fa-star" aria-hidden="true"></i>
                                     <i class="fa fa-star" aria-hidden="true"></i>
                                     <i class="fa fa-star" aria-hidden="true"></i>
-
                                     <div class="front-stars" style="width: {{$avg_rating_per}}%">
                                         <i class="fa fa-star" aria-hidden="true"></i>
                                         <i class="fa fa-star" aria-hidden="true"></i>
@@ -308,7 +315,6 @@
                         </div>
                     </div>
                 </div>
-
                 @endforeach
                 @endif
             </div>
@@ -316,13 +322,10 @@
     </div>
 </section>
 @endsection
-
 @section('customJs')
-
 <script>
 $("#productratingform").submit(function(event) {
     event.preventDefault();
-
     $.ajax({
         url: '{{ route("front.productRating", $product->id) }}',
         type: 'post',
@@ -338,7 +341,6 @@ $("#productratingform").submit(function(event) {
                     $("#name").removeClass('is-invalid').siblings("p").removeClass(
                         'invalid-feedback').html('');
                 }
-
                 if (errors && errors.email) {
                     $("#email").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
                         .html(errors.email);
@@ -346,7 +348,6 @@ $("#productratingform").submit(function(event) {
                     $("#email").removeClass('is-invalid').siblings("p").removeClass(
                         'invalid-feedback').html('');
                 }
-
                 if (errors && errors.rating) {
                     $("#rating").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
                         .html(errors.rating);
@@ -354,7 +355,6 @@ $("#productratingform").submit(function(event) {
                     $("#rating").removeClass('is-invalid').siblings("p").removeClass(
                         'invalid-feedback').html('');
                 }
-
                 if (errors && errors.review) {
                     $("#review").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
                         .html(errors.review);

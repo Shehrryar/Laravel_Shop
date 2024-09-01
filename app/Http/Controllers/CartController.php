@@ -68,9 +68,6 @@ class CartController extends Controller
     {
         $discount = Discount::where('status',1)->get();
         $cartcontent = Cart::content();
-        // echo "<pre>";
-        // print_r($cartcontent);
-        // exit;
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
         return view('front.cart', $data);
@@ -134,9 +131,7 @@ class CartController extends Controller
         if (Cart::count() == 0) {
             return redirect()->route('front.cart');
         }
-
         // if user is not loogin redirect to the login page
-
         if (Auth::check() == false) {
             if (!session()->has('url.intended')) {
                 session(['url.intended' => url()->current()]);
@@ -157,27 +152,15 @@ class CartController extends Controller
                 $discount = $code->discont_amount;
             }
         }
-
-
         // Calculate shiping here
-
-        // echo "<pre>";
-        // print_r(Auth::user()->id);
-        // exit;
-
         if (!empty($customerAddress->country_id)) {
             $usercountry = $customerAddress->country_id;
-
             $shipping_info = Shipping::where('country_id', $usercountry)->first();
             $totalqty = 0;
             $total_shipping = 0;
             foreach (Cart::content() as $item) {
                 $totalqty += $item->qty;
             }
-
-            // echo "<pre>";
-            // print_r($usercountry);
-            // exit;
             $total_shipping = $totalqty * $shipping_info->amount;
             $grand_total = ($subtotal - $discount) + $total_shipping;
 
@@ -326,7 +309,8 @@ class CartController extends Controller
                 $productData->save();
 
             }
-            orderEmail($order->id);
+            
+            // orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
             Cart::destroy();
             return response()->json([

@@ -171,6 +171,24 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         /* Subtle shadow for depth */
     }
+
+    .discount-banner {
+        /* Position it near the left */
+        margin-left: 20px;
+        background-color: #ff4d4d;
+        /* Bright red background for visibility */
+        color: white;
+        /* White text for contrast */
+        padding: 5px 10px;
+        /* Some padding for better appearance */
+        font-size: 14px;
+        /* Font size for readability */
+        font-weight: bold;
+        /* Bold text to stand out */
+        border-radius: 5px;
+        /* Ensure it stays on top of other content */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
     </style>
 </head>
 

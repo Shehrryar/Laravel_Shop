@@ -144,6 +144,7 @@
 													@php
 														$images_prod = $prod->product_images()->first();
 														$inWishlist = $wishlist->contains('product_id', $prod->id);
+            											$getprice = getDiscountedPrice($prod->id,$discount, $prod->price);
 													@endphp
 													<div class="col-md-4">
 														<div class="card product-card">
@@ -155,8 +156,9 @@
 																		<img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
 																	@endif
 																</a>
-																<div class="discount-badge">20% OFF</div>
-
+																@if ($getprice['discount_value'] !=0)
+                            									<div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
+                            									@endif
 																<a onclick="addToWishlist({{$prod->id}})" class="whishlist" href="javascript:void(0)">
 																	<i id="addwishlist{{$prod->id}}" class="far fa-heart"
 																		style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
@@ -169,7 +171,7 @@
 															</div>
 															<hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
 															@if ($prod->qty > 0)
-																<a class="btn btn-dark" href="javascript:void(0)" onclick="addToCart({{$prod->id}})">
+															<a class="btn btn-dark" href="javascript:void(0)" onclick='addToCart({{ $prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
 																	<i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
 																</a>
 															@else
@@ -180,10 +182,12 @@
 															<div class="card-body text-center mt-3">
 																<a class="h6 link" href="product.php">{{trans($prod->title)}}</a>
 																<div class="price mt-2">
-																	<span class="h5"><strong>{{$prod->price}}$</strong></span>
-																	@if ($prod->compared_price > 0)
-																		<span class="h6 text-underline"><del>{{$prod->compared_price}}</del></span>
-																	@endif
+																@if ($getprice['discounted_price'] !=0)
+                            										<span class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
+                            										<span class="h5"><del>{{$getprice['actual_price']}}$</del></span>
+                            										@else
+                            										<span class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
+                            									@endif
 																</div>
 
 																<div style="display: flex; justify-content: center;">
