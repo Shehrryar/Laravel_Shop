@@ -6,7 +6,7 @@
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Create User</h1>
+                <h1>Edit User</h1>
             </div>
             <div class="col-sm-6 text-right">
                 <a href='{{route("users.index")}}' class="btn btn-primary">Back</a>
@@ -27,7 +27,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name">Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Name">
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Name"
+                                    value="{{$user_edit->name}}">
                                 <p id="para_name"></p>
                             </div>
                         </div>
@@ -35,7 +36,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="email">Email</label>
-                                <input type="text" name="email" id="email" class="form-control" placeholder="email">
+                                <input type="text" name="email" id="email" class="form-control" placeholder="email"
+                                    value="{{$user_edit->email}}">
                                 <p id="para_email"></p>
                             </div>
                         </div>
@@ -44,14 +46,15 @@
                             <div class="mb-3">
                                 <label for="password">Password</label>
                                 <input type="password" name="password" id="password" class="form-control"
-                                    placeholder="password">
+                                    placeholder="password" value="{{$user_edit->password}}">
                                 <p id="para_password"></p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="phone">Phone</label>
-                                <input type="text" name="phone" id="phone" class="form-control" placeholder="phone">
+                                <input type="text" name="phone" id="phone" class="form-control" placeholder="phone"
+                                    value="{{$user_edit->phone}}">
                                 <p id="para_phone"></p>
                             </div>
                         </div>
@@ -61,8 +64,8 @@
                                 <label for="status">Status</label>
 
                                 <select id="status" name="status" class="form-control">
-                                    <option value="1">Active</option>
-                                    <option value="0">Block</option>
+                                    <option {{($user_edit->status == 1) ? 'selected' : ''}} value="1">Active</option>
+                                    <option {{($user_edit->status == 0) ? 'selected' : ''}} value="0">Block</option>
                                 </select>
 
                             </div>
@@ -71,7 +74,7 @@
                 </div>
             </div>
             <div class="pb-5 pt-3">
-                <button type="submit" id="getFormValuesButton" class="btn btn-primary">Create</button>
+                <button type="submit" id="getFormValuesButton" class="btn btn-primary">Update</button>
                 <a href='{{route("users.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
             </div>
 
@@ -90,8 +93,8 @@ $(document).ready(function() {
         event.preventDefault();
         var formDataArray = $("#user_from").serializeArray();
         $.ajax({
-            url: '{{route("users.store")}}',
-            type: 'POST',
+            url: '{{route("users.update", $user_edit->id)}}',
+            type: 'PUT',
             data: formDataArray, // Use correct form ID
             dataType: 'json', // 'datatype' should be 'dataType'
             success: function(response) {

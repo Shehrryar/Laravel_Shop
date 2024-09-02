@@ -49,7 +49,7 @@ class UserController extends Controller
             session()->flash('success', $message);
             return response()->json(
                 [
-                    'status' => false,
+                    'status' => true,
                     'message' => $message
                 ]
             );
@@ -63,6 +63,53 @@ class UserController extends Controller
         }
     }
 
+    public function edit($userid, Request $request){
+        $user_edit = User::find($userid);
+        return view('admin.users.edit', compact('user_edit'));
+    }
+
+    public function update(Request $request, $user_id)
+    {
+        $user_edit = User::find($user_id);
+        if(empty($user_edit))
+        return response()->json([
+             'status'=>false,
+             'not found'=>ture,
+             'message'=> 'User not found'
+     ]);
+        $validater = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required',
+                'email' => 'required|email|unique:users',
+                'phone' => 'required',
+                'password' => 'required',
+            ]
+        );
+        if ($validater->passes()) {
+            $user_edit->name = $request->name;
+            $user_edit->email = $request->email;
+            $user_edit->phone = $request->phone;
+            $user_edit->password = Hash::make($request->name);
+            $user_edit->status = $request->status;
+            $user_edit->save();
+            $message = "User is Updated Successfully";
+            session()->flash('success', $message);
+            return response()->json(
+                [
+                    'status' => true,
+                    'message' => $message
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    'status' => false,
+                    'errors' => $validater->errors()
+                ]
+            );
+        }
+    }
 
     public function destroy($user_id, Request $request)
     {
