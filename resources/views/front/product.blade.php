@@ -241,6 +241,7 @@
                 @php
                 $images_prod = $relatedproduct->product_images()->first();
                 $inWishlist = $wishlist->contains('product_id', $relatedproduct->id);
+                $getprice = getDiscountedPrice($relatedproduct->id,$discount, $product->price);
                 @endphp
                 <div class="card product-card">
                     <div class="product-image position-relative">
