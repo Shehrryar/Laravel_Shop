@@ -182,7 +182,6 @@
             success: function (response) {
                 window.location.href = '{{route("order.detail", $order->id)}}';
             }
-
         });
     });
 </script>

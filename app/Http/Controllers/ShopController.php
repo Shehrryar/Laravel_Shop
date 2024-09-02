@@ -71,7 +71,7 @@ class ShopController extends Controller
             $request->merge(['price_max' => 1000]);
         }
         
-        $discount = Discount::get();
+        $discount = Discount::where('status',1)->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['products'] = $products;
@@ -122,7 +122,7 @@ class ShopController extends Controller
         if (!empty(Auth::user())) {
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
-        $discount = Discount::get();
+        $discount = Discount::where('status',1)->get();
         $data['product'] = $product;
         $data['wishlist'] = $wishlist;
         $data['showrelatedproduct'] = $samcatproduct;
