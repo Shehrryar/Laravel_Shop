@@ -21,6 +21,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\admin\LanguageController;
 use App\Http\Controllers\admin\OrderController;
+use App\Http\Controllers\admin\UserController;
+
 use Laravel\Socialite\Facades\Socialite;
 /*
 |--------------------------------------------------------------------------
@@ -207,6 +209,13 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
         Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
 
+        // user routes
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+        // Route::get('/brands/{brandedit}/edit', [UserController::class, 'edit'])->name('brands.edit');
+        // Route::put('/brands/{brandupadate}', [UserController::class, 'update'])->name('brands.update');
+        Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
                 
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
