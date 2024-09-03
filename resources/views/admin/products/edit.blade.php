@@ -337,6 +337,29 @@
             }
         });
     });
+
+
+        $("#sub_category").change(function () {
+        var subcategory_id = $(this).val();
+        $.ajax({
+            url: '{{route("productsubcat.subcategory")}}',
+            type: 'get',
+            data: { subcategory_id: subcategory_id },
+            dataType: 'json',
+            success: function (response) {
+                $("#subsub_category").find("option").not(":first").remove();
+                $.each(response['SubSubCategory'], function (key, item) {
+                    $("#subsub_category").append(`<option value ='${item.id}'>${item.name}</option>`)
+                });
+            },
+            error: function () {
+                console.log("something went wrong");
+            }
+        });
+    });
+    
+
+
     Dropzone.autoDiscover = false;
     const dropzone = $("#image").dropzone({
         url: "{{route('product-images.update')}}",

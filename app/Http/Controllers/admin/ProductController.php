@@ -73,7 +73,7 @@ class ProductController extends Controller
             $product->shipping_returns = strip_tags($request->shipping_return);
             if (!empty($request->related_product)) {
                 $product->related_products = implode(',', $request->related_product);
-            }else{
+            } else {
                 $product->related_products = '';
             }
             $product->save();
@@ -111,7 +111,7 @@ class ProductController extends Controller
         if (empty($product)) {
             return redirect()->route('product.index')->with('error', 'product not found');
         }
-        if($product != null){
+        if ($product != null) {
             $related_products = explode(',', $product->related_products);
             $showrelatedproduct = Product::whereIn('id', $related_products)->get();
         }
@@ -147,6 +147,15 @@ class ProductController extends Controller
         }
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
+
+            // Check if sub_category is an integer
+            if (is_numeric($request->sub_category) && is_int((int) $request->sub_category)) {
+                // It's an integer, so use it directly
+                $subcategory_id = (int) $request->sub_category;
+            } else {
+                // It's a name, so fetch the ID using the name
+                $subcategory_id = SubCategory::where('name', $request->sub_category)->value('id');
+            }
             $product->title = $request->title;
             $product->slug = $request->slug;
             $product->price = $request->price;
@@ -157,7 +166,7 @@ class ProductController extends Controller
             $product->qty = $request->qty;
             $product->status = $request->status;
             $product->categories_id = $request->category;
-            $product->sub_category_id = $request->sub_category;
+            $product->sub_category_id = $subcategory_id;
             $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
             $product->is_featured = $request->is_featured;
@@ -166,9 +175,10 @@ class ProductController extends Controller
             $product->shipping_returns = strip_tags($request->shipping_return);
             if (!empty($request->related_product)) {
                 $product->related_products = implode(',', $request->related_product);
-            }else{
+            } else {
                 $product->related_products = '';
             }
+
             $product->save();
             $request->session()->flash('success', 'product data is updated sucessufully');
 
@@ -233,8 +243,8 @@ class ProductController extends Controller
             'status' => 'true'
         ]);
     }
-
-    function importProducts(Request $request){
+    function importProducts(Request $request)
+    {
         $file = $request->file('file');
 
         $validator = Validator::make(
@@ -256,7 +266,7 @@ class ProductController extends Controller
         for ($i = 0; $i < count($fileData); $i++) {
             $data = array_combine($header, $fileData[$i]);
 
-            $data = array_map(function($value) {
+            $data = array_map(function ($value) {
                 return $value === 'NULL' ? null : $value;
             }, $data);
             $data['is_featured'] = $data['is_featured'] === 'Yes' ? true : false;
