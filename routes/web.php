@@ -22,8 +22,11 @@ use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\admin\LanguageController;
 use App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\ColorController;
+use App\Http\Controllers\admin\SizeController;
 
-use Laravel\Socialite\Facades\Socialite;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -74,7 +77,7 @@ Route::group(['prefix' => 'account'], function () {
         // Register with Facebook
         Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
         Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
-        
+
         Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
         Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
 
@@ -103,7 +106,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
 
         //Localization for admin
-        
+
         Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('admin.localizationcontroller');
 
         // category routes
@@ -131,11 +134,11 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::get('/subsubcategory', [SubSubCategoryController::class, 'index'])->name('subsubcategories.index');
         Route::get('/subsubcategory/create', [SubSubCategoryController::class, 'create'])->name('subsubcategory.create');
-        Route::post('/subsubcategory/store', [SubSubCategoryController::class, 'store'])->name('subsubcategory.store');   
+        Route::post('/subsubcategory/store', [SubSubCategoryController::class, 'store'])->name('subsubcategory.store');
         Route::get('/subsubcategory/{subcatedit}/edit', [SubSubCategoryController::class, 'edit'])->name('subsubcategory.edit');
         Route::put('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'update'])->name('subsubcategory.update');
         Route::delete('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'destroy'])->name('subsubcategory.delete');
-                
+
         // these route for the brand
 
         Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
@@ -156,7 +159,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/language/{langdelete}', [LanguageController::class, 'destroy'])->name('language.delete');
 
         // these routes are for the Products
-
 
         Route::get('/product', [ProductController::class, 'index'])->name('product.index');
         Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
@@ -182,12 +184,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
 
 
-         // Order Routes
+        // Order Routes
 
-         Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
-         Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
-         Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
-         Route::post('/orders/sent-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('order.sendinvoiceemail');
+        Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
+        Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
+        Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
+        Route::post('/orders/sent-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('order.sendinvoiceemail');
 
 
 
@@ -216,7 +218,23 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{userupadate}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
-                
+
+        // add route for the color
+        Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
+        Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
+        Route::post('/colorss/store', [ColorController::class, 'store'])->name('colorss.store');
+        Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
+        Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
+        Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
+
+        // add route for the size
+        Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
+        Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
+        Route::post('/sizes/store', [SizeController::class, 'store'])->name('sizes.store');
+        Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
+        Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
+        Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
+
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
 
