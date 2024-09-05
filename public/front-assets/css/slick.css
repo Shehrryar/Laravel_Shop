@@ -171,3 +171,148 @@
   .star-rating{
     font-size: 1em;
   }
+
+
+
+
+  
+
+  .notification {
+    /* background-color: #555; */
+    color: white;
+    text-decoration: none;
+    padding: 9px 13px;
+    position: relative;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+.notification:hover {
+    background: gray;
+}
+
+.notification .badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    padding: 5px 10px;
+    border-radius: 50%;
+    background: red;
+    color: white;
+}
+
+.d-flex {
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    /* Show the submenu to the right */
+    margin-top: -1px;
+}
+
+.dropdown-submenu-left>.dropdown-menu {
+    left: auto;
+    right: 100%;
+    /* Show the submenu to the left */
+}
+
+/* Show the submenu on hover */
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+/* Add to Cart Button */
+.product-action .btn-dark {
+    background: linear-gradient(45deg, #6b8e23, #4caf50);
+    /* Gradient background */
+    color: white;
+    /* White text color */
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    /* Remove border */
+    border-radius: 5px;
+    /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Light shadow for depth */
+    transition: background 0.3s ease, transform 0.3s ease;
+    /* Smooth transitions */
+}
+
+/* Hover effect */
+.product-action .btn-dark:hover {
+    background: linear-gradient(45deg, #4caf50, #388e3c);
+    /* Darker green gradient */
+    transform: translateY(-2px);
+    /* Slightly raise the button */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    /* Increase shadow on hover */
+}
+
+/* Active state */
+.product-action .btn-dark:active {
+    transform: translateY(0);
+    /* Reset the translation */
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+    /* Slightly reduce shadow */
+}
+
+/* Icon styling */
+.product-action .btn-dark i {
+    margin-right: 8px;
+    /* Space between icon and text */
+    font-size: 18px;
+}
+
+/* Discount Badge */
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    /* Position it near the top */
+    left: 10px;
+    /* Position it near the left */
+    background-color: #ff4d4d;
+    /* Bright red background for visibility */
+    color: white;
+    /* White text for contrast */
+    padding: 5px 10px;
+    /* Some padding for better appearance */
+    font-size: 14px;
+    /* Font size for readability */
+    font-weight: bold;
+    /* Bold text to stand out */
+    border-radius: 5px;
+    /* Rounded corners */
+    z-index: 10;
+    /* Ensure it stays on top of other content */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+}
+
+.discount-banner {
+    /* Position it near the left */
+    margin-left: 20px;
+    background-color: #ff4d4d;
+    /* Bright red background for visibility */
+    color: white;
+    /* White text for contrast */
+    padding: 5px 10px;
+    /* Some padding for better appearance */
+    font-size: 14px;
+    /* Font size for readability */
+    font-weight: bold;
+    /* Bold text to stand out */
+    border-radius: 5px;
+    /* Ensure it stays on top of other content */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}

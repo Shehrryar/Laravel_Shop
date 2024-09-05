@@ -45,7 +45,8 @@
 						<tr>
 							<th width="60">ID</th>
 							<th>Name</th>
-							<th>Code</th>
+							<th>Hex Value</th>
+							<th>Color</th>
 							<th>Status</th>
 							<th>Action</th>
 						</tr>
@@ -57,6 +58,8 @@
 									<td>{{ $color->id}}</td>
 									<td>{{ $color->name}}</td>
 									<td>{{ $color->value}}</td>
+									<td ><div id = "color_sorting" style="background-color: {{ $color->value }};"></div></td>
+
 									<td>
 										@if($color->status == 1)
 											<svg class="text-success-500 h-6 w-6 text-success" xmlns="http://www.w3.org/2000/svg"

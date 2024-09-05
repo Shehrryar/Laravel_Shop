@@ -31,7 +31,7 @@
 						<div class="col-md-6">
 							<div class="mb-3">
 								<label for="hex_value">Hex Value</label>
-								<input type="text" name="value" id="value" class="form-control"
+								<input type="color" name="value" id="value" class="form-control"
 									placeholder="Hex value">
 							</div>
 							<p id="para_cod"></p>

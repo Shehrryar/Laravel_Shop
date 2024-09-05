@@ -10,18 +10,11 @@
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/fontawesome-free/css/all.min.css')}}">
 		<!-- Theme style -->
 		<link rel="stylesheet" href="{{asset('admin-assets/css/adminlte.min.css')}}">
-
-
         <link rel="stylesheet" href="{{asset('admin-assets/plugins/summernote/summernote.min.css')}}">
-
 		<link rel="stylesheet" href="{{asset('admin-assets/css/custom.css')}}">
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/dropzone/min/dropzone.min.css')}}">
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/select2/css/select2.min.css')}}">
-
-		
 		<meta name="csrf-token" content="{{csrf_token()}}">
-
-
 	</head>
 	<body class="hold-transition sidebar-mini">
 		<!-- Site wrapper -->
@@ -39,7 +32,6 @@
 						<li class="breadcrumb-item active">Dashboard</li>
 					</ol> -->
 				</div>
-				
 				<ul class="navbar-nav ml-auto">
 					<li class="nav-item">
 						<a class="nav-link" data-widget="fullscreen" href="#" role="button">
@@ -51,7 +43,6 @@
 							<img src="{{asset('admin-assets/img/avatar5.png')}}" class='img-circle elevation-2' width="40" height="40" alt="">
 						</a>
 						<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-3">
-            
 							<h4 class="h4 mb-0"><strong>{{$admin = Auth::guard('admin')->user()->name;}}</strong></h4>
 							<div class="mb-3">{{$admin = Auth::guard('admin')->user()->email;}}</div>
 							<div class="dropdown-divider"></div>
@@ -81,10 +72,8 @@
 			</div>
 			<!-- /.content-wrapper -->
 			<footer class="main-footer">
-				
 				<strong>Copyright &copy; 2020-2024 Sheharyar Asif All rights reserved.
 			</footer>
-			
 		</div>
 		<!-- ./wrapper -->
 		<!-- jQuery -->
@@ -95,11 +84,8 @@
 		<script src="{{asset('admin-assets/js/adminlte.min.js')}}"></script>
 		<!-- AdminLTE for demo purposes -->
 		<script src="{{asset('admin-assets/js/demo.js')}}"></script>
-
         <script src="{{asset('admin-assets/plugins/summernote/summernote.min.js')}}"></script>
         <script src="{{asset('admin-assets/plugins/select2/js/select2.min.js')}}"></script>
-		
-
 		<script src="{{asset('admin-assets/plugins/dropzone/min/dropzone.min.js')}}"></script>
 		<script type="text/javascript">
 		$.ajaxSetup({
@@ -107,16 +93,12 @@
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			}
 		});
-
-
 		$(document).ready(function(){
 			$(".summernote").summernote({
 				height:250
 			});
-
 		});
 </script>
-
 		@yield('customjs')
 	</body>
 </html>
