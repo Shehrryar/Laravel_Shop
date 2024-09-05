@@ -1,14 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use App\Models\Discount;
-
 class FrontController extends Controller
 {
     public function index()
@@ -22,14 +19,12 @@ class FrontController extends Controller
                     ->withCount('product_ratings')
                     ->withSum('product_ratings', 'rating')
                     ->paginate(8);
-
         $latest_product = Product::orderBy('id', 'DESC')
                         ->where('status', 1)
                         ->withCount('product_ratings')
                         ->withSum('product_ratings', 'rating')
                         ->paginate(8);
         $discount = Discount::where('status', 1)->get();
-
         // echo "<pre>";
         // print_r($discount);
         // exit;
@@ -47,8 +42,6 @@ class FrontController extends Controller
                 'status' => false
             ]);
         }
-
-
         $product = Product::where('id', $request->id)->first();
         if ($product == null) {
             return response()->json([
@@ -56,7 +49,6 @@ class FrontController extends Controller
                 'message' => '<div class = "alert alert-danger">Product not found.</div>'
             ]);
         }
-
         $wishlist = Wishlist::updateOrCreate(
             [
                 'user_id' => Auth::user()->id,
@@ -67,12 +59,9 @@ class FrontController extends Controller
                 'product_id' => $request->id
             ]
         );
-
         return response()->json([
             'status' => true,
             'message' => '<div class = "alert alert-success"><strong>"' . $product->title . '"</strong> is added to the Wishlist.</div>'
         ]);
-
-
     }
 }

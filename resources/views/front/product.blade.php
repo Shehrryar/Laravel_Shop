@@ -1,6 +1,5 @@
 @extends('front.layouts.app')
 @section('content')
-
 <section class="section-5 pt-3 pb-3 mb-3 bg-white">
     <div class="container">
         <div class="light-font">
@@ -46,7 +45,6 @@
                 @else
                 <h1>{{$product->title}}</h1>
                 @endif
-                   
                     <div class="d-flex mb-3">
                         <!-- <div class="text-primary mr-2">
                             <small class="fas fa-star"></small>
@@ -62,7 +60,6 @@
                                 <i class="fa fa-star" aria-hidden="true"></i>
                                 <i class="fa fa-star" aria-hidden="true"></i>
                                 <i class="fa fa-star" aria-hidden="true"></i>
-
                                 <div class="front-stars" style="width: {{$avg_rating_per}}%">
                                     <i class="fa fa-star" aria-hidden="true"></i>
                                     <i class="fa fa-star" aria-hidden="true"></i>
@@ -89,7 +86,6 @@
                     @endif
                 </div>
             </div>
-
             <div class="col-md-12 mt-5">
                 <div class="bg-light">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -157,7 +153,6 @@
                                             <textarea name="review" id="review" class="form-control" cols="30" rows="10"
                                                 placeholder="How was your overall experience?"></textarea>
                                             <p></p>
-
                                         </div>
                                         <div>
                                             <button class="btn btn-dark">Submit</button>
@@ -176,7 +171,6 @@
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
-
                                                 <div class="front-stars" style="width: {{$avg_rating_per}}%">
                                                     <i class="fa fa-star" aria-hidden="true"></i>
                                                     <i class="fa fa-star" aria-hidden="true"></i>
@@ -188,7 +182,6 @@
                                         </div>
                                         <div class="pt-2 ps-2">({{$product->product_ratings_count}} Reviews)</div>
                                     </div>
-
                                 </div>
                                 @if ($product->product_ratings->isNotEmpty())
                                     @foreach ($product->product_ratings as $rating)
@@ -204,7 +197,6 @@
                                             <i class="fa fa-star" aria-hidden="true"></i>
                                             <i class="fa fa-star" aria-hidden="true"></i>
                                             <i class="fa fa-star" aria-hidden="true"></i>
-
                                             <div class="front-stars" style="width:{{$ratingper}}%">
                                                 <i class="fa fa-star" aria-hidden="true"></i>
                                                 <i class="fa fa-star" aria-hidden="true"></i>
@@ -228,7 +220,6 @@
         </div>
     </div>
 </section>
-
 <section class="pt-5 section-8">
     <div class="container">
         <div class="section-title">
@@ -266,7 +257,6 @@
                                 style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
                         </a>
                     </div>
-
                     <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
                     @if ($relatedproduct->qty > 0)
                     <a style = "width: 100%;" class="btn btn-dark" href="javascript:void(0)" onclick='addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
@@ -277,8 +267,6 @@
                         <i class="fa fa-shopping-cart"></i> {{trans('Out of Stock')}}
                     </a>
                     @endif
-
-
                     <div class="card-body text-center mt-3">
                         <a class="h6 link" href="">{{$relatedproduct->title}}</a>
                         <div class="price mt-2">

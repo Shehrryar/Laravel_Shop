@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en_AU">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title><?php echo (!empty($title)) ? 'Title-' . $title : 'Home'; ?>Laravel Online Shop</title>
     <meta name="description" content="" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no" />
-
     <meta name="HandheldFriendly" content="True" />
     <meta name="pinterest" content="nopin" />
-
     <meta property="og:locale" content="en_AU" />
     <meta property="og:type" content="website" />
     <meta property="fb:admins" content="" />
@@ -24,38 +21,28 @@
     <meta property="og:image:width" content="" />
     <meta property="og:image:height" content="" />
     <meta property="og:image:alt" content="" />
-
     <meta name="twitter:title" content="" />
     <meta name="twitter:site" content="" />
     <meta name="twitter:description" content="" />
     <meta name="twitter:image" content="" />
     <meta name="twitter:image:alt" content="" />
     <meta name="twitter:card" content="summary_large_image" />
-
-
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/slick.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/slick-theme.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/video-js.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/style.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/ion.rangeSlider.min.css')}}" />
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-
-
     <!-- Fav Icon -->
     <link rel="shortcut icon" type="image/x-icon" href="#" />
     <meta name="csrf-token" content="{{csrf_token()}}">
-
     <style>
-    
     </style>
 </head>
-
 <body data-instant-intensity="mousedown">
-
     <div class="bg-light top-header">
         <div class="container">
             <div class="row align-items-center py-3 d-none d-lg-flex justify-content-between">
@@ -65,19 +52,18 @@
                     </a>
                 </div>
                 <div class="col-lg-6 col-6 text-left  d-flex justify-content-end align-items-center">
-
                     @if (Auth::check())
-                    <a href="{{route('account.profile')}}" class="nav-link text-dark">My Account</a>
+                        <a href="{{route('account.profile')}}" class="nav-link text-dark">My Account</a>
                     @else
-                    <a href="{{route('account.login')}}" class="nav-link text-dark">Login</a>
+                        <a href="{{route('account.login')}}" class="nav-link text-dark">Login</a>
                     @endif
-
-                    <form action="">
+                    <form id="search_prodcut" name="search_prodcut" action="{{ route('product.search') }}"
+                        method="POST">
                         <div class="input-group">
-                            <input type="text" placeholder="Search For Products" class="form-control"
-                                aria-label="Amount (to the nearest dollar)">
+                            <input type="text" name="search_query" placeholder="Search For Products"
+                                class="form-control" aria-label="Amount (to the nearest dollar)">
                             <span class="input-group-text">
-                                <i class="fa fa-search"></i>
+                                <button type="submit"><i class="fa fa-search"></i></button>
                             </span>
                         </div>
                     </form>
@@ -85,7 +71,6 @@
             </div>
         </div>
     </div>
-
     <header class="bg-dark">
         <div class="container">
             <nav class="navbar navbar-expand-xl" id="navbar">
@@ -102,80 +87,70 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         @if(getcategories()->isNotEmpty())
-                        @foreach(getcategories() as $category)
-                        <li class="nav-item dropdown">
-
-                            <button onclick="show_category('{{ route('front.shop', $category->slug) }}')"
-                                class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ trans($category->name) }}
-                            </button>
-
-                            @if($category->sub_category->isNotEmpty())
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                @foreach($category->sub_category as $subcategory)
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item nav-link"
-                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug]) }}">
-                                        {{ trans($subcategory->name) }}
-                                    </a>
-
-                                    @if($subcategory->sub_sub_category->isNotEmpty())
-                                    <!-- Check for SubSubCategory -->
-                                    <ul class="dropdown-menu dropdown-menu-dark">
-                                        @foreach($subcategory->sub_sub_category as $subSubCategory)
-                                        <li>
-                                            <a class="dropdown-item nav-link"
-                                                href="{{ route('front.shop', [$category->slug, $subcategory->slug, $subSubCategory->slug]) }}">
-                                                {{ trans($subSubCategory->name) }}
-                                            </a>
-                                        </li>
-                                        @endforeach
-                                    </ul>
+                            @foreach(getcategories() as $category)
+                                <li class="nav-item dropdown">
+                                    <button onclick="show_category('{{ route('front.shop', $category->slug) }}')"
+                                        class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ trans($category->name) }}
+                                    </button>
+                                    @if($category->sub_category->isNotEmpty())
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            @foreach($category->sub_category as $subcategory)
+                                                <li class="dropdown-submenu">
+                                                    <a class="dropdown-item nav-link"
+                                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug]) }}">
+                                                        {{ trans($subcategory->name) }}
+                                                    </a>
+                                                    @if($subcategory->sub_sub_category->isNotEmpty())
+                                                        <!-- Check for SubSubCategory -->
+                                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                                            @foreach($subcategory->sub_sub_category as $subSubCategory)
+                                                                <li>
+                                                                    <a class="dropdown-item nav-link"
+                                                                        href="{{ route('front.shop', [$category->slug, $subcategory->slug, $subSubCategory->slug]) }}">
+                                                                        {{ trans($subSubCategory->name) }}
+                                                                    </a>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     @endif
                                 </li>
-                                @endforeach
-                            </ul>
-                            @endif
-                        </li>
-                        @endforeach
+                            @endforeach
                         @endif
                     </ul>
                 </div>
-
                 <div class="right-nav py-0 d-flex align-items-center ">
-
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         <li class="nav-item dropdown">
                             <select id="languageSelect" class="form-control">
                                 @php
-                                $languages = \App\Models\Language::all();
+                                    $languages = \App\Models\Language::all();
                                 @endphp
                                 @foreach ($languages as $language)
-                                @if ($language->status == 1)
-                                <option value="{{ $language->Isocode }}"
-                                    {{ app()->getLocale() == $language->Isocode ? 'selected' : '' }}>
-                                    {{ trans($language->name) }}
-                                </option>
-                                @endif
+                                    @if ($language->status == 1)
+                                        <option value="{{ $language->Isocode }}" {{ app()->getLocale() == $language->Isocode ? 'selected' : '' }}>
+                                            {{ trans($language->name) }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                         </li>
                     </ul>
-
-
                     <a href="{{route(('front.cart'))}}" class="d-flex notification" style="margin-left: 10px;">
                         <i class="fa-solid fa-cart-shopping" style="font-size: 29px;"></i>
                         <span class="badge">{{Cart::count()}}</span>
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </a>
                 </div>
-
             </nav>
         </div>
     </header>
     <main>
-
         @yield('content')
         <footer class="bg-dark mt-5">
             <div class="container pb-5 pt-3">
@@ -189,7 +164,6 @@
                                 000 000 0000</p>
                         </div>
                     </div>
-
                     <div class="col-md-4">
                         <div class="footer-card">
                             <h3>Important Links</h3>
@@ -202,7 +176,6 @@
                             </ul>
                         </div>
                     </div>
-
                     <div class="col-md-4">
                         <div class="footer-card">
                             <h3>My Account</h3>
@@ -227,8 +200,6 @@
                 </div>
             </div>
         </footer>
-
-
         <!-- Modal -->
         <div class="modal fade" id="wishlist_model" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
@@ -248,173 +219,147 @@
                 </div>
             </div>
         </div>
-
-
         <script src="{{asset('front-assets/js/jquery-3.6.0.min.js')}}"></script>
         <script src="{{asset('front-assets/js/bootstrap.bundle.5.1.3.min.js')}}"></script>
         <script src="{{asset('front-assets/js/instantpages.5.1.0.min.js')}}"></script>
         <script src="{{asset('front-assets/js/lazyload.17.6.0.min.js')}}"></script>
         <script src="{{asset('front-assets/js/slick.min.js')}}"></script>
         <script src="{{asset('front-assets/js/ion.rangeSlider.min.js')}}"></script>
-
         <script src="{{asset('front-assets/js/custom.js')}}"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
         <script>
-        window.onscroll = function() {
-            myFunction()
-        };
-
-        var navbar = document.getElementById("navbar");
-        var sticky = navbar.offsetTop;
-
-        function myFunction() {
-            if (window.pageYOffset >= sticky) {
-                navbar.classList.add("sticky")
-            } else {
-                navbar.classList.remove("sticky");
+            window.onscroll = function () {
+                myFunction()
+            };
+            var navbar = document.getElementById("navbar");
+            var sticky = navbar.offsetTop;
+            function myFunction() {
+                if (window.pageYOffset >= sticky) {
+                    navbar.classList.add("sticky")
+                } else {
+                    navbar.classList.remove("sticky");
+                }
             }
-        }
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-
-        function addToCart(id, discount_val, discount_price, actual_price) {
-            $.ajax({
-                url: '{{ route("front.addToCart") }}',
-                type: 'POST',
-                data: {
-                    id: id,
-                    discount_val: discount_val,
-                    discount_price: discount_price,
-                    actual_price: actual_price
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === true) {
-                        window.location.href = "{{ route('front.cart') }}";
-                    } else {
-                        alert(response.message);
-                    }
-                },
-            });
-        }
-
-        $('.redhearticon').css({
-            'color': 'red'
-        });
-
-        function addToWishlist(id) {
-            var addwishlistid = "#addwishlist" + id;
-            var removewishlistid = "#removewishlist" + id;
-            $.ajax({
-                url: '{{ route("front.addtowishlist") }}',
-                type: 'post',
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == true) {
-                        $(addwishlistid).css('display', 'none');
-                        $(removewishlistid).css('display', 'block');
-                        $("#wishlist_model .modal-body").html(response.message);
-                        $("#wishlist_model").modal('show');
-                    } else {
-                        // Redirect to login if not successful
-                        window.location.href = "{{ route('account.login') }}";
-                    }
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-        }
-
-        function removefromWishlist(id) {
-            var addwishlistid = "#addwishlist" + id;
-            var removewishlistid = "#removewishlist" + id;
-            $.ajax({
-                url: '{{route("account.remove_product_from_wislist")}}',
-                type: 'post',
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == true) {
-
-                        $(addwishlistid).css('display', 'block');
-                        $(removewishlistid).css('display', 'none');
-
-                    }
-                }
+            function addToCart(id, discount_val, discount_price, actual_price) {
+                $.ajax({
+                    url: '{{ route("front.addToCart") }}',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        discount_val: discount_val,
+                        discount_price: discount_price,
+                        actual_price: actual_price
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status === true) {
+                            window.location.href = "{{ route('front.cart') }}";
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                });
+            }
+            $('.redhearticon').css({
+                'color': 'red'
             });
-        }
-
-
-        document.getElementById('languageSelect').addEventListener('change', function() {
-            var selectedLanguage = this.value;
-            // Redirect to the selected language URL
-            var url = "{{ route('front.localizationcontroller', ':locale') }}";
-            url = url.replace(':locale', selectedLanguage);
-            window.location.href = url;
-        });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
-
-            // Loop through each dropdown item and add event listeners
-            dropdownItems.forEach(function(dropdown) {
-                dropdown.addEventListener('mouseenter', function() {
-                    var dropdownMenu = this.querySelector('.dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.add('show');
-                        dropdown.classList.add('show');
+            function addToWishlist(id) {
+                var addwishlistid = "#addwishlist" + id;
+                var removewishlistid = "#removewishlist" + id;
+                $.ajax({
+                    url: '{{ route("front.addtowishlist") }}',
+                    type: 'post',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status == true) {
+                            $(addwishlistid).css('display', 'none');
+                            $(removewishlistid).css('display', 'block');
+                            $("#wishlist_model .modal-body").html(response.message);
+                            $("#wishlist_model").modal('show');
+                        } else {
+                            // Redirect to login if not successful
+                            window.location.href = "{{ route('account.login') }}";
+                        }
                     }
                 });
-
-                dropdown.addEventListener('mouseleave', function() {
-                    var dropdownMenu = this.querySelector('.dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.remove('show');
-                        dropdown.classList.remove('show');
+            }
+            function removefromWishlist(id) {
+                var addwishlistid = "#addwishlist" + id;
+                var removewishlistid = "#removewishlist" + id;
+                $.ajax({
+                    url: '{{route("account.remove_product_from_wislist")}}',
+                    type: 'post',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status == true) {
+                            $(addwishlistid).css('display', 'block');
+                            $(removewishlistid).css('display', 'none');
+                        }
                     }
                 });
-            });
-
-            var subDropdownItems = document.querySelectorAll('.dropdown-submenu');
-
-            // Loop through each sub-dropdown item and add event listeners
-            subDropdownItems.forEach(function(subDropdown) {
-                subDropdown.addEventListener('mouseenter', function() {
-                    var dropdownMenu = this.querySelector('.dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.add('show');
-                        subDropdown.classList.add('show');
-                    }
-                });
-
-                subDropdown.addEventListener('mouseleave', function() {
-                    var dropdownMenu = this.querySelector('.dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.remove('show');
-                        subDropdown.classList.remove('show');
-                    }
-                });
-            });
-        });
-
-
-        function show_category(url) {
-            if (url) {
+            }
+            document.getElementById('languageSelect').addEventListener('change', function () {
+                var selectedLanguage = this.value;
+                // Redirect to the selected language URL
+                var url = "{{ route('front.localizationcontroller', ':locale') }}";
+                url = url.replace(':locale', selectedLanguage);
                 window.location.href = url;
+            });
+            document.addEventListener('DOMContentLoaded', function () {
+                var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
+                // Loop through each dropdown item and add event listeners
+                dropdownItems.forEach(function (dropdown) {
+                    dropdown.addEventListener('mouseenter', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.add('show');
+                            dropdown.classList.add('show');
+                        }
+                    });
+                    dropdown.addEventListener('mouseleave', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.remove('show');
+                            dropdown.classList.remove('show');
+                        }
+                    });
+                });
+                var subDropdownItems = document.querySelectorAll('.dropdown-submenu');
+                // Loop through each sub-dropdown item and add event listeners
+                subDropdownItems.forEach(function (subDropdown) {
+                    subDropdown.addEventListener('mouseenter', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.add('show');
+                            subDropdown.classList.add('show');
+                        }
+                    });
+                    subDropdown.addEventListener('mouseleave', function () {
+                        var dropdownMenu = this.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            dropdownMenu.classList.remove('show');
+                            subDropdown.classList.remove('show');
+                        }
+                    });
+                });
+            });
+            function show_category(url) {
+                if (url) {
+                    window.location.href = url;
+                }
             }
-        }
         </script>
-
         @yield('customJs')
 </body>
-
 </html>
