@@ -34,7 +34,6 @@ class CartController extends Controller
         if (Cart::count() > 0) {
             $cartcontent = Cart::content();
             $productAlreadyExist = false;
-
             foreach ($cartcontent as $item) {
                 if ($item->id == $product->id) {
                     $productAlreadyExist = true;
@@ -45,7 +44,6 @@ class CartController extends Controller
                 $status = true;
                 $message = $product->title . " Added in the Cart";
                 session()->flash('success', $message);
-
             } else {
                 $status = false;
                 $message = $product->title . " Already added in the Cart";
@@ -67,6 +65,7 @@ class CartController extends Controller
         $cartcontent = Cart::content();
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
+        $data['keyword'] = '';
         return view('front.cart', $data);
     }
     public function updateCart(Request $request)
@@ -135,7 +134,6 @@ class CartController extends Controller
         $countries = Country::orderBy('name', 'ASC')->get();
         if (session()->has('code')) {
             $code = session()->get('code');
-
             if ($code->type == 'percent') {
                 $discount = ($code->discont_amount / 100) * $subtotal;
             } else {
@@ -153,11 +151,9 @@ class CartController extends Controller
             }
             $total_shipping = $totalqty * $shipping_info->amount;
             $grand_total = ($subtotal - $discount) + $total_shipping;
-
         } else {
             $total_shipping = 0;
             $grand_total = ($subtotal - $discount) + $total_shipping;
-
             // echo $grand_total;
             // exit;
         }
@@ -168,7 +164,8 @@ class CartController extends Controller
                 'customerAddress' => $customerAddress,
                 'discount' => $discount,
                 'total_shipping' => number_format($total_shipping, 2),
-                'grand_total' => $grand_total
+                'grand_total' => $grand_total,
+                'keyword'=>''
             ]
         );
     }

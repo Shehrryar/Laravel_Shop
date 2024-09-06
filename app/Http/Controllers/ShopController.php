@@ -84,6 +84,8 @@ class ShopController extends Controller
         $data['sort'] = $request->get('sort');
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
+        $data['keyword'] = '';
+
 
         return view('front.shop', $data);
     }
@@ -129,6 +131,8 @@ class ShopController extends Controller
         $data['avg_rating'] = $avg_rating;
         $data['avg_rating_per'] = $avg_rating_per;
         $data['discount'] = $discount;
+        $data['keyword'] = '';
+
 
         return view('front.product', $data);
     }

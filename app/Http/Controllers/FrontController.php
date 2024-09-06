@@ -32,6 +32,8 @@ class FrontController extends Controller
         $data['discount'] = $discount;
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
+        $data['keyword'] = '';
+
         return view('front.home', $data);
     }
     public function addToWishlist(Request $request)

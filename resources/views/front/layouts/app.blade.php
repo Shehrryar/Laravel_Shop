@@ -59,8 +59,9 @@
                     @endif
                     <form id="search_prodcut" name="search_prodcut" action="{{ route('product.search') }}"
                         method="POST">
+                        @csrf
                         <div class="input-group">
-                            <input type="text" name="search_query" placeholder="Search For Products"
+                            <input type="text" value="{{$keyword}}" name="search_query" placeholder="Search For Products"
                                 class="form-control" aria-label="Amount (to the nearest dollar)">
                             <span class="input-group-text">
                                 <button type="submit"><i class="fa fa-search"></i></button>
