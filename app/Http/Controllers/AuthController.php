@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -11,23 +9,18 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-
-
-
-
 class AuthController extends Controller
 {
     public function login()
     {
-        return view('front.account.login');
+        $data['keyword'] = '';
+        return view('front.account.login', $data);
     }
-
     public function register()
     {
-        return view('front.account.register');
+        $data['keyword'] = '';
+        return view('front.account.register',$data);
     }
-
-
     public function processRegister(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -35,7 +28,6 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:5|confirmed',
         ]);
-
         if ($validator->passes()) {
             $user = new User();
             $user->name = $request->name;
@@ -45,7 +37,6 @@ class AuthController extends Controller
             $user->save();
             $message = 'You have been registered Successfully';
             session()->flash('success', $message);
-
             return response()->json([
                 'status' => true,
                 'message' => $message
@@ -56,7 +47,6 @@ class AuthController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
-
     }
     public function authenticate(Request $request)
     {
@@ -64,7 +54,6 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        
         if ($validator->passes()) {
             if (Auth::attempt(['email' => $request->email, 'google_id' => $request->password], $request->get('remember'))) {
                 if (session()->has('url.intended')) {
@@ -92,8 +81,6 @@ class AuthController extends Controller
         Auth::logout();
         return redirect()->route('account.login')->with('success', 'Your successfully logout');
     }
-
-
     public function githubRedirect()
     {
         return Socialite::driver('github')->redirect();
@@ -127,7 +114,6 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-
     public function googleRedirect(){
         return Socialite::driver('google')->stateless()->redirect();
     }
@@ -159,8 +145,6 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-
-
     public function facebookRedirect(){
         return Socialite::driver('facebook')->stateless()->redirect();
     }
@@ -192,19 +176,16 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-    
     public function wishlist(){
        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
        $data = [];
        $data['wishlist'] = $wishlist;
        return view('front.account.wishlist', $data);
     }
-
     public function remove_product_from_wishlist(Request $request) {
         $wishlist = Wishlist::where('user_id', Auth::user()->id)
                             ->where('product_id', $request->id)
                             ->first();
-    
         if ($wishlist == null) {
             session()->flash('error', 'Product already removed');
             return response()->json([
@@ -218,15 +199,12 @@ class AuthController extends Controller
             ]);
         }
     }
-
     public function order(){
         $user = Auth::user();
         $orders = Order::where('user_id', $user->id)->orderby('created_at','DESC')->get();
         $data['orders'] = $orders;
         return view('front.account.order', $data);
     }
-
-
     public function orderdetail($id){
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('id',$id)->first();
@@ -235,8 +213,6 @@ class AuthController extends Controller
         $data['order'] = $order; 
         $data['orderitemscount'] = $orderitemscount; 
         $data['orderitems'] = $orderitems; 
-
         return view('front.account.orderdetail', $data);
     }
-    
 }

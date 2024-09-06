@@ -25,10 +25,9 @@ class CartController extends Controller
             ]);
         }
         $discountprice = getDiscountedPrice($request->id, Discount::get(), $request->actual_price);
-        if($discountprice['discounted_price']!=0){
+        if ($discountprice['discounted_price'] != 0) {
             $price = $discountprice['discounted_price'];
-        }
-        else{
+        } else {
             $price = $discountprice['actual_price'];
         }
         if (Cart::count() > 0) {
@@ -61,7 +60,7 @@ class CartController extends Controller
     }
     public function Cart()
     {
-        $discount = Discount::where('status',1)->get();
+        $discount = Discount::where('status', 1)->get();
         $cartcontent = Cart::content();
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
@@ -136,8 +135,9 @@ class CartController extends Controller
             $code = session()->get('code');
             if ($code->type == 'percent') {
                 $discount = ($code->discont_amount / 100) * $subtotal;
+                $discount_amo = $code->discont_amount;
             } else {
-                $discount = $code->discont_amount;
+                $discount_amo = $code->discont_amount;
             }
         }
         // Calculate shiping here
@@ -162,10 +162,10 @@ class CartController extends Controller
             [
                 'countries' => $countries,
                 'customerAddress' => $customerAddress,
-                'discount' => $discount,
+                'discount' => $discount_amo,
                 'total_shipping' => number_format($total_shipping, 2),
                 'grand_total' => $grand_total,
-                'keyword'=>''
+                'keyword' => ''
             ]
         );
     }
