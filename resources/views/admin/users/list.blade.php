@@ -22,10 +22,6 @@
 		<div class="card">
 			<form action="" method="get">
 				<div class="card-header">
-					<div class="card-title">
-						<button class="btn btn-default" type="button"
-							onclick="window.location.href='{{route("users.index")}}'">Reset</button>
-					</div>
 					<div class="card-tools">
 						<div class="input-group input-group" style="width: 250px;">
 							<input type="text" value='{{Request::get("keyword")}}' name="keyword"
@@ -47,7 +43,7 @@
 							<th>Name</th>
 							<th>Email</th>
 							<th>Phone No.</th>
-							<th width="100">Status</th>
+							<th width="100">Enable / Disable</th>
 							<th width="100">Action</th>
 						</tr>
 					</thead>

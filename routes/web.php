@@ -37,7 +37,6 @@ use App\Http\Controllers\SearchController;
 // Route::get('/test', function(){
 // });
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
-
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
 Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
@@ -60,7 +59,9 @@ Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
         Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
-        // Register with Githud
+        Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
+        Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
+        // Register with Github
         Route::GET('/auth/redirect', [AuthController::class, 'githubRedirect'])->name('auth.github');
         Route::GET('/auth/callback', [AuthController::class, 'githubCallback'])->name('auth.githubcallback');
         // Register with Google
@@ -69,8 +70,10 @@ Route::group(['prefix' => 'account'], function () {
         // Register with Facebook
         Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
         Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
-        Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
-        Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
+        // Login with Google
+        Route::GET('/auth/callbacklogin/google', [AuthController::class, 'googleCallbacklogin'])->name('auth.googlecallbacklogin');
+        // Login with Facebook
+        Route::GET('/auth/callbacklogin/facebook', [AuthController::class, 'facebookCallbacklogin'])->name('auth.facebookcallbacklogin');
     });
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');

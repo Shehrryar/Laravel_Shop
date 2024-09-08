@@ -117,9 +117,6 @@ class CartController extends Controller
     {
         // if cart is empty redirect to the cart page
         $discount = 0;
-        $discount_amo= 0;
-        $discount_type= '';
-
         $subtotal = Cart::subtotal(2, '.', '');
         if (Cart::count() == 0) {
             return redirect()->route('front.cart');
@@ -139,10 +136,8 @@ class CartController extends Controller
             if ($code->type == 'percent') {
                 $discount = ($code->discont_amount / 100) * $subtotal;
                 $discount_amo = $code->discont_amount;
-                $discount_type = $code->type;
             } else {
                 $discount_amo = $code->discont_amount;
-                $discount_type = $code->type;
             }
         }
         // Calculate shiping here
@@ -168,7 +163,6 @@ class CartController extends Controller
                 'countries' => $countries,
                 'customerAddress' => $customerAddress,
                 'discount' => $discount_amo,
-                'discount_type' => $discount_type,
                 'total_shipping' => number_format($total_shipping, 2),
                 'grand_total' => $grand_total,
                 'keyword' => ''

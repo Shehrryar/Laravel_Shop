@@ -77,12 +77,11 @@ class UserController extends Controller
              'not found'=>ture,
              'message'=> 'User not found'
      ]);
-
         $validater = Validator::make(
             $request->all(),
             [
                 'name' => 'required',
-                'email' => 'required|unique:users,email,'.$user_edit->id.',id',
+                'email' => 'required|email|unique:users',
                 'phone' => 'required',
                 'password' => 'required',
             ]

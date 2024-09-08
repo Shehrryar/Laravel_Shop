@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="pb-5 pt-3">
-                <button type="submit" id="getFormValuesButton" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary">Update</button>
                 <a href='{{route("users.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
             </div>
 
@@ -89,17 +89,16 @@
 <script>
 $(document).ready(function() {
 
-    $("#user_from").click(function(event) {
+    $("#user_from").submit(function(event) {
         event.preventDefault();
-        var formDataArray = $("#user_from").serializeArray();
         $.ajax({
             url: '{{route("users.update", $user_edit->id)}}',
             type: 'PUT',
-            data: formDataArray, // Use correct form ID
+            data: $(this).serializeArray(), // Use correct form ID
             dataType: 'json', // 'datatype' should be 'dataType'
             success: function(response) {
                 if (response['status'] === true) {
-                    window.location.href = "{{ route('users.index') }}";
+                    window.location.href = "{{route('users.index')}}";
                 } else {
                     var errors = response['errors'];
                     if (errors['name']) {

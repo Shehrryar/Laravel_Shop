@@ -157,7 +157,11 @@
 
                             <div class="d-flex justify-content-between summery-end">
                                 <div class="h6"><strong>Discount</strong></div>
+                                @if ($discount_type == 'percent ')  
                                 <div class="h6"><strong id="dicount_coupon">${{$discount}}</strong></div>
+                                @else
+                                <div class="h6"><strong id="dicount_coupon">{{$discount}}%</strong></div>
+                                @endif
                             </div>
 
                             <div class="d-flex justify-content-between summery-end">

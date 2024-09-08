@@ -23,9 +23,6 @@ class AuthController extends Controller
     }
     public function processRegister(Request $request)
     {
-        echo "<pre>";
-        print_r($request->all());
-        exit;
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users',
@@ -77,8 +74,7 @@ class AuthController extends Controller
     }
     public function profile()
     {
-        $data['keyword'] = '';
-        return view('front.account.profile', $data);
+        return view('front.account.profile');
     }
     public function logout()
     {
@@ -123,8 +119,6 @@ class AuthController extends Controller
     }
     public function googleCallback(){
         $googleUser = Socialite::driver('google')->stateless()->user();
-
-
         $userExists = User::where('email', $googleUser->email)
         ->first();
         if ($userExists && $userExists->role == 2) {
@@ -133,15 +127,9 @@ class AuthController extends Controller
         }
         else if($userExists && $userExists->role == 1){
             if($userExists->google_id == $googleUser->id){
-                if($userExists->status == 1){
-                    Auth::login($userExists);
-                    session()->flash('success', 'Welcome to the Dashboard');
-                    return redirect()->route('front.home');
-                }else{
-                    session()->flash('error', 'Your account  is disabled. Please contact to the admin');
-                    return redirect()->route('account.login'); 
-                }
-
+                Auth::login($userExists);
+                session()->flash('success', 'Welcome to the Dashboard');
+                return redirect()->route('front.home');
             }
             session()->flash('error', 'Account already exist enter your Email and Password');
             return redirect()->route('account.login');
@@ -157,7 +145,6 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-
     public function facebookRedirect(){
         return Socialite::driver('facebook')->stateless()->redirect();
     }
