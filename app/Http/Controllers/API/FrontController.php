@@ -1,10 +1,10 @@
 <?php
-namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use App\Models\Product;
+namespace App\Http\Controllers\API;
+use App\Http\Controllers\Controller; // Import the base controller
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
+use App\Models\Product;
 use App\Models\Discount;
 class FrontController extends Controller
 {
@@ -34,7 +34,10 @@ class FrontController extends Controller
         $data['latest_product'] = $latest_product;
         $data['keyword'] = '';
 
-        return view('front.home', $data);
+        return response()->json([
+            'data'=>$data
+        ]);
+
     }
     public function addToWishlist(Request $request)
     {

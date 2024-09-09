@@ -6,10 +6,10 @@
 	<div class="container-fluid my-2">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1>Discount Coupon</h1>
+				<h1>Stock Management</h1>
 			</div>
 			<div class="col-sm-6 text-right">
-				<a href='{{route("discount.create")}}' class="btn btn-primary">New Discount</a>
+				<a href='{{route("stock.create")}}' class="btn btn-primary">Add New Stock</a>
 			</div>
 		</div>
 	</div>
@@ -44,48 +44,29 @@
 					<thead>
 						<tr>
 							<th width="60">ID</th>
-							<th>Name</th>
-							<th>Discount</th>
-							<th>Products</th>
-							<th>Start Date</th>
-							<th>End Date</th>
-							<th width="100">Status</th>
-							<th width="100">Action</th>
+							<th>Product</th>
+							<th>Quantity</th>
+							<th>Sold Quantity</th>
+							<th>Remanining Quantity</th>
+							<th>Status</th>
+							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
 
-						@if($Discount->isNotEmpty())
-							@foreach($Discount as $disname)
-
-
+						@if($stock->isNotEmpty())
+							@foreach($stock as $stoc)
+							@php
+								$product = $stoc->product;
+							@endphp
 								<tr>
-									<td>{{ $disname->id}}</td>
-									<td>{{ $disname->name}}</td>
+									<td>{{ $stoc->id }}</td>
+									<td>{{ $product->title }}</td>
+									<td>{{ $stoc->quantity}}</td>
+									<td>{{ $stoc->remaning_quantity}}</td>
+									<td>{{ $stoc->sold_quantity}}</td>
 									<td>
-										@if ($disname->type == 'percentage')
-											{{$disname->value}}%
-										@else
-											{{$disname->value}}$
-										@endif
-									</td>
-									<td>
-										<ul class="product-list">
-											@foreach ($products as $product)
-											@foreach (explode(',', $disname->product_ids) as $stock_pro_id)
-											@if ($stock_pro_id == $product->id)
-											<li>{{ $product->title }}</li>
-											@endif
-											@endforeach
-											@endforeach
-										</ul>
-									</td>
-
-
-									<td>{{ $disname->start_at}}</td>
-									<td>{{ $disname->expires_at}}</td>
-									<td>
-										@if($disname->status == 1)
+										@if($stoc->status == 1)
 											<svg class="text-success-500 h-6 w-6 text-success" xmlns="http://www.w3.org/2000/svg"
 												fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
 												aria-hidden="true">
@@ -101,7 +82,7 @@
 										@endif
 									</td>
 									<td>
-										<a href="{{route('discount.edit', $disname->id)}}">
+										<a href="{{route('stock.edit', $stoc->id)}}">
 											<svg class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
 												viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 												<path
@@ -109,7 +90,7 @@
 												</path>
 											</svg>
 										</a>
-										<a href="#" onclick='delecoupon({{$disname->id}})' class="text-danger w-4 h-4 mr-1">
+										<a href="#" onclick='deletestock({{$stoc->id}})' class="text-danger w-4 h-4 mr-1">
 											<svg wire:loading.remove.delay="" wire:target=""
 												class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
 												viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -135,7 +116,7 @@
 			</div>
 			<div class="card-footer clearfix">
 
-				{{ $Discount->links() }}
+				{{ $stock->links() }}
 			</div>
 		</div>
 	</div>
@@ -146,9 +127,9 @@
 
 @section('customjs') 
 <script>
-	function delecoupon(dis_id) {
-		var delurl = '{{route("discount.delete", "ID")}}'.replace("ID", dis_id);
-		if (confirm("Are you sure you want to delete " + dis_id)) {
+	function deletestock(stock_id) {
+		var delurl = '{{route("stock.delete", "ID")}}'.replace("ID", stock_id);
+		if (confirm("Are you sure you want to delete " + stock_id)) {
 			$.ajax({
 				url: delurl,
 				type: 'delete',
@@ -156,7 +137,7 @@
 				dataType: 'json', // 'datatype' should be 'dataType'
 				success: function (response) {
 					if (response['status']) {
-						window.location.href = "{{route('discount.index')}}";
+						window.location.href = "{{route('stock.index')}}";
 					}
 				}
 			});

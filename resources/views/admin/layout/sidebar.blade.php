@@ -73,6 +73,14 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href='{{route("stock.index")}}' class="nav-link">
+                        <i class="nav-icon fas fa-tag"></i>
+                        <p>Stock Management</p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
                     <a href="{{route("shipping.create")}}" class="nav-link">
                         <!-- <i class="nav-icon fas fa-tag"></i> -->
                         <i class="fas fa-truck nav-icon"></i>

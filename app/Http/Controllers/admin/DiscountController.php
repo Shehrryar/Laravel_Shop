@@ -8,8 +8,6 @@ use App\Models\Category;
 use App\Models\Discount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
-
 class DiscountController extends Controller
 {
     public function index(Request $request)
@@ -19,9 +17,11 @@ class DiscountController extends Controller
             $Discount = $Discount->where('name','like','%'.$request->get('keyword').'%');
         }
         $Discount = $Discount->paginate(10);
-        return view('admin.discount.list', compact('Discount'));
+        $products = Product::get();
+        $data['products']=$products;
+        $data['Discount']=$Discount;
+        return view('admin.discount.list', $data);
     }
-
     public function create()
     {
         $data = [];
@@ -29,7 +29,6 @@ class DiscountController extends Controller
         $data['products']=$products;
         return view('admin.discount.create', $data);
     }
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -39,7 +38,6 @@ class DiscountController extends Controller
             'discount_amount' => 'required|numeric',
             'status' => 'required',
         ]);
-
         if ($validator->passes()) {
             $discount = new Discount();
             $discount->name = $request->discount_name;
@@ -50,7 +48,6 @@ class DiscountController extends Controller
             $discount->start_at = $request->starts_at;
             $discount->expires_at = $request->expires_at;
             $discount->save();
-
             $message = 'Discount added successfully';
             session()->flash('success', $message);
             return response()->json([
@@ -64,10 +61,8 @@ class DiscountController extends Controller
             ]);
         }
     }
-    
     public function edit(Request $request, $id)
     {
-
         $discount_edit = Discount::find($id);    
         if ($discount_edit == null) {
             session()->flash('error', 'Record not found');
@@ -82,8 +77,6 @@ class DiscountController extends Controller
         ];
         return view('admin.discount.edit', $data);
     }
-    
-
     public function update(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'discount_name'=>'required',
@@ -116,7 +109,6 @@ class DiscountController extends Controller
             ]);
         }
     }
-
     public function destroy(Request $request, $id)
     {
         $discount = Discount::find($id);
@@ -132,6 +124,5 @@ class DiscountController extends Controller
             'status' => true,
             'message' => 'Record deleted successfully'
         ]);
-
     }
 }

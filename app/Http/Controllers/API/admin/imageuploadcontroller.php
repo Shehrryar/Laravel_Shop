@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\API\admin;
 // use Intervention\Image\Facades\Image as Image;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;

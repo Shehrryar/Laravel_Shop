@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->integer('status')->default(1)->after('role');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('track_qty');
+            $table->dropColumn('qty');
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('status');
-
+        Schema::table('products', function (Blueprint $table) {
+            $table->boolean('track_qty');
+            $table->integer('qty')->nullable();
         });
     }
 };

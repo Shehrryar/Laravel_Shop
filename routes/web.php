@@ -23,6 +23,7 @@ use App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\ColorController;
 use App\Http\Controllers\admin\SizeController;
+use App\Http\Controllers\admin\StockManagementController;
 use App\Http\Controllers\SearchController;
 /*
 |--------------------------------------------------------------------------
@@ -169,6 +170,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/discount/{id}/edit', [DiscountController::class, 'edit'])->name('discount.edit');
         Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
         Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
+        
         // user routes
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -176,6 +178,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{userupadate}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
+        
         // add route for the color
         Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
         Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
@@ -183,6 +186,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
         Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
         Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
+        
         // add route for the size
         Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
         Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
@@ -190,6 +194,15 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
         Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
         Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
+
+        // add route for the Stock
+        Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
+        Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
+        Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
+        Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
+        Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
+        Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+        
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });

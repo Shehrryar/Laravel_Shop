@@ -34,9 +34,13 @@ use App\Http\Controllers\API\SearchController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-// Route::get('/test', function(){
-// });
-Route::get('/', [FrontController::class, 'index'])->name('front.home');
+Route::get('/test', function(){
+    return response()->json([
+        'name'=>'sheharyar',
+        'phone'=>'03175038179'
+    ]);
+});
+Route::get('/api', [FrontController::class, 'index'])->name('front.home');
 
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
@@ -187,6 +191,14 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
         Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
         Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
+
+         // add route for the Stock managment
+         Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
+         Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
+         Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
+         Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
+         Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
+         Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });
