@@ -250,20 +250,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Related product</h2>
-                            <div class="mb-3">
-                                <select multiple class="releated-product w-100" name="related_product[]"
-                                    id="related_product">
-                                    @foreach($showrelatedproduct as $subproduct)
-                                        <option value="{{$subproduct->id}}" selected>{{$subproduct->title}}</option>
-                                    @endforeach
-                                </select>
-                                <p class="error"></p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="pb-5 pt-3">
