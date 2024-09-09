@@ -8,6 +8,9 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\TempImage;
+use App\Models\Stock;
+use App\Models\Size;
+use App\Models\Color;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use Illuminate\Support\Facades\File;
@@ -25,17 +28,21 @@ class ProductController extends Controller
     }
     public function create()
     {
+        // $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
+        // $data['subcategories'] = $subcategories;
         $data = [];
         $categories = Category::orderBy('name', 'ASC')->get();
-        // $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
+        $stocks = Stock::orderBy('id', 'ASC')->get();
+        $colors = Color::orderBy('name', 'ASC')->get();
+        $sizes = Size::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
-        // $data['subcategories'] = $subcategories;
         $data['brands'] = $brands;
+        $data['stocks'] = $stocks;
+        $data['colors'] = $colors;
+        $data['sizes'] = $sizes;
         return view('admin.products.create', $data);
     }
-
-
     public function store(Request $request)
     {
         $values = [
@@ -43,14 +50,9 @@ class ProductController extends Controller
             'slug' => 'required|unique:products',
             'price' => 'required|numeric',
             'sku' => 'required|unique:products',
-            'track_qty' => 'required|in:1,0',
             'category' => 'required|numeric',
             'is_featured' => 'required|in:1,0',
         ];
-
-        if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
-            $values['qty'] = 'required|numeric';
-        }
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
             $product = new Product;
@@ -60,13 +62,13 @@ class ProductController extends Controller
             $product->compare_price = $request->compare_price;
             $product->sku = $request->sku;
             $product->barcode = $request->barcode;
-            $product->track_qty = $request->track_qty;
-            $product->qty = $request->qty;
             $product->status = $request->status;
             $product->categories_id = $request->category;
             $product->sub_category_id = $request->sub_category;
             $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
+            $product->color_id = $request->color;
+            $product->size_id = $request->size;
             $product->is_featured = $request->is_featured;
             $product->short_description = strip_tags($request->short_description);
             $product->description = strip_tags($request->description);
@@ -118,11 +120,16 @@ class ProductController extends Controller
         $productimage = ProductImage::where('product_id', $product->id)->get();
         $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
         $susubcategories = SubSubCategory::where('subcategory_id', $product->sub_category_id)->get();
-
         $categories = Category::orderBy('name', 'ASC')->get();
+        $stocks = Stock::orderBy('id', 'ASC')->get();
+        $colors = Color::orderBy('name', 'ASC')->get();
+        $sizes = Size::orderBy('name', 'ASC')->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
+        $data['stocks'] = $stocks;
+        $data['colors'] = $colors;
+        $data['sizes'] = $sizes;
         $data['product'] = $product;
         $data['productimage'] = $productimage;
         $data['subcategories'] = $subcategories;
@@ -138,16 +145,11 @@ class ProductController extends Controller
             'slug' => 'required|unique:products,slug,' . $product->id . ',id',
             'price' => 'required|numeric',
             'sku' => 'required|unique:products,sku,' . $product->id . ',id',
-            'track_qty' => 'required|in:1,0',
             'category' => 'required|numeric',
             'is_featured' => 'required|in:1,0',
         ];
-        if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
-            $values['qty'] = 'required|numeric';
-        }
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
-
             // Check if sub_category is an integer
             if (is_numeric($request->sub_category) && is_int((int) $request->sub_category)) {
                 // It's an integer, so use it directly
@@ -162,13 +164,13 @@ class ProductController extends Controller
             $product->compare_price = $request->compare_price;
             $product->sku = $request->sku;
             $product->barcode = $request->barcode;
-            $product->track_qty = $request->track_qty;
-            $product->qty = $request->qty;
             $product->status = $request->status;
             $product->categories_id = $request->category;
             $product->sub_category_id = $subcategory_id;
             $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
+            $product->color_id = $request->color;
+            $product->size_id = $request->size;
             $product->is_featured = $request->is_featured;
             $product->short_description = strip_tags($request->short_description);
             $product->description = strip_tags($request->description);
@@ -178,13 +180,11 @@ class ProductController extends Controller
             } else {
                 $product->related_products = '';
             }
-
             $product->save();
-            $request->session()->flash('success', 'product data is updated sucessufully');
-
+            $request->session()->flash('success', 'Product data is updated sucessufully');
             return response()->json([
                 'status' => true,
-                'message' => "data is updated sucessufully",
+                'message' => "Product data is updated sucessufully",
             ]);
         } else {
             return response()->json([
@@ -193,11 +193,9 @@ class ProductController extends Controller
             ]);
         }
     }
-
     public function delete($id, Request $request)
     {
         $product = Product::find($id);
-
         if (empty($product)) {
             $request->session()->flash('error', 'Product not found');
             return response()->json([
@@ -205,22 +203,17 @@ class ProductController extends Controller
                 'notfound' => true
             ]);
         }
-
         // Retrieve product images
         $productImages = ProductImage::where('product_id', $id)->get();
-
         if (!empty($productImages)) {
             foreach ($productImages as $image) {
                 // Delete image file
                 File::delete(public_path('/upload/products/' . $image->image));
             }
-
             ProductImage::where('product_id', $id)->delete();
         }
         $product->delete();
-
         $request->session()->flash('success', 'Product deleted successfully');
-
         return response()->json([
             'status' => true,
             'message' => 'Product deleted successfully'
@@ -234,7 +227,6 @@ class ProductController extends Controller
             if ($products != null) {
                 foreach ($products as $keyprod) {
                     $tempproducts[] = array('id' => $keyprod->id, 'text' => $keyprod->title);
-
                 }
             }
         }
@@ -246,26 +238,21 @@ class ProductController extends Controller
     function importProducts(Request $request)
     {
         $file = $request->file('file');
-
         $validator = Validator::make(
             ['file' => $file],
             ['file' => 'required|mimes:csv,txt']
         );
-
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator,
                 'status' => 'false'
             ]);
         }
-
         $filePath = $file->getRealPath();
         $fileData = array_map('str_getcsv', file($filePath));
         $header = array_shift($fileData);
-
         for ($i = 0; $i < count($fileData); $i++) {
             $data = array_combine($header, $fileData[$i]);
-
             $data = array_map(function ($value) {
                 return $value === 'NULL' ? null : $value;
             }, $data);
@@ -299,7 +286,5 @@ class ProductController extends Controller
             'status' => true,
             'message' => 'Prodcuts are import successfully'
         ]);
-
     }
-
 }

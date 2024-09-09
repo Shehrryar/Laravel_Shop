@@ -1,5 +1,4 @@
 @extends('front.layouts.app')
-
 @section('content')
 <section class="section-5 pt-3 pb-3 mb-3 bg-white">
     <div class="container">
@@ -12,7 +11,6 @@
         </div>
     </div>
 </section>
-
 @if(Session::has('success'))
     <div class="dropdown">
         <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
@@ -35,7 +33,6 @@
                     <div class="card shadow-lg border-0">
                         <div class="card-body checkout-form">
                             <div class="row">
-
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="firstname" id="firstname" class="form-control"
@@ -52,7 +49,6 @@
                                         <p></p>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="email" id="email" class="form-control"
@@ -61,7 +57,6 @@
                                         <p></p>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <select name="country" id="country" class="form-control">
@@ -76,7 +71,6 @@
                                         <p></p>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <textarea name="address" id="address" cols="30" rows="3" placeholder="Address"
@@ -84,7 +78,6 @@
                                         <p></p>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="apartment" id="apartment" class="form-control"
@@ -92,7 +85,6 @@
                                             value="{{!empty($customerAddress) ? $customerAddress->apartment : ''}}">
                                     </div>
                                 </div>
-
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <input type="text" name="city" id="city" class="form-control" placeholder="City"
@@ -100,7 +92,6 @@
                                         <p></p>
                                     </div>
                                 </div>
-
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <input type="text" name="state" id="state" class="form-control"
@@ -109,7 +100,6 @@
                                         <p></p>
                                     </div>
                                 </div>
-
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <input type="text" name="zip" id="zip" class="form-control" placeholder="Zip"
@@ -117,7 +107,6 @@
                                         <p></p>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <input type="text" name="mobile" id="mobile" class="form-control"
@@ -126,15 +115,12 @@
                                         <p></p>
                                     </div>
                                 </div>
-
-
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <textarea name="order_notes" id="order_notes" cols="30" rows="2"
                                             placeholder="Order Notes (optional)" class="form-control"></textarea>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -145,16 +131,12 @@
                     </div>
                     <div class="card cart-summery">
                         <div class="card-body">
-
                             @foreach (Cart::content() as $item)
-
                                 <div class="d-flex justify-content-between pb-2">
                                     <div class="h6">{{$item->name}} X {{$item->qty}}</div>
                                     <div class="h6">{{$item->price * $item->qty}}</div>
                                 </div>
-
                             @endforeach
-
                             <div class="d-flex justify-content-between summery-end">
                                 <div class="h6"><strong>Discount</strong></div>
                                 @if ($discount_type == 'percent ')  
@@ -163,12 +145,10 @@
                                 <div class="h6"><strong id="dicount_coupon">{{$discount}}%</strong></div>
                                 @endif
                             </div>
-
                             <div class="d-flex justify-content-between summery-end">
                                 <div class="h6"><strong>Subtotal</strong></div>
                                 <div class="h6"><strong>${{Cart::subtotal()}}</strong></div>
                             </div>
-
                             <div class="d-flex justify-content-between mt-2">
                                 <div class="h6"><strong>Shipping</strong></div>
                                 <div class="h6"><strong id="shipping_charges">${{$total_shipping}}</strong></div>
@@ -179,14 +159,12 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="input-group apply-coupan mt-4">
                         <input type="text" placeholder="Coupon Code" name="discount_code" id="discount_code"
                             class="form-control">
                         <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
                     </div>
                     <span class="text-danger" id="coupon-error-message"></span>
-
                     @if (Session::has('code'))
                         <div id="discount-account-wrapper">
                             <div class="mt-4">
@@ -195,24 +173,18 @@
                             </div>
                         </div>
                     @endif
-
-
                     <div class="card payment-form ">
                         <h3 class="card-title h5 mb-3">Payment Details</h3>
-
                         <div class="">
                             <input checked type="radio" name='payment_method' value='cod' onclick="payment_method_1()"
                                 id='payment_method_1'>
                             <label class="form-check-label" for="payment_method">COD</label>
                         </div>
-
                         <div class="">
                             <input type="radio" name='payment_method' value='cod' onclick="payment_method_1()"
                                 id='payment_method_2'>
                             <label class="form-check-label" for="payment_method">Stripe</label>
                         </div>
-
-
                         <div class="card-body p-0 d-none" id='card-payment-form'>
                             <div class="mb-3">
                                 <label for="card_number" class="mb-2">Card Number</label>
@@ -237,32 +209,25 @@
                             <button class="btn-dark btn btn-block w-100" type="submit">Pay Now</button>
                         </div>
                     </div>
-
-
                     <!-- CREDIT CARD FORM ENDS HERE -->
-
                 </div>
             </div>
         </div>
     </form>
 </section>
 @endsection
-
 @section('customJs')
 <script>
-
     $('#payment_method_1').click(function () {
         if ($(this).is(":checked")) {
             $("#card-payment-form").addClass('d-none');
         }
     });
-
     $('#payment_method_2').click(function () {
         if ($(this).is(":checked")) {
             $("#card-payment-form").removeClass('d-none');
         }
     });
-
     $('#order_form').submit(function () {
         event.preventDefault();
         $.ajax({
@@ -277,56 +242,46 @@
                         $('#firstname').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.firstname);
                     } else {
                         $('#firstname').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
-
                     if (errors.lastname) {
                         $('#lastname').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.lastname);
                     } else {
                         $('#lastname').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                     if (errors.email) {
                         $('#email').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.email);
                     } else {
                         $('#email').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                     if (errors.country) {
                         $('#country').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.country);
                     } else {
                         $('#country').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                     if (errors.address) {
                         $('#address').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.address);
                     } else {
                         $('#address').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                     if (errors.city) {
                         $('#city').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.city);
                     } else {
                         $('#city').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                     if (errors.state) {
                         $('#state').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.state);
                     } else {
                         $('#state').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                     if (errors.zip) {
                         $('#zip').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.zip);
                     } else {
                         $('#zip').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                     if (errors.mobile) {
                         $('#mobile').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.mobile);
                     } else {
                         $('#mobile').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
-
                     }
                 }
                 else {
@@ -335,7 +290,6 @@
             }
         });
     });
-
     $("#country").change(function () {
         $.ajax({
             url: '{{route('front.getOrderSummary')}}',
@@ -348,15 +302,11 @@
                 if (response.status == true) {
                     $('#shipping_charges').html(response.shipping_charge);
                     $('#grand_total').html(response.grand_total);
-
                 }
             }
         });
     });
-
     // $("#apply-discount").click(function () {
-
-
     $('body').on('click', "#apply-discount", function () {
         $.ajax({
             url: '{{route('front.applydiscount')}}',
@@ -379,8 +329,6 @@
             }
         });
     });
-
-
     $('body').on('click', "#remove-discount", function () {
         $.ajax({
             url: '{{route('front.removediscount')}}',
@@ -396,23 +344,11 @@
                     $('#dicount_coupon').html(response.discount);
                     $('#discount-account-wrapper').html('');
                     $('#discount_code').val('');
-
-
-
                 }
             }
         });
     });
-
     // $("#remove-discount").click(function() {
-
     // });
-
-
-
-
-
-
-
 </script>
 @endsection

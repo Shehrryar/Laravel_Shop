@@ -10,7 +10,6 @@
 		</div>
 	</div>
 </section>
-
 <section class="section-6 pt-5">
 	<div class="container">
 		<div class="row">
@@ -18,7 +17,6 @@
 				<div class="sub-title">
 					<h2>{{trans("Categories")}}</h3>
 				</div>
-
 				<div class="card">
 					<div class="card-body">
 						<div class="accordion accordion-flush" id="accordionExample">
@@ -37,7 +35,6 @@
 											<a href='{{route("front.shop", $cat->slug)}}'
 												class="nav-item nav-link {{($categroy_selected == $cat->id) ? 'text-primary' : ''}}">{{trans($cat->name)}}</a>
 										@endif
-
 										@if($cat->sub_category->isNotEmpty())
 											<div id="collapseOne-{{ $key }}"
 												class="accordion-collapse collapse {{($categroy_selected == $cat->id) ? 'show' : ''}}"
@@ -58,7 +55,6 @@
 																			{{trans($subcat->name)}}
 																		</button>
 																	</h2>
-
 																	<div id="collapseTwo-{{ $key }}-{{ $subcatKey }}"
 																		class="push_right accordion-collapse collapse {{($subcategroy_selected == $subcat->id) ? 'show' : ''}}"
 																		aria-labelledby="headingTwo-{{ $key }}-{{ $subcatKey }}"
@@ -87,11 +83,8 @@
 								@endforeach
 							@endif
 						</div>
-
-
 					</div>
 				</div>
-
 				<div class="sub-title mt-5">
 					<h2>{{trans("Brand")}}</h3>
 				</div>
@@ -107,14 +100,11 @@
 									</label>
 								</div>
 							@endforeach
-						@endif  
-			</div>
+						@endif  					</div>
 				</div>
-
 				<div class="sub-title mt-5">
 					<h2>{{trans("Price")}}</h3>
 				</div>
-
 				<div class="card">
 					<div class="card-body">
 						<input type="text" class="js-range-slider" name="my_range" value="" />
@@ -126,16 +116,13 @@
 					<div class="col-12 pb-1">
 						<div class="d-flex align-items-center justify-content-end mb-4">
 							<div class="ml-2">
-
 								<select id="sort" name="sort" class="form-control">
 									<option value="pricehigh" {{($sort == 'pricehigh') ? 'selected' : ''}}>Price High
 									</option>
 									<option value="latest" {{($sort == 'latest') ? 'selected' : ''}}>Latest</option>
 									<option value="pricelow" {{($sort == 'pricelow') ? 'selected' : ''}}>Price Low
 									</option>
-
 								</select>
-
 							</div>
 						</div>
 					</div>
@@ -144,7 +131,7 @@
 													@php
 														$images_prod = $prod->product_images()->first();
 														$inWishlist = $wishlist->contains('product_id', $prod->id);
-            											$getprice = getDiscountedPrice($prod->id,$discount, $prod->price);
+														$getprice = getDiscountedPrice($prod->id, $discount, $prod->price);
 													@endphp
 													<div class="col-md-4">
 														<div class="card product-card">
@@ -156,9 +143,9 @@
 																		<img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
 																	@endif
 																</a>
-																@if ($getprice['discount_value'] !=0)
-                            									<div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
-                            									@endif
+																@if ($getprice['discount_value'] != 0)
+																	<div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
+																@endif
 																<a onclick="addToWishlist({{$prod->id}})" class="whishlist" href="javascript:void(0)">
 																	<i id="addwishlist{{$prod->id}}" class="far fa-heart"
 																		style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
@@ -170,26 +157,20 @@
 																</a>
 															</div>
 															<hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
-															@if ($prod->qty > 0)
-															<a class="btn btn-dark" href="javascript:void(0)" onclick='addToCart({{ $prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
+																<a class="btn btn-dark" href="javascript:void(0)"
+																	onclick='addToCart({{ $prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
 																	<i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
 																</a>
-															@else
-																<a class="btn btn-dark" href="javascript:void(0)" disabled>
-																	<i class="fa fa-shopping-cart"></i> {{trans('Out of Stock')}}
-																</a>
-															@endif
 															<div class="card-body text-center mt-3">
 																<a class="h6 link" href="product.php">{{trans($prod->title)}}</a>
 																<div class="price mt-2">
-																@if ($getprice['discounted_price'] !=0)
-                            										<span class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
-                            										<span class="h5"><del>{{$getprice['actual_price']}}$</del></span>
-                            										@else
-                            										<span class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
-                            									@endif
+																	@if ($getprice['discounted_price'] != 0)
+																		<span class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
+																		<span class="h5"><del>{{$getprice['actual_price']}}$</del></span>
+																	@else
+																		<span class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
+																	@endif
 																</div>
-
 																<div style="display: flex; justify-content: center;">
 																	@php
 																		$avg_rating_per = 0;
@@ -206,7 +187,6 @@
 																			<i class="fa fa-star" aria-hidden="true"></i>
 																			<i class="fa fa-star" aria-hidden="true"></i>
 																			<i class="fa fa-star" aria-hidden="true"></i>
-
 																			<div class="front-stars" style="width: {{$avg_rating_per}}%">
 																				<i class="fa fa-star" aria-hidden="true"></i>
 																				<i class="fa fa-star" aria-hidden="true"></i>
@@ -234,7 +214,6 @@
 @endsection
 @section('customJs')
 <script>
-
 	rangeSlider = $(".js-range-slider").ionRangeSlider({
 		type: "double",
 		min: 1,
@@ -267,12 +246,9 @@
 		if (brands.length > 0) {
 			url += '&brand=' + brands.toString();
 		}
-
 		url += '&price_min=' + slider.result.from + '&price_max=' + slider.result.to;
 		url += '&sort=' + $('#sort').val();
 		window.location.href = url;
-
 	}
 </script>
-
 @endsection

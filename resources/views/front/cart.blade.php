@@ -1,7 +1,5 @@
 @extends('front.layouts.app')
-
 @section('content')
-
 <section class="section-5 pt-3 pb-3 mb-3 bg-white">
     <div class="container">
         <div class="light-font">
@@ -15,7 +13,6 @@
         </div>
     </div>
 </section>
-
 <section class=" section-9 pt-4">
     <div class="container">
         <div class="row">
@@ -25,17 +22,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             @endif
-
             @if(Session::has('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ Session::get('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             @endif
-
-
             @if(Cart::count() > 0)
-
             <div class="col-md-8">
                 <div class="table-responsive">
                     <table class="table" id="cart">
@@ -59,7 +52,6 @@
                                         @else
                                         <img src="{{asset('admin-assets\img\default-150x150.png')}}">
                                         @endif
-
                                         <h2>{{trans($item->name)}}</h2>
                                     </div>
                                 </td>
@@ -67,7 +59,6 @@
                                     $getprice = getDiscountedPrice($item->id,$discount, $item->price);
                                 @endphp
                                 <td>{{$item->price}}</td>
-
                                 @if ($getprice['discount_value'] !=0)                                
                                     <td>{{$getprice['discount_value']}}%</td>
                                 @else
@@ -106,7 +97,6 @@
             </div>
             <div class="col-md-4">
                 <div class="card cart-summery">
-
                     <div class="card-body">
                         <div class="sub-title">
                             <h2 class="bg-white">{{trans("Cart Summery")}}</h3>
@@ -115,9 +105,6 @@
                             <div>{{trans("Subtotal")}}</div>
                             <div>{{Cart::Subtotal()}}</div>
                         </div>
-
-
-
                         <div class="pt-5">
                             <a href="{{route('front.checkout')}}"
                                 class="btn-dark btn btn-block w-100">{{trans("Proceed to Checkout")}}</a>
@@ -137,13 +124,10 @@
         </div>
     </div>
 </section>
-
 @endsection
-
 @section('customJs')
 <script>
 $('.add').click(function() {
-
     var qtyElement = $(this).parent().prev(); // Qty Input
     var qtyValue = parseInt(qtyElement.val());
     if (qtyValue < 25) {
@@ -153,10 +137,7 @@ $('.add').click(function() {
         updateCart(id, newQty);
     }
 });
-
-
 $('.sub').click(function() {
-
     var qtyElement = $(this).parent().next();
     var qtyValue = parseInt(qtyElement.val());
     if (qtyValue > 1) {
@@ -166,7 +147,6 @@ $('.sub').click(function() {
         updateCart(id, newQty);
     }
 });
-
 function updateCart(rowId, Qty) {
     $.ajax({
         url: '{{route("front.updateCart")}}',
@@ -181,8 +161,6 @@ function updateCart(rowId, Qty) {
         }
     });
 }
-
-
 function deleteitem(rowId) {
     if (confirm('Are you sure you want to delete?')) {
         $.ajax({
@@ -199,5 +177,4 @@ function deleteitem(rowId) {
     }
 }
 </script>
-
 @endsection

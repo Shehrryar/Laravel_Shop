@@ -117,9 +117,8 @@ class CartController extends Controller
     {
         // if cart is empty redirect to the cart page
         $discount = 0;
-        $discount_amo= 0;
-        $discount_type= '';
-
+        $discount_amo = 0;
+        $discount_type = '';
         $subtotal = Cart::subtotal(2, '.', '');
         if (Cart::count() == 0) {
             return redirect()->route('front.cart');
@@ -274,11 +273,11 @@ class CartController extends Controller
                 $orderitems->total = $item->price * $item->qty;
                 $orderitems->save();
                 // Updat product stock
-                $productData = Product::find($item->id);
-                $currentQuantity = $productData->qty;
-                $updatedquantity = $currentQuantity - $item->qty;
-                $productData->qty = $updatedquantity;
-                $productData->save();
+                // $productData = Product::find($item->id);
+                // $currentQuantity = $productData->qty;
+                // $updatedquantity = $currentQuantity - $item->qty;
+                // $productData->qty = $updatedquantity;
+                // $productData->save();
             }
             orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');

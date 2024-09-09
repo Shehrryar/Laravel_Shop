@@ -38,16 +38,10 @@
                                         </a>
                                     </div>
                                     <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
-                                    @if ($f_product->qty > 0)
-                                        <a class="btn btn-dark" href="javascript:void(0)"
-                                            onclick='addToCart({{ $f_product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
-                                            <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
-                                        </a>
-                                    @else
-                                        <a class="btn btn-dark" href="javascript:void(0)" disabled>
-                                            <i class="fa fa-shopping-cart"></i> {{trans('Out of Stock')}}
-                                        </a>
-                                    @endif
+                                    <a class="btn btn-dark" href="javascript:void(0)"
+                                        onclick='addToCart({{ $f_product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
+                                        <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
+                                    </a>
                                     <div class="card-body text-center">
                                         <a class="h6 link"
                                             href="{{route('front.product', $f_product->slug)}}">{{trans($f_product->title)}}</a>
@@ -104,7 +98,6 @@
                         Go to Homepage
                     </a>
                 </div>
-
             @endif
             <div class="col-md-12 pt-5">
                 @if (!empty($keyword))

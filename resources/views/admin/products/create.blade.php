@@ -120,22 +120,6 @@
                                             placeholder="Barcode">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="hidden" id="track_qty" name="track_qty" value="0">
-                                            <input class="custom-control-input" type="checkbox" id="track_qty"
-                                                name="track_qty" value="1" checked>
-                                            <label for="track_qty" class="custom-control-label">Track Quantity</label>
-                                            <p class="error"></p>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <input type="number" min="0" name="qty" id="qty" class="form-control"
-                                            placeholder="Qty">
-                                        <p class="error"></p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -173,12 +157,49 @@
                                     <option value="">Select a Sub Category</option>
                                 </select>
                             </div>
-
                             <div class="mb-3">
                                 <label for="subsub_category">Level 3 Subcategory</label>
                                 <select name="subsub_category" id="subsub_category" class="form-control">
                                     <option value="">Select a Sub SubCategory</option>
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h2 class="h4 mb-3">Product Color</h2>
+                            <div class="mb-3">
+                                <select name="color" id="color" class="form-control">
+                                    <option value="">Select the Color</option>
+                                    @if($colors->isNotEmpty())
+                                        @foreach($colors as $colori)
+                                            <option value="{{$colori->id}}">{{$colori->name}}</option>
+                                        @endforeach
+                                    @endif 
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h2 class="h4 mb-3">Product Size</h2>
+                            <div class="mb-3">
+                                <select name="size" id="size" class="form-control">
+                                    <option value="">Select the Size</option>
+                                    @if($sizes->isNotEmpty())
+                                        @foreach($sizes as $sizei)
+                                            <option value="{{$sizei->id}}">{{$sizei->name}}</option>
+                                        @endforeach
+                                    @endif 
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h2 class="h4 mb-3">Product Stock</h2>
+                            <div class="mb-3">
+                                <input class="form-control" type="number" placeholder="Enter Stock Quantity" value ="" id="" >
                             </div>
                         </div>
                     </div>
@@ -193,7 +214,6 @@
                                             <option value="{{$brandi->id}}">{{$brandi->name}}</option>
                                         @endforeach
                                     @endif 
-
                                 </select>
                             </div>
                         </div>
@@ -292,8 +312,6 @@
             }
         });
     });
-
-
     $("#category").change(function () {
         var category_id = $(this).val();
         $.ajax({
@@ -312,8 +330,6 @@
             }
         });
     });
-
-
     $("#sub_category").change(function () {
         var subcategory_id = $(this).val();
         $.ajax({
@@ -332,8 +348,6 @@
             }
         });
     });
-
-
     Dropzone.autoDiscover = false;
     const dropzone = $("#image").dropzone({
         url: "{{route('temp-images.create') }}",
