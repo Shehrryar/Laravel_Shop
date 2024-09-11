@@ -15,230 +15,262 @@
 </section>
 <!-- Main content -->
 <section class="content">
-    <!-- Default box -->
-    <form action="" method="POST" name="productform" id="productform">
-        @csrf
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="title">Title</label>
-                                        <input type="text" name="title" id="title" class="form-control"
-                                            placeholder="Title">
-                                        <p class="error"></p>
+    <div class="container-fluid">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="basic-info-tab" data-bs-toggle="tab" href="#basic-info" role="tab"
+                    aria-controls="basic-info" aria-selected="true">Basic Info</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="additional-info-tab" data-bs-toggle="tab" href="#additional-info" role="tab"
+                    aria-controls="additional-info" aria-selected="false">Additional Info</a>
+            </li>
+        </ul>
+        <!-- Form -->
+        <form action="" method="POST" name="productform" id="productform">
+            @csrf
+            <div class="tab-content">
+                <!-- Basic Info Tab -->
+                <div class="tab-pane fade show active" id="basic-info" role="tabpanel" aria-labelledby="basic-info-tab">
+                    <div class="row">
+                        <!-- Left Column (8 columns wide) -->
+                        <div class="col-md-8">
+                            <!-- Product Details -->
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="title">Title</label>
+                                                <input type="text" name="title" id="title" class="form-control"
+                                                    placeholder="Title">
+                                                <p class="error"></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="slug">Slug</label>
+                                                <input type="text" name="slug" id="slug" class="form-control"
+                                                    placeholder="Slug">
+                                                <p class="error"></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="short_description">Short Description</label>
+                                                <textarea name="short_description" id="short_description" cols="30"
+                                                    rows="3" class="form-control summernote"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="description">Description</label>
+                                                <textarea name="description" id="description" cols="30" rows="5"
+                                                    class="form-control summernote"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="shipping_return">Shipping Return</label>
+                                                <textarea name="shipping_return" id="shipping_return" cols="30" rows="3"
+                                                    class="form-control summernote"></textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="Slug">Slug</label>
-                                        <input type="text" name="slug" id="slug" class="form-control"
-                                            placeholder="Slug">
-                                        <p class="error"></p>
+                            </div>
+                            <!-- Media -->
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Media</h2>
+                                    <div id="image" class="dropzone dz-clickable">
+                                        <div class="dz-message needsclick">
+                                            Drop files here or click to upload.
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="short_description">Short Description</label>
-                                        <textarea name="short_description" id="short_description" cols="30" rows="10"
-                                            class="summernote"></textarea>
+                            </div>
+                            <!-- Pricing -->
+
+                            <!-- Inventory -->
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Inventory</h2>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="sku">SKU (Stock Keeping Unit)</label>
+                                                <input type="text" name="sku" id="sku" class="form-control"
+                                                    placeholder="SKU">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="barcode">Barcode</label>
+                                                <input type="text" name="barcode" id="barcode" class="form-control"
+                                                    placeholder="Barcode">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                            </div>
+                        </div>
+                        <!-- Right Column (4 columns wide) -->
+                        <div class="col-md-4">
+                            <!-- Product Status -->
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Product Status</h2>
                                     <div class="mb-3">
-                                        <label for="description">Description</label>
-                                        <textarea name="description" id="description" cols="30" rows="10"
-                                            class="summernote"></textarea>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="1">Active</option>
+                                            <option value="0">Block</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                            </div>
+                            <!-- Product Category -->
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Product Category</h2>
                                     <div class="mb-3">
-                                        <label for="shipping_return">Shipping Return</label>
-                                        <textarea name="shipping_return" id="shipping_return" cols="30" rows="10"
-                                            class="summernote"></textarea>
+                                        <label for="category">Category</label>
+                                        <select name="category" id="category" class="form-control">
+                                            <option value="">Select a Category</option>
+                                            @if($categories->isNotEmpty())
+                                                @foreach($categories as $cati_data)
+                                                    <option value="{{$cati_data->id}}">{{$cati_data->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sub_category">Level 2 Subcategory</label>
+                                        <select name="sub_category" id="sub_category" class="form-control">
+                                            <option value="">Select a Sub Category</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="subsub_category">Level 3 Subcategory</label>
+                                        <select name="subsub_category" id="subsub_category" class="form-control">
+                                            <option value="">Select a Sub SubCategory</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Product Brand -->
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Product Brand</h2>
+                                    <div class="mb-3">
+                                        <select name="brand" id="brand" class="form-control">
+                                            <option value="">Select the Brand</option>
+                                            @if($brands->isNotEmpty())
+                                                @foreach($brands as $brandi)
+                                                    <option value="{{$brandi->id}}">{{$brandi->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Featured Product -->
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Featured Product</h2>
+                                    <div class="mb-3">
+                                        <select name="is_featured" id="is_featured" class="form-control">
+                                            <option value="0">No</option>
+                                            <option value="1">Yes</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Media</h2>
-                            <div id="image" class="dropzone dz-clickable">
-                                <div class="dz-message needsclick">
-                                    <br>Drop files here or click to upload.<br><br>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" id="productgallery">
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Pricing</h2>
-                            <div class="row">
-                                <div class="col-md-12">
+                    <!-- Submit Button -->
+                </div>
+                <!-- Additional Info Tab -->
+                <div class="tab-pane fade" id="additional-info" role="tabpanel" aria-labelledby="additional-info-tab">
+                    <!-- Add any additional content here -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Product Color</h2>
                                     <div class="mb-3">
-                                        <label for="price">Price</label>
-                                        <p class="error"></p>
-                                        <input type="text" name="price" id="price" class="form-control"
-                                            placeholder="Price">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="compare_price">Compare at Price</label>
-                                        <input type="text" name="compare_price" id="compare_price" class="form-control"
-                                            placeholder="Compare Price">
-                                        <p class="text-muted mt-3">
-                                            To show a reduced price, move the product’s original price into Compare at
-                                            price. Enter a lower value into Price.
-                                        </p>
+                                        <select name="color" id="color" class="form-control">
+                                            <option value="">Select the Color</option>
+                                            @if($colors->isNotEmpty())
+                                                @foreach($colors as $colori)
+                                                    <option value="{{$colori->id}}">{{$colori->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Inventory</h2>
-                            <div class="row">
-                                <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Product Size</h2>
                                     <div class="mb-3">
-                                        <label for="sku">SKU (Stock Keeping Unit)</label>
-                                        <input type="text" name="sku" id="sku" class="form-control" placeholder="sku">
-                                        <p class="error"></p>
+                                        <select name="size" id="size" class="form-control">
+                                            <option value="">Select the Size</option>
+                                            @if($sizes->isNotEmpty())
+                                                @foreach($sizes as $sizei)
+                                                    <option value="{{$sizei->id}}">{{$sizei->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                            </div>
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Product Stock</h2>
                                     <div class="mb-3">
-                                        <label for="barcode">Barcode</label>
-                                        <input type="text" name="barcode" id="barcode" class="form-control"
-                                            placeholder="Barcode">
+                                        <input class="form-control" type="number" placeholder="Enter Stock Quantity"
+                                            id="stock">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Pricing</h2>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="price">Price</label>
+                                                <input type="text" name="price" id="price" class="form-control"
+                                                    placeholder="Price">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="compare_price">Compare at Price</label>
+                                                <input type="text" name="compare_price" id="compare_price"
+                                                    class="form-control" placeholder="Compare Price">
+                                                <p class="text-muted mt-3">
+                                                    To show a reduced price, move the product’s original price into
+                                                    Compare at price. Enter a lower value into Price.
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Product status</h2>
-                            <div class="mb-3">
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">Active</option>
-                                    <option value="0">Block</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <h2 class="h4  mb-3">Product category</h2>
-                            <div class="mb-3">
-                                <label for="category">Category</label>
-                                <select name="category" id="category" class="form-control">
-                                    <option value="">Select a Category</option>
-                                    @if($categories->isNotEmpty())
-                                        @foreach($categories as $cati_data)
-                                            <option value="{{$cati_data->id}}">{{$cati_data->name}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                <p class="error"></p>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sub_category">Level 2 Subcategory</label>
-                                <select name="sub_category" id="sub_category" class="form-control">
-                                    <option value="">Select a Sub Category</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="subsub_category">Level 3 Subcategory</label>
-                                <select name="subsub_category" id="subsub_category" class="form-control">
-                                    <option value="">Select a Sub SubCategory</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Product Color</h2>
-                            <div class="mb-3">
-                                <select name="color" id="color" class="form-control">
-                                    <option value="">Select the Color</option>
-                                    @if($colors->isNotEmpty())
-                                        @foreach($colors as $colori)
-                                            <option value="{{$colori->id}}">{{$colori->name}}</option>
-                                        @endforeach
-                                    @endif 
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Product Size</h2>
-                            <div class="mb-3">
-                                <select name="size" id="size" class="form-control">
-                                    <option value="">Select the Size</option>
-                                    @if($sizes->isNotEmpty())
-                                        @foreach($sizes as $sizei)
-                                            <option value="{{$sizei->id}}">{{$sizei->name}}</option>
-                                        @endforeach
-                                    @endif 
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Product Stock</h2>
-                            <div class="mb-3">
-                                <input class="form-control" type="number" placeholder="Enter Stock Quantity" value ="" id="" >
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Product brand</h2>
-                            <div class="mb-3">
-                                <select name="brand" id="brand" class="form-control">
-                                    <option value="">Select the Brand</option>
-                                    @if($brands->isNotEmpty())
-                                        @foreach($brands as $brandi)
-                                            <option value="{{$brandi->id}}">{{$brandi->name}}</option>
-                                        @endforeach
-                                    @endif 
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Featured product</h2>
-                            <div class="mb-3">
-                                <select name="is_featured" id="is_featured" class="form-control">
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
-                                <p class="error"></p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="pb-5 pt-3">
+                    <button type="submit" class="btn btn-primary">Add New</button>
+                    <a href='{{route("product.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
             </div>
-            <div class="pb-5 pt-3">
-                <button type="submit" class="btn btn-primary">Add New</button>
-                <a href='{{route("product.index")}}' class="btn btn-outline-dark ml-3">Cancel</a>
-            </div>
-        </div>
-    </form>
-    <!-- /.card -->
+        </form>
+    </div>
 </section>
 @endsection
 @section('customjs') 
@@ -349,12 +381,12 @@
         }, success: function (file, response) {
             $("#image_id").val(response.image_id);
             var html = `<div class="card" id="image_row_${response['image_id']}" style="width: 18rem;">
-     <input type="hidden" name="image_array[]" value="${response['image_id']}">
-  <img class="card-img-top" src="${response['imagepath']}" alt="Card image cap">
-  <div class="card-body">
-    <a href="javascript:void(0)" onclick="delete_image(${response['image_id']})" class="btn btn-danger">Delete</a>
-  </div>
-</div>`;
+        <input type="hidden" name="image_array[]" value="${response['image_id']}">
+        <img class="card-img-top" src="${response['imagepath']}" alt="Card image cap">
+            <div class="card-body">
+                <a href="javascript:void(0)" onclick="delete_image(${response['image_id']})" class="btn btn-danger">Delete</a>
+            </div>
+        </div>`;
             $('#productgallery').append(html);
         },
         complete: function (file) {
