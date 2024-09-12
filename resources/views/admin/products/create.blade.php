@@ -92,7 +92,6 @@
                                 </div>
                             </div>
                             <!-- Pricing -->
-
                             <!-- Inventory -->
                             <div class="card mb-3">
                                 <div class="card-body">
@@ -193,9 +192,10 @@
                 </div>
                 <!-- Additional Info Tab -->
                 <div class="tab-pane fade" id="additional-info" role="tabpanel" aria-labelledby="additional-info-tab">
-                    <!-- Add any additional content here -->
+                    <!-- Row format for three divs in a single row -->
                     <div class="row">
-                        <div class="col-md-8">
+                        <!-- First Column (4 columns wide) -->
+                        <div class="col-md-4">
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h2 class="h4 mb-3">Product Color</h2>
@@ -211,6 +211,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Second Column (4 columns wide) -->
+                        <div class="col-md-4">
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h2 class="h4 mb-3">Product Size</h2>
@@ -226,6 +229,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Third Column (4 columns wide) -->
+                        <div class="col-md-4">
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h2 class="h4 mb-3">Product Stock</h2>
@@ -235,29 +241,23 @@
                                     </div>
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="col-md-4">
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    <h2 class="h4 mb-3">Pricing</h2>
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <!-- First Column for Price -->
                                             <div class="mb-3">
                                                 <label for="price">Price</label>
+                                                <p class="error"></p>
                                                 <input type="text" name="price" id="price" class="form-control"
-                                                    placeholder="Price">
+                                                    placeholder="Price" value="">
                                             </div>
-                                        </div>
-                                        <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label for="compare_price">Compare at Price</label>
                                                 <input type="text" name="compare_price" id="compare_price"
-                                                    class="form-control" placeholder="Compare Price">
-                                                <p class="text-muted mt-3">
-                                                    To show a reduced price, move the product’s original price into
-                                                    Compare at price. Enter a lower value into Price.
-                                                </p>
+                                                    class="form-control" placeholder="Compare Price" value="">
                                             </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
