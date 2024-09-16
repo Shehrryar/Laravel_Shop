@@ -286,47 +286,45 @@
 @endsection
 @section('customjs') 
 <script>
-    $(document).ready(function () {
-        var twodattributesArray = [];
 
-        $('#add-attributes-btn').on('click', function (e) {
-            e.preventDefault(); // Prevent form submission if necessary
+    var twodattributesArray = [];
+    $('#add-attributes-btn').on('click', function (e) {
+        e.preventDefault(); // Prevent form submission if necessary
 
-            // Get values from form
-            var color_id = $('#color option:selected').val();
-            var color_name = $('#color option:selected').text();
-            var size_id = $('#size option:selected').val();
-            var size_name = $('#size option:selected').text();
-            var stock = $('#stock').val();
-            var price = $('#price').val();
-            var comparePrice = $('#compare_price').val();
+        // Get values from form
+        var color_id = $('#color option:selected').val();
+        var color_name = $('#color option:selected').text();
+        var size_id = $('#size option:selected').val();
+        var size_name = $('#size option:selected').text();
+        var stock = $('#stock').val();
+        var price = $('#price').val();
+        var comparePrice = $('#compare_price').val();
 
-            // Validate if attributes are selected/entered
-            if (color === "Select the Color" || size === "Select the Size" || !stock || !price) {
-                alert("Please make sure all attributes are selected and entered.");
-                return;
-            }
+        // Validate if attributes are selected/entered
+        if (color === "Select the Color" || size === "Select the Size" || !stock || !price) {
+            alert("Please make sure all attributes are selected and entered.");
+            return;
+        }
 
-            // 1D Array to hold single set of attributes
-            var attributesArray = [];
+        // 1D Array to hold single set of attributes
+        var attributesArray = [];
 
-            attributesArray.push({
-                color: color,
-                size: size,
-                stock: stock,
-                price: price,
-                comparePrice: comparePrice ? comparePrice : 'N/A'
-            });
+        attributesArray.push({
+            color: color,
+            size: size,
+            stock: stock,
+            price: price,
+            comparePrice: comparePrice ? comparePrice : 'N/A'
+        });
 
-            // Push the 1D array into the 2D array
-            twodattributesArray.push(attributesArray);
+        // Push the 1D array into the 2D array
+        twodattributesArray.push(attributesArray);
 
-            // Log the 2D array to check structure
-            console.log(twodattributesArray);
+        // Log the 2D array to check structure
 
-            // Create the row with attributes and buttons for edit/remove (for UI display)
-            var uniqueId = new Date().getTime(); // Unique ID for the row
-            var attributeRow = `
+        // Create the row with attributes and buttons for edit/remove (for UI display)
+        var uniqueId = new Date().getTime(); // Unique ID for the row
+        var attributeRow = `
             <div class="col-md-12" id="attribute-row-${uniqueId}">
                 <div class="card">
                     <div class="card-body">
@@ -355,41 +353,75 @@
                 </div>
             </div>`;
 
-            // Append the new row with the attributes to the div
-            $('#attribute-list-row').append(attributeRow);
+        // Append the new row with the attributes to the div
+        $('#attribute-list-row').append(attributeRow);
+    });
+
+    $("#productform").submit(function (event) {
+        event.preventDefault();
+        var formarray = $("#productform").serializeArray();
+        // Convert the form array to an object to merge additional data
+        var formData = {};
+        $.each(formarray, function (i, field) {
+            formData[field.name] = field.value;
         });
-
-        // Remove the attribute row and also remove it from the 2D array
-        $(document).on('click', '.remove-attribute', function () {
-            var id = $(this).data('id');
-            $('#attribute-row-' + id).remove(); // Remove the row with the specific id
-
-            // Optionally remove from the 2D array if needed (this example doesn't track by id, but you can add logic to handle it)
-        });
-
-        // Edit the attribute row (same as before, no change here)
-        $(document).on('click', '.edit-attribute', function () {
-            var id = $(this).data('id');
-            var row = $('#attribute-row-' + id);
-
-            // Get current values from the row
-            var color = row.find('p:contains("Color:")').text().replace('Color: ', '');
-            var size = row.find('p:contains("Size:")').text().replace('Size: ', '');
-            var stock = row.find('p:contains("Stock:")').text().replace('Stock: ', '');
-            var price = row.find('p:contains("Price:")').text().replace('Price: ', '');
-            var comparePrice = row.find('p:contains("Compare Price:")').text().replace('Compare Price: ', '');
-
-            // Set the values back to the form for editing
-            $('#color').val($('#color option:contains("' + color + '")').val());  // Set color option
-            $('#size').val($('#size option:contains("' + size + '")').val());    // Set size option
-            $('#stock').val(stock);
-            $('#price').val(price);
-            $('#compare_price').val(comparePrice === 'N/A' ? '' : comparePrice);
-
-            // Remove the current row for now, you can add back after editing
-            $('#attribute-row-' + id).remove();
+        // Add the twodattributesArray to the formData
+        formData['attributes'] = twodattributesArray;
+        $.ajax({
+            url: '{{ route("product.store") }}',
+            type: 'post',
+            data: JSON.stringify(formData),  // Convert to JSON string
+            contentType: 'application/json', // Set content type to JSON
+            dataType: 'json',
+            success: function (response) {
+                if (response['status'] == true) {
+            
+                }
+                else {
+                    var errors = response['error'];
+                    $(".error").removeClass('invalid-feedback').html('');
+                    $("input[type='text']").removeClass('is-invalid');
+                    $.each(errors, function (key, value) {
+                        $(`#${key}`).addClass("is-invalid").siblings('p').addClass('invalid-feedback').html(value);
+                    });
+                }
+            },
+            error: function () {
+                console.log("something went wrong");
+            }
         });
     });
+
+    // Remove the attribute row and also remove it from the 2D array
+    $(document).on('click', '.remove-attribute', function () {
+        var id = $(this).data('id');
+        $('#attribute-row-' + id).remove(); // Remove the row with the specific id
+
+        // Optionally remove from the 2D array if needed (this example doesn't track by id, but you can add logic to handle it)
+    });
+
+    // Edit the attribute row (same as before, no change here)
+    // $(document).on('click', '.edit-attribute', function () {
+    //     var id = $(this).data('id');
+    //     var row = $('#attribute-row-' + id);
+
+    //     // Get current values from the row
+    //     var color = row.find('p:contains("Color:")').text().replace('Color: ', '');
+    //     var size = row.find('p:contains("Size:")').text().replace('Size: ', '');
+    //     var stock = row.find('p:contains("Stock:")').text().replace('Stock: ', '');
+    //     var price = row.find('p:contains("Price:")').text().replace('Price: ', '');
+    //     var comparePrice = row.find('p:contains("Compare Price:")').text().replace('Compare Price: ', '');
+
+    //     // Set the values back to the form for editing
+    //     $('#color').val($('#color option:contains("' + color + '")').val());  // Set color option
+    //     $('#size').val($('#size option:contains("' + size + '")').val());    // Set size option
+    //     $('#stock').val(stock);
+    //     $('#price').val(price);
+    //     $('#compare_price').val(comparePrice === 'N/A' ? '' : comparePrice);
+
+    //     // Remove the current row for now, you can add back after editing
+    //     $('#attribute-row-' + id).remove();
+    // });
 
 
 
@@ -429,32 +461,7 @@
             },
         });
     });
-    $("#productform").submit(function (event) {
-        event.preventDefault();
-        var formarray = $("#productform").serializeArray();
-        $.ajax({
-            url: '{{route("product.store")}}',
-            type: 'post',
-            data: formarray,
-            dataType: 'json',
-            success: function (response) {
-                if (response['status'] == true) {
-                    window.location.href = "{{route('product.index')}}";
-                }
-                else {
-                    var errors = response['error'];
-                    $(".error").removeClass('invalid-feedback').html('');
-                    $("input[type='text']").removeClass('is-invalid');
-                    $.each(errors, function (key, value) {
-                        $(`#${key}`).addClass("is-invalid").siblings('p').addClass('invalid-feedback').html(value);
-                    });
-                }
-            },
-            error: function () {
-                console.log("something went wrong");
-            }
-        });
-    });
+
     $("#category").change(function () {
         var category_id = $(this).val();
         $.ajax({
