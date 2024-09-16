@@ -201,7 +201,7 @@
                                             <option {{($product->color_id == $colori->id) ? 'selected' : ''}}
                                                 value="{{$colori->id}}">{{$colori->name}}</option>
                                         @endforeach
-                                    @endif 
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -217,7 +217,7 @@
                                             <option {{($product->size_id == $sizei->id) ? 'selected' : ''}}
                                                 value="{{$sizei->id}}">{{$sizei->name}}</option>
                                         @endforeach
-                                    @endif 
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -233,7 +233,7 @@
                                             <option {{($product->brands_id == $brandi->id) ? 'selected' : ''}}
                                                 value="{{$brandi->id}}">{{$brandi->name}}</option>
                                         @endforeach
-                                    @endif 
+                                    @endif
                                 </select>
                             </div>
                         </div>
