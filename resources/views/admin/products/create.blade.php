@@ -212,6 +212,17 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">Product Image</h2>
+                                    <div class="mb-3">
+                                        <input type="file" class="form-control" name="product_image" id="product_image">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Second Column (4 columns wide) -->
                         <div class="col-md-4">
                             <div class="card mb-3">
@@ -299,9 +310,10 @@
         var stock = $('#stock').val();
         var price = $('#price').val();
         var comparePrice = $('#compare_price').val();
+        var fileInput = $('#product_image')[0].files[0];
 
         // Validate if attributes are selected/entered
-        if (color === "Select the Color" || size === "Select the Size" || !stock || !price) {
+        if (color === "Select the Color" || size === "Select the Size" || !stock || !price || !fileInput) {
             alert("Please make sure all attributes are selected and entered.");
             return;
         }
@@ -310,13 +322,13 @@
         var attributesArray = [];
 
         attributesArray.push({
-            color: color,
-            size: size,
+            color: color_id,
+            size: size_id,
             stock: stock,
             price: price,
-            comparePrice: comparePrice ? comparePrice : 'N/A'
+            comparePrice: comparePrice,
+            file: fileInput ? fileInput.name : null
         });
-
         // Push the 1D array into the 2D array
         twodattributesArray.push(attributesArray);
 
@@ -375,7 +387,7 @@
             dataType: 'json',
             success: function (response) {
                 if (response['status'] == true) {
-            
+
                 }
                 else {
                     var errors = response['error'];
