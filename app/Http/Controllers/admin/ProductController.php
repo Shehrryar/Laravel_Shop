@@ -15,6 +15,7 @@ use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\ProductAttribute;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -50,7 +51,7 @@ class ProductController extends Controller
         echo "<pre>";
         print_r($request->all());
         exit;
-
+        
         $values = [
             'title' => 'required',
             'slug' => 'required|unique:products',
@@ -94,9 +95,12 @@ class ProductController extends Controller
                     $attribute_of_product->stock_id = $attributes[0]['stock'];
                     $attribute_of_product->saling_price = $attributes[0]['price'];
                     $attribute_of_product->original_price = $attributes[0]['comparePrice'];
-                    
-                    $attribute_of_product->image = $attributes[0]['image'];
 
+                    $directory = public_path() . '/upload/products/Attributes_images/';
+                    $file = $attributes[0]['file'];
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    Storage::putFileAs($directory, $file, $filename);
+                    $attribute_of_product->image = $attributes[0]['file'];
                     $attribute_of_product->save();
                 }
             }

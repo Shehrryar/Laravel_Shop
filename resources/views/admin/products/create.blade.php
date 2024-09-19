@@ -299,8 +299,9 @@
 <script>
 
     var twodattributesArray = [];
+
     $('#add-attributes-btn').on('click', function (e) {
-        e.preventDefault(); // Prevent form submission if necessary
+        e.preventDefault();
 
         // Get values from form
         var color_id = $('#color option:selected').val();
@@ -312,58 +313,53 @@
         var comparePrice = $('#compare_price').val();
         var fileInput = $('#product_image')[0].files[0];
 
-        // Validate if attributes are selected/entered
-        if (color === "Select the Color" || size === "Select the Size" || !stock || !price || !fileInput) {
-            alert("Please make sure all attributes are selected and entered.");
+        if (!fileInput) {
+            alert("Please select a file.");
             return;
         }
 
-        // 1D Array to hold single set of attributes
-        var attributesArray = [];
-
-        attributesArray.push({
+        var attributesArray = {
             color: color_id,
             size: size_id,
             stock: stock,
             price: price,
             comparePrice: comparePrice,
-            file: fileInput ? fileInput.name : null
-        });
-        // Push the 1D array into the 2D array
-        twodattributesArray.push(attributesArray);
+            file: fileInput,
+            image_name: fileInput.name
+        };
 
-        // Log the 2D array to check structure
+        twodattributesArray.push(attributesArray);
 
         // Create the row with attributes and buttons for edit/remove (for UI display)
         var uniqueId = new Date().getTime(); // Unique ID for the row
         var attributeRow = `
-            <div class="col-md-12" id="attribute-row-${uniqueId}">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-2">
-                                <p><strong>Color:</strong> ${color_name}</p>
-                            </div>
-                            <div class="col-md-2">
-                                <p><strong>Size:</strong> ${size_name}</p>
-                            </div>
-                            <div class="col-md-2">
-                                <p><strong>Stock:</strong> ${stock}</p>
-                            </div>
-                            <div class="col-md-2">
-                                <p><strong>Price:</strong> ${price}</p>
-                            </div>
-                            <div class="col-md-2">
-                                <p><strong>Compare Price:</strong> ${comparePrice ? comparePrice : 'N/A'}</p>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <button class="btn btn-sm btn-warning edit-attribute" data-id="${uniqueId}">Edit</button>
-                                <button class="btn btn-sm btn-danger remove-attribute" data-id="${uniqueId}">Remove</button>
-                            </div>
+        <div class="col-md-12" id="attribute-row-${uniqueId}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <p><strong>Color:</strong> ${color_name}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p><strong>Size:</strong> ${size_name}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p><strong>Stock:</strong> ${stock}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p><strong>Price:</strong> ${price}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p><strong>Compare Price:</strong> ${comparePrice ? comparePrice : 'N/A'}</p>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button class="btn btn-sm btn-warning edit-attribute" data-id="${uniqueId}">Edit</button>
+                            <button class="btn btn-sm btn-danger remove-attribute" data-id="${uniqueId}">Remove</button>
                         </div>
                     </div>
                 </div>
-            </div>`;
+            </div>
+        </div>`;
 
         // Append the new row with the attributes to the div
         $('#attribute-list-row').append(attributeRow);
@@ -371,25 +367,37 @@
 
     $("#productform").submit(function (event) {
         event.preventDefault();
+        var formData = new FormData();
+
+        // Append form fields to the FormData object
         var formarray = $("#productform").serializeArray();
-        // Convert the form array to an object to merge additional data
-        var formData = {};
         $.each(formarray, function (i, field) {
-            formData[field.name] = field.value;
+            formData.append(field.name, field.value);
         });
-        // Add the twodattributesArray to the formData
-        formData['attributes'] = twodattributesArray;
+
+        // Convert the twodattributesArray to a JSON string and append it
+        formData.append('attributes', JSON.stringify(twodattributesArray));
+
+        // Append file fields manually to the FormData
+        twodattributesArray.forEach(function (attribute) {
+            if (attribute.file) {
+                // Extract the file name from the File object
+                const fileName = attribute.file.name;
+                formData.append(fileName, attribute.file);
+            }
+        });
+
+
         $.ajax({
             url: '{{ route("product.store") }}',
             type: 'post',
-            data: JSON.stringify(formData),  // Convert to JSON string
-            contentType: 'application/json', // Set content type to JSON
-            dataType: 'json',
+            data: formData,
+            processData: false, // Important! Prevent jQuery from automatically transforming the data into a query string
+            contentType: false, // Important! Ensure multipart/form-data is used
             success: function (response) {
                 if (response['status'] == true) {
-
-                }
-                else {
+                    // Handle success
+                } else {
                     var errors = response['error'];
                     $(".error").removeClass('invalid-feedback').html('');
                     $("input[type='text']").removeClass('is-invalid');
@@ -403,6 +411,7 @@
             }
         });
     });
+
 
     // Remove the attribute row and also remove it from the 2D array
     $(document).on('click', '.remove-attribute', function () {
