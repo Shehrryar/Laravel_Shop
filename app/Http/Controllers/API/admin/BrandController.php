@@ -16,8 +16,9 @@ class BrandController extends Controller
             $brands = $brands->where('name','like','%'.$request->get('keyword').'%');
         }
         $brands = $brands->paginate(10);
-
-        return view('admin.brands.list', compact('brands'));
+        return response()->json([
+            'brands' => $brands,
+        ]);
     }
     public function create(){
         return view('admin.brands.create');
@@ -58,11 +59,14 @@ class BrandController extends Controller
         $brand = Brand::find($id);
         if(empty($brand)){
             $request->session()->flash('error','Record not found');
-            return redirect()->route('brands.index');
+            return response()->json([
+                'error' => 'Record Not Found',
+            ]);
         }
         $data['brand'] = $brand; 
-        return view('admin.brands.edit', $data);
-
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function update($id, Request $request){

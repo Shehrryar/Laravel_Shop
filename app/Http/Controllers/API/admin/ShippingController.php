@@ -16,7 +16,9 @@ class ShippingController extends Controller
         $data['countries'] = $countries;
         $shipping_charges = Shipping::select('shipping_charges.*', 'countries.name')->leftJoin('countries', 'countries.id', 'shipping_charges.country_id')->get();
         $data['shipping_charges'] = $shipping_charges;
-        return view('admin.shipping.create', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function store(Request $request)
@@ -59,8 +61,9 @@ class ShippingController extends Controller
 
         $data['countries'] = $countries;
         $data['shipping_charge'] = $shipping_charge;
-        return view('admin.shipping.edit', $data);
-
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function update($id, Request $request)

@@ -19,7 +19,9 @@ class DiscountController extends Controller
             $Discount = $Discount->where('name','like','%'.$request->get('keyword').'%');
         }
         $Discount = $Discount->paginate(10);
-        return view('admin.discount.list', compact('Discount'));
+        return response()->json([
+            'Discount' => $Discount,
+        ]);
     }
 
     public function create()
@@ -27,7 +29,9 @@ class DiscountController extends Controller
         $data = [];
         $products = Product::get();
         $data['products']=$products;
-        return view('admin.discount.create', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function store(Request $request)
@@ -80,7 +84,9 @@ class DiscountController extends Controller
             'discount_edit' => $discount_edit,
             'products' => $products
         ];
-        return view('admin.discount.edit', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     
 

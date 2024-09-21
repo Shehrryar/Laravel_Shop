@@ -20,7 +20,10 @@ class SubCategoryController extends Controller
         }
 
         $subcategories = $subcategories->paginate(10);
-        return view('admin.subcategory.list', compact('subcategories'));
+
+        return response()->json([
+            'suncategory' => $subcategories,
+        ]);
     }   
     public function create(){
 
@@ -70,7 +73,9 @@ class SubCategoryController extends Controller
         $cat_data = Category::orderBy('name','ASC')->get();
         $data['cat_data'] = $cat_data;
         $data['subcat'] = $subcat;
-        return view('admin.subcategory.edit', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function update($id , Request $request){

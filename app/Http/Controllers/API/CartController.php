@@ -66,7 +66,9 @@ class CartController extends Controller
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-        return view('front.cart', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     public function updateCart(Request $request)
     {
@@ -158,17 +160,14 @@ class CartController extends Controller
             // echo $grand_total;
             // exit;
         }
-        return view(
-            'front.checkout',
-            [
-                'countries' => $countries,
-                'customerAddress' => $customerAddress,
-                'discount' => $discount_amo,
-                'total_shipping' => number_format($total_shipping, 2),
-                'grand_total' => $grand_total,
-                'keyword' => ''
-            ]
-        );
+        return response()->json([
+            'countries' => $countries,
+            'customerAddress' => $customerAddress,
+            'discount' => $discount_amo,
+            'total_shipping' => number_format($total_shipping, 2),
+            'grand_total' => $grand_total,
+            'keyword' => ''
+        ]);
     }
     public function processCheckout(Request $request)
     {

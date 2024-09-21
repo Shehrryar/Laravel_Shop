@@ -19,8 +19,10 @@ class OrderController extends Controller
             });
         }
         $orders = $orders->paginate(10);
-        return view('admin.orders.list', compact('orders'));
-    
+
+        return response()->json([
+            'orders' => $orders,
+        ]);    
     }
     public function detail($orderid){
         $order = Order::select('orders.*', 'countries.name as countryName')
@@ -29,8 +31,13 @@ class OrderController extends Controller
         ->first();
 
         $orderitems = OrderItem::where('order_id', $orderid)->get();
-        return view('admin.orders.detail', 
-        ['order'=>$order, 'orderitems'=> $orderitems]);
+        $data = [];
+
+        $data['order'] = $order; 
+        $data['orderitems'] = $orderitems;
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function changeOrderStatus(Request $request, $id){
@@ -45,7 +52,6 @@ class OrderController extends Controller
             'message'=> $message
         ]);
     }
-
     public function sendInvoiceEmail(Request $request, $order_id){
         $message = 'Order email sent successfully';
         orderEmail($order_id, $request->userType);

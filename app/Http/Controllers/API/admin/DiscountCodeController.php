@@ -17,7 +17,9 @@ class DiscountCodeController extends Controller
             $DiscountCoupon = $DiscountCoupon->where('name','like','%'.$request->get('keyword').'%');
         }
         $DiscountCoupon = $DiscountCoupon->paginate(10);
-        return view('admin.discount_coupon.list', compact('DiscountCoupon'));
+        return response()->json([
+            'DiscountCoupon' => $DiscountCoupon,
+        ]);
     }
     public function create()
     {
@@ -71,7 +73,9 @@ class DiscountCodeController extends Controller
             session()->flash('error', 'Record not found');
             return redirect()->route('coupon.index');
         }
-        return view('admin.discount_coupon.edit', compact('coupon_edit'));
+        return response()->json([
+            'coupon_edit' => $coupon_edit,
+        ]);
     }
     public function update(Request $request, $id)
     {

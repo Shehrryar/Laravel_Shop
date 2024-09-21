@@ -30,6 +30,8 @@ class SearchController extends Controller
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['featured_products'] = $featured_products;
-        return view('front.search', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 }

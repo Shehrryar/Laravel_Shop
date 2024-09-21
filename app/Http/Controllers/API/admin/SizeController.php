@@ -13,7 +13,9 @@ class SizeController extends Controller
             $size = $size->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $sizes = $size->paginate(10);
-        return view('admin.size.list', compact('sizes'));
+        return response()->json([
+            'sizes' => $sizes,
+        ]);
     }
     public function create()
     {
@@ -55,7 +57,9 @@ class SizeController extends Controller
             return redirect()->route('sizess.index');
         }
         $data['size'] = $size;
-        return view('admin.size.edit', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     public function update($id, Request $request)
     {

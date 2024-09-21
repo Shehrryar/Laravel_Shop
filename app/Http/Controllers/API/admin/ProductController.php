@@ -21,7 +21,10 @@ class ProductController extends Controller
         }
         $products = $products->paginate(10);
         $data['product'] = $products;
-        return view('admin.products.list', $data);
+        $data['language'] = $language; 
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     public function create()
     {
@@ -32,7 +35,9 @@ class ProductController extends Controller
         $data['categories'] = $categories;
         // $data['subcategories'] = $subcategories;
         $data['brands'] = $brands;
-        return view('admin.products.create', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
 
@@ -128,7 +133,9 @@ class ProductController extends Controller
         $data['subcategories'] = $subcategories;
         $data['susubcategories'] = $susubcategories;
         $data['showrelatedproduct'] = $showrelatedproduct;
-        return view('admin.products.edit', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     public function update($id, Request $request)
     {

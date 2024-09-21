@@ -15,7 +15,9 @@ class AuthController extends Controller
     public function login()
     {
         $data['keyword'] = '';
-        return view('front.account.login', $data);
+        return response()->json([
+            'keyword' => $data
+        ]);
     }
     public function register()
     {
@@ -56,7 +58,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
         if ($validator->passes()) {
-            if (Auth::attempt(['email' => $request->email, 'google_id' => $request->password], $request->get('remember'))) {
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
                 if (session()->has('url.intended')) {
                     return redirect(session()->get('url.intended'));
                 }
@@ -80,7 +82,9 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('account.login')->with('success', 'Your successfully logout');
+        return response()->json([
+            'message' => 'Your successfully logout'
+        ]);
     }
     public function githubRedirect()
     {
@@ -181,7 +185,9 @@ class AuthController extends Controller
        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
        $data = [];
        $data['wishlist'] = $wishlist;
-       return view('front.account.wishlist', $data);
+       return response()->json([
+        'data' =>  $data,
+    ]);
     }
     public function remove_product_from_wishlist(Request $request) {
         $wishlist = Wishlist::where('user_id', Auth::user()->id)
@@ -204,7 +210,10 @@ class AuthController extends Controller
         $user = Auth::user();
         $orders = Order::where('user_id', $user->id)->orderby('created_at','DESC')->get();
         $data['orders'] = $orders;
-        return view('front.account.order', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
+
     }
     public function orderdetail($id){
         $user = Auth::user();
@@ -214,6 +223,8 @@ class AuthController extends Controller
         $data['order'] = $order; 
         $data['orderitemscount'] = $orderitemscount; 
         $data['orderitems'] = $orderitems; 
-        return view('front.account.orderdetail', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 }

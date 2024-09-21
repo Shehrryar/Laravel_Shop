@@ -86,9 +86,10 @@ class ShopController extends Controller
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['keyword'] = '';
+        return response()->json([
+            'data' => $data,
 
-
-        return view('front.shop', $data);
+        ]);
     }
     public function product($slug)
     {
@@ -133,9 +134,9 @@ class ShopController extends Controller
         $data['avg_rating_per'] = $avg_rating_per;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-
-
-        return view('front.product', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function productRating(Request $request, $id)

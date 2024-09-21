@@ -18,7 +18,10 @@ class UserController extends Controller
             $user = $user->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $user = $user->paginate(10);
-        return view('admin.users.list', ['users' => $user]);
+
+        return response()->json([
+            'users' => $user,
+        ]);
     }
 
     public function create(Request $request)
@@ -65,7 +68,9 @@ class UserController extends Controller
 
     public function edit($userid, Request $request){
         $user_edit = User::find($userid);
-        return view('admin.users.edit', compact('user_edit'));
+        return response()->json([
+            'user_edit' => $user_edit,
+        ]);
     }
 
     public function update(Request $request, $user_id)

@@ -27,7 +27,9 @@ class SubSubCategoryController extends Controller
         if (!empty($request->get('keyword'))) {
             $subsubcategories = $subsubcategories->orwhere('sub_sub_categories.name', 'like', '%' . $request->get('keyword') . '%');
         }
-        return view('admin.subsubcategory.list', compact('subsubcategories'));
+        return response()->json([
+            'subsubcategoriesata' => $subsubcategories,
+        ]);
     }
     public function create()
     {
@@ -36,7 +38,9 @@ class SubSubCategoryController extends Controller
         $subcat_data = SubCategory::orderBy('name', 'ASC')->get();
         $data['cat_data'] = $cat_data;
         $data['subcat_data'] = $subcat_data;
-        return view('admin.subsubcategory.create', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     public function store(Request $request)
     {
@@ -80,7 +84,9 @@ class SubSubCategoryController extends Controller
         $data['cat_data'] = $cat_data;
         $data['subcat_data'] = $subcat_data;
         $data['subsubcat'] = $subsubcat;
-        return view('admin.subsubcategory.edit', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function update($id, Request $request)

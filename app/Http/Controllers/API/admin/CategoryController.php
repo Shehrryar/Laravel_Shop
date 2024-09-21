@@ -20,7 +20,9 @@ class CategoryController extends Controller
             $categories = $categories->where('name','like','%'.$request->get('keyword').'%');
         }
         $categories = $categories->paginate(10);
-        return view('admin.category.list', compact('categories'));
+        return response()->json([
+            'categories' => $categories,
+        ]);
     }
      public function create(){
         return view('admin.category.create');
@@ -72,7 +74,9 @@ class CategoryController extends Controller
      }
      public function edit($catid, Request $request){
         $cat_edit = Category::find($catid);
-        return view('admin.category.edit', compact('cat_edit'));
+        return response()->json([
+            'cat_edit' => $cat_edit,
+        ]);
     }
      public function update($cat_id, Request $request){
           $cat_edit = Category::find($cat_id);

@@ -14,8 +14,9 @@ class LanguageController extends Controller
             $language = $language->where('name','like','%'.$request->get('keyword').'%');
         }
         $language = $language->paginate(10);
-
-        return view('admin.languages.list', compact('language') );
+        return response()->json([
+            'language' => $language,
+        ]);
     }
 
     public function create(){
@@ -60,8 +61,9 @@ class LanguageController extends Controller
             return redirect()->route('languages.index');
         }
         $data['language'] = $language; 
-        return view('admin.languages.edit', $data);
-
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     public function update($id, Request $request){
         $language_edit = Language::find($id);

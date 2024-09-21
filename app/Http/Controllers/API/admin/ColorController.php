@@ -13,7 +13,9 @@ class ColorController extends Controller
             $colors = $colors->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $colors = $colors->paginate(10);
-        return view('admin.colors.list', compact('colors'));
+        return response()->json([
+            'colors' => $colors,
+        ]);
     }
     public function create()
     {
@@ -55,7 +57,9 @@ class ColorController extends Controller
             return redirect()->route('colorss.index');
         }
         $data['color'] = $color;
-        return view('admin.colors.edit', $data);
+        return response()->json([
+            'data' => $data,
+        ]);
     }
     public function update($id, Request $request)
     {
