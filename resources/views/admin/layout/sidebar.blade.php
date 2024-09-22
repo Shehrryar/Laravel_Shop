@@ -48,12 +48,28 @@
                         <p>Brands</p>
                     </a>
                 </li>
-
-                <li class="nav-item">
-                    <a href='{{route("product.index")}}' class="nav-link">
-                        <i class="nav-icon fas fa-tag"></i>
-                        <p>Products</p>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i> 
+                        <p>
+                        Products
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a style = "margin-left: 28px;" href='{{route("product.index")}}' class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Product list</p>
+                            </a>
+                        </li>
+						<li class="nav-item">
+                            <a style = "margin-left: 28px;" href="{{ route('productattribute.index') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Product Attribute</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="nav-item">

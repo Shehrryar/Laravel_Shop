@@ -24,7 +24,11 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\ColorController;
 use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\StockManagementController;
+use App\Http\Controllers\admin\ProductAttributeController;
 use App\Http\Controllers\SearchController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -145,6 +149,14 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/product/{delete}', [ProductController::class, 'delete'])->name('product.delete');
         Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
         Route::post('/import-products', [ProductController::class, 'importProducts'])->name('product.importProducts');
+
+        // Prodcut attribute Routes
+        Route::get('/productattribute', [ProductAttributeController::class, 'index'])->name('productattribute.index');
+        Route::post('/productattribute/create', [ProductAttributeController::class, 'create'])->name('productattribute.create');
+        Route::post('/productattribute/store', [ProductAttributeController::class, 'store'])->name('productattribute.store');
+        Route::get('/productattribute/{id}', [ProductAttributeController::class, 'edit'])->name('productattribute.edit');
+        Route::put('/productattribute/{id}', [ProductAttributeController::class, 'update'])->name('productattribute.update');
+        Route::delete('/productattribute/{id}', [ProductAttributeController::class, 'destroy'])->name('shipping.delete');
         // shipping Routes
         Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
         Route::post('/shipping/store', [ShippingController::class, 'store'])->name('shipping.store');
