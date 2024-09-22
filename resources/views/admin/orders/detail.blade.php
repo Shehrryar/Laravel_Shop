@@ -6,7 +6,9 @@
             <div class="col-sm-6">
                 <h1>Order: #{{$order->id}}</h1>
             </div>
+
             <div class="col-sm-6 text-right">
+                <a href="{{route('order.index')}}" class="btn btn-primary">View Detail PDF</a>
                 <a href="{{route('order.index')}}" class="btn btn-primary">Back</a>
             </div>
         </div>
@@ -33,9 +35,9 @@
                                 </address>
                                 <strong>Shipped Date : </strong>
                                 @if (!empty($order->shipping_date))
-                                    {{\Carbon\Carbon::parse($order->shipping_date)->format('d M, Y')}}
+                                {{\Carbon\Carbon::parse($order->shipping_date)->format('d M, Y')}}
                                 @else
-                                    N/A
+                                N/A
                                 @endif
                             </div>
 
@@ -48,13 +50,13 @@
                                 <b>Total:</b> ${{number_format($order->grandtotal, 2)}}<br>
                                 <b>Status:</b>
                                 @if ($order->status == 'pending')
-                                    <span class="badge bg-danger">Pending</span>
+                                <span class="badge bg-danger">Pending</span>
                                 @elseif($order->status == 'shipped')
-                                    <span class="badge bg-info">Shipped</span>
+                                <span class="badge bg-info">Shipped</span>
                                 @elseif($order->status == 'delivered')
-                                    <span class="badge bg-success">Delivered </span>
+                                <span class="badge bg-success">Delivered </span>
                                 @else
-                                    <span class="badge bg-danger">Cancelled </span>
+                                <span class="badge bg-danger">Cancelled </span>
                                 @endif
                                 <br>
                             </div>
@@ -73,12 +75,12 @@
                             <tbody>
 
                                 @foreach ($orderitems as $item)
-                                    <tr>
-                                        <th>{{$item->name}}</th>
-                                        <th>{{number_format($item->price, 2)}}</th>
-                                        <th>{{number_format($item->qty, 2)}}</th>
-                                        <th>{{number_format($item->total, 2)}}</th>
-                                    </tr>
+                                <tr>
+                                    <th>{{$item->name}}</th>
+                                    <th>{{number_format($item->price, 2)}}</th>
+                                    <th>{{number_format($item->qty, 2)}}</th>
+                                    <th>{{number_format($item->total, 2)}}</th>
+                                </tr>
                                 @endforeach
                                 <tr>
                                     <th colspan="3" class="text-right">Subtotal:</th>
@@ -134,19 +136,19 @@
                     </form>
                 </div>
                 <div class="card">
-                    <form action="" method="post" name="sentInvoiceEmail" id="sentInvoiceEmail" >
-                    <div class="card-body">
-                        <h2 class="h4 mb-3">Send Inovice Email</h2>
-                        <div class="mb-3">
-                            <select name="userType" id="userType" class="form-control">
-                                <option value="customer">Customer</option>
-                                <option value="admin">Admin</option>
-                            </select>
+                    <form action="" method="post" name="sentInvoiceEmail" id="sentInvoiceEmail">
+                        <div class="card-body">
+                            <h2 class="h4 mb-3">Send Inovice Email</h2>
+                            <div class="mb-3">
+                                <select name="userType" id="userType" class="form-control">
+                                    <option value="customer">Customer</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-primary">Send</button>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <button class="btn btn-primary">Send</button>
-                        </div>
-                    </div>
                     </form>
                 </div>
             </div>
@@ -158,31 +160,31 @@
 @section('customjs')
 
 <script>
-    $("#changeorderstatusform").submit(function (event) {
-        event.preventDefault();
-        $.ajax({
-            url: '{{route('order.changeorderstatus', $order->id)}}',
-            type: 'post',
-            data: $(this).serializeArray(),
-            dataType: 'json',
-            success: function (response) {
-                window.location.href = '{{route("order.detail", $order->id)}}';
-            }
+$("#changeorderstatusform").submit(function(event) {
+    event.preventDefault();
+    $.ajax({
+        url: '{{route('order.changeorderstatus', $order->id)}}',
+        type: 'post',
+        data: $(this).serializeArray(),
+        dataType: 'json',
+        success: function(response) {
+            window.location.href = '{{route("order.detail", $order->id)}}';
+        }
 
-        });
     });
-    
-    $("#sentInvoiceEmail").submit(function (event) {
-        event.preventDefault();
-        $.ajax({
-            url: '{{route('order.sendinvoiceemail', $order->id)}}',
-            type: 'post',
-            data: $(this).serializeArray(),
-            dataType: 'json',
-            success: function (response) {
-                window.location.href = '{{route("order.detail", $order->id)}}';
-            }
-        });
+});
+
+$("#sentInvoiceEmail").submit(function(event) {
+    event.preventDefault();
+    $.ajax({
+        url: '{{route('order.sendinvoiceemail', $order->id)}}',
+        type: 'post',
+        data: $(this).serializeArray(),
+        dataType: 'json',
+        success: function(response) {
+            window.location.href = '{{route("order.detail", $order->id)}}';
+        }
     });
+});
 </script>
 @endsection
