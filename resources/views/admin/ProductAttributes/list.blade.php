@@ -9,7 +9,7 @@
                 <h1>Products</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href='{{route("product.create")}}' class="btn btn-primary">New Product</a>
+                <a href='{{route("productattribute.create")}}' class="btn btn-primary">New Attributes</a>
             </div>
         </div>
     </div>
@@ -54,23 +54,24 @@
                     <tbody>
                         @if($product_attributes->isNotEmpty())
                         @foreach($product_attributes as $prod_att)
-                        <tr>
-                            <td>{{prod_att->id}}</td>
+                            <td>{{ $prod_att->product->title ?? 'N/A' }}</td>
+                            <td>{{$prod_att->color->name ?? 'N/A'}}</td>
+                            <td>{{$prod_att->size->name ?? 'N/A'}}</td>
                             <td>
-                                @if(!empty($images_prod))
-                                <img src="{{asset('upload/products/'.$prod_att->image)}}" class="img-thumbnail"
+                                @if(!empty($prod_att->image))
+                                <img src="{{asset('upload/products/Attributes_images/'.$prod_att->image)}}" class="img-thumbnail"
                                     width="50">
                                 @else
                                 <img src="{{asset('admin-assets\img\default-150x150.png')}}" class="img-thumbnail"
                                     width="50">
                                 @endif
                             </td>
-                            <td><a href="#">{{prod_att->title}}</a></td>
-                            <td>{{prod_att->price}}</td>
-                            <td>{{prod_att->qty}}</td>
-                            <td>{{prod_att->sku}}</td>
-                            <td>
-                                @if(prod_att->status==1)
+                            <td>{{$prod_att->original_price}}</td>
+                            <td>{{$prod_att->quantity}}</td>
+                            <td>{{$prod_att->remaning_quantity}}</td>
+                            <td>{{$prod_att->sold_quantity}}</td>
+                            <!-- <td>
+                                @if($prod_att->status==1)
                                 <svg class="text-success-500 h-6 w-6 text-success" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                     aria-hidden="true">
@@ -84,9 +85,9 @@
                                         d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 @endif
-                            </td>
+                            </td> -->
                             <td>
-                                <a href='{{route("product.edit", prod_att->id)}}'>
+                                <a href='{{route("product.edit", $prod_att->id)}}'>
                                     <svg class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path
@@ -94,7 +95,7 @@
                                         </path>
                                     </svg>
                                 </a>
-                                <a href='#' onclick="deleteproduct({{prod_att->id}})" class="text-danger w-4 h-4 mr-1">
+                                <a href='#' onclick="deleteproduct_att({{$prod_att->id}})" class="text-danger w-4 h-4 mr-1">
                                     <svg wire:loading.remove.delay="" wire:target=""
                                         class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -120,19 +121,17 @@
 @endsection
 @section('customjs')
 <script>
-function deleteproduct(id) {
+function deleteproduct_att(id) {
 
-    var delurl = '{{route("product.delete","ID")}}'.replace("ID", id);
+    var delurl = '{{route("productattribute.delete","ID")}}'.replace("ID", id);
     $.ajax({
-
         url: delurl,
         type: 'delete',
         data: {}, // Use correct form ID
         dataType: 'json', // 'datatype' should be 'dataType'
         success: function(response) {
-
             if (response['status']) {
-                window.location.href = "{{route('product.index')}}";
+                window.location.href = "{{route('productattribute.index')}}";
             }
         }
 

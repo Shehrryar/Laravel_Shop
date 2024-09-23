@@ -46,12 +46,7 @@ class ProductController extends Controller
         return view('admin.products.create', $data);
     }
     public function store(Request $request)
-    {
-
-        echo "<pre>";
-        print_r($request->all());
-        exit;
-        
+    {        
         $values = [
             'title' => 'required',
             'slug' => 'required|unique:products',
