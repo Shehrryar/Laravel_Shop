@@ -138,26 +138,5 @@ function deleteproduct_att(id) {
     });
 
 }
-
-function importproductfile() {
-    event.preventDefault();
-    var form = document.getElementById('importproductform');
-    var formData = new FormData(form);
-    $.ajax({
-
-        url: '{{route("product.importProducts")}}',
-        type: 'post',
-        data: formData, // Use correct form ID
-        processData: false, // Prevent jQuery from automatically transforming the data into a query string
-        contentType: false,
-        dataType: 'json', // 'datatype' should be 'dataType'
-        success: function(response) {
-            if (response['status'] == true) {
-                window.location.href = "{{route('product.index')}}";
-            }
-        }
-
-    });
-}
 </script>
 @endsection

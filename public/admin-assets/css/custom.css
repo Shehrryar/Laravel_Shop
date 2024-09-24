@@ -1,60 +1,62 @@
 .w-4 {
-  width: 1rem;
+    width: 1rem;
 }
 .h-4 {
-  height: 1rem;
+    height: 1rem;
 }
 
 .w-6 {
-  width: 1.5rem;
+    width: 1.5rem;
 }
 .h-6 {
-  height: 1.5rem;
+    height: 1.5rem;
 }
 
 .dropzone {
-  background: white;
-  border-radius: 5px;
-  border: 2px dashed rgb(0, 135, 247);
-  border-image: none;
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
+    background: white;
+    border-radius: 5px;
+    border: 2px dashed rgb(0, 135, 247);
+    border-image: none;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-
-#color_sorting{
-  background-color: #b32323;
-  height: 30px;
-  width: 30%;
-  border-radius: 40px;
+#color_sorting {
+    background-color: #b32323;
+    height: 30px;
+    width: 30%;
+    border-radius: 40px;
 }
-
 
 .product-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
 .product-list li {
-  margin: 2px ; /* Spacing between each product */
-  padding: 2px; /* Padding around product name */
-  border: 1px solid #5e5a5a; /* Light border for each product */
-  border-radius: 100px; /* Rounded corners */
-  background-color: #f0f8ff; /* Light background for better visibility */
-  color: #333; /* Text color */
-  font-weight: bold; /* Bold product names */
-  font-size: 14px; /* Adjust font size */
+    margin: 2px; /* Spacing between each product */
+    padding: 2px; /* Padding around product name */
+    border: 1px solid #5e5a5a; /* Light border for each product */
+    border-radius: 100px; /* Rounded corners */
+    background-color: #f0f8ff; /* Light background for better visibility */
+    color: #333; /* Text color */
+    font-weight: bold; /* Bold product names */
+    font-size: 14px; /* Adjust font size */
 }
 /* Hover effect for product items */
 .product-list li:hover {
-  background-color: #e0ecff; /* Darker background on hover */
-  border-color: #b0c4de; /* Change border color on hover */
-  cursor: pointer; /* Pointer cursor to indicate interactivity */
+    background-color: #e0ecff; /* Darker background on hover */
+    border-color: #b0c4de; /* Change border color on hover */
+    cursor: pointer; /* Pointer cursor to indicate interactivity */
 }
 /* Optional: Add a shadow effect for product items */
 .product-list li {
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+table td {
+    align-content: center;
 }

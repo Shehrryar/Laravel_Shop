@@ -48,8 +48,10 @@
                             <th width="60">ID</th>
                             <th width="80"></th>
                             <th>Product</th>
-                            <th>Price</th>
-                            <th>Qty</th>
+                            
+                            <!-- <th>Price</th>
+                            <th>Qty</th> -->
+
                             <th>SKU</th>
                             <th width="100">Status</th>
                             <th width="100">Action</th>
@@ -74,8 +76,8 @@
                                 @endif
                             </td>
                             <td><a href="#">{{$prod->title}}</a></td>
-                            <td>{{$prod->price}}</td>
-                            <td>{{$prod->qty}}</td>
+                            <!-- <td>{{$prod->price}}</td>
+                            <td>{{$prod->qty}}</td> -->
                             <td>{{$prod->sku}}</td>
                             <td>
                                 @if($prod->status==1)

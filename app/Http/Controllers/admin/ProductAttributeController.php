@@ -8,6 +8,8 @@ use App\Models\ProductAttribute;
 use App\Models\Size;
 use App\Models\Color;
 use App\Models\Product;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class ProductAttributeController extends Controller
@@ -30,11 +32,62 @@ class ProductAttributeController extends Controller
         $data['colors'] = $colors;
         $data['sizes'] = $sizes;
         $data['products'] = $products;
-        return view('admin.ProductAttributes.create' , $data);
+        return view('admin.ProductAttributes.create', $data);
+    }
+
+    public function store(Request $request)
+    {
+        // Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ensure file is an image with specific formats and size limit
+            'stock_quantity' => 'required|integer|min:1', // Ensure stock quantity is a positive integer
+            'price' => 'required|numeric|min:0', // Ensure price is a positive number
+            'compare_price' => 'nullable|numeric|min:0', // Optional field but must be numeric if provided
+        ]);
+
+        // If validation passes, proceed to store data
+        if ($validator->passes()) {
+            // Create a new ProductAttribute instance
+            $productattribute = new ProductAttribute();
+
+            // Handle file upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = $request->product_id.'_'.$image->getClientOriginalName().'_'.time().'.' . $image->getClientOriginalExtension(); // Create a unique filename
+                $image->move(public_path('/upload/products/Attributes_images/'), $imageName); // Move the image to the 'public/images' directory
+                $productattribute->image = $imageName; // Store the image name in the model
+            }
+
+            // Assign other request values to the product attribute
+            $productattribute->product_id = $request->product_id;
+            $productattribute->quantity = $request->stock_quantity;
+            $productattribute->original_price = $request->price;
+            $productattribute->saling_price = $request->compare_price;
+            $productattribute->color_id = $request->color; // Assuming a relationship exists
+            $productattribute->size_id = $request->size; // Assuming a relationship exists
+
+            // Save the product attribute
+            $productattribute->save();
+
+            // Flash success message
+            session()->flash('success', 'Product Attribute Added Successfully');
+
+            // Return JSON response
+            return response()->json([
+                'status' => true,
+                'message' => 'Product Attribute saved successfully',
+            ]);
+        } else {
+            // Return validation errors as JSON response
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
     }
 
 
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
 
     }
@@ -48,7 +101,7 @@ class ProductAttributeController extends Controller
     {
         $ProductAttribute_del = ProductAttribute::find($id);
 
-        if($ProductAttribute_del == null){
+        if ($ProductAttribute_del == null) {
             session()->flash('error', 'Product Attribute is Not Found');
             return response()->json([
                 'status' => true,
