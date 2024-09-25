@@ -154,9 +154,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/productattribute', [ProductAttributeController::class, 'index'])->name('productattribute.index');
         Route::get('/productattribute/create', [ProductAttributeController::class, 'create'])->name('productattribute.create');
         Route::post('/productattribute/store', [ProductAttributeController::class, 'store'])->name('productattribute.store');
-        Route::get('/productattribute/{id}', [ProductAttributeController::class, 'edit'])->name('productattribute.edit');
-        Route::put('/productattribute/{id}', [ProductAttributeController::class, 'update'])->name('productattribute.update');
-        Route::delete('/productattribute/{id}', [ProductAttributeController::class, 'destroy'])->name('productattribute.delete');
+        Route::get('/productattribute/edit/{id}', [ProductAttributeController::class, 'edit'])->name('productattribute.edit');
+        Route::put('/productattribute/update/{id}', [ProductAttributeController::class, 'update'])->name('productattribute.update');
+        Route::delete('/productattribute/delete/{id}', [ProductAttributeController::class, 'destroy'])->name('productattribute.delete');
         // shipping Routes
         Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
         Route::post('/shipping/store', [ShippingController::class, 'store'])->name('shipping.store');
