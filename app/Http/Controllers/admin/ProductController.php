@@ -149,8 +149,6 @@ class ProductController extends Controller
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['stocks'] = $stocks;
-        $data['colors'] = $colors;
-        $data['sizes'] = $sizes;
         $data['product'] = $product;
         $data['productimage'] = $productimage;
         $data['subcategories'] = $subcategories;
@@ -171,18 +169,14 @@ class ProductController extends Controller
         ];
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
-            // Check if sub_category is an integer
             if (is_numeric($request->sub_category) && is_int((int) $request->sub_category)) {
-                // It's an integer, so use it directly
                 $subcategory_id = (int) $request->sub_category;
             } else {
-                // It's a name, so fetch the ID using the name
                 $subcategory_id = SubCategory::where('name', $request->sub_category)->value('id');
             }
             $product->title = $request->title;
             $product->slug = $request->slug;
             $product->price = $request->price;
-            $product->compare_price = $request->compare_price;
             $product->sku = $request->sku;
             $product->barcode = $request->barcode;
             $product->status = $request->status;
@@ -190,8 +184,6 @@ class ProductController extends Controller
             $product->sub_category_id = $subcategory_id;
             $product->sub_sub_category_id = $request->subsub_category;
             $product->brands_id = $request->brand;
-            $product->color_id = $request->color;
-            $product->size_id = $request->size;
             $product->is_featured = $request->is_featured;
             $product->short_description = strip_tags($request->short_description);
             $product->description = strip_tags($request->description);

@@ -192,38 +192,6 @@
                     </div>
                     <div class="card mb-3">
                         <div class="card-body">
-                            <h2 class="h4 mb-3">Product Color</h2>
-                            <div class="mb-3">
-                                <select name="color" id="color" class="form-control">
-                                    <option value="">Select the Color</option>
-                                    @if($colors->isNotEmpty())
-                                        @foreach($colors as $colori)
-                                            <option {{($product->color_id == $colori->id) ? 'selected' : ''}}
-                                                value="{{$colori->id}}">{{$colori->name}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Product Size</h2>
-                            <div class="mb-3">
-                                <select name="size" id="size" class="form-control">
-                                    <option value="">Select the Size</option>
-                                    @if($sizes->isNotEmpty())
-                                        @foreach($sizes as $sizei)
-                                            <option {{($product->size_id == $sizei->id) ? 'selected' : ''}}
-                                                value="{{$sizei->id}}">{{$sizei->name}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-body">
                             <h2 class="h4 mb-3">Product brand</h2>
                             <div class="mb-3">
                                 <select name="brand" id="brand" class="form-control">

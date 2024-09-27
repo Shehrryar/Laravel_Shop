@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->unsignedBigInteger('color_id')->nullable()->after('brands_id');
-            $table->unsignedBigInteger('size_id')->nullable()->after('color_id');
-            $table->unsignedBigInteger('stock_id')->nullable()->after('size_id');
+            $table->Integer('price')->nullable()->after('brands_id');
         });
         
     }
@@ -24,9 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('color_id'); 
-            $table->dropColumn('size_id'); 
-            $table->dropColumn('stock_id'); 
+            $table->dropColumn('price'); 
         });
     }
 };
