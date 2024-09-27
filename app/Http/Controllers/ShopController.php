@@ -9,6 +9,7 @@ use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\Wishlist;
 use App\Models\Discount;
+use App\Models\ProductAttribute;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 class ShopController extends Controller
@@ -108,8 +109,11 @@ class ShopController extends Controller
         //     $related_products = explode(',', $product->related_products);
         //     $showrelatedproduct = Product::whereIn('id', $related_products)->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
         // }
+        
+        $product_available_color =  Product::where('slug', $slug)->with('product_attributes')->first();
 
-
+        dd($product_available_color);
+        
         $avg_rating = '0.00';
         if ($product->product_ratings_count > 0) {
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);

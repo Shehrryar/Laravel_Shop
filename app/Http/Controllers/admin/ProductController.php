@@ -60,7 +60,7 @@ class ProductController extends Controller
             $product = new Product;
             $product->title = $request->title;
             $product->slug = $request->slug;
-            // $product->price = $request->price;
+            $product->price = $request->price;
             // $product->compare_price = $request->compare_price;
             $product->sku = $request->sku;
             $product->barcode = $request->barcode;
@@ -80,25 +80,25 @@ class ProductController extends Controller
             } else {
                 $product->related_products = '';
             }
-            $product_attributes = $request['attributes'];
-            if (!empty($product_attributes)) {
-                foreach ($product_attributes as $key => $attributes) {
-                    $attribute_of_product = new ProductAttribute();
-                    $attribute_of_product->product_id = $product->id;
-                    $attribute_of_product->color_id = $attributes[0]['color'];
-                    $attribute_of_product->size_id = $attributes[0]['size'];
-                    $attribute_of_product->stock_id = $attributes[0]['stock'];
-                    $attribute_of_product->saling_price = $attributes[0]['price'];
-                    $attribute_of_product->original_price = $attributes[0]['comparePrice'];
+            // $product_attributes = $request['attributes'];
+            // if (!empty($product_attributes)) {
+            //     foreach ($product_attributes as $key => $attributes) {
+            //         $attribute_of_product = new ProductAttribute();
+            //         $attribute_of_product->product_id = $product->id;
+            //         $attribute_of_product->color_id = $attributes[0]['color'];
+            //         $attribute_of_product->size_id = $attributes[0]['size'];
+            //         $attribute_of_product->stock_id = $attributes[0]['stock'];
+            //         $attribute_of_product->saling_price = $attributes[0]['price'];
+            //         $attribute_of_product->original_price = $attributes[0]['comparePrice'];
 
-                    $directory = public_path() . '/upload/products/Attributes_images/';
-                    $file = $attributes[0]['file'];
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    Storage::putFileAs($directory, $file, $filename);
-                    $attribute_of_product->image = $attributes[0]['file'];
-                    $attribute_of_product->save();
-                }
-            }
+            //         $directory = public_path() . '/upload/products/Attributes_images/';
+            //         $file = $attributes[0]['file'];
+            //         $filename = time() . '_' . $file->getClientOriginalName();
+            //         Storage::putFileAs($directory, $file, $filename);
+            //         $attribute_of_product->image = $attributes[0]['file'];
+            //         $attribute_of_product->save();
+            //     }
+            // }
             $product->save();
             /// save gallery pics
             if (!empty($request->image_array)) {
