@@ -112,7 +112,7 @@ class ShopController extends Controller
         
         $product_available_color =  Product::where('slug', $slug)->with('product_attributes')->first();
 
-        dd($product_available_color);
+        // dd($product_available_color);
         
         $avg_rating = '0.00';
         if ($product->product_ratings_count > 0) {
@@ -135,9 +135,8 @@ class ShopController extends Controller
         $data['avg_rating'] = $avg_rating;
         $data['avg_rating_per'] = $avg_rating_per;
         $data['discount'] = $discount;
+        $data['product_available_color'] = $product_available_color;
         $data['keyword'] = '';
-
-
         return view('front.product', $data);
     }
 

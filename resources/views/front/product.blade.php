@@ -79,8 +79,10 @@
                     <div class="form-group">
                         <label for="color">Choose Color:</label>
                         <div>
-                            <input type="radio" name="color" value="" id="color">
-                            <label for="color-"></label>
+                            @foreach ($product_available_color->product_attributes as $available_color )
+                            <input type="radio" name="color" value="{{$available_color->color_id}}" id="color_id" onclick="handleColorChange(this)">
+                            <label for="color-">{{$available_color->color->name}}</label>
+                            @endforeach
                         </div>
                     </div>
 
@@ -187,33 +189,33 @@
                                     </div>
                                 </div>
                                 @if ($product->product_ratings->isNotEmpty())
-                                                            @foreach ($product->product_ratings as $rating)
-                                                                                        @php
-                                                                                            $ratingper = ($rating->rating * 100) / 5
-                                                                                        @endphp
-                                                                                        <div class="rating-group mb-4">
-                                                                                            <span> <strong>{{$rating->username}} </strong></span>
-                                                                                            <div class="star-rating mt-2" title="">
-                                                                                                <div class="back-stars">
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <div class="front-stars" style="width:{{$ratingper}}%">
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="my-3">
-                                                                                                <p>{{$rating->comment}}</p>
-                                                                                            </div>
-                                                                                        </div>
-                                                            @endforeach
+                                     @foreach ($product->product_ratings as $rating)
+                                      @php
+                                          $ratingper = ($rating->rating * 100) / 5
+                                      @endphp
+                                      <div class="rating-group mb-4">
+                                          <span> <strong>{{$rating->username}} </strong></span>
+                                          <div class="star-rating mt-2" title="">
+                                              <div class="back-stars">
+                                                  <i class="fa fa-star" aria-hidden="true"></i>
+                                                  <i class="fa fa-star" aria-hidden="true"></i>
+                                                  <i class="fa fa-star" aria-hidden="true"></i>
+                                                  <i class="fa fa-star" aria-hidden="true"></i>
+                                                  <i class="fa fa-star" aria-hidden="true"></i>
+                                                  <div class="front-stars" style="width:{{$ratingper}}%">
+                                                      <i class="fa fa-star" aria-hidden="true"></i>
+                                                      <i class="fa fa-star" aria-hidden="true"></i>
+                                                      <i class="fa fa-star" aria-hidden="true"></i>
+                                                      <i class="fa fa-star" aria-hidden="true"></i>
+                                                      <i class="fa fa-star" aria-hidden="true"></i>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="my-3">
+                                              <p>{{$rating->comment}}</p>
+                                          </div>
+                                      </div>
+                                     @endforeach
                                 @endif
                             </div>
                         </div>
@@ -361,5 +363,34 @@
             }
         });
     });
+
+    function handleColorChange(element) {
+    const selectedColor = element.value; // Get the selected color value
+    
+    $.ajax({
+        url: '{{ route("product.change_color") }}', // Make sure this route resolves correctly
+        type: 'POST', // Use POST method
+        data: {
+            color: selectedColor, // Send the selected color value
+            _token: '{{ csrf_token() }}' // Include the CSRF token
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.status === true) {
+                // Handle success case
+                console.log("Color selected successfully.");
+            } else {
+                // Handle failure case
+                console.log("Failed to select color.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log("AJAX Error:", error);
+        }
+    });
+}
+
+
+
 </script>
 @endsection

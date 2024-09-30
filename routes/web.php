@@ -26,8 +26,7 @@ use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\StockManagementController;
 use App\Http\Controllers\admin\ProductAttributeController;
 use App\Http\Controllers\SearchController;
-
-
+use App\Http\Controllers\AttributeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +57,8 @@ Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
 Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
 Route::post('search', [SearchController::class, 'search'])->name('product.search');
+Route::post('color', [AttributeController::class, 'change_color'])->name('product.change_color');
+
 
 
 Route::group(['prefix' => 'account'], function () {
