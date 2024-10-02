@@ -21,7 +21,7 @@
                         @if($product->product_images)
                             @foreach($product->product_images as $key => $productImage)
                                 <div class="carousel-item {{($key == 0) ? 'active' : ''}} ">
-                                    <img class="w-100 h-100" src="{{asset('upload/products/' . $productImage->image)}}"
+                                    <img class="w-100 h-100" id="product-image" src="{{asset('upload/products/' . $productImage->image)}}"
                                         alt="Image">
                                 </div>
                             @endforeach
@@ -43,7 +43,7 @@
                     @if ($getprice['discount_value'] != 0)
                         <div style="display:flex;">
                             <h1>{{$product->title}}</h1>
-                            <div class="discount-banner">{{ $getprice['discount_value'] }}% OFF</div>
+                            <div class="discount-banner">{{$getprice['discount_value']}}% OFF</div>
                         </div>
                     @else
                         <h1>{{$product->title}}</h1>
@@ -79,9 +79,10 @@
                     <div class="form-group">
                         <label for="color">Choose Color:</label>
                         <div>
-                            @foreach ($product_available_color->product_attributes as $available_color )
-                            <input type="radio" name="color" value="{{$available_color->color_id}}" id="color_id" onclick="handleColorChange(this)">
-                            <label for="color-">{{$available_color->color->name}}</label>
+                            @foreach ($product_available_color->product_attributes as $available_color)
+                                <input type="radio" name="color" value="{{$available_color->color_id}}" id="color_id"
+                                    onclick="handleColorChange(this)">
+                                <label for="color-">{{$available_color->color->name}}</label>
                             @endforeach
                         </div>
                     </div>
@@ -189,33 +190,33 @@
                                     </div>
                                 </div>
                                 @if ($product->product_ratings->isNotEmpty())
-                                     @foreach ($product->product_ratings as $rating)
-                                      @php
-                                          $ratingper = ($rating->rating * 100) / 5
-                                      @endphp
-                                      <div class="rating-group mb-4">
-                                          <span> <strong>{{$rating->username}} </strong></span>
-                                          <div class="star-rating mt-2" title="">
-                                              <div class="back-stars">
-                                                  <i class="fa fa-star" aria-hidden="true"></i>
-                                                  <i class="fa fa-star" aria-hidden="true"></i>
-                                                  <i class="fa fa-star" aria-hidden="true"></i>
-                                                  <i class="fa fa-star" aria-hidden="true"></i>
-                                                  <i class="fa fa-star" aria-hidden="true"></i>
-                                                  <div class="front-stars" style="width:{{$ratingper}}%">
-                                                      <i class="fa fa-star" aria-hidden="true"></i>
-                                                      <i class="fa fa-star" aria-hidden="true"></i>
-                                                      <i class="fa fa-star" aria-hidden="true"></i>
-                                                      <i class="fa fa-star" aria-hidden="true"></i>
-                                                      <i class="fa fa-star" aria-hidden="true"></i>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                          <div class="my-3">
-                                              <p>{{$rating->comment}}</p>
-                                          </div>
-                                      </div>
-                                     @endforeach
+                                  @foreach ($product->product_ratings as $rating)
+                                   @php
+                                       $ratingper = ($rating->rating * 100) / 5
+                                     @endphp
+                                   <div class="rating-group mb-4">
+                                       <span> <strong>{{$rating->username}} </strong></span>
+                                       <div class="star-rating mt-2" title="">
+                                           <div class="back-stars">
+                                               <i class="fa fa-star" aria-hidden="true"></i>
+                                               <i class="fa fa-star" aria-hidden="true"></i>
+                                               <i class="fa fa-star" aria-hidden="true"></i>
+                                               <i class="fa fa-star" aria-hidden="true"></i>
+                                               <i class="fa fa-star" aria-hidden="true"></i>
+                                               <div class="front-stars" style="width:{{$ratingper}}%">
+                                                   <i class="fa fa-star" aria-hidden="true"></i>
+                                                   <i class="fa fa-star" aria-hidden="true"></i>
+                                                   <i class="fa fa-star" aria-hidden="true"></i>
+                                                   <i class="fa fa-star" aria-hidden="true"></i>
+                                                   <i class="fa fa-star" aria-hidden="true"></i>
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="my-3">
+                                           <p>{{$rating->comment}}</p>
+                                       </div>
+                                   </div>
+                                  @endforeach
                                 @endif
                             </div>
                         </div>
@@ -248,6 +249,7 @@
                                                     @else
                                                         <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
                                                     @endif
+
                                                 </a>
                                                 @if ($getprice['discount_value'] != 0)
                                                     <div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
@@ -365,30 +367,48 @@
     });
 
     function handleColorChange(element) {
-    const selectedColor = element.value; // Get the selected color value
-    
-    $.ajax({
-        url: '{{ route("product.change_color") }}', // Make sure this route resolves correctly
-        type: 'POST', // Use POST method
-        data: {
-            color: selectedColor, // Send the selected color value
-            _token: '{{ csrf_token() }}' // Include the CSRF token
-        },
-        dataType: 'json',
-        success: function (response) {
-            if (response.status === true) {
-                // Handle success case
-                console.log("Color selected successfully.");
-            } else {
-                // Handle failure case
-                console.log("Failed to select color.");
+        const selectedColor = element.value; // Get the selected color value
+
+        $.ajax({
+            url: '{{ route("product.change_color") }}', // Ensure this route resolves correctly
+            type: 'POST',
+            data: {
+                color: selectedColor, // Send the selected color value
+                _token: '{{ csrf_token() }}' // Include the CSRF token
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.status === true) {
+                    var arrtibutedata = response.product_attribute_data;
+
+                    // Update the product image if a new image is returned
+                    if (arrtibutedata['image']) {
+                        var imagePath = '{{ asset('upload/products/Attributes_images') }}/' + arrtibutedata['image'];
+                        $('#product-image').attr('src', imagePath);
+                        
+                    }
+                } else {
+                    console.log("Error: Could not change product image.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX Error:", error);
             }
-        },
-        error: function (xhr, status, error) {
-            console.log("AJAX Error:", error);
-        }
-    });
-}
+        });
+    }
+
+
+
+    function calculateDiscount(price) {
+    const originalPrice = {{ $product->price }}; // Original product price from backend
+    const discountValue = {{ $discount }}; // The discount value from backend
+
+    if (discountValue > 0) {
+        var discountedPrice = originalPrice - (originalPrice * (discountValue / 100));
+        return Math.round(((originalPrice - price) / originalPrice) * 100);
+    }
+    return 0; // No discount
+    }
 
 
 

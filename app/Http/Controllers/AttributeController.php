@@ -9,6 +9,10 @@ class AttributeController extends Controller
 {
     public function change_color(Request $request){
         $color = $request->input('color');
-        $product_attribute_data= ProductAttribute::where('color_id', $color)->get();
+        $product_attribute_data= ProductAttribute::where('color_id', $color)->first();
+        return response()->json([
+            'status'=>true,
+            'product_attribute_data' => $product_attribute_data,
+        ]);
     }
 }
