@@ -21,8 +21,8 @@
                         @if($product->product_images)
                             @foreach($product->product_images as $key => $productImage)
                                 <div class="carousel-item {{($key == 0) ? 'active' : ''}} ">
-                                    <img class="w-100 h-100" id="product-image" src="{{asset('upload/products/' . $productImage->image)}}"
-                                        alt="Image">
+                                    <img class="w-100 h-100" id="product-image"
+                                        src="{{asset('upload/products/' . $productImage->image)}}" alt="Image">
                                 </div>
                             @endforeach
                         @endif
@@ -190,33 +190,33 @@
                                     </div>
                                 </div>
                                 @if ($product->product_ratings->isNotEmpty())
-                                  @foreach ($product->product_ratings as $rating)
-                                   @php
-                                       $ratingper = ($rating->rating * 100) / 5
-                                     @endphp
-                                   <div class="rating-group mb-4">
-                                       <span> <strong>{{$rating->username}} </strong></span>
-                                       <div class="star-rating mt-2" title="">
-                                           <div class="back-stars">
-                                               <i class="fa fa-star" aria-hidden="true"></i>
-                                               <i class="fa fa-star" aria-hidden="true"></i>
-                                               <i class="fa fa-star" aria-hidden="true"></i>
-                                               <i class="fa fa-star" aria-hidden="true"></i>
-                                               <i class="fa fa-star" aria-hidden="true"></i>
-                                               <div class="front-stars" style="width:{{$ratingper}}%">
-                                                   <i class="fa fa-star" aria-hidden="true"></i>
-                                                   <i class="fa fa-star" aria-hidden="true"></i>
-                                                   <i class="fa fa-star" aria-hidden="true"></i>
-                                                   <i class="fa fa-star" aria-hidden="true"></i>
-                                                   <i class="fa fa-star" aria-hidden="true"></i>
-                                               </div>
-                                           </div>
-                                       </div>
-                                       <div class="my-3">
-                                           <p>{{$rating->comment}}</p>
-                                       </div>
-                                   </div>
-                                  @endforeach
+                                                            @foreach ($product->product_ratings as $rating)
+                                                                                        @php
+                                                                                            $ratingper = ($rating->rating * 100) / 5
+                                                                                         @endphp
+                                                                                        <div class="rating-group mb-4">
+                                                                                            <span> <strong>{{$rating->username}} </strong></span>
+                                                                                            <div class="star-rating mt-2" title="">
+                                                                                                <div class="back-stars">
+                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                    <div class="front-stars" style="width:{{$ratingper}}%">
+                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="my-3">
+                                                                                                <p>{{$rating->comment}}</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                            @endforeach
                                 @endif
                             </div>
                         </div>
@@ -320,50 +320,55 @@
 </section>
 @endsection
 @section('customJs')
+
+
 <script>
-    $("#productratingform").submit(function (event) {
-        event.preventDefault();
-        $.ajax({
-            url: '{{ route("front.productRating", $product->id) }}',
-            type: 'post',
-            data: $(this).serializeArray(),
-            dataType: 'json',
-            success: function (response) {
-                if (response.status == false) {
-                    var errors = response.errors;
-                    if (errors && errors.name) {
-                        $("#name").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.name);
+    $(document).ready(function () {
+        $("#productratingform").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '{{ route("front.productRating", $product->id) }}',
+                type: 'post',
+                data: $(this).serializeArray(),
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status == false) {
+                        var errors = response.errors;
+                        if (errors && errors.name) {
+                            $("#name").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                                .html(errors.name);
+                        } else {
+                            $("#name").removeClass('is-invalid').siblings("p").removeClass(
+                                'invalid-feedback').html('');
+                        }
+                        if (errors && errors.email) {
+                            $("#email").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                                .html(errors.email);
+                        } else {
+                            $("#email").removeClass('is-invalid').siblings("p").removeClass(
+                                'invalid-feedback').html('');
+                        }
+                        if (errors && errors.rating) {
+                            $("#rating").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                                .html(errors.rating);
+                        } else {
+                            $("#rating").removeClass('is-invalid').siblings("p").removeClass(
+                                'invalid-feedback').html('');
+                        }
+                        if (errors && errors.review) {
+                            $("#review").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
+                                .html(errors.review);
+                        } else {
+                            $("#review").removeClass('is-invalid').siblings("p").removeClass(
+                                'invalid-feedback').html('');
+                        }
                     } else {
-                        $("#name").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
+                        window.location.href = "{{route('front.product', $product->slug)}}";
                     }
-                    if (errors && errors.email) {
-                        $("#email").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.email);
-                    } else {
-                        $("#email").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
-                    }
-                    if (errors && errors.rating) {
-                        $("#rating").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.rating);
-                    } else {
-                        $("#rating").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
-                    }
-                    if (errors && errors.review) {
-                        $("#review").addClass('is-invalid').siblings("p").addClass('invalid-feedback')
-                            .html(errors.review);
-                    } else {
-                        $("#review").removeClass('is-invalid').siblings("p").removeClass(
-                            'invalid-feedback').html('');
-                    }
-                } else {
-                    window.location.href = "{{route('front.product', $product->slug)}}";
                 }
-            }
+            });
         });
+
     });
 
     function handleColorChange(element) {
@@ -396,6 +401,11 @@
             }
         });
     }
+</script>
+<!-- <script>
+    
+
+
 
 
 
@@ -412,5 +422,5 @@
 
 
 
-</script>
+</script> -->
 @endsection
