@@ -190,33 +190,33 @@
                                     </div>
                                 </div>
                                 @if ($product->product_ratings->isNotEmpty())
-                                                            @foreach ($product->product_ratings as $rating)
-                                                                                        @php
-                                                                                            $ratingper = ($rating->rating * 100) / 5
-                                                                                         @endphp
-                                                                                        <div class="rating-group mb-4">
-                                                                                            <span> <strong>{{$rating->username}} </strong></span>
-                                                                                            <div class="star-rating mt-2" title="">
-                                                                                                <div class="back-stars">
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    <div class="front-stars" style="width:{{$ratingper}}%">
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="my-3">
-                                                                                                <p>{{$rating->comment}}</p>
-                                                                                            </div>
-                                                                                        </div>
-                                                            @endforeach
+                                @foreach ($product->product_ratings as $rating)
+                                @php
+                                    $ratingper = ($rating->rating * 100) / 5
+                                 @endphp
+                                <div class="rating-group mb-4">
+                                    <span> <strong>{{$rating->username}} </strong></span>
+                                    <div class="star-rating mt-2" title="">
+                                        <div class="back-stars">
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <div class="front-stars" style="width:{{$ratingper}}%">
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="my-3">
+                                        <p>{{$rating->comment}}</p>
+                                    </div>
+                                </div>
+                                @endforeach
                                 @endif
                             </div>
                         </div>
@@ -320,7 +320,6 @@
 </section>
 @endsection
 @section('customJs')
-
 
 <script>
     $(document).ready(function () {
