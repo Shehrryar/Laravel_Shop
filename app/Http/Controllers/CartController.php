@@ -9,7 +9,8 @@ use App\Models\Product;
 use App\Models\Country;
 use App\Models\Shipping;
 use Carbon\Carbon;
-use Gloudemans\Shoppingcart\Facades\Cart;
+use App\Models\Cart;
+// use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -39,7 +40,12 @@ class CartController extends Controller
                 }
             }
             if ($productAlreadyExist == false) {
+
+                $cart = new Cart();
+
                 Cart::add($product->id, $product->title, 1, $price, ['productImage' => (!empty($product->product_images)) ? $product->product_images->first() : '']);
+
+
                 $status = true;
                 $message = $product->title . " Added in the Cart";
                 session()->flash('success', $message);

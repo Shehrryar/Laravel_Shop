@@ -246,6 +246,9 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+
+
             function addToCart(id, discount_val, discount_price, actual_price) {
                 $.ajax({
                     url: '{{ route("front.addToCart") }}',
@@ -266,6 +269,8 @@
                     },
                 });
             }
+
+            
             $('.redhearticon').css({
                 'color': 'red'
             });

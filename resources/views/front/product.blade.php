@@ -68,10 +68,10 @@
                         <small class="pt-2 ps-1">({{$product->product_ratings_count}} Reviews)</small>
                     </div>
                     @if ($getprice['discounted_price'] != 0)
-                        <span class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
-                        <span class="h5"><del>{{$getprice['actual_price']}}$</del></span>
+                        <span id="discounted-price" class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
+                        <span id="actual-price" class="h5"><del>{{$getprice['actual_price']}}$</del></span>
                     @else
-                        <span class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
+                        <span id="actual-price" class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
                     @endif
                     <p>{{$product->short_description}}</p>
                     <!-- option for choose color -->
@@ -89,7 +89,7 @@
 
                     <a href="javascript:void(0)"
                         onclick="addToCart({{ $product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})"
-                        class="btn btn-dark"><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
+                        class="btn btn-dark" id="addtocart" ><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                 </div>
             </div>
             <div class="col-md-12 mt-5">
@@ -267,7 +267,7 @@
                                             <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
                                             @if ($relatedproduct->qty > 0)
                                                 <a style="width: 100%;" class="btn btn-dark" href="javascript:void(0)"
-                                                    onclick='addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
+                                                    onclick='addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
                                                     <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
                                                 </a>
                                             @else
@@ -384,12 +384,22 @@
             success: function (response) {
                 if (response.status === true) {
                     var arrtibutedata = response.product_attribute_data;
-
-                    // Update the product image if a new image is returned
                     if (arrtibutedata['image']) {
                         var imagePath = '{{ asset('upload/products/Attributes_images') }}/' + arrtibutedata['image'];
                         $('#product-image').attr('src', imagePath);
-                        
+                        var discount_price = response.discountedPrice;
+                        var reduce_price_html = '<strong>' + discount_price['discounted_price'] + '$</strong>';
+                        var actual_price_html = '<del>' + discount_price['actual_price'] + '$</del>';
+                        if (discount_price['value'] != 0) {
+                            $('#discounted-price').html(reduce_price_html); // Update discounted price
+                            $('#actual-price').html(actual_price_html); // Update original price with a strike-through
+                        } else {
+                            $('#discounted-price').remove(); // Remove the discounted price element if no discount
+                            $('#actual-price').html(actual_price_html);
+                        }
+
+                        var addToCartButton = document.querySelector('#addtocart');
+                        addToCartButton.setAttribute('onclick', `addToCart(${arrtibutedata['product_id']}, ${discount_price['value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']})`);
                     }
                 } else {
                     console.log("Error: Could not change product image.");
@@ -401,25 +411,4 @@
         });
     }
 </script>
-<!-- <script>
-    
-
-
-
-
-
-    function calculateDiscount(price) {
-    const originalPrice = {{ $product->price }}; // Original product price from backend
-    const discountValue = {{ $discount }}; // The discount value from backend
-
-    if (discountValue > 0) {
-        var discountedPrice = originalPrice - (originalPrice * (discountValue / 100));
-        return Math.round(((originalPrice - price) / originalPrice) * 100);
-    }
-    return 0; // No discount
-    }
-
-
-
-</script> -->
 @endsection
