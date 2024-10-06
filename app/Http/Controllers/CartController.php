@@ -18,6 +18,11 @@ class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
+        if (Auth::check() == false) {
+            return response()->json([
+                'userlogin' => 'isnotlogged',
+            ]);
+        }
         $product = Product::with('product_images')->find($request->id);
         if ($product == null) {
             return response()->json([
@@ -32,20 +37,23 @@ class CartController extends Controller
             $price = $discountprice['actual_price'];
         }
         if (Cart::count() > 0) {
-            $cartcontent = Cart::content();
+            $cartcontent = Cart::get();
             $productAlreadyExist = false;
             foreach ($cartcontent as $item) {
-                if ($item->id == $product->id) {
+                if ($item->product_id == $product->id) {
                     $productAlreadyExist = true;
                 }
             }
             if ($productAlreadyExist == false) {
-
-                $cart = new Cart();
-
-                Cart::add($product->id, $product->title, 1, $price, ['productImage' => (!empty($product->product_images)) ? $product->product_images->first() : '']);
-
-
+                Cart::create([
+                    'user_id' => Auth::user()->id, // Assuming the user is logged in
+                    'product_id' => $product->id,
+                    'product_attribute_id' => $product->id,
+                    'title' => $product->title,
+                    'quantity' => 1,
+                    'price' => $price,
+                    'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
+                ]);
                 $status = true;
                 $message = $product->title . " Added in the Cart";
                 session()->flash('success', $message);
@@ -54,7 +62,15 @@ class CartController extends Controller
                 $message = $product->title . " Already added in the Cart";
             }
         } else {
-            Cart::add($product->id, $product->title, 1, $price, ['productImage' => (!empty($product->product_images)) ? $product->product_images->first() : '']);
+            Cart::create([
+                'user_id' => Auth::user()->id, // Assuming the user is logged in
+                'product_id' => $product->id,
+                'product_attribute_id' => $product->id,
+                'title' => $product->title,
+                'quantity' => 1,
+                'price' => $price,
+                'product_image' => (!empty($product->product_images)) ? $product->product_images->first()->image : ''
+            ]);
             $status = true;
             $message = $product->title . " Added to the Cart";
             session()->flash('success', $message);
@@ -67,7 +83,9 @@ class CartController extends Controller
     public function Cart()
     {
         $discount = Discount::where('status', 1)->get();
-        $cartcontent = Cart::content();
+        $cartcontent = Cart::get();
+        $cartcount = Cart::count();
+        $data['cartcount'] = $cartcount;
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
         $data['keyword'] = '';
@@ -75,25 +93,29 @@ class CartController extends Controller
     }
     public function updateCart(Request $request)
     {
-        $iteminfo = Cart::get($request->rowid);
+        $iteminfo = Cart::find($request->rowid);
         $product = Product::find($iteminfo->id);
-        if ($product->track_qty == 'Yes') {
-            if ($request->qty <= $product->qty) {
-                Cart::update($request->rowid, $request->qty);
-                $message = "Cart updated sucessfully";
-                $status = True;
-                session()->flash('success', $message);
-            } else {
-                $message = "Requested qty($request->qty) not available";
-                $status = false;
-                session()->flash('error', $message);
-            }
-        } else {
-            Cart::update($request->rowid, $request->qty);
-            $message = "Cart updated successfully";
+        // if ($product->track_qty == 'Yes') {
+        // if ($request->qty <= $product->qty) {
+            $iteminfo->quantity = $request->qty;
+            $iteminfo->save();
+            $message = "Cart updated sucessfully";
             $status = True;
             session()->flash('success', $message);
-        }
+        // } 
+        // else {
+        //     $message = "Requested qty($request->qty) not available";
+        //     $status = false;
+        //     session()->flash('error', $message);
+        // }
+        // } 
+
+        // else {
+        //     Cart::update($request->rowid, $request->qty);
+        //     $message = "Cart updated successfully";
+        //     $status = True;
+        //     session()->flash('success', $message);
+        // }
         return response()->json([
             'status' => $status,
             'message' => $message
@@ -101,7 +123,7 @@ class CartController extends Controller
     }
     public function deleteitem(Request $request)
     {
-        $iteminfo = Cart::get($request->rowid);
+        $iteminfo = Cart::find($request->rowid);
         if ($iteminfo == null) {
             $error_message = 'item not found';
             session()->flash('error', $error_message);
@@ -110,7 +132,7 @@ class CartController extends Controller
                 'message' => $error_message
             ]);
         } else {
-            Cart::remove($request->rowid);
+            $iteminfo->delete();
             $message = 'item removed successfully';
             session()->flash('success', $message);
             return response()->json([
@@ -130,13 +152,13 @@ class CartController extends Controller
             return redirect()->route('front.cart');
         }
         // if user is not loogin redirect to the login page
-        if (Auth::check() == false) {
-            if (!session()->has('url.intended')) {
-                session(['url.intended' => url()->current()]);
-            }
-            return redirect()->route('account.login');
-        }
-        session()->forget('url.intended');
+        // if (Auth::check() == false) {
+        //     if (!session()->has('url.intended')) {
+        //         session(['url.intended' => url()->current()]);
+        //     }
+        //     return redirect()->route('account.login');
+        // }
+        // session()->forget('url.intended');
         $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
         $countries = Country::orderBy('name', 'ASC')->get();
         if (session()->has('code')) {

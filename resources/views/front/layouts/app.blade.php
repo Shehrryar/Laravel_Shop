@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en_AU">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title><?php echo (!empty($title)) ? 'Title-' . $title : 'Home'; ?>Laravel Online Shop</title>
@@ -42,6 +43,11 @@
     <style>
     </style>
 </head>
+@php
+
+
+@endphp
+
 <body data-instant-intensity="mousedown">
     <div class="bg-light top-header">
         <div class="container">
@@ -61,8 +67,9 @@
                         method="POST">
                         @csrf
                         <div class="input-group">
-                            <input type="text" value="{{$keyword}}" name="search_query" placeholder="Search For Products"
-                                class="form-control" aria-label="Amount (to the nearest dollar)">
+                            <input type="text" value="{{$keyword}}" name="search_query"
+                                placeholder="Search For Products" class="form-control"
+                                aria-label="Amount (to the nearest dollar)">
                             <span class="input-group-text">
                                 <button type="submit"><i class="fa fa-search"></i></button>
                             </span>
@@ -144,7 +151,7 @@
                     </ul>
                     <a href="{{route(('front.cart'))}}" class="d-flex notification" style="margin-left: 10px;">
                         <i class="fa-solid fa-cart-shopping" style="font-size: 29px;"></i>
-                        <span class="badge">{{Cart::count()}}</span>
+                        <span class="badge">{{getcartquantityandtotal()['totalQuantity']}}</span>
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </a>
                 </div>
@@ -262,15 +269,21 @@
                     dataType: 'json',
                     success: function (response) {
                         if (response.status === true) {
-                            window.location.href = "{{ route('front.cart') }}";
+                            window.location.href = "{{ route('front.cart') }}"; // Redirect to cart if product added
+                        } else if (response.userlogin == 'isnotlogged') {
+                            window.location.href = "{{ route('account.login') }}"; // Redirect to login if not logged in
                         } else {
-                            alert(response.message);
+                            alert(response.message); // Show the error message
                         }
                     },
+                    error: function (xhr, status, error) {
+                        console.log('Error:', error); // Optional: log the error for debugging
+                    }
                 });
             }
 
-            
+
+
             $('.redhearticon').css({
                 'color': 'red'
             });
@@ -368,4 +381,5 @@
         </script>
         @yield('customJs')
 </body>
+
 </html>

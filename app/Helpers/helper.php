@@ -5,6 +5,24 @@ use App\Models\Country;
 use App\Models\Order;
 use Carbon\Carbon;
 use App\Models\ProductImage;
+use App\Models\Cart;
+
+
+
+
+function getcartquantityandtotal()
+{
+    $data = [];
+    $cartItems = Cart::get();
+    $totalQuantity = $cartItems->sum('quantity');
+
+    $totalPrice = $cartItems->sum(function ($item) {
+        return $item->price * $item->quantity; // Multiply price by quantity for each item
+    });
+    $data['totalQuantity'] = $totalQuantity;
+    $data['totalPrice'] = $totalPrice;
+    return $data;
+}
 function getcategories()
 {
     return Category::OrderBy('name', 'ASC')
@@ -74,4 +92,8 @@ if (!function_exists('transFront')) {
         return trans("front::" . $key, $replace, $locale);
     }
 }
+
+
+
+
 ?>

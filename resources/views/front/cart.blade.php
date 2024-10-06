@@ -17,109 +17,109 @@
     <div class="container">
         <div class="row">
             @if(Session::has('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ Session::get('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ Session::get('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             @endif
             @if(Session::has('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ Session::get('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            @endif
-            @if(Cart::count() > 0)
-            <div class="col-md-8">
-                <div class="table-responsive">
-                    <table class="table" id="cart">
-                        <thead>
-                            <tr>
-                                <th>{{trans("Item")}}</th>
-                                <th>{{trans("Price")}}</th>
-                                <th>{{trans("Discount")}}</th>
-                                <th>{{trans("Quantity")}}</th>
-                                <th>{{trans("Total")}}</th>
-                                <th>{{trans("Remove")}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($cartcontent as $item)
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        @if(!empty($item->options->productImage->image))
-                                        <img src="{{asset('upload/products/' . $item->options->productImage->image)}}">
-                                        @else
-                                        <img src="{{asset('admin-assets\img\default-150x150.png')}}">
-                                        @endif
-                                        <h2>{{trans($item->name)}}</h2>
-                                    </div>
-                                </td>
-                                @php
-                                    $getprice = getDiscountedPrice($item->id,$discount, $item->price);
-                                @endphp
-                                <td>{{$item->price}}</td>
-                                @if ($getprice['discount_value'] !=0)                                
-                                    <td>{{$getprice['discount_value']}}%</td>
-                                @else
-                                <td>0%</td>
-                                @endif
-                                <td>
-                                    <div class="input-group quantity mx-auto" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-dark btn-minus p-2 pt-1 pb-1 sub"
-                                                data-id="{{$item->rowId}}">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm  border-0 text-center"
-                                            value="{{$item->qty}}">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-dark btn-plus p-2 pt-1 pb-1 add"
-                                                data-id="{{$item->rowId}}">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    {{$item->price * $item->qty}}
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteitem('{{$item->rowId}}')"><i
-                                            class="fa fa-times"></i></button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ Session::get('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card cart-summery">
-                    <div class="card-body">
-                        <div class="sub-title">
-                            <h2 class="bg-white">{{trans("Cart Summery")}}</h3>
-                        </div>
-                        <div class="d-flex justify-content-between pb-2">
-                            <div>{{trans("Subtotal")}}</div>
-                            <div>{{Cart::Subtotal()}}</div>
-                        </div>
-                        <div class="pt-5">
-                            <a href="{{route('front.checkout')}}"
-                                class="btn-dark btn btn-block w-100">{{trans("Proceed to Checkout")}}</a>
+            @endif
+            @if($cartcount > 0)
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table" id="cart">
+                                <thead>
+                                    <tr>
+                                        <th>{{trans("Item")}}</th>
+                                        <th>{{trans("Price")}}</th>
+                                        <th>{{trans("Discount")}}</th>
+                                        <th>{{trans("Quantity")}}</th>
+                                        <th>{{trans("Total")}}</th>
+                                        <th>{{trans("Remove")}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($cartcontent as $item)
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        @if(!empty($item->product_image))
+                                                                            <img src="{{asset('upload/products/' . $item->product_image)}}">
+                                                                        @else
+                                                                            <img src="{{asset('admin-assets\img\default-150x150.png')}}">
+                                                                        @endif
+                                                                        <h2>{{trans($item->title)}}</h2>
+                                                                    </div>
+                                                                </td>
+                                                                @php
+                                                                    $getprice = getDiscountedPrice($item->id, $discount, $item->price);
+                                                                @endphp
+                                                                <td>{{$item->price}}</td>
+                                                                @if ($getprice['discount_value'] != 0)
+                                                                    <td>{{$getprice['discount_value']}}%</td>
+                                                                @else
+                                                                    <td>0%</td>
+                                                                @endif
+                                                                <td>
+                                                                    <div class="input-group quantity mx-auto" style="width: 100px;">
+                                                                        <div class="input-group-btn">
+                                                                            <button class="btn btn-sm btn-dark btn-minus p-2 pt-1 pb-1 sub"
+                                                                                data-id="{{$item->id}}">
+                                                                                <i class="fa fa-minus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        <input type="text" class="form-control form-control-sm  border-0 text-center"
+                                                                            value="{{$item->quantity}}">
+                                                                        <div class="input-group-btn">
+                                                                            <button class="btn btn-sm btn-dark btn-plus p-2 pt-1 pb-1 add"
+                                                                                data-id="{{$item->id}}">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    {{$item->price * $item->quantity}}
+                                                                </td>
+                                                                <td>
+                                                                    <button class="btn btn-sm btn-danger" onclick="deleteitem('{{$item->id}}')"><i
+                                                                            class="fa fa-times"></i></button>
+                                                                </td>
+                                                            </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
-                <!-- <div class="input-group apply-coupan mt-4">
-                        <input type="text" placeholder="Coupon Code" class="form-control">
-                        <button class="btn btn-dark" type="button" id="button-addon2">Apply Coupon</button>
-                    </div> -->
-            </div>
+                    <div class="col-md-4">
+                        <div class="card cart-summery">
+                            <div class="card-body">
+                                <div class="sub-title">
+                                    <h2 class="bg-white">{{trans("Cart Summery")}}</h3>
+                                </div>
+                                <div class="d-flex justify-content-between pb-2">
+                                    <div>{{trans("Subtotal")}}</div>
+                                    <div>{{getcartquantityandtotal()['totalPrice']}}</div>
+                                </div>
+                                <div class="pt-5">
+                                    <a href="{{route('front.checkout')}}"
+                                        class="btn-dark btn btn-block w-100">{{trans("Proceed to Checkout")}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="input-group apply-coupan mt-4">
+                                <input type="text" placeholder="Coupon Code" class="form-control">
+                                <button class="btn btn-dark" type="button" id="button-addon2">Apply Coupon</button>
+                            </div> -->
+                    </div>
             @else
-            <div class="col-md-12">
-                <h1>{{trans("Cart is empty")}}</h1>
-            </div>
+                <div class="col-md-12">
+                    <h1>{{trans("Cart is empty")}}</h1>
+                </div>
             @endif
         </div>
     </div>
@@ -127,54 +127,54 @@
 @endsection
 @section('customJs')
 <script>
-$('.add').click(function() {
-    var qtyElement = $(this).parent().prev(); // Qty Input
-    var qtyValue = parseInt(qtyElement.val());
-    if (qtyValue < 25) {
-        qtyElement.val(qtyValue + 1);
-        var id = $(this).data('id');
-        var newQty = qtyElement.val();
-        updateCart(id, newQty);
-    }
-});
-$('.sub').click(function() {
-    var qtyElement = $(this).parent().next();
-    var qtyValue = parseInt(qtyElement.val());
-    if (qtyValue > 1) {
-        qtyElement.val(qtyValue - 1);
-        var id = $(this).data('id');
-        var newQty = qtyElement.val();
-        updateCart(id, newQty);
-    }
-});
-function updateCart(rowId, Qty) {
-    $.ajax({
-        url: '{{route("front.updateCart")}}',
-        type: 'post',
-        data: {
-            rowid: rowId,
-            qty: Qty
-        },
-        dataType: 'Json',
-        success: function(response) {
-            window.location.href = '{{route("front.cart")}}';
+    $('.add').click(function () {
+        var qtyElement = $(this).parent().prev(); // Qty Input
+        var qtyValue = parseInt(qtyElement.val());
+        if (qtyValue < 25) {
+            qtyElement.val(qtyValue + 1);
+            var id = $(this).data('id');
+            var newQty = qtyElement.val();
+            updateCart(id, newQty);
         }
     });
-}
-function deleteitem(rowId) {
-    if (confirm('Are you sure you want to delete?')) {
+    $('.sub').click(function () {
+        var qtyElement = $(this).parent().next();
+        var qtyValue = parseInt(qtyElement.val());
+        if (qtyValue > 1) {
+            qtyElement.val(qtyValue - 1);
+            var id = $(this).data('id');
+            var newQty = qtyElement.val();
+            updateCart(id, newQty);
+        }
+    });
+    function updateCart(rowId, Qty) {
         $.ajax({
-            url: '{{route("front.deleteitem.cart")}}',
+            url: '{{route("front.updateCart")}}',
             type: 'post',
             data: {
-                rowid: rowId
+                rowid: rowId,
+                qty: Qty
             },
             dataType: 'Json',
-            success: function(response) {
+            success: function (response) {
                 window.location.href = '{{route("front.cart")}}';
             }
         });
     }
-}
+    function deleteitem(rowId) {
+        if (confirm('Are you sure you want to delete?')) {
+            $.ajax({
+                url: '{{route("front.deleteitem.cart")}}',
+                type: 'post',
+                data: {
+                    rowid: rowId
+                },
+                dataType: 'Json',
+                success: function (response) {
+                    window.location.href = '{{route("front.cart")}}';
+                }
+            });
+        }
+    }
 </script>
 @endsection
