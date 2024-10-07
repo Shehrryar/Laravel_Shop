@@ -7,13 +7,10 @@ use Carbon\Carbon;
 use App\Models\ProductImage;
 use App\Models\Cart;
 
-
-
-
 function getcartquantityandtotal()
 {
     $data = [];
-    $cartItems = Cart::get();
+    $cartItems = Cart::where('user_id', auth()->id())->get();
     $totalQuantity = $cartItems->sum('quantity');
 
     $totalPrice = $cartItems->sum(function ($item) {

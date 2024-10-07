@@ -44,52 +44,52 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($cartcontent as $item)
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="d-flex align-items-center">
-                                                                        @if(!empty($item->product_image))
-                                                                            <img src="{{asset('upload/products/' . $item->product_image)}}">
-                                                                        @else
-                                                                            <img src="{{asset('admin-assets\img\default-150x150.png')}}">
-                                                                        @endif
-                                                                        <h2>{{trans($item->title)}}</h2>
-                                                                    </div>
-                                                                </td>
-                                                                @php
-                                                                    $getprice = getDiscountedPrice($item->id, $discount, $item->price);
-                                                                @endphp
-                                                                <td>{{$item->price}}</td>
-                                                                @if ($getprice['discount_value'] != 0)
-                                                                    <td>{{$getprice['discount_value']}}%</td>
-                                                                @else
-                                                                    <td>0%</td>
-                                                                @endif
-                                                                <td>
-                                                                    <div class="input-group quantity mx-auto" style="width: 100px;">
-                                                                        <div class="input-group-btn">
-                                                                            <button class="btn btn-sm btn-dark btn-minus p-2 pt-1 pb-1 sub"
-                                                                                data-id="{{$item->id}}">
-                                                                                <i class="fa fa-minus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        <input type="text" class="form-control form-control-sm  border-0 text-center"
-                                                                            value="{{$item->quantity}}">
-                                                                        <div class="input-group-btn">
-                                                                            <button class="btn btn-sm btn-dark btn-plus p-2 pt-1 pb-1 add"
-                                                                                data-id="{{$item->id}}">
-                                                                                <i class="fa fa-plus"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    {{$item->price * $item->quantity}}
-                                                                </td>
-                                                                <td>
-                                                                    <button class="btn btn-sm btn-danger" onclick="deleteitem('{{$item->id}}')"><i
-                                                                            class="fa fa-times"></i></button>
-                                                                </td>
-                                                            </tr>
+                                  <tr>
+                                      <td>
+                                          <div class="d-flex align-items-center">
+                                              @if(!empty($item->product_image))
+                                                  <img src="{{asset('upload/products/' . $item->product_image)}}">
+                                              @else
+                                                  <img src="{{asset('admin-assets\img\default-150x150.png')}}">
+                                              @endif
+                                              <h2>{{trans($item->title)}}</h2>
+                                          </div>
+                                      </td>
+                                      @php
+                                          $getprice = getDiscountedPrice($item->id, $discount, $item->price);
+                                      @endphp
+                                      <td>{{$item->price}}</td>
+                                      @if ($getprice['discount_value'] != 0)
+                                          <td>{{$getprice['discount_value']}}%</td>
+                                      @else
+                                          <td>0%</td>
+                                      @endif
+                                      <td>
+                                          <div class="input-group quantity mx-auto" style="width: 100px;">
+                                              <div class="input-group-btn">
+                                                  <button class="btn btn-sm btn-dark btn-minus p-2 pt-1 pb-1 sub"
+                                                      data-id="{{$item->id}}">
+                                                      <i class="fa fa-minus"></i>
+                                                  </button>
+                                              </div>
+                                              <input type="text" class="form-control form-control-sm  border-0 text-center"
+                                                  value="{{$item->quantity}}">
+                                              <div class="input-group-btn">
+                                                  <button class="btn btn-sm btn-dark btn-plus p-2 pt-1 pb-1 add"
+                                                      data-id="{{$item->id}}">
+                                                      <i class="fa fa-plus"></i>
+                                                  </button>
+                                              </div>
+                                          </div>
+                                      </td>
+                                      <td>
+                                          {{$item->price * $item->quantity}}
+                                      </td>
+                                      <td>
+                                          <button class="btn btn-sm btn-danger" onclick="deleteitem('{{$item->id}}')"><i
+                                                  class="fa fa-times"></i></button>
+                                      </td>
+                                  </tr>
                                     @endforeach
                                 </tbody>
                             </table>

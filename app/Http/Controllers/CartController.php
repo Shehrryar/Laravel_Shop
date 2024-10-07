@@ -83,8 +83,8 @@ class CartController extends Controller
     public function Cart()
     {
         $discount = Discount::where('status', 1)->get();
-        $cartcontent = Cart::get();
-        $cartcount = Cart::count();
+        $cartcontent = Cart::where('user_id', auth()->id())->get();
+        $cartcount = Cart::where('user_id', auth()->id())->count();
         $data['cartcount'] = $cartcount;
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
@@ -147,8 +147,11 @@ class CartController extends Controller
         $discount = 0;
         $discount_amo = 0;
         $discount_type = '';
-        $subtotal = Cart::subtotal(2, '.', '');
-        if (Cart::count() == 0) {
+        $cartcount = Cart::where('user_id', auth()->id())->count();
+        $cartcontent = Cart::where('user_id', auth()->id())->get();
+
+        $subtotal = getcartquantityandtotal()['totalPrice'];
+        if ($cartcount == 0) {
             return redirect()->route('front.cart');
         }
         // if user is not loogin redirect to the login page
@@ -178,8 +181,8 @@ class CartController extends Controller
             $shipping_info = Shipping::where('country_id', $usercountry)->first();
             $totalqty = 0;
             $total_shipping = 0;
-            foreach (Cart::content() as $item) {
-                $totalqty += $item->qty;
+            foreach ($cartcontent as $item) {
+                $totalqty += $item->quantity;
             }
             $total_shipping = $totalqty * $shipping_info->amount;
             $grand_total = ($subtotal - $discount) + $total_shipping;
@@ -192,10 +195,12 @@ class CartController extends Controller
         return view(
             'front.checkout',
             [
+                'cartcontent' => $cartcontent,
                 'countries' => $countries,
                 'customerAddress' => $customerAddress,
                 'discount' => $discount_amo,
                 'discount_type' => $discount_type,
+                'subtotal' => $subtotal,                
                 'total_shipping' => number_format($total_shipping, 2),
                 'grand_total' => $grand_total,
                 'keyword' => ''
@@ -204,7 +209,8 @@ class CartController extends Controller
     }
     public function processCheckout(Request $request)
     {
-        // apply validation
+        $cartcontent = Cart::where('user_id', auth()->id())->get();
+        $subtotal = getcartquantityandtotal()['totalPrice'];
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|min:5',
             'lastname' => 'required',
@@ -240,12 +246,12 @@ class CartController extends Controller
                 'country_id' => $request->country,
             ]
         );
+
         if ($request->payment_method == 'cod') {
             $shipping = 0;
             $discount = 0;
             $discountcodeid = '';
             $promocode = '';
-            $subtotal = Cart::subtotal(2, '.', '');
             if (session()->has('code')) {
                 $code = session()->get('code');
                 if ($code->type == 'percent') {
@@ -259,7 +265,7 @@ class CartController extends Controller
             //calculate shipping 
             $shipping_info = Shipping::where('country_id', $request->country)->first();
             $totalqty = 0;
-            foreach (Cart::content() as $item) {
+            foreach ($cartcontent as $item) {
                 $totalqty += $item->qty;
             }
             if ($shipping_info != null) {
@@ -291,14 +297,14 @@ class CartController extends Controller
             $order->country_id = $request->country;
             $order->save();
             // store order item in the order item table
-            foreach (Cart::content() as $item) {
+            foreach ($cartcontent as $item) {
                 $orderitems = new OrderItem();
                 $orderitems->product_id = $item->id;
                 $orderitems->order_id = $order->id;
-                $orderitems->name = $item->name;
-                $orderitems->quantity = $item->qty;
+                $orderitems->name = $item->title;
+                $orderitems->quantity = $item->quantity;
                 $orderitems->price = $item->price;
-                $orderitems->total = $item->price * $item->qty;
+                $orderitems->total = $item->price * $item->quantity;
                 $orderitems->save();
                 // Updat product stock
                 // $productData = Product::find($item->id);
@@ -309,7 +315,7 @@ class CartController extends Controller
             }
             orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
-            Cart::destroy();
+            Cart::where('user_id', Auth::id())->delete();
             return response()->json([
                 'status' => true,
                 'message' => 'Order Saved Successfully',

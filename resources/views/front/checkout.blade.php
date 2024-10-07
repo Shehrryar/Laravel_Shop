@@ -131,10 +131,10 @@
                     </div>
                     <div class="card cart-summery">
                         <div class="card-body">
-                            @foreach (Cart::content() as $item)
+                            @foreach ($cartcontent as $item)
                                 <div class="d-flex justify-content-between pb-2">
-                                    <div class="h6">{{$item->name}} X {{$item->qty}}</div>
-                                    <div class="h6">{{$item->price * $item->qty}}</div>
+                                    <div class="h6">{{$item->title}} X {{$item->quantity}}</div>
+                                    <div class="h6">{{$item->price * $item->quantity}}</div>
                                 </div>
                             @endforeach
                             <div class="d-flex justify-content-between summery-end">
@@ -147,7 +147,7 @@
                             </div>
                             <div class="d-flex justify-content-between summery-end">
                                 <div class="h6"><strong>Subtotal</strong></div>
-                                <div class="h6"><strong>${{Cart::subtotal()}}</strong></div>
+                                <div class="h6"><strong>${{$subtotal}}</strong></div>
                             </div>
                             <div class="d-flex justify-content-between mt-2">
                                 <div class="h6"><strong>Shipping</strong></div>
