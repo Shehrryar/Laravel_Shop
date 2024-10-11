@@ -30,7 +30,7 @@ class ColorController extends Controller
                 'name' => 'required',
                 'product_id' => 'required',
                 'price' => 'required',
-                'value' => 'required|unique:color',
+                // 'value' => 'required|unique:color',
                 'status' => 'required',
             ]
         );
@@ -82,7 +82,7 @@ class ColorController extends Controller
                 'name' => 'required',
                 'product_id' => 'required',
                 'price' => 'required',
-                'value' => 'required|unique:color,value,' . $color_edit->id . ',id',
+                // 'value' => 'required|unique:color,value,' . $color_edit->id . ',id',
                 'status' => 'required',
             ]
         );

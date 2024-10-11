@@ -76,19 +76,35 @@
                     <p>{{$product->short_description}}</p>
                     <!-- option for choose color -->
 
-                    <div class="form-group">
-                        <label for="color">Choose Color:</label>
-                        <div>
-                            @foreach ($product_available_color->color as $available_color)
+                    @if ($product_available_color->color->isNotEmpty())
+                        <div class="form-group">
+                            <label for="color">Choose Color:</label>
+                            <div>
+                                @foreach ($product_available_color->color as $available_color)
                                 <input type="radio" name="color" value="{{$available_color->id}}" id="color_id"
-                                    onclick="handleColorChange(this)">
+                                onclick="handleColorChange(this)">
                                 <label for="color-">{{$available_color->name}}</label>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
+
+                    @if ($product_available_size->size->isNotEmpty())
+                        <div class="form-group">
+                            <label for="size">Choose Size:</label>
+                            <select name="size" id="size_id" class="form-control" onchange="handleSizeChange(this)">
+                                @foreach ($product_available_size->size as $available_size)
+                                    <option value="{{$available_size->id}}">{{$available_size->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
+
 
                     <a href="javascript:void(0)"
-                        onclick="addToCart({{ $product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})"
+                        onclick="addToCart({{ $product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }}, 0 , 0)"
                         class="btn btn-dark" id="addtocart" ><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                 </div>
             </div>
@@ -267,7 +283,7 @@
                                             <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
                                             @if ($relatedproduct->qty > 0)
                                                 <a style="width: 100%;" class="btn btn-dark" href="javascript:void(0)"
-                                                    onclick='addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
+                                                    onclick="addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
                                                     <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
                                                 </a>
                                             @else
@@ -403,7 +419,7 @@
                         var product_id = {{ $product->id }};
 
                         var addToCartButton = document.querySelector('#addtocart');
-                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']})`);
+                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${response['color_id']}, ${0})`);
                     }
                 } else {
                     console.log("Error: Could not change product image.");
@@ -414,5 +430,57 @@
             }
         });
     }
+
+
+    function handleSizeChange(element) {
+        const selectedSize = element.value; // Get the selected color value
+        $('#product-carousel').carousel('pause');
+
+        $.ajax({
+            url: '{{ route("product.sizeChange") }}', // Ensure this route resolves correctly
+            type: 'POST',
+            data: {
+                size_id: selectedSize, // Send the selected color value
+                _token: '{{ csrf_token() }}' // Include the CSRF token
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.status === true) {
+                    var arrtibutedata = response.image_name_with_size;                   
+                    if (arrtibutedata['image_name_with_size']) {
+                        var imagePath = '{{ asset('upload/products') }}/' + arrtibutedata['image_name_with_size'];
+                        $('#product-image').attr('src', imagePath);
+                        var discount_price = response.discountedPrice;
+
+
+                        console.log(discount_price);
+                        
+                        var reduce_price_html = '<strong>' + discount_price['discounted_price'] + '$</strong>';
+                        var actual_price_html = '<del>' + discount_price['actual_price'] + '$</del>';
+                        if (discount_price['value'] != 0) {
+                            $('#discounted-price').html(reduce_price_html); // Update discounted price
+                            $('#actual-price').html(actual_price_html); // Update original price with a strike-through
+                        } else {
+                            $('#discounted-price').remove(); // Remove the discounted price element if no discount
+                            $('#actual-price').html(actual_price_html);
+                        }
+
+
+                        var product_id = {{ $product->id }};
+
+                        var addToCartButton = document.querySelector('#addtocart');
+                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${0}, ${response['size_id']})`);
+                    }
+                } else {
+                    console.log("Error: Could not change product image.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX Error:", error);
+            }
+        });
+    }
+
+
 </script>
 @endsection

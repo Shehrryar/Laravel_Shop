@@ -110,9 +110,8 @@ class ShopController extends Controller
         //     $showrelatedproduct = Product::whereIn('id', $related_products)->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
         // }
         
-        $product_available_color =  Product::where('slug', $slug)->with('color')->first();
-
-        
+        $product_available_color =  Product::where('slug', $slug)->with('color')->first();        
+        $product_available_size =  Product::where('slug', $slug)->with('size')->first();        
         $avg_rating = '0.00';
         if ($product->product_ratings_count > 0) {
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
@@ -139,6 +138,7 @@ class ShopController extends Controller
         $data['avg_rating_per'] = $avg_rating_per;
         $data['discount'] = $discount;
         $data['product_available_color'] = $product_available_color;
+        $data['product_available_size'] = $product_available_size;
         $data['keyword'] = '';
         return view('front.product', $data);
     }
