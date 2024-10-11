@@ -159,7 +159,7 @@
                                     </div>
                                     <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
                                     <a class="btn btn-dark" href="javascript:void(0)"
-                                        onclick='addToCart({{ $f_product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
+                                        onclick="addToCart({{ $f_product->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
                                         <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
                                     </a>
                                     <div class="card-body text-center">

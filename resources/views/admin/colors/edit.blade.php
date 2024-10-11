@@ -32,11 +32,37 @@
 						<div class="col-md-6">
 							<div class="mb-3">
 								<label for="hex_value">Hex Value</label>
-								<input type="color" name="value" id="value" class="form-control"
-									placeholder="Hex Value" value="{{$color->value}}">
+								<input type="color" name="value" id="value" class="form-control" placeholder="Hex Value"
+									value="{{$color->value}}">
 							</div>
 							<p id="para_value"></p>
 						</div>
+
+						<div class="col-md-6">
+							<div class="mb-3">
+							<label>Select Product</label>
+								<select name="product_id" id="product_id" class="form-control">
+									<option value="">Select the Product</option>
+									@if($products->isNotEmpty())
+										@foreach($products as $product)
+											<option value="{{$product->id}}" {{ $color->product_id == $product->id ? 'selected' : '' }}>
+												{{$product->title}}
+											</option>
+										@endforeach
+									@endif
+								</select>
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="price">Price</label>
+								<input type="number" name="price" id="price" class="form-control"
+									placeholder="Add Price" value="{{$color->price}}" >
+							</div>
+							<p id="para_cod"></p>
+						</div>
+
 						<div class="col-md-6">
 							<div class="mb-3">
 								<label for="status">Status</label>

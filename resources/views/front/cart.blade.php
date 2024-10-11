@@ -56,7 +56,7 @@
                                           </div>
                                       </td>
                                       @php
-                                          $getprice = getDiscountedPrice($item->id, $discount, $item->price);
+                                          $getprice = getDiscountedPrice($item->product_id, $discount, $item->price);
                                       @endphp
                                       <td>{{$item->price}}</td>
                                       @if ($getprice['discount_value'] != 0)

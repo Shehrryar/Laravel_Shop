@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Size;
+use App\Models\Product;
 class SizeController extends Controller
 {
     public function index(Request $request)
@@ -17,7 +18,9 @@ class SizeController extends Controller
     }
     public function create()
     {
-        return view('admin.size.create');
+        $products = Product::orderBy('title', 'ASC')->get();
+        $data['products'] = $products;
+        return view('admin.size.create', $data);
     }
     public function store(Request $request)
     {
@@ -25,6 +28,8 @@ class SizeController extends Controller
             $request->all(),
             [
                 'name' => 'required',
+                'product_id' => 'required',
+                'price' => 'required',
                 'code' => 'required|unique:size',
                 'status' => 'required',
             ]
@@ -33,6 +38,8 @@ class SizeController extends Controller
             $size = new Size();
             $size->name = $request->name;
             $size->code = $request->code;
+            $size->product_id = $request->product_id;
+            $size->price = $request->price;
             $size->status = $request->status;
             $size->save();
             $request->session()->flash('success', 'Size added sucessfully');
@@ -54,6 +61,8 @@ class SizeController extends Controller
             $request->session()->flash('error', 'Record not found');
             return redirect()->route('sizess.index');
         }
+        $products = Product::orderBy('title', 'ASC')->get();
+        $data['products'] = $products;
         $data['size'] = $size;
         return view('admin.size.edit', $data);
     }
@@ -71,6 +80,8 @@ class SizeController extends Controller
             $request->all(),
             [
                 'name' => 'required',
+                'product_id' => 'required',
+                'price' => 'required',
                 'code' => 'required|unique:size,code,' . $size_edit->id . ',id',
                 'status' => 'required',
             ]
@@ -78,6 +89,8 @@ class SizeController extends Controller
         if ($validater->passes()) {
             $size_edit->name = $request->name;
             $size_edit->code = $request->code;
+            $size_edit->product_id = $request->product_id;
+            $size_edit->price = $request->price;
             $size_edit->status = $request->status;
             $size_edit->save();
             $message = 'Size updated sucessfully';

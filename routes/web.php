@@ -27,7 +27,7 @@ use App\Http\Controllers\admin\StockManagementController;
 use App\Http\Controllers\admin\ProductAttributeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AttributeController;
-
+       
 /*
 |--------------------------------------------------------------------------
 | Web Routes

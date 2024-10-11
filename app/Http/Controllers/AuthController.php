@@ -190,6 +190,8 @@ class AuthController extends Controller
        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
        $data = [];
        $data['wishlist'] = $wishlist;
+       $data['keyword'] = '';
+
        return view('front.account.wishlist', $data);
     }
     public function remove_product_from_wishlist(Request $request) {
@@ -213,6 +215,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $orders = Order::where('user_id', $user->id)->orderby('created_at','DESC')->get();
         $data['orders'] = $orders;
+        $data['keyword'] = ''; 
         return view('front.account.order', $data);
     }
     public function orderdetail($id){
@@ -223,6 +226,7 @@ class AuthController extends Controller
         $data['order'] = $order; 
         $data['orderitemscount'] = $orderitemscount; 
         $data['orderitems'] = $orderitems; 
+        $data['keyword'] = ''; 
         return view('front.account.orderdetail', $data);
     }
 }

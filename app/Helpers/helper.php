@@ -56,6 +56,7 @@ function orderEmail($orderId, $userType)
 }
 function getDiscountedPrice($product, $discounts, $price)
 {
+
     $discountedPrice = 0;
     $discountValue = 0;
     // Check if discounts array is not empty
@@ -63,14 +64,18 @@ function getDiscountedPrice($product, $discounts, $price)
         foreach ($discounts as $dis) {
             $product_ids = explode(',', $dis->product_ids);
             if (in_array($product, $product_ids) && $dis->type == 'percentage') {
+
+
+
+
                 if (Carbon::now()->between($dis->start_at, $dis->expires_at)) {
                     $discountValue = $dis->value;
                     $discountedPrice = $price - ($price * ($dis->value / 100));
-                    break; // Assuming only one discount should be applied
                 }
             }
         }
     }
+
     return [
         'discount_value' => $discountValue,
         'discounted_price' => $discountedPrice,

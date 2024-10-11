@@ -79,10 +79,10 @@
                     <div class="form-group">
                         <label for="color">Choose Color:</label>
                         <div>
-                            @foreach ($product_available_color->product_attributes as $available_color)
-                                <input type="radio" name="color" value="{{$available_color->color_id}}" id="color_id"
+                            @foreach ($product_available_color->color as $available_color)
+                                <input type="radio" name="color" value="{{$available_color->id}}" id="color_id"
                                     onclick="handleColorChange(this)">
-                                <label for="color-">{{$available_color->color->name}}</label>
+                                <label for="color-">{{$available_color->name}}</label>
                             @endforeach
                         </div>
                     </div>
@@ -372,7 +372,9 @@
 
     function handleColorChange(element) {
         const selectedColor = element.value; // Get the selected color value
+        $('#product-carousel').carousel('pause');
 
+        
         $.ajax({
             url: '{{ route("product.change_color") }}', // Ensure this route resolves correctly
             type: 'POST',
@@ -383,9 +385,9 @@
             dataType: 'json',
             success: function (response) {
                 if (response.status === true) {
-                    var arrtibutedata = response.product_attribute_data;
-                    if (arrtibutedata['image']) {
-                        var imagePath = '{{ asset('upload/products/Attributes_images') }}/' + arrtibutedata['image'];
+                    var arrtibutedata = response.image_name_with_color;
+                    if (arrtibutedata['image_name_with_color']) {
+                        var imagePath = '{{ asset('upload/products') }}/' + arrtibutedata['image_name_with_color'];
                         $('#product-image').attr('src', imagePath);
                         var discount_price = response.discountedPrice;
                         var reduce_price_html = '<strong>' + discount_price['discounted_price'] + '$</strong>';
@@ -398,8 +400,10 @@
                             $('#actual-price').html(actual_price_html);
                         }
 
+                        var product_id = {{ $product->id }};
+
                         var addToCartButton = document.querySelector('#addtocart');
-                        addToCartButton.setAttribute('onclick', `addToCart(${arrtibutedata['product_id']}, ${discount_price['value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']})`);
+                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']})`);
                     }
                 } else {
                     console.log("Error: Could not change product image.");

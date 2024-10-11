@@ -3,19 +3,37 @@
 namespace App\Http\Controllers;
 use App\Models\ProductAttribute;
 use App\Models\Discount;
+use App\Models\Color;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
-    public function change_color(Request $request){
+    public function change_color(Request $request)
+    {
+
+        $color_image_name = array();
         $color = $request->input('color');
-        $product_attribute_data= ProductAttribute::where('color_id', $color)->first();
+        $product_attribute_data = Color::where('id', $color)->first();
+        $all_images = ProductImage::where('product_id', $product_attribute_data->product_id)
+            ->pluck('image');
+        foreach ($all_images as $value) {
+            $colorName = preg_quote(strtolower($product_attribute_data->name), '/');
+            if (preg_match("/$colorName/i", strtolower($value), $matches)) {
+                $color_image_name['image_name_with_color'] = $value;
+            } 
+        }
+
         $discount = Discount::where('status', 1)->get();
-        $discountedPrice = getDiscountedPrice($product_attribute_data->product_id, $discount, $product_attribute_data->original_price);
+        $discountedPrice = getDiscountedPrice($product_attribute_data->product_id, $discount, $product_attribute_data->price);
+
+
         return response()->json([
-            'status'=>true,
-            'product_attribute_data' => $product_attribute_data,
+            'status' => true,
+            'image_name_with_color'=>$color_image_name,
+            'product_attribute_price' => $product_attribute_data->price,
             'discountedPrice' => $discountedPrice,
+            'color_id' => $color,
         ]);
     }
 }

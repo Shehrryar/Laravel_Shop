@@ -30,6 +30,8 @@ class CartController extends Controller
                 'message' => 'Product not Found'
             ]);
         }
+
+
         $discountprice = getDiscountedPrice($request->id, Discount::get(), $request->actual_price);
         if ($discountprice['discounted_price'] != 0) {
             $price = $discountprice['discounted_price'];
@@ -90,6 +92,7 @@ class CartController extends Controller
         $data['discount'] = $discount;
         $data['keyword'] = '';
         return view('front.cart', $data);
+
     }
     public function updateCart(Request $request)
     {
@@ -325,7 +328,8 @@ class CartController extends Controller
     }
     public function getOrderSummary(Request $request)
     {
-        $subtotal = Cart::subtotal(2, '.', '');
+        $cartcontent = Cart::where('user_id', auth()->id())->get();
+        $subtotal = getcartquantityandtotal()['totalPrice'];
         // apply discount here
         $discount = 0;
         $discountString = '';
@@ -344,10 +348,10 @@ class CartController extends Controller
         if ($request->country_id > 0) {
             $shipping_info = Shipping::where('country_id', $request->country_id)->first();
             $totalqty = 0;
-            foreach (Cart::content() as $item) {
-                $totalqty += $item->qty;
+            foreach ($cartcontent as $item) {
+                $totalqty += $item->quantity;
             }
-            if ($shipping_info != null) {
+            if (!empty($shipping_info)) {
                 $shipping_charge = $totalqty * $shipping_info->amount;
                 $grand_total = ($subtotal - $discount) + $shipping_charge;
                 return response()->json([

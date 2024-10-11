@@ -13,11 +13,11 @@ class ProductImageControlller extends Controller
     public function update(Request $request){
         $image = $request->image;
         $ext = $image->getClientOriginalExtension();
+        $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME); // Get the original name without extension
         $spath = $image->getPathName();
-        
         $productimage = new ProductImage();
         $productimage->product_id = $request->product_id;
-        $new_image_name = $request->product_id.'-'.$productimage->id.'-'.time().'.'.$ext;
+        $new_image_name = $originalName.'-'.$request->product_id.'-'.$productimage->id.'-'.time().'.'.$ext;
         $productimage->image = $new_image_name;
         $productimage->save();
 

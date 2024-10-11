@@ -36,5 +36,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductAttribute::class, 'product_id', 'id');
     }
-    
+    public function color()
+    {
+        return $this->hasMany(Color::class, 'product_id');
+    }
+
 }

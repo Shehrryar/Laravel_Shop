@@ -290,6 +290,7 @@
             }
         });
     });
+    
     $("#country").change(function () {
         $.ajax({
             url: '{{route('front.getOrderSummary')}}',

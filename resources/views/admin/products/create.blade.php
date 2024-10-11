@@ -337,6 +337,8 @@ $("#sub_category").change(function() {
         }
     });
 });
+
+
 Dropzone.autoDiscover = false;
 const dropzone = $("#image").dropzone({
     url: "{{route('temp-images.create') }}",
