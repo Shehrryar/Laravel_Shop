@@ -11,6 +11,8 @@ class Cart extends Model
         'product_id',
         'product_attribute_id',
         'title',
+        'color_id',
+        'size_id',
         'quantity',
         'price',
         'product_image'

@@ -256,7 +256,7 @@
 
 
 
-            function addToCart(id, discount_val, discount_price, actual_price, color_id, size_id) {
+            function addToCart(id, discount_val, discount_price, actual_price, attribute_Array) {
                 $.ajax({
                     url: '{{ route("front.addToCart") }}',
                     type: 'POST',
@@ -265,8 +265,7 @@
                         discount_val: discount_val,
                         discount_price: discount_price,
                         actual_price: actual_price,
-                        color: color_id,
-                        size: size_id,
+                        attribute_Array: attribute_Array,
                     },
                     dataType: 'json',
                     success: function (response) {

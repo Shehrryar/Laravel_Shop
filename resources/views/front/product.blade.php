@@ -104,7 +104,7 @@
 
 
                     <a href="javascript:void(0)"
-                        onclick="addToCart({{ $product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }}, 0 , 0)"
+                        onclick="addToCart({{ $product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }},'')"
                         class="btn btn-dark" id="addtocart" ><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                 </div>
             </div>
@@ -419,7 +419,7 @@
                         var product_id = {{ $product->id }};
 
                         var addToCartButton = document.querySelector('#addtocart');
-                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${response['color_id']}, ${0})`);
+                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${JSON.stringify(response)})`);
                     }
                 } else {
                     console.log("Error: Could not change product image.");
@@ -460,16 +460,16 @@
                         if (discount_price['value'] != 0) {
                             $('#discounted-price').html(reduce_price_html); // Update discounted price
                             $('#actual-price').html(actual_price_html); // Update original price with a strike-through
-                        } else {
+                        } 
+                        else {
                             $('#discounted-price').remove(); // Remove the discounted price element if no discount
                             $('#actual-price').html(actual_price_html);
                         }
 
-
                         var product_id = {{ $product->id }};
 
                         var addToCartButton = document.querySelector('#addtocart');
-                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${0}, ${response['size_id']})`);
+                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${JSON.stringify(response)})`);
                     }
                 } else {
                     console.log("Error: Could not change product image.");

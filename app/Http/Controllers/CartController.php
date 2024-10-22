@@ -18,6 +18,10 @@ class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
+
+        echo "<pre>";
+        print_r($request->all());
+        exit;
         if (Auth::check() == false) {
             return response()->json([
                 'userlogin' => 'isnotlogged',
@@ -38,11 +42,16 @@ class CartController extends Controller
         } else {
             $price = $discountprice['actual_price'];
         }
+
+
+
         if (Cart::count() > 0) {
             $cartcontent = Cart::get();
             $productAlreadyExist = false;
+
+
             foreach ($cartcontent as $item) {
-                if ($item->product_id == $product->id) {
+                if ($item->product_id == $product->id && $item->color_id == $request->color && $item->size_id == $request->size) {
                     $productAlreadyExist = true;
                 }
             }
@@ -52,6 +61,8 @@ class CartController extends Controller
                     'product_id' => $product->id,
                     'product_attribute_id' => $product->id,
                     'title' => $product->title,
+                    'color_id' => $request->color,
+                    'size_id' => $request->size,
                     'quantity' => 1,
                     'price' => $price,
                     'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
@@ -69,6 +80,8 @@ class CartController extends Controller
                 'product_id' => $product->id,
                 'product_attribute_id' => $product->id,
                 'title' => $product->title,
+                'color_id' => $request->color,
+                'size_id' => $request->size,
                 'quantity' => 1,
                 'price' => $price,
                 'product_image' => (!empty($product->product_images)) ? $product->product_images->first()->image : ''

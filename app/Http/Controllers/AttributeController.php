@@ -34,12 +34,14 @@ class AttributeController extends Controller
             'product_attribute_price' => $product_attribute_data->price,
             'discountedPrice' => $discountedPrice,
             'color_id' => $color,
+            'color_name' => $product_attribute_data->name,
+
         ]);
     }
 
     public function sizeChange(Request $request)
     {
-        $size_name = array();
+        $size_image_name = array();
         $size_id = $request->input('size_id');
         $product_attribute_data = Size::where('id', $size_id)->first();
         $all_images = ProductImage::where('product_id', $product_attribute_data->product_id)
@@ -50,7 +52,7 @@ class AttributeController extends Controller
                 $size_image_name['image_name_with_size'] = $value;
             } 
         }
-
+        
         $discount = Discount::where('status', 1)->get();
         $discountedPrice = getDiscountedPrice($product_attribute_data->product_id, $discount, $product_attribute_data->price);
 
@@ -60,6 +62,7 @@ class AttributeController extends Controller
             'product_attribute_price' => $product_attribute_data->price,
             'discountedPrice' => $discountedPrice,
             'size_id' => $size_id,
+            'size_name' => $product_attribute_data->code,
         ]);
     }
 
