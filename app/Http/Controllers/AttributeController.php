@@ -12,6 +12,7 @@ class AttributeController extends Controller
 {
     public function change_color(Request $request)
     {
+        $controller_type = 'color';
         $color_image_name = array();
         $color = $request->input('color');
         $product_attribute_data = Color::where('id', $color)->first();
@@ -30,17 +31,20 @@ class AttributeController extends Controller
 
         return response()->json([
             'status' => true,
+            'controller_type' => $controller_type,
             'image_name_with_color'=>$color_image_name,
             'product_attribute_price' => $product_attribute_data->price,
             'discountedPrice' => $discountedPrice,
             'color_id' => $color,
+            'size_id' => 0,
             'color_name' => $product_attribute_data->name,
-
+            'size_name' => '',
         ]);
     }
 
     public function sizeChange(Request $request)
     {
+        $controller_type = 'size';
         $size_image_name = array();
         $size_id = $request->input('size_id');
         $product_attribute_data = Size::where('id', $size_id)->first();
@@ -52,17 +56,20 @@ class AttributeController extends Controller
                 $size_image_name['image_name_with_size'] = $value;
             } 
         }
-        
         $discount = Discount::where('status', 1)->get();
         $discountedPrice = getDiscountedPrice($product_attribute_data->product_id, $discount, $product_attribute_data->price);
 
         return response()->json([
             'status' => true,
+            'controller_type' => $controller_type,
             'image_name_with_size'=>$size_image_name,
             'product_attribute_price' => $product_attribute_data->price,
             'discountedPrice' => $discountedPrice,
             'size_id' => $size_id,
+            'color_id' => 0,
             'size_name' => $product_attribute_data->code,
+            'color_name' => '',
+
         ]);
     }
 
