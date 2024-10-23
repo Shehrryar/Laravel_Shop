@@ -6,6 +6,7 @@ use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use App\Models\Discount;
+use App\Models\Stock;
 class FrontController extends Controller
 {
     public function index()
@@ -25,9 +26,9 @@ class FrontController extends Controller
                         ->withSum('product_ratings', 'rating')
                         ->paginate(8);
         $discount = Discount::where('status', 1)->get();
-        // echo "<pre>";
-        // print_r($discount);
-        // exit;
+        $stock = Stock::get();
+
+
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['featured_products'] = $featured_products;
