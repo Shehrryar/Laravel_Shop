@@ -12,6 +12,8 @@
                                 $images_prod = $f_product->product_images()->first();
                                 $inWishlist = $wishlist->contains('product_id', $f_product->id);
                                 $getprice = getDiscountedPrice($f_product->id, $discount, $f_product->price);
+                                $stockHandle = handleStock($f_product->id);
+
                             @endphp
                             <div class="col-md-3">
                                 <div class="card product-card">
@@ -38,10 +40,20 @@
                                         </a>
                                     </div>
                                     <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
+                                   
+                                
+                                    @if ($stockHandle['status'] == true)
                                     <a class="btn btn-dark" href="javascript:void(0)"
-                                        onclick='addToCart({{ $f_product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
-                                        <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
+                                        onclick="addToCart({{ $f_product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
+                                        <i class="fa fa-shopping-cart"></i> {{trans($stockHandle['message'])}}
                                     </a>
+                                    @else
+                                    <a class="btn btn-danger">
+                                     {{trans($stockHandle['message'])}}
+                                    </a>
+                                    @endif
+
+
                                     <div class="card-body text-center">
                                         <a class="h6 link"
                                             href="{{route('front.product', $f_product->slug)}}">{{trans($f_product->title)}}</a>

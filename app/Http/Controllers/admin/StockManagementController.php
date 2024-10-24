@@ -39,8 +39,8 @@ class StockManagementController extends Controller
             $stock->quantity = $request->quantity;
             $stock->product_id = implode(',' , $request->select_product);
             $stock->status = $request->status;
-            $stock->remaning_quantity = $request->remaning_quantity;
-            $stock->sold_quantity = $request->sold_quantity;
+            // $stock->remaning_quantity = $request->remaning_quantity;
+            // $stock->sold_quantity = $request->sold_quantity;
             $stock->save();
 
             $message = 'Stock added successfully';
@@ -86,10 +86,9 @@ class StockManagementController extends Controller
             $stock_update->quantity = $request->quantity;
             $stock_update->product_id = implode(',' , $request->select_product);
             $stock_update->status = $request->status;
-            $stock_update->remaning_quantity = $request->remaning_quantity;
-            $stock_update->sold_quantity = $request->sold_quantity;
+            // $stock_update->remaning_quantity = $request->remaning_quantity;
+            // $stock_update->sold_quantity = $request->sold_quantity;
             $stock_update->save();
-
             $message = 'Stock updated successfully';
             session()->flash('success', $message);
             return response()->json([

@@ -316,3 +316,10 @@
     /* Ensure it stays on top of other content */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
+
+.disabled-link {
+    pointer-events: none;
+    cursor: not-allowed;
+    text-decoration: none;
+  }

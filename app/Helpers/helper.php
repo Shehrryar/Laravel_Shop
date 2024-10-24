@@ -6,6 +6,7 @@ use App\Models\Order;
 use Carbon\Carbon;
 use App\Models\ProductImage;
 use App\Models\Cart;
+use App\Models\Stock;
 
 function getcartquantityandtotal()
 {
@@ -94,6 +95,35 @@ if (!function_exists('transFront')) {
         return trans("front::" . $key, $replace, $locale);
     }
 }
+
+
+function handleStock($product_id)
+{
+    // Iterate through stock array
+    $stock = Stock::get();
+    if (!empty($stock)) {
+        foreach ($stock as $stoc) {
+            // Check if the product ID matches and color and size are both zero
+            if ($stoc->product_id == $product_id && $stoc->color_id == 0 && $stoc->size_id == 0) {
+                // In stock - return a message or action to add to cart
+                return [
+                    'status' => true,
+                    'message' => 'Add to Cart'
+
+                ];
+            }
+        }
+    }
+    // Default: Out of Stock
+    return [
+        'status' => false,
+        'message' => 'Out of Stock'
+    ];
+}
+
+
+
+
 
 
 

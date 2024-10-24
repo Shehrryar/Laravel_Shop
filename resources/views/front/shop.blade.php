@@ -132,6 +132,7 @@
 														$images_prod = $prod->product_images()->first();
 														$inWishlist = $wishlist->contains('product_id', $prod->id);
 														$getprice = getDiscountedPrice($prod->id, $discount, $prod->price);
+														$stockHandle = handleStock($prod->id);
 													@endphp
 													<div class="col-md-4">
 														<div class="card product-card">
@@ -157,10 +158,21 @@
 																</a>
 															</div>
 															<hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
+																
+														
+															@if ($stockHandle['status'] == true)
 																<a class="btn btn-dark" href="javascript:void(0)"
-																	onclick='addToCart({{ $prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
-																	<i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
+																	onclick="addToCart({{ $prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
+																	<i class="fa fa-shopping-cart"></i> {{trans($stockHandle['message'])}}
 																</a>
+															@else
+																<a class="btn btn-danger">
+																{{trans($stockHandle['message'])}}
+																</a>
+															@endif
+
+
+
 															<div class="card-body text-center mt-3">
 																<a class="h6 link" href="product.php">{{trans($prod->title)}}</a>
 																<div class="price mt-2">

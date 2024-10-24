@@ -255,6 +255,7 @@
                                             $images_prod = $relatedproduct->product_images()->first();
                                             $inWishlist = $wishlist->contains('product_id', $relatedproduct->id);
                                             $getprice = getDiscountedPrice($relatedproduct->id, $discount, $product->price);
+                                            $stockHandle = handleStock($relatedproduct->id);
                                         @endphp
                                         <div class="card product-card">
                                             <div class="product-image position-relative">
@@ -281,16 +282,19 @@
                                                 </a>
                                             </div>
                                             <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
-                                            @if ($relatedproduct->qty > 0)
-                                                <a style="width: 100%;" class="btn btn-dark" href="javascript:void(0)"
-                                                    onclick="addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
-                                                    <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
-                                                </a>
+
+                                            @if ($stockHandle['status'] == true)
+                                            <a class="btn btn-dark" href="javascript:void(0)"
+                                                onclick="addToCart({{ $relatedproduct->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
+                                                <i class="fa fa-shopping-cart"></i> {{trans($stockHandle['message'])}}
+                                            </a>
                                             @else
-                                                <a class="btn btn-dark" href="javascript:void(0)" disabled>
-                                                    <i class="fa fa-shopping-cart"></i> {{trans('Out of Stock')}}
-                                                </a>
+                                            <a class="btn btn-danger">
+                                            {{trans($stockHandle['message'])}}
+                                            </a>
                                             @endif
+
+
                                             <div class="card-body text-center mt-3">
                                                 <a class="h6 link" href="">{{$relatedproduct->title}}</a>
                                                 <div class="price mt-2">
@@ -299,6 +303,7 @@
                                                         <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}$</del></span>
                                                     @endif
                                                 </div>
+                                                
                                                 @php
                                                     $avg_rating_per = 0;
                                                     if ($relatedproduct->product_ratings_count > 0) {
@@ -307,6 +312,7 @@
                                                         $avg_rating_per = ($avg_rating * 100) / 5;
                                                     }
                                                 @endphp
+
                                                 <div style="display: flex; justify-content: center;">
                                                     <div class="star-rating product mt-2" title="">
                                                         <div class="back-stars">

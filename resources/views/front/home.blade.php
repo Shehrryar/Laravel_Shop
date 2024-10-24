@@ -132,6 +132,7 @@
                                 $images_prod = $f_product->product_images()->first();
                                 $inWishlist = $wishlist->contains('product_id', $f_product->id);
                                 $getprice = getDiscountedPrice($f_product->id, $discount, $f_product->price);
+                                $stockHandle = handleStock($f_product->id);
                             @endphp
                             <div class="col-md-3">
                                 <div class="card product-card">
@@ -158,10 +159,22 @@
                                         </a>
                                     </div>
                                     <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
-                                    <a class="btn btn-dark" href="javascript:void(0)"
-                                        onclick="addToCart({{ $f_product->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
-                                        <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
+
+                                <!-- this is section for handling out of stock products -->
+
+                            
+                                    @if ($stockHandle['status'] == true)
+                                        <a class="btn btn-dark" href="javascript:void(0)"
+                                            onclick="addToCart({{ $f_product->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
+                                            <i class="fa fa-shopping-cart"></i> {{trans($stockHandle['message'])}}
+                                        </a>
+                                    @else
+                                    <a class="btn btn-danger">
+                                     {{trans($stockHandle['message'])}}
                                     </a>
+                                    @endif
+
+
                                     <div class="card-body text-center">
                                         <a class="h6 link"
                                             href="{{route('front.product', $f_product->slug)}}">{{trans($f_product->title)}}</a>
@@ -222,7 +235,8 @@
                         @php
                             $images_prod = $late_prod->product_images()->first();
                             $inWishlist = $wishlist->contains('product_id', $late_prod->id);
-                            $getprice = getDiscountedPrice($late_prod->id, $discount, $late_prod->price)
+                            $getprice = getDiscountedPrice($late_prod->id, $discount, $late_prod->price);
+                            $stockHandle = handleStock($late_prod->id);
                         @endphp
                         <div class="col-md-3">
                             <div class="card product-card">
@@ -251,10 +265,25 @@
                                 @if ($getprice['discount_value'] != 0)
                                     <div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
                                 @endif
-                                <a class="btn btn-dark" href="javascript:void(0)"
-                                    onclick='addToCart({{ $late_prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})'>
-                                    <i class="fa fa-shopping-cart"></i> {{trans('Add To Cart')}}
-                                </a>
+
+                                <!-- this is section for handling out of stock products -->
+
+                                @if ($stockHandle['status'] == true)
+                                    <a class="btn btn-dark" href="javascript:void(0)"
+                                        onclick="addToCart({{ $late_prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
+                                        <i class="fa fa-shopping-cart"></i> {{trans($stockHandle['message'])}}
+                                    </a>
+                                @else
+                                    <a class="btn btn-danger">
+                                     {{trans($stockHandle['message'])}}
+                                    </a>
+                                @endif
+
+
+
+
+
+
                                 <div class="card-body text-center mt-3">
                                     <a class="h6 link" href="product.php">{{trans($late_prod->title)}}</a>
                                     <div class="price mt-2">
@@ -263,7 +292,8 @@
                                             <span class="h5"><del>{{$getprice['actual_price']}}$</del></span>
                                         @else
                                             <span class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
-                                        @endif                          </div>
+                                        @endif
+                                    </div>
                                     <!-- this portion for the product rating -->
                                     @php
                                         $avg_rating_per = 0;
