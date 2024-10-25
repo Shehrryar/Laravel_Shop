@@ -46,6 +46,8 @@
 							<th width="60">ID</th>
 							<th>Product</th>
 							<th>Quantity</th>
+							<th>Color</th>
+							<th>Size</th>
 							<th>Sold Quantity</th>
 							<th>Remanining Quantity</th>
 							<th>Status</th>
@@ -61,8 +63,33 @@
 							@endphp
 								<tr>
 									<td>{{ $stoc->id }}</td>
-									<td>{{ $product->title }}</td>
+									<td>
+										<ul class="product-list">
+											<li>{{ $product->title }}</li>
+										</ul>
+									</td>
 									<td>{{ $stoc->quantity}}</td>
+									
+									
+									<th>
+										@foreach ($colors as $color)
+											@if ($color->id == $stoc->color_id)
+												{{$color->name}}
+											@endif
+										@endforeach
+									</th>
+
+									<th>
+										@foreach ($sizes as $size)
+											@if ($size->id == $stoc->size_id)
+												{{$size->name}}
+											@endif
+										@endforeach
+										
+									</th>
+
+
+
 									<td>{{ $stoc->remaning_quantity}}</td>
 									<td>{{ $stoc->sold_quantity}}</td>
 									<td>

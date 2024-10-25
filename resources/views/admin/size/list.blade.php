@@ -46,6 +46,7 @@
 							<th width="60">ID</th>
 							<th>Name</th>
 							<th>Size Code</th>
+							<th>Product</th>
 							<th>Status</th>
 							<th>Action</th>
 						</tr>
@@ -57,6 +58,15 @@
 									<td>{{ $size->id}}</td>
 									<td>{{ $size->name}}</td>
 									<td>{{ $size->code}}</td>
+									<td>
+										<ul class="product-list">
+											@foreach ($products as $product)
+											@if ($size->product_id == $product->id)
+											<li>{{ $product->title }}</li>
+											@endif
+											@endforeach
+										</ul>
+									</td>
 									<td>
 										@if($size->status == 1)
 											<svg class="text-success-500 h-6 w-6 text-success" xmlns="http://www.w3.org/2000/svg"

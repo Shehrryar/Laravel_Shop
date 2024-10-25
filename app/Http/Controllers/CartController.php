@@ -10,6 +10,9 @@ use App\Models\Country;
 use App\Models\Shipping;
 use Carbon\Carbon;
 use App\Models\Cart;
+use App\Models\Stock;
+use Illuminate\Support\Facades\DB;
+
 // use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -172,29 +175,34 @@ class CartController extends Controller
     }
     public function updateCart(Request $request)
     {
-        $iteminfo = Cart::find($request->rowid);
-        $product = Product::find($iteminfo->id);
-        // if ($product->track_qty == 'Yes') {
-        // if ($request->qty <= $product->qty) {
-        $iteminfo->quantity = $request->qty;
-        $iteminfo->save();
-        $message = "Cart updated sucessfully";
-        $status = True;
-        session()->flash('success', $message);
-        // } 
-        // else {
-        //     $message = "Requested qty($request->qty) not available";
-        //     $status = false;
-        //     session()->flash('error', $message);
-        // }
-        // } 
 
-        // else {
-        //     Cart::update($request->rowid, $request->qty);
-        //     $message = "Cart updated successfully";
-        //     $status = True;
-        //     session()->flash('success', $message);
-        // }
+
+        $iteminfo = Cart::find($request->rowid);
+        $stock = DB::table('stocks')
+            ->where('product_id', $iteminfo->product_id)
+            ->where('color_id', $iteminfo->color_id)
+            ->where('size_id', $iteminfo->size_id)
+            ->where('status', 1)
+            ->first();
+
+        if ($stock) {
+            if ($request->qty <= $stock->quantity) {
+                $iteminfo->quantity = $request->qty;
+                $iteminfo->save();
+                $message = "Cart updated sucessfully";
+                $status = True;
+                session()->flash('success', $message);
+            } else {
+                $message = "Requested qty($request->qty) not available";
+                $status = false;
+                session()->flash('error', $message);
+            }
+        } else {
+            $message = "Requested qty($request->qty) not available";
+            $status = false;
+            session()->flash('error', $message);
+        }
+
         return response()->json([
             'status' => $status,
             'message' => $message
@@ -228,7 +236,6 @@ class CartController extends Controller
         $discount_type = '';
         $cartcount = Cart::where('user_id', auth()->id())->count();
         $cartcontent = Cart::where('user_id', auth()->id())->get();
-
         $subtotal = getcartquantityandtotal()['totalPrice'];
         if ($cartcount == 0) {
             return redirect()->route('front.cart');
@@ -378,20 +385,37 @@ class CartController extends Controller
             // store order item in the order item table
             foreach ($cartcontent as $item) {
                 $orderitems = new OrderItem();
-                $orderitems->product_id = $item->id;
+                $orderitems->product_id = $item->product_id;
                 $orderitems->order_id = $order->id;
                 $orderitems->name = $item->title;
                 $orderitems->quantity = $item->quantity;
                 $orderitems->price = $item->price;
                 $orderitems->total = $item->price * $item->quantity;
                 $orderitems->save();
-                // Updat product stock
-                // $productData = Product::find($item->id);
-                // $currentQuantity = $productData->qty;
-                // $updatedquantity = $currentQuantity - $item->qty;
-                // $productData->qty = $updatedquantity;
-                // $productData->save();
+
+
+                $stock = DB::table('stocks')
+                ->where('product_id', $item->product_id)
+                ->where('color_id', $item->color_id)
+                ->where('size_id', $item->size_id)
+                ->where('status', 1)
+                ->first();
+
+
+                echo "<pre>";
+                print_r($stock);
+                exit;
+
+                $stockupdate = Stock::find($stock->id);
+
+                $currentQuantity = $stock->quantity;
+                $updatedquantity = $currentQuantity - $item->quantity;
+                $stockupdate->quantity = $updatedquantity;
+                $stockupdate->sold_quantity = $stock->sold_quantity + $item->quantity;
+                $stockupdate->save();
             }
+
+
             orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
             Cart::where('user_id', Auth::id())->delete();

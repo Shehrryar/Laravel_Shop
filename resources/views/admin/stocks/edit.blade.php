@@ -53,6 +53,55 @@
 
                             </div>
                         </div>
+
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="select_color">Select Color</label>
+                                <select name="color_id" id="color" class="form-control">
+                                <option value='0'>Select the Color</option>
+                                            @if($colors->isNotEmpty())
+                                                @foreach($colors as $colori)
+                                                    <option {{($stock_edit->color_id == $colori->id) ? 'selected' : ''}} value="{{$colori->id}}">{{$colori->name}}--
+                                                        
+                                                    @foreach ($products as $product)
+                                                    @if ($product->id == $colori->product_id)
+                                                    {{$product->title}}
+                                                    @endif
+                                                    @endforeach
+
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                </select>
+                                <p id="para_products"></p>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="select_size">Select Size</label>
+                                <select name="size_id" id="size" class="form-control">
+                                            <option value="0">Select the Size</option>
+                                            @if($sizes->isNotEmpty())
+                                                @foreach($sizes as $sizei)
+                                                    <option {{($stock_edit->size_id == $sizei->id) ? 'selected' : ''}} value="{{$sizei->id}}"> {{$sizei->name}}-- 
+                                                    @foreach ($products as $product)
+                                                    @if ($product->id == $sizei->product_id)
+                                                    {{$product->title}}
+                                                    @endif
+                                                    @endforeach
+                                                </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                <p id="para_products"></p>
+                            </div>
+                        </div>
+
+
+
 						<div class="col-md-6">
                             <div class="mb-3">
                                 <label for="remaning_quantity">Remaining Quantity</label>

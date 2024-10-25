@@ -47,6 +47,7 @@
 							<th>Name</th>
 							<th>Hex Value</th>
 							<th>Color</th>
+							<th>Product</th>
 							<th>Status</th>
 							<th>Action</th>
 						</tr>
@@ -59,6 +60,16 @@
 									<td>{{ $color->name}}</td>
 									<td>{{ $color->value}}</td>
 									<td ><div id = "color_sorting" style="background-color: {{ $color->value }};"></div></td>
+
+									<td>
+										<ul class="product-list">
+											@foreach ($products as $product)
+											@if ($color->product_id == $product->id)
+											<li>{{ $product->title }}</li>
+											@endif
+											@endforeach
+										</ul>
+									</td>
 
 									<td>
 										@if($color->status == 1)

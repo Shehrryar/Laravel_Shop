@@ -14,7 +14,10 @@ class SizeController extends Controller
             $size = $size->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $sizes = $size->paginate(10);
-        return view('admin.size.list', compact('sizes'));
+        $products = Product::orderBy('title', 'ASC')->get();
+        $data['products'] = $products;
+        $data['sizes'] = $sizes;
+        return view('admin.size.list',$data);
     }
     public function create()
     {

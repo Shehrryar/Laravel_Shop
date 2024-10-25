@@ -19,7 +19,12 @@ class StockManagementController extends Controller
             $stock = $stock->where('product_id','like','%'.$request->get('keyword').'%');
         }
         $stock = $stock->paginate(10);
-        return view('admin.stocks.list', compact('stock'));
+        $colors = Color::orderBy('name', 'ASC')->get();
+        $sizes = Size::orderBy('name', 'ASC')->get();
+        $data['colors'] = $colors;
+        $data['sizes'] = $sizes;
+        $data['stock'] = $stock;
+        return view('admin.stocks.list', $data);
     }
     public function create()
     {

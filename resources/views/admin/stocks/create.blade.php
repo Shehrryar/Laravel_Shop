@@ -53,39 +53,48 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h2 class="h4 mb-3">Product Color</h2>
-                                    <div class="mb-3">
-                                        <select name="color_id" id="color" class="form-control">
-                                            <option value='0'>Select the Color</option>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="select_color">Select Color</label>
+                                <select name="color_id" id="color" class="form-control">
+                                <option value='0'>Select the Color</option>
                                             @if($colors->isNotEmpty())
                                                 @foreach($colors as $colori)
-                                                    <option value="{{$colori->id}}">{{$colori->name}}</option>
+                                                    <option value="{{$colori->id}}">{{$colori->name}}--
+                                                        
+                                                    @foreach ($products as $product)
+                                                    @if ($product->id == $colori->product_id)
+                                                    {{$product->title}}
+                                                    @endif
+                                                    @endforeach
+
+                                                    </option>
                                                 @endforeach
                                             @endif
-                                        </select>
-                                    </div>
-                                </div>
+                                </select>
+                                <p id="para_products"></p>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h2 class="h4 mb-3">Product Size</h2>
-                                    <div class="mb-3">
-                                        <select name="size_id" id="size" class="form-control">
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="select_size">Select Size</label>
+                                <select name="size_id" id="size" class="form-control">
                                             <option value="0">Select the Size</option>
                                             @if($sizes->isNotEmpty())
                                                 @foreach($sizes as $sizei)
-                                                    <option value="{{$sizei->id}}">{{$sizei->name}}</option>
+                                                    <option value="{{$sizei->id}}"> {{$sizei->name}}-- 
+                                                    @foreach ($products as $product)
+                                                    @if ($product->id == $sizei->product_id)
+                                                    {{$product->title}}
+                                                    @endif
+                                                    @endforeach
+                                                </option>
                                                 @endforeach
                                             @endif
                                         </select>
-                                    </div>
-                                </div>
+                                <p id="para_products"></p>
                             </div>
                         </div>
 
