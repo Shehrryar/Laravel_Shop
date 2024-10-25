@@ -4,6 +4,8 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Stock;
 use App\Models\Product;
+use App\Models\Size;
+use App\Models\Color;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,8 +24,12 @@ class StockManagementController extends Controller
     public function create()
     {
         $data = [];
-        $products = Product::get();
+        $colors = Color::orderBy('name', 'ASC')->get();
+        $sizes = Size::orderBy('name', 'ASC')->get();
+        $products = Product::orderBy('title', 'ASC')->get();
         $data['products']=$products;
+        $data['colors'] = $colors;
+        $data['sizes'] = $sizes;
         return view('admin.stocks.create', $data);
     }
     public function store(Request $request)
@@ -39,6 +45,8 @@ class StockManagementController extends Controller
             $stock->quantity = $request->quantity;
             $stock->product_id = implode(',' , $request->select_product);
             $stock->status = $request->status;
+            $stock->color_id = $request->color_id;
+            $stock->size_id = $request->size_id;
             // $stock->remaning_quantity = $request->remaning_quantity;
             // $stock->sold_quantity = $request->sold_quantity;
             $stock->save();
@@ -61,14 +69,14 @@ class StockManagementController extends Controller
     {
 
         $stock_edit = Stock::find($id);    
-        if ($stock_edit == null) {
-            session()->flash('error', 'Record not found');
-            return redirect()->route('coupon.index');
-        }
-        $products = Product::all();
+        $products = Product::orderBy('title', 'ASC')->get();
+        $colors = Color::orderBy('name', 'ASC')->get();
+        $sizes = Size::orderBy('name', 'ASC')->get();
         $data = [
             'stock_edit' => $stock_edit,
-            'products' => $products
+            'products' => $products,
+            'colors' => $colors,
+            'sizes' => $sizes
         ];
         return view('admin.stocks.edit', $data);
     }
@@ -85,6 +93,8 @@ class StockManagementController extends Controller
             $stock_update = Stock::find($id);
             $stock_update->quantity = $request->quantity;
             $stock_update->product_id = implode(',' , $request->select_product);
+            $stock_update->color_id = $request->color_id;
+            $stock_update->size_id = $request->size_id;
             $stock_update->status = $request->status;
             // $stock_update->remaning_quantity = $request->remaning_quantity;
             // $stock_update->sold_quantity = $request->sold_quantity;

@@ -106,6 +106,9 @@
                     <a href="javascript:void(0)"
                         onclick="addToCart({{ $product->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }},'')"
                         class="btn btn-dark" id="addtocart" ><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
+                    <a disabled id="outofstockutton" class="btn btn-danger" style="display:none;" >
+                                            {{trans('Out of Stock')}}
+                                            </a>
                 </div>
             </div>
             <div class="col-md-12 mt-5">
@@ -393,99 +396,136 @@
     });
 
     function handleColorChange(element) {
-        const selectedColor = element.value; // Get the selected color value
-        $('#product-carousel').carousel('pause');
+    const selectedColor = element.value; // Get the selected color value
+    $('#product-carousel').carousel('pause'); // Pause the carousel while updating
 
-        
-        $.ajax({
-            url: '{{ route("product.change_color") }}', // Ensure this route resolves correctly
-            type: 'POST',
-            data: {
-                color: selectedColor, // Send the selected color value
-                _token: '{{ csrf_token() }}' // Include the CSRF token
-            },
-            dataType: 'json',
-            success: function (response) {
-                if (response.status === true) {
-                    var arrtibutedata = response.image_name_with_color;
-                    if (arrtibutedata['image_name_with_color']) {
-                        var imagePath = '{{ asset('upload/products') }}/' + arrtibutedata['image_name_with_color'];
-                        $('#product-image').attr('src', imagePath);
-                        var discount_price = response.discountedPrice;
-                        var reduce_price_html = '<strong>' + discount_price['discounted_price'] + '$</strong>';
-                        var actual_price_html = '<del>' + discount_price['actual_price'] + '$</del>';
-                        if (discount_price['value'] != 0) {
-                            $('#discounted-price').html(reduce_price_html); // Update discounted price
-                            $('#actual-price').html(actual_price_html); // Update original price with a strike-through
-                        } else {
-                            $('#discounted-price').remove(); // Remove the discounted price element if no discount
-                            $('#actual-price').html(actual_price_html);
-                        }
+    $.ajax({
+        url: '{{ route("product.change_color") }}', // Ensure this route resolves correctly
+        type: 'POST',
+        data: {
+            color: selectedColor, // Send the selected color value
+            _token: '{{ csrf_token() }}' // Include the CSRF token
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.status === true) {
+                const attributedData = response.image_name_with_color;
 
-                        var product_id = {{ $product->id }};
-
-                        var addToCartButton = document.querySelector('#addtocart');
-                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${JSON.stringify(response)})`);
-                    }
-                } else {
-                    console.log("Error: Could not change product image.");
+                // Update product image if available
+                if (attributedData && attributedData['image_name_with_color']) {
+                    const imagePath = `{{ asset('upload/products') }}/${attributedData['image_name_with_color']}`;
+                    $('#product-image').attr('src', imagePath);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log("AJAX Error:", error);
-            }
-        });
-    }
 
+                // Update price information
+                const discountPrice = response.discountedPrice;
+                if (discountPrice) {
+                    const discountValue = discountPrice['discount_value'] || 0;
+                    const discountedPriceHtml = `<strong>${discountPrice['discounted_price']}$</strong>`;
+                    const actualPriceHtml = `<del>${discountPrice['actual_price']}$</del>`;
 
-    function handleSizeChange(element) {
-        const selectedSize = element.value; // Get the selected color value
-        $('#product-carousel').carousel('pause');
-
-        $.ajax({
-            url: '{{ route("product.sizeChange") }}', // Ensure this route resolves correctly
-            type: 'POST',
-            data: {
-                size_id: selectedSize, // Send the selected color value
-                _token: '{{ csrf_token() }}' // Include the CSRF token
-            },
-            dataType: 'json',
-            success: function (response) {
-                if (response.status === true) {
-                    var arrtibutedata = response.image_name_with_size;                   
-                    if (arrtibutedata['image_name_with_size']) {
-                        var imagePath = '{{ asset('upload/products') }}/' + arrtibutedata['image_name_with_size'];
-                        $('#product-image').attr('src', imagePath);
-                        var discount_price = response.discountedPrice;
-
-
-                        console.log(discount_price);
-                        
-                        var reduce_price_html = '<strong>' + discount_price['discounted_price'] + '$</strong>';
-                        var actual_price_html = '<del>' + discount_price['actual_price'] + '$</del>';
-                        if (discount_price['value'] != 0) {
-                            $('#discounted-price').html(reduce_price_html); // Update discounted price
-                            $('#actual-price').html(actual_price_html); // Update original price with a strike-through
-                        } 
-                        else {
-                            $('#discounted-price').remove(); // Remove the discounted price element if no discount
-                            $('#actual-price').html(actual_price_html);
-                        }
-
-                        var product_id = {{ $product->id }};
-
-                        var addToCartButton = document.querySelector('#addtocart');
-                        addToCartButton.setAttribute('onclick', `addToCart(${product_id}, ${discount_price['discount_value']}, ${discount_price['discounted_price']}, ${discount_price['actual_price']},${JSON.stringify(response)})`);
+                    // Display prices based on discount availability
+                    if (discountValue > 0) {
+                        $('#discounted-price').html(discountedPriceHtml); // Show discounted price
+                        $('#actual-price').html(actualPriceHtml); // Show original price as struck-through
+                    } else {
+                        $('#discounted-price').empty(); // Clear discounted price if no discount
+                        $('#actual-price').html(actualPriceHtml); // Show actual price without discount
                     }
-                } else {
-                    console.log("Error: Could not change product image.");
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log("AJAX Error:", error);
+
+                // Handle Add to Cart or Out of Stock button state
+                const productId = {{ $product->id }};
+                const addToCartButton = document.querySelector('#addtocart');
+                const outOfStockButton = document.querySelector('#outofstockutton');
+
+                if (response.message === 'in_stock') {
+                    addToCartButton.style.display = 'block';
+                    outOfStockButton.style.display = 'none';
+                    addToCartButton.setAttribute(
+                        'onclick',
+                        `addToCart(${productId}, ${discountPrice['discount_value']}, ${discountPrice['discounted_price']}, ${discountPrice['actual_price']}, ${JSON.stringify(response)})`
+                    );
+                } else {
+                    addToCartButton.style.display = 'none';
+                    outOfStockButton.style.display = 'block';
+                }
+            } else {
+                console.error("Error: Could not change product image or update prices.");
             }
-        });
-    }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", error);
+        }
+    });
+}
+
+
+function handleSizeChange(element) {
+    const selectedSize = element.value; // Get the selected size value
+    $('#product-carousel').carousel('pause'); // Pause the carousel
+
+    $.ajax({
+        url: '{{ route("product.sizeChange") }}', // Ensure this route resolves correctly
+        type: 'POST',
+        data: {
+            size_id: selectedSize, // Send the selected size value
+            _token: '{{ csrf_token() }}' // Include the CSRF token
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.status === true) {
+                const attributedData = response.image_name_with_size;
+
+                // Update product image if available
+                if (attributedData && attributedData['image_name_with_size']) {
+                    const imagePath = `{{ asset('upload/products') }}/${attributedData['image_name_with_size']}`;
+                    $('#product-image').attr('src', imagePath);
+                }
+
+                // Update price information
+                const discountPrice = response.discountedPrice;
+                if (discountPrice) {
+                    const discountValue = discountPrice['discount_value'] || 0;
+                    const discountedPriceHtml = `<strong>${discountPrice['discounted_price']}$</strong>`;
+                    const actualPriceHtml = `<del>${discountPrice['actual_price']}$</del>`;
+
+                    // Display prices based on discount availability
+                    if (discountValue > 0) {
+                        $('#discounted-price').html(discountedPriceHtml); // Show discounted price
+                        $('#actual-price').html(actualPriceHtml); // Show original price with a strike-through
+                    } else {
+                        $('#discounted-price').empty(); // Clear discounted price if no discount
+                        $('#actual-price').html(actualPriceHtml); // Show actual price without discount
+                    }
+                }
+
+                // Handle Add to Cart or Out of Stock button state
+                const productId = {{ $product->id }};
+                const addToCartButton = document.querySelector('#addtocart');
+                const outOfStockButton = document.querySelector('#outofstockutton');
+
+
+                if (response.message === 'in_stock') {
+                    addToCartButton.style.display = 'block';
+                    outOfStockButton.style.display = 'none';
+                    addToCartButton.setAttribute(
+                        'onclick',
+                        `addToCart(${productId}, ${discountPrice['discount_value']}, ${discountPrice['discounted_price']}, ${discountPrice['actual_price']}, ${JSON.stringify(response)})`
+                    );
+                } else {
+                    addToCartButton.style.display = 'none';
+                    outOfStockButton.style.display = 'block';
+                }
+            } else {
+                console.error("Error: Could not change product image.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", error);
+        }
+    });
+}
 
 
 </script>
