@@ -255,7 +255,7 @@
                                             $images_prod = $relatedproduct->product_images()->first();
                                             $inWishlist = $wishlist->contains('product_id', $relatedproduct->id);
                                             $getprice = getDiscountedPrice($relatedproduct->id, $discount, $product->price);
-                                            $stockHandle = handleStock($relatedproduct->id);
+                                            $stockHandle = handleStock($relatedproduct->id,0,0);
                                         @endphp
                                         <div class="card product-card">
                                             <div class="product-image position-relative">

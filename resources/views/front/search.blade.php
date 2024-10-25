@@ -12,7 +12,7 @@
                                 $images_prod = $f_product->product_images()->first();
                                 $inWishlist = $wishlist->contains('product_id', $f_product->id);
                                 $getprice = getDiscountedPrice($f_product->id, $discount, $f_product->price);
-                                $stockHandle = handleStock($f_product->id);
+                                $stockHandle = handleStock($f_product->id,0,0);
 
                             @endphp
                             <div class="col-md-3">

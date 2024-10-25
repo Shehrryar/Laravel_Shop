@@ -132,7 +132,7 @@
 														$images_prod = $prod->product_images()->first();
 														$inWishlist = $wishlist->contains('product_id', $prod->id);
 														$getprice = getDiscountedPrice($prod->id, $discount, $prod->price);
-														$stockHandle = handleStock($prod->id);
+														$stockHandle = handleStock($prod->id,0,0);
 													@endphp
 													<div class="col-md-4">
 														<div class="card product-card">

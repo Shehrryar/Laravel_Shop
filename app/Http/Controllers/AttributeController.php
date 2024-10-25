@@ -28,7 +28,7 @@ class AttributeController extends Controller
         $discount = Discount::where('status', 1)->get();
         $discountedPrice = getDiscountedPrice($product_attribute_data->product_id, $discount, $product_attribute_data->price);
 
-
+        
         return response()->json([
             'status' => true,
             'controller_type' => $controller_type,

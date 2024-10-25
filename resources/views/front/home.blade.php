@@ -132,7 +132,7 @@
                                 $images_prod = $f_product->product_images()->first();
                                 $inWishlist = $wishlist->contains('product_id', $f_product->id);
                                 $getprice = getDiscountedPrice($f_product->id, $discount, $f_product->price);
-                                $stockHandle = handleStock($f_product->id);
+                                $stockHandle = handleStock($f_product->id,0,0);
                             @endphp
                             <div class="col-md-3">
                                 <div class="card product-card">
@@ -236,7 +236,7 @@
                             $images_prod = $late_prod->product_images()->first();
                             $inWishlist = $wishlist->contains('product_id', $late_prod->id);
                             $getprice = getDiscountedPrice($late_prod->id, $discount, $late_prod->price);
-                            $stockHandle = handleStock($late_prod->id);
+                            $stockHandle = handleStock($late_prod->id,0,0);
                         @endphp
                         <div class="col-md-3">
                             <div class="card product-card">

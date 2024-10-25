@@ -97,19 +97,18 @@ if (!function_exists('transFront')) {
 }
 
 
-function handleStock($product_id)
+function handleStock($product_id, $color_id, $size_id)
 {
     // Iterate through stock array
     $stock = Stock::get();
     if (!empty($stock)) {
         foreach ($stock as $stoc) {
             // Check if the product ID matches and color and size are both zero
-            if ($stoc->product_id == $product_id && $stoc->color_id == 0 && $stoc->size_id == 0) {
+            if ($stoc->product_id == $product_id && $stoc->color_id == $color_id && $stoc->size_id == $size_id) {
                 // In stock - return a message or action to add to cart
                 return [
                     'status' => true,
                     'message' => 'Add to Cart'
-
                 ];
             }
         }
@@ -120,12 +119,4 @@ function handleStock($product_id)
         'message' => 'Out of Stock'
     ];
 }
-
-
-
-
-
-
-
-
 ?>
