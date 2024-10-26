@@ -168,6 +168,7 @@ Route::group(['prefix' => 'admin'], function () {
         // Order Routes
         Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
         Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
+        Route::get('/orderspdf/{order_id}', [OrderController::class, 'getOrderDetailPdf'])->name('order.detailPdf');
         Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
         Route::post('/orders/sent-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('order.sendinvoiceemail');
         // Route for the discont coupon

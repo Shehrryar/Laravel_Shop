@@ -45,11 +45,10 @@
 						<tr>
 							<th width="60">ID</th>
 							<th>Product</th>
-							<th>Quantity</th>
 							<th>Color</th>
 							<th>Size</th>
-							<th>Sold Quantity</th>
 							<th>Remanining Quantity</th>
+							<th>Sold Quantity</th>
 							<th>Status</th>
 							<th>Action</th>
 						</tr>
@@ -68,7 +67,6 @@
 											<li>{{ $product->title }}</li>
 										</ul>
 									</td>
-									<td>{{ $stoc->quantity}}</td>
 									
 									
 									<th>
@@ -90,7 +88,7 @@
 
 
 
-									<td>{{ $stoc->remaning_quantity}}</td>
+									<td>{{ $stoc->quantity}}</td>
 									<td>{{ $stoc->sold_quantity}}</td>
 									<td>
 										@if($stoc->status == 1)

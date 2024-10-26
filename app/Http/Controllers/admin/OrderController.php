@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OrderItem;
 class OrderController extends Controller
 {
@@ -32,6 +33,23 @@ class OrderController extends Controller
         return view('admin.orders.detail', 
         ['order'=>$order, 'orderitems'=> $orderitems]);
     }
+
+
+    public function getOrderDetailPdf($orderid){
+
+        $order = Order::select('orders.*', 'countries.name as countryName')
+        ->where('orders.id', $orderid)
+        ->leftJoin('countries', 'countries.id','orders.country_id')
+        ->first();
+        $orderitems = OrderItem::where('order_id', $orderid)->get();
+        $pdf = Pdf::loadView('admin.orders.pdf', [
+            'order' => $order,
+            'orderitems' => $orderitems
+        ]);
+        // Return PDF for download
+        return $pdf->download('order_' . $order->id . '_details.pdf');
+    }
+
 
     public function changeOrderStatus(Request $request, $id){
         $order = Order::find($id);

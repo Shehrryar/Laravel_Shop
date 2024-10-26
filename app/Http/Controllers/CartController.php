@@ -401,19 +401,20 @@ class CartController extends Controller
                 ->where('status', 1)
                 ->first();
 
-
-                echo "<pre>";
-                print_r($stock);
-                exit;
-
-                $stockupdate = Stock::find($stock->id);
-
                 $currentQuantity = $stock->quantity;
-                $updatedquantity = $currentQuantity - $item->quantity;
-                $stockupdate->quantity = $updatedquantity;
-                $stockupdate->sold_quantity = $stock->sold_quantity + $item->quantity;
-                $stockupdate->save();
+                $updatedQuantity = $currentQuantity - $item->quantity;
+                $soldQuantity = $stock->sold_quantity + $item->quantity;
+                
+                // Update the stock record in the database
+                DB::table('stocks')
+                    ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
+                    ->update([
+                        'quantity' => $updatedQuantity,
+                        'sold_quantity' => $soldQuantity,
+                    ]);
             }
+
+            
 
 
             orderEmail($order->id, 'customer');
@@ -520,6 +521,7 @@ class CartController extends Controller
     }
     public function thankyou()
     {
-        return view('front.thanks');
+        $data['keyword'] = ''; 
+        return view('front.thanks', $data);
     }
 }
