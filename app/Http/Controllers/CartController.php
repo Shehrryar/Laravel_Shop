@@ -401,20 +401,27 @@ class CartController extends Controller
                 ->where('status', 1)
                 ->first();
 
-                $currentQuantity = $stock->quantity;
-                $updatedQuantity = $currentQuantity - $item->quantity;
-                $soldQuantity = $stock->sold_quantity + $item->quantity;
-                
-                // Update the stock record in the database
-                DB::table('stocks')
-                    ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
-                    ->update([
-                        'quantity' => $updatedQuantity,
-                        'sold_quantity' => $soldQuantity,
-                    ]);
-            }
 
-            
+                if(!empty($stock) && $item->quantity <= $stock->quantity){
+                    $currentQuantity = $stock->quantity;
+                    $updatedQuantity = $currentQuantity - $item->quantity;
+                    $soldQuantity = $stock->sold_quantity + $item->quantity;
+                    
+                    // Update the stock record in the database
+                    DB::table('stocks')
+                        ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
+                        ->update([
+                            'quantity' => $updatedQuantity,
+                            'sold_quantity' => $soldQuantity,
+                        ]);
+                }else{
+                    return response()->json([
+                        'status' => 'stock_missing',
+                        'message' => 'Stock is low for the --(<strong>'.$item->title.'</strong>)',
+                    ]);
+                }
+
+            }
 
 
             orderEmail($order->id, 'customer');

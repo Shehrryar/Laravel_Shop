@@ -27,6 +27,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8">
+                    <h2 id="stock_missing" ></h2>
                     <div class="sub-title">
                         <h2>Shipping Address</h2>
                     </div>
@@ -283,6 +284,9 @@
                     } else {
                         $('#mobile').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
                     }
+                }
+                else if(response.status == 'stock_missing'){                    
+                    $('#stock_missing').addClass('danger-alert').html(response.message);
                 }
                 else {
                     window.location.href = "{{ route('front.thankyou') }}";

@@ -323,3 +323,12 @@
     cursor: not-allowed;
     text-decoration: none;
   }
+
+
+  .danger-alert {
+    color: #a94442;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    padding: 10px;
+    border-radius: 5px;
+}
