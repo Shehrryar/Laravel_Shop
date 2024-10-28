@@ -25,7 +25,7 @@
 								<form action="" method="get"> 
 							<div class="card-header">
 								<div class="card-title">
-							      <button class="btn btn-default" type="button" onclick="window.location.href='{{route("brands.index")}}'>Reset</button>
+							      <button class="btn btn-default" type="button" onclick="window.location.href="{{route('brands.index')}}">Reset</button>
 								</div>
 								<div class="card-tools">
 									<div class="input-group input-group" style="width: 250px;">
