@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
 use Illuminate\Support\Facades\File;
-
+use Crypt;
 use App\Models\TempImage;
 
 
@@ -71,6 +71,7 @@ class CategoryController extends Controller
         ]);
      }
      public function edit($catid, Request $request){
+        $catid = Crypt::decrypt($catid);
         $cat_edit = Category::find($catid);
         return view('admin.category.edit', compact('cat_edit'));
     }

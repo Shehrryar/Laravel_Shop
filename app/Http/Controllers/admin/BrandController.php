@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+use Crypt;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -54,8 +55,8 @@ class BrandController extends Controller
     }
 
     public function edit($id, Request $request){
-
-        $brand = Brand::find($id);
+        $brand_id = Crypt::decrypt($id);
+        $brand = Brand::find($brand_id);
         if(empty($brand)){
             $request->session()->flash('error','Record not found');
             return redirect()->route('brands.index');
@@ -110,6 +111,7 @@ class BrandController extends Controller
     }
 
     public function destroy($brnd_id, Request $request){
+
         $brnd_del = Brand::find($brnd_id);
         if(empty($brnd_del)){
             $request->session()->flash("Error","brand not found");
