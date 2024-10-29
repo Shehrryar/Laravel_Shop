@@ -35,8 +35,12 @@ class CartController extends Controller
         }
         $cart_attribute = $request->attribute_Array;
         $discountprice = getDiscountedPrice($request->id, Discount::get(), $request->actual_price);
+
         if ($discountprice['discounted_price'] != 0) {
             $price = $discountprice['discounted_price'];
+
+
+
         } else {
             $price = $discountprice['actual_price'];
         }
@@ -352,15 +356,16 @@ class CartController extends Controller
             $shipping_info = Shipping::where('country_id', $request->country)->first();
             $totalqty = 0;
             foreach ($cartcontent as $item) {
-                $totalqty += $item->qty;
+                $totalqty += $item->quantity;
             }
-            if ($shipping_info != null) {
+            if (!empty($shipping_info) && $shipping_info != null) {
                 $shipping = $totalqty * $shipping_info->amount;
                 $grandtotal = ($subtotal - $discount) + $shipping;
             } else {
                 $shipping = 10;
                 $grandtotal = ($subtotal - $discount) + $shipping;
             }
+
             $order = new Order();
             $order->subtotal = $subtotal;
             $order->shipping = $shipping;
@@ -395,18 +400,18 @@ class CartController extends Controller
 
 
                 $stock = DB::table('stocks')
-                ->where('product_id', $item->product_id)
-                ->where('color_id', $item->color_id)
-                ->where('size_id', $item->size_id)
-                ->where('status', 1)
-                ->first();
+                    ->where('product_id', $item->product_id)
+                    ->where('color_id', $item->color_id)
+                    ->where('size_id', $item->size_id)
+                    ->where('status', 1)
+                    ->first();
 
 
-                if(!empty($stock) && $item->quantity <= $stock->quantity){
+                if (!empty($stock) && $item->quantity <= $stock->quantity) {
                     $currentQuantity = $stock->quantity;
                     $updatedQuantity = $currentQuantity - $item->quantity;
                     $soldQuantity = $stock->sold_quantity + $item->quantity;
-                    
+
                     // Update the stock record in the database
                     DB::table('stocks')
                         ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
@@ -414,10 +419,10 @@ class CartController extends Controller
                             'quantity' => $updatedQuantity,
                             'sold_quantity' => $soldQuantity,
                         ]);
-                }else{
+                } else {
                     return response()->json([
                         'status' => 'stock_missing',
-                        'message' => 'Stock is low for the --(<strong>'.$item->title.'</strong>)',
+                        'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
                     ]);
                 }
 
@@ -440,13 +445,16 @@ class CartController extends Controller
         $subtotal = getcartquantityandtotal()['totalPrice'];
         // apply discount here
         $discount = 0;
+        $discount_amo = 0;
         $discountString = '';
         if (session()->has('code')) {
             $code = session()->get('code');
             if ($code->type == 'percent') {
                 $discount = ($code->discont_amount / 100) * $subtotal;
+                $discount_amo = '<strong>'.$code->discont_amount.'%</strong>';
             } else {
                 $discount = $code->discont_amount;
+                $discount_amo = $code->discont_amount;
             }
             $discountString = '<div class="mt-4">
             <strong>' . session()->get('code')->code . '</strong>
@@ -464,7 +472,7 @@ class CartController extends Controller
                 $grand_total = ($subtotal - $discount) + $shipping_charge;
                 return response()->json([
                     'status' => true,
-                    'discount' => $discount,
+                    'discount' => $discount_amo,
                     'shipping_charge' => number_format($shipping_charge, 2),
                     'discountString' => $discountString,
                     'grand_total' => number_format($grand_total, 2)
@@ -474,7 +482,7 @@ class CartController extends Controller
                 $grand_total = ($subtotal - $discount) + $shipping_charge;
                 return response()->json([
                     'status' => true,
-                    'discount' => $discount,
+                    'discount' => $discount_amo,
                     'discountString' => $discountString,
                     'shipping_charge' => number_format($shipping_charge, 2),
                     'grand_total' => number_format($grand_total, 2)
@@ -483,7 +491,7 @@ class CartController extends Controller
         } else {
             return response()->json([
                 'status' => true,
-                'discount' => $discount,
+                'discount' => $discount_amo,
                 'discountString' => $discountString,
                 'shipping_charge' => number_format(0),
                 'grand_total' => number_format($subtotal - $discount, 2)
@@ -528,7 +536,7 @@ class CartController extends Controller
     }
     public function thankyou()
     {
-        $data['keyword'] = ''; 
+        $data['keyword'] = '';
         return view('front.thanks', $data);
     }
 }

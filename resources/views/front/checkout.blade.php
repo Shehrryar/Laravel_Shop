@@ -166,7 +166,7 @@
                         <button class="btn btn-dark" type="button" id="apply-discount">Apply Coupon</button>
                     </div>
                     <span class="text-danger" id="coupon-error-message"></span>
-                    @if (Session::has('code'))
+                    @if(Session::has('code'))
                         <div id="discount-account-wrapper">
                             <div class="mt-4">
                                 <strong id="coupon-error-message">{{Session::get('code')->code}}</strong>
@@ -325,6 +325,7 @@
                 if (response.status == true) {
                     $('#shipping_charges').html(response.shipping_charge);
                     $('#grand_total').html(response.grand_total);
+                    
                     $('#dicount_coupon').html(response.discount);
                     $('#discount-account-wrapper').html(response.discountString);
                 }
