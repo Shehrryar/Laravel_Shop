@@ -67,12 +67,18 @@
                         </div>
                         <small class="pt-2 ps-1">({{$product->product_ratings_count}} Reviews)</small>
                     </div>
+
+
                     @if ($getprice['discounted_price'] != 0)
                         <span id="discounted-price" class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
                         <span id="actual-price" class="h5"><del>{{$getprice['actual_price']}}$</del></span>
                     @else
+                        <span id="discounted-price" class="h5"><strong></strong></span>
                         <span id="actual-price" class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
                     @endif
+
+
+
                     <p>{{$product->short_description}}</p>
                     <!-- option for choose color -->
 
@@ -423,14 +429,16 @@
                     const discountValue = discountPrice['discount_value'] || 0;
                     const discountedPriceHtml = `<strong>${discountPrice['discounted_price']}$</strong>`;
                     const actualPriceHtml = `<del>${discountPrice['actual_price']}$</del>`;
+                    
+                    const actualPriceHtmlnotdiscountavailable = `<strong>${discountPrice['actual_price']}$</strong>`;
 
                     // Display prices based on discount availability
                     if (discountValue > 0) {
                         $('#discounted-price').html(discountedPriceHtml); // Show discounted price
                         $('#actual-price').html(actualPriceHtml); // Show original price as struck-through
                     } else {
-                        $('#discounted-price').empty(); // Clear discounted price if no discount
-                        $('#actual-price').html(actualPriceHtml); // Show actual price without discount
+                        $('#discounted-price').html(actualPriceHtmlnotdiscountavailable); // Clear discounted price if no discount
+                        $('#actual-price').empty(); // Show actual price without discount
                     }
                 }
 
@@ -490,13 +498,16 @@ function handleSizeChange(element) {
                     const discountedPriceHtml = `<strong>${discountPrice['discounted_price']}$</strong>`;
                     const actualPriceHtml = `<del>${discountPrice['actual_price']}$</del>`;
 
+                    const actualPriceHtmlnotdiscountavailable = `<strong>${discountPrice['actual_price']}$</strong>`;
+
+
                     // Display prices based on discount availability
                     if (discountValue > 0) {
                         $('#discounted-price').html(discountedPriceHtml); // Show discounted price
                         $('#actual-price').html(actualPriceHtml); // Show original price with a strike-through
                     } else {
-                        $('#discounted-price').empty(); // Clear discounted price if no discount
-                        $('#actual-price').html(actualPriceHtml); // Show actual price without discount
+                        $('#discounted-price').html(actualPriceHtmlnotdiscountavailable); // Clear discounted price if no discount
+                        $('#actual-price').empty(); // Show actual price without discount
                     }
                 }
 
