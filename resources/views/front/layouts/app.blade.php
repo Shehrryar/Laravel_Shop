@@ -41,6 +41,74 @@
     <link rel="shortcut icon" type="image/x-icon" href="#" />
     <meta name="csrf-token" content="{{csrf_token()}}">
     <style>
+        <style>.chat-box {
+            width: 300px;
+            height: 400px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .close-chat-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .chat-content {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+
+        .chat-input button {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
     </style>
 </head>
 @php
@@ -132,6 +200,9 @@
                     </ul>
                 </div>
                 <div class="right-nav py-0 d-flex align-items-center ">
+                    <a href="#" id="chatToggle" class="nav-link d-flex align-items-center" style="cursor: pointer;">
+                        <i class="fas fa-comments" style="margin-right: 8px;"></i> <!-- Chat icon -->
+                    </a>
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         <li class="nav-item dropdown">
@@ -156,6 +227,27 @@
                     </a>
                 </div>
             </nav>
+
+
+            <div id="chatBox" class="chat-box" style="display: none;">
+                <div class="chat-header">
+                    <span>Chat</span>
+                    <button id="closeChat" class="close-chat-btn">&times;</button>
+                </div>
+                <div class="chat-content" id="chatContent">
+                    <!-- Messages will go here -->
+                    <p style="background-color:white;">Welcome! How can we help you today?</p>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatMessageInput" placeholder="Type a message..." />
+                    <button id="sendMessageBtn">Send</button>
+                </div>
+            </div>
+
+
+
+
+
         </div>
     </header>
     <main>
@@ -335,6 +427,9 @@
                 var url = "{{ route('front.localizationcontroller', ':locale') }}";
                 url = url.replace(':locale', selectedLanguage);
                 window.location.href = url;
+
+
+
             });
             document.addEventListener('DOMContentLoaded', function () {
                 var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
@@ -379,6 +474,61 @@
                     window.location.href = url;
                 }
             }
+        </script>
+
+
+
+        <script>
+            // Toggle chat box visibility
+            document.getElementById('chatToggle').addEventListener('click', function (event) {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.style.display = chatBox.style.display === 'none' || chatBox.style.display === '' ? 'block' : 'none';
+                event.preventDefault();
+                $.ajax({
+                    url: "{{ route('front.chat') }}",
+                    type: 'GET',
+                    success: function (messages) {
+
+                        const chatContent = document.getElementById('chatContent'); // Make sure this element exists
+                        chatContent.innerHTML = ''; // Clear existing messages if needed
+
+                        for (let i = 0; i <messages.length; i++) {
+                            const message = messages[i];
+                            const newMessage = document.createElement('p');
+                            newMessage.textContent = message.message_content;
+                            chatContent.appendChild(newMessage);
+                        }
+                    }
+                });
+            });
+
+            // Close chat box when close button is clicked
+            document.getElementById('closeChat').addEventListener('click', function () {
+                document.getElementById('chatBox').style.display = 'none';
+            });
+
+            // Optional: Send message logic (dummy example)
+            document.getElementById('sendMessageBtn').addEventListener('click', function () {
+                event.preventDefault();
+                const messageInput = document.getElementById('chatMessageInput');
+                const chatContent = document.getElementById('chatContent');
+
+                $.ajax({
+                    url: "{{ route('send.message') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        message_content: messageInput.value
+                    },
+                    success: function (message) {
+                        const newMessage = document.createElement('p');
+                        newMessage.textContent = message.message_content;
+                        chatContent.appendChild(newMessage);
+                        messageInput.value = ''; // Clear input field
+                        chatContent.scrollTop = chatContent.scrollHeight; // Scroll to bottom
+                    }
+                });
+            });
         </script>
         @yield('customJs')
 </body>

@@ -27,6 +27,7 @@ use App\Http\Controllers\admin\StockManagementController;
 use App\Http\Controllers\admin\ProductAttributeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AttributeController;  
+use App\Http\Controllers\ChatController;  
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -88,6 +89,12 @@ Route::group(['prefix' => 'account'], function () {
         Route::GET('/mywishlist', [AuthController::class, 'wishlist'])->name('account.wishlist');
         Route::POST('/remove-product-from-wishlist', [AuthController::class, 'remove_product_from_wishlist'])->name('account.remove_product_from_wislist');
         Route::GET('/logout', [AuthController::class, 'logout'])->name('account.logout');
+
+        Route::get('/chat-box', [ChatController::class, 'renderchatbox'])->name('front.chat');
+        Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
+        Route::get('/fetch-messages/{receiverId}', [ChatController::class, 'fetchMessages'])->name('fetch.messages');
+        Route::post('/mark-as-read/{receiverId}', [ChatController::class, 'markAsRead'])->name('mark.as.read');
+
     });
 });
 Route::group(['prefix' => 'admin'], function () {
