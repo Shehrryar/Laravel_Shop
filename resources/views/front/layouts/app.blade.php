@@ -229,7 +229,9 @@
             </nav>
 
 
-            <div id="chatBox" class="chat-box" style="display: none;">
+
+
+            <div id="chatBox" class="chat-box" style="display: none; display: block; position: fixed; z-index: 9;bottom: 67%; right: 0%;">
                 <div class="chat-header">
                     <span>Chat</span>
                     <button id="closeChat" class="close-chat-btn">&times;</button>
@@ -492,7 +494,7 @@
                         const chatContent = document.getElementById('chatContent'); // Make sure this element exists
                         chatContent.innerHTML = ''; // Clear existing messages if needed
 
-                        for (let i = 0; i <messages.length; i++) {
+                        for (let i = 0; i < messages.length; i++) {
                             const message = messages[i];
                             const newMessage = document.createElement('p');
                             newMessage.textContent = message.message_content;
