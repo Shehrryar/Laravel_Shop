@@ -9,16 +9,29 @@ class ChatController extends Controller
 {
 
     public function renderchatbox(Request $request)
-    {    $adminId = DB::table('users')
-        ->where('role', 2)
-        ->where('name', 'admin')
-        ->value('id');
+    {
+        $adminId = DB::table('users')
+            ->where('role', 2)
+            ->where('name', 'admin')
+            ->value('id');
         $getchat = DB::table('messages')
-        ->where('sender_id', Auth::id())
-        ->where('receiver_id', $adminId)
-        ->get();
-        return response()->json($getchat);
-    
+            ->where(function ($query) use ($adminId) {
+                $query->where('sender_id', Auth::id())
+                    ->where('receiver_id', $adminId);
+            })
+            ->orWhere(function ($query) use ($adminId) {
+                $query->where('sender_id', $adminId)
+                    ->where('receiver_id', Auth::id());
+            })
+            ->orderBy('created_at', 'asc') // Optional: Order by timestamp if needed
+            ->get();
+
+        $data = [];
+        $data['sender_id'] = Auth::id();
+        $data['receiver_id'] = $adminId;
+        $data['chat_message'] = $getchat;
+        return response()->json($data);
+
     }
     public function sendMessage(Request $request)
     {

@@ -40,76 +40,6 @@
     <!-- Fav Icon -->
     <link rel="shortcut icon" type="image/x-icon" href="#" />
     <meta name="csrf-token" content="{{csrf_token()}}">
-    <style>
-        <style>.chat-box {
-            width: 300px;
-            height: 400px;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-
-        .close-chat-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .chat-content {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-        }
-
-        .chat-input {
-            padding: 10px;
-            border-top: 1px solid #ccc;
-            display: flex;
-        }
-
-        .chat-input input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 5px;
-        }
-
-        .chat-input button {
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .chat-input button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-
-    </style>
 </head>
 @php
 
@@ -200,7 +130,7 @@
                     </ul>
                 </div>
                 <div class="right-nav py-0 d-flex align-items-center ">
-                    <a href="#" id="chatToggle" class="nav-link d-flex align-items-center" style="cursor: pointer;">
+                    <a href="#" id="chatboxdisplay" class="nav-link d-flex align-items-center" style="cursor: pointer;">
                         <i class="fas fa-comments" style="margin-right: 8px;"></i> <!-- Chat icon -->
                     </a>
                     <ul class="navbar-nav ml-auto">
@@ -230,26 +160,35 @@
 
 
 
-
-            <div id="chatBox" class="chat-box" style="display: none; display: block; position: fixed; z-index: 9;bottom: 67%; right: 0%;">
-                <div class="chat-header">
+            <div id="chatBox" class="chat-box"
+                style="display:none; position: fixed; z-index: 9; bottom: 10%; right: 2%; width: 300px; height: 400px; border: 1px solid #ccc; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                <div class="chat-header"
+                    style="background-color: #f1f1f1; padding: 10px; border-bottom: 1px solid #ccc;">
                     <span>Chat</span>
-                    <button id="closeChat" class="close-chat-btn">&times;</button>
+                    <button id="closeChat" class="close-chat-btn"
+                        style="float: right; border: none; background: none; font-size: 20px; cursor: pointer;">&times;</button>
                 </div>
-                <div class="chat-content" id="chatContent">
+                <div class="chat-content" id="chatContent"
+                    style="height: calc(100% - 100px); overflow-y: auto; padding: 10px; background-color: #ffffff;">
                     <!-- Messages will go here -->
-                    <p style="background-color:white;">Welcome! How can we help you today?</p>
+                    <p id="sener_p" style="background-color:white;word-break: break-all;width: 60%;">Welcome! How can we
+                        help you today?</p>
+                    <p id="receiver_p"
+                        style="background-color:gray;word-break: break-all;width: 60%;margin-left: 107px;">Welcome! How
+                        can we help you today?</p>
                 </div>
-                <div class="chat-input">
-                    <input type="text" id="chatMessageInput" placeholder="Type a message..." />
-                    <button id="sendMessageBtn">Send</button>
+                <div class="chat-input" style="padding: 10px; border-top: 1px solid #ccc; background-color: #f9f9f9;">
+                    <input type="text" id="chatMessageInput" placeholder="Type a message..."
+                        style="width: calc(100% - 60px); padding: 5px; " />
+                    <button id="sendMessageBtn"
+                        style="padding: 5px 10px; margin-left: 5px; font-size:13px; ">Send</button>
                 </div>
             </div>
 
 
 
-        
-        
+
+
         </div>
     </header>
     <main>
@@ -376,9 +315,6 @@
                     }
                 });
             }
-
-
-
             $('.redhearticon').css({
                 'color': 'red'
             });
@@ -482,7 +418,7 @@
 
         <script>
             // Toggle chat box visibility
-            document.getElementById('chatToggle').addEventListener('click', function (event) {
+            document.getElementById('chatboxdisplay').addEventListener('click', function (event) {
                 const chatBox = document.getElementById('chatBox');
                 chatBox.style.display = chatBox.style.display === 'none' || chatBox.style.display === '' ? 'block' : 'none';
                 event.preventDefault();
@@ -490,19 +426,33 @@
                     url: "{{ route('front.chat') }}",
                     type: 'GET',
                     success: function (messages) {
-
                         const chatContent = document.getElementById('chatContent'); // Make sure this element exists
                         chatContent.innerHTML = ''; // Clear existing messages if needed
 
-                        for (let i = 0; i < messages.length; i++) {
-                            const message = messages[i];
-                            const newMessage = document.createElement('p');
-                            newMessage.textContent = message.message_content;
+                        for (let i = 0; i < messages.chat_message.length; i++) {
+                            const message = messages.chat_message[i]; // Move this line outside of the conditional block
+                            let newMessage = document.createElement('p');
+                            newMessage.style.wordBreak = 'break-all';
+                            newMessage.style.width = '60%';
+                            newMessage.style.color = 'white';
+
+                            // Check if the message sender matches
+                            if (messages.sender_id == message.sender_id) {
+                                newMessage.style.backgroundColor = 'blue';
+                                newMessage.textContent = message.message_content;
+                            } else {
+                                newMessage.style.backgroundColor = 'grey';
+                                newMessage.style.marginLeft = '107px';
+                                newMessage.textContent = message.message_content;
+                            }
+
+                            // Append the new message to the chat content container
                             chatContent.appendChild(newMessage);
                         }
                     }
                 });
             });
+
 
             // Close chat box when close button is clicked
             document.getElementById('closeChat').addEventListener('click', function () {
@@ -523,8 +473,14 @@
                         message_content: messageInput.value
                     },
                     success: function (message) {
+
                         const newMessage = document.createElement('p');
                         newMessage.textContent = message.message_content;
+                        newMessage.style.backgroundColor = 'blue';
+                        newMessage.style.color = 'white';
+
+                        newMessage.style.wordBreak = 'break-all';
+                        newMessage.style.width = '60%';
                         chatContent.appendChild(newMessage);
                         messageInput.value = ''; // Clear input field
                         chatContent.scrollTop = chatContent.scrollHeight; // Scroll to bottom
