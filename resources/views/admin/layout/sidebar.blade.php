@@ -148,6 +148,15 @@
                     </a>
                 </li>
 
+
+
+                <li class="nav-item">
+                    <a href="{{route('chat.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-globe"></i>
+                        <p>Chat</p>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a href="pages.html" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>

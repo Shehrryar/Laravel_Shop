@@ -26,8 +26,9 @@ use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\StockManagementController;
 use App\Http\Controllers\admin\ProductAttributeController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AttributeController;  
-use App\Http\Controllers\ChatController;  
+use App\Http\Controllers\admin\adminChatController;  
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -223,6 +224,17 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
         Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+
+
+
+
+        Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
+        // Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
+        // Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
+        // Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
+        // Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
+        // Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });
