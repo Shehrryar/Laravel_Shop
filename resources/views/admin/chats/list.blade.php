@@ -5,10 +5,7 @@
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>User</h1>
-            </div>
-            <div class="col-sm-6 text-right">
-                <a href='{{route("users.create")}}' class="btn btn-primary">New User</a>
+                <h1>User Chats</h1>
             </div>
         </div>
     </div>
@@ -24,8 +21,9 @@
                 <div class="card-header">
                     <div class="card-tools">
                         <div class="input-group input-group" style="width: 250px;">
-                            <input type="text" value='{{Request::get("keyword")}}' name="keyword" class="form-control float-right" placeholder="Search">
-                                <div class="input-group-append">
+                            <input type="text" value='{{Request::get("keyword")}}' name="keyword"
+                                class="form-control float-right" placeholder="Search">
+                            <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                     <i class="fas fa-search"></i>
                                 </button>
@@ -35,77 +33,49 @@
                 </div>
             </form>
 
-            <div class="card-body table-responsive p-0">
-                <table class="table table-hover text-nowrap">
-                    <thead>
-                        <tr>
-                            <th width="60">ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone No.</th>
-                            <th width="100">Enable / Disable</th>
-                            <th width="100">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if(!empty($allchatstoadmin))
-                            @foreach($allchatstoadmin as $key => $userchat)
-                                @foreach($users as $key => $user)
-                                    @if($user->id == $allchatstoadmin[$key])
-                                        <tr>
-                                            <td>{{ $userchat->id}}</td>
-                                            <td>{{ $user->name}}</td>
-                                            <td>{{ $userchat->email}}</td>
-                                            <td>{{ $userchat->phone}}</td>
-                                            <td>
-                                                @if($userchat->status == 1)
-                                                    <svg class="text-success-500 h-6 w-6 text-success" xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                                        aria-hidden="true">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                @else
-                                                    <svg class="text-danger h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <a href="{{route('users.edit', $userchat->id)}}">
-                                                    <svg class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                        <path
-                                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z">
-                                                        </path>
-                                                    </svg>
-                                                </a>
-                                                <a href="#" onclick='deleuser({{$userchat->id}})' class="text-danger w-4 h-4 mr-1">
-                                                    <svg wire:loading.remove.delay="" wire:target=""
-                                                        class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                        <path ath fill-rule="evenodd"
-                                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                                            clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="5">
-                                    Record Not Found
-                                </td>
-                            </tr>
+            <div class="chat-container">
+                <!-- User List Section -->
+                <div class="user-list">
+                    @foreach ($allchatstoadmin as $userId => $chats)
+                        @if (isset($chats['user_detail']))
+                            <h4>{{ $chats['user_detail']['name'] }}</h4> <!-- Display the User's Name -->
                         @endif
-                    </tbody>
-                </table>
+                    @endforeach
+                </div>
+
+                <!-- Chat Box Section -->
+                <div class="chat-box">
+                    @foreach ($allchatstoadmin as $userId => $chats)
+                                        @php
+                                            // Get the latest chat message
+                                            $latestChat = collect($chats)
+                                                ->filter(function ($chat, $key) {
+                                                    return $key !== 'user_detail'; // Ignore user_detail key
+                                                })
+                                                ->sortByDesc('created_at')
+                                                ->first();
+                                        @endphp
+
+                                        @if ($latestChat)
+                                            <div class="chat-message {{ $latestChat->sender_id === $userId ? 'sent' : '' }}">
+                                                <p><strong>Message:</strong> {{ htmlspecialchars($latestChat->message_content) }}</p>
+                                                <p><small><strong>Sent At:</strong> {{ $latestChat->created_at }}</small></p>
+                                            </div>
+                                        @endif
+                    @endforeach
+
+                    <!-- Input for sending new messages (example placeholder) -->
+                    <div class="chat-input">
+                        <input type="text" placeholder="Type a message..." />
+                        <button type="button">Send</button>
+                    </div>
+                </div>
             </div>
+
+
+
+
+
             <div class="card-footer clearfix">
             </div>
         </div>
@@ -115,21 +85,21 @@
 @endsection
 @section('customjs') 
 <script>
-function deleuser(user_id) {
-    var delurl = '{{route("users.delete", "ID")}}'.replace("ID", user_id);
-    if (confirm("Are you sure you want to delete " + user_id)) {
-        $.ajax({
-            url: delurl,
-            type: 'delete',
-            data: {}, // Use correct form ID
-            dataType: 'json', // 'datatype' should be 'dataType'
-            success: function (response) {
-                if (response['status']) {
-                    window.location.href = "{{route('users.index')}}";
+    function deleuser(user_id) {
+        var delurl = '{{route("users.delete", "ID")}}'.replace("ID", user_id);
+        if (confirm("Are you sure you want to delete " + user_id)) {
+            $.ajax({
+                url: delurl,
+                type: 'delete',
+                data: {}, // Use correct form ID
+                dataType: 'json', // 'datatype' should be 'dataType'
+                success: function (response) {
+                    if (response['status']) {
+                        window.location.href = "{{route('users.index')}}";
+                    }
                 }
-            }
-        });
+            });
+        }
     }
-}
 </script>
 @endsection

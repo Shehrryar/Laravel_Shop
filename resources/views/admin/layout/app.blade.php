@@ -16,6 +16,71 @@
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/select2/css/select2.min.css')}}">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 		<meta name="csrf-token" content="{{csrf_token()}}">
+
+		<style>
+    .chat-container {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        max-width: 800px;
+        margin: 20px auto;
+        height: 500px;
+    }
+    .user-list {
+        flex: 1;
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-right: 1px solid #ccc;
+        overflow-y: auto;
+    }
+    .user-list h4 {
+        margin-bottom: 15px;
+    }
+    .chat-box {
+        flex: 3;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        overflow-y: auto;
+        height: 100%;
+    }
+    .chat-message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #e1f7d5;
+        max-width: 60%;
+    }
+    .chat-message.sent {
+        align-self: flex-end;
+        background-color: #c1e1ff;
+    }
+    .chat-message p {
+        margin: 0;
+        padding: 0;
+    }
+    .chat-input {
+        margin-top: 15px;
+        display: flex;
+    }
+    .chat-input input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .chat-input button {
+        padding: 10px;
+        margin-left: 5px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
 	</head>
 	<body class="hold-transition sidebar-mini">
 		<!-- Site wrapper -->

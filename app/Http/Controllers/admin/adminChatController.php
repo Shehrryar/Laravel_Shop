@@ -28,11 +28,14 @@ class adminChatController extends Controller
             // Convert the collection to an array if it's not empty.
             if ($getchat->isNotEmpty()) {
                 $all_chats_array[$user_id] = $getchat->toArray();
+                $all_chats_array[$user_id]['user_detail']['name'] = $user->name;
+                $all_chats_array[$user_id]['user_detail']['email'] = $user->email;
+                $all_chats_array[$user_id]['user_detail']['phone'] = $user->phone;
+                $all_chats_array[$user_id]['user_detail']['status'] = $user->status;
             }
         }
         $data = [
             'allchatstoadmin' => $all_chats_array,
-            'users' => $users,
         ];
         return view('admin.chats.list', $data);
     }
