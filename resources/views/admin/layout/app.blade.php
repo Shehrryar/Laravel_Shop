@@ -18,7 +18,7 @@
 		<meta name="csrf-token" content="{{csrf_token()}}">
 
 		<style>
-    .chat-container {
+    /* .chat-container {
         display: flex;
         border: 1px solid #ccc;
         border-radius: 8px;
@@ -79,7 +79,7 @@
         color: #fff;
         border-radius: 4px;
         cursor: pointer;
-    }
+    } */
 </style>
 	</head>
 	<body class="hold-transition sidebar-mini">

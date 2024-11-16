@@ -32,20 +32,14 @@
                     </div>
                 </div>
             </form>
+            <div style="display: flex;" class="chat_container" >
+                <div style="padding:10px;" class="chat-container">
 
-            <div class="chat-container">
-                <!-- User List Section -->
-                <div class="user-list">
                     @foreach ($allchatstoadmin as $userId => $chats)
-                        @if (isset($chats['user_detail']))
-                            <h4>{{ $chats['user_detail']['name'] }}</h4> <!-- Display the User's Name -->
-                        @endif
-                    @endforeach
-                </div>
+                                        @if (isset($chats['user_detail']))
+                                            <a href = "">{{ $chats['user_detail']['name'] }}</a> <!-- Display the User's Name -->
+                                        @endif
 
-                <!-- Chat Box Section -->
-                <div class="chat-box">
-                    @foreach ($allchatstoadmin as $userId => $chats)
                                         @php
                                             // Get the latest chat message
                                             $latestChat = collect($chats)
@@ -54,8 +48,7 @@
                                                 })
                                                 ->sortByDesc('created_at')
                                                 ->first();
-                                        @endphp
-
+                                          @endphp
                                         @if ($latestChat)
                                             <div class="chat-message {{ $latestChat->sender_id === $userId ? 'sent' : '' }}">
                                                 <p><strong>Message:</strong> {{ htmlspecialchars($latestChat->message_content) }}</p>
@@ -63,19 +56,11 @@
                                             </div>
                                         @endif
                     @endforeach
-
-                    <!-- Input for sending new messages (example placeholder) -->
-                    <div class="chat-input">
-                        <input type="text" placeholder="Type a message..." />
-                        <button type="button">Send</button>
-                    </div>
+                </div>
+                <div style="background-color: gray; padding: 10px" class="message-box" >
+                    uieywriouewor
                 </div>
             </div>
-
-
-
-
-
             <div class="card-footer clearfix">
             </div>
         </div>
