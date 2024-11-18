@@ -229,8 +229,12 @@ Route::group(['prefix' => 'admin'], function () {
 
 
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
+        Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
+        Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
+
+
+        
         // Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
-        // Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
         // Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
         // Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         // Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');

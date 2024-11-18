@@ -54,8 +54,11 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
+
+
         if ($validator->passes()) {
-            if (Auth::attempt(['email' => $request->email, 'google_id' => $request->password], $request->get('remember'))) {
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
                 if (session()->has('url.intended')) {
                     return redirect(session()->get('url.intended'));
                 }

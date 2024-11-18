@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Message;
 class adminChatController extends Controller
 {
     public function index()
@@ -38,5 +39,41 @@ class adminChatController extends Controller
             'allchatstoadmin' => $all_chats_array,
         ];
         return view('admin.chats.list', $data);
+    }
+    public function chatDisplayBox(Request $request)
+    {
+        $userId = $request->user_id;
+        $specificChat = DB::table('messages')
+            ->where(function ($query) use ($userId) {
+                $query->where('sender_id', Auth::id())
+                    ->where('receiver_id', $userId);
+            })
+            ->orWhere(function ($query) use ($userId) {
+                $query->where('sender_id', $userId)
+                    ->where('receiver_id', Auth::id());
+            })
+            ->orderBy('created_at', 'asc') // Ensure chats are ordered by creation time.
+            ->get();
+
+
+        $response = response()->json(
+            [
+                'status' => true,
+                'specificChat' => $specificChat,
+            ]
+        );
+        return $response;
+    }
+
+
+    public function sendMessage(Request $request)
+    {
+        $message = Message::create([
+            'sender_id' => Auth::id(),
+            'receiver_id' => $request->receiverId,
+            'message_content' => $request->message_content,
+        ]);
+
+        return response()->json($message);
     }
 }

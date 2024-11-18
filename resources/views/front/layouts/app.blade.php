@@ -168,7 +168,7 @@
                     <button id="closeChat" class="close-chat-btn"
                         style="float: right; border: none; background: none; font-size: 20px; cursor: pointer;">&times;</button>
                 </div>
-                <div class="chat-content" id="chatContent"
+                <div class="chat-content" id="chatContent"uieywriouewor
                     style="height: calc(100% - 100px); overflow-y: auto; padding: 10px; background-color: #ffffff;">
                     <!-- Messages will go here -->
                     <p id="sener_p" style="background-color:white;word-break: break-all;width: 60%;">Welcome! How can we
@@ -435,6 +435,8 @@
                             newMessage.style.wordBreak = 'break-all';
                             newMessage.style.width = '60%';
                             newMessage.style.color = 'white';
+                            newMessage.style.borderRadius = '10px';
+                            newMessage.style.padding = '10px';
 
                             // Check if the message sender matches
                             if (messages.sender_id == message.sender_id) {
@@ -478,7 +480,8 @@
                         newMessage.textContent = message.message_content;
                         newMessage.style.backgroundColor = 'blue';
                         newMessage.style.color = 'white';
-
+                        newMessage.style.borderRadius = '10px';
+                        newMessage.style.padding = '10px';
                         newMessage.style.wordBreak = 'break-all';
                         newMessage.style.width = '60%';
                         chatContent.appendChild(newMessage);
