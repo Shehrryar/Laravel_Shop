@@ -103,7 +103,6 @@
         }
     }
 
-
     function openChat(user_id) {
         $.ajax({
             url: '{{route('chat.chatdisplaybox')}}',
@@ -120,7 +119,6 @@
                         const message = response.specificChat[i]; // Move this line outside of the conditional block
                         let newMessage = document.createElement('p');
                         let receiver_id = document.getElementById('receiver_id');
-
                         newMessage.style.wordBreak = 'break-all';
                         newMessage.style.borderRadius = '60px';
                         newMessage.style.padding = '10px';
@@ -177,7 +175,5 @@
             }
         });
     });
-
-
 </script>
 @endsection
