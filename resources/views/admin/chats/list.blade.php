@@ -143,7 +143,7 @@
             }
         });
     }
-
+    setInterval(openChat, 50);
 
 
 

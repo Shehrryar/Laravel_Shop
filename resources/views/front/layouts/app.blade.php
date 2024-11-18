@@ -168,7 +168,7 @@
                     <button id="closeChat" class="close-chat-btn"
                         style="float: right; border: none; background: none; font-size: 20px; cursor: pointer;">&times;</button>
                 </div>
-                <div class="chat-content" id="chatContent"uieywriouewor
+                <div class="chat-content" id="chatContent" uieywriouewor
                     style="height: calc(100% - 100px); overflow-y: auto; padding: 10px; background-color: #ffffff;">
                     <!-- Messages will go here -->
                     <p id="sener_p" style="background-color:white;word-break: break-all;width: 60%;">Welcome! How can we
@@ -422,6 +422,11 @@
                 const chatBox = document.getElementById('chatBox');
                 chatBox.style.display = chatBox.style.display === 'none' || chatBox.style.display === '' ? 'block' : 'none';
                 event.preventDefault();
+                fetchMessages(); // Fetch messages immediately when clicked
+            });
+
+            // Function to fetch and update chat messages
+            function fetchMessages() {
                 $.ajax({
                     url: "{{ route('front.chat') }}",
                     type: 'GET',
@@ -430,7 +435,7 @@
                         chatContent.innerHTML = ''; // Clear existing messages if needed
 
                         for (let i = 0; i < messages.chat_message.length; i++) {
-                            const message = messages.chat_message[i]; // Move this line outside of the conditional block
+                            const message = messages.chat_message[i];
                             let newMessage = document.createElement('p');
                             newMessage.style.wordBreak = 'break-all';
                             newMessage.style.width = '60%';
@@ -453,7 +458,11 @@
                         }
                     }
                 });
-            });
+            }
+
+            // Set up auto-refresh every 5 seconds (adjust the interval as needed)
+            setInterval(fetchMessages, 50);
+
 
 
             // Close chat box when close button is clicked
