@@ -50,25 +50,25 @@
                     @endphp
 
                     @foreach ($sortedChats as $userId => $chats)
-                                        @if (isset($chats['user_detail']))
-                                            <a href="#" onclick='openChat({{$userId}})'>{{ $chats['user_detail']['name'] }}</a>
-                                            <!-- Display the User's Name -->
-                                        @endif
-                                        @php
-                                            // Get the latest chat message
-                                            $latestChat = collect($chats)
-                                                ->filter(function ($chat, $key) {
-                                                    return $key !== 'user_detail'; // Ignore user_detail key
-                                                })
-                                                ->sortByDesc('created_at')
-                                                ->first();
-                                        @endphp
-                                        @if ($latestChat)
-                                            <div class="chat-message {{ $latestChat->sender_id === $userId ? 'sent' : '' }}">
-                                                <p><strong>Message:</strong> {{ htmlspecialchars($latestChat->message_content) }}</p>
-                                                <p><small><strong>Sent At:</strong> {{ $latestChat->created_at }}</small></p>
-                                            </div>
-                                        @endif
+                            @if (isset($chats['user_detail']))
+                                <a href="#" onclick='openChat({{$userId}})'>{{ $chats['user_detail']['name'] }}</a>
+                                <!-- Display the User's Name -->
+                            @endif
+                            @php
+                                // Get the latest chat message
+                                $latestChat = collect($chats)
+                                    ->filter(function ($chat, $key) {
+                                        return $key !== 'user_detail'; // Ignore user_detail key
+                                    })
+                                    ->sortByDesc('created_at')
+                                    ->first();
+                            @endphp
+                            @if ($latestChat)
+                                <div class="chat-message {{ $latestChat->sender_id === $userId ? 'sent' : '' }}">
+                                    <p><strong>Message:</strong> {{ htmlspecialchars($latestChat->message_content) }}</p>
+                                    <p><small><strong>Sent At:</strong> {{ $latestChat->created_at }}</small></p>
+                                </div>
+                            @endif
                     @endforeach
 
                 </div>
@@ -157,17 +157,6 @@
             }
         });
     }
-
-    setInterval(function () {
-        const receiver_id = document.getElementById('receiver_id');
-        if (receiver_id) {
-            const user_id = receiver_id.value;
-            openChat(user_id);
-        }
-    }, 5000);
-
-
-
     document.getElementById('sendMessageBtn').addEventListener('click', function () {
         event.preventDefault();
         const messageInput = document.getElementById('chatMessageInput');
@@ -183,7 +172,6 @@
                 receiverId: receiverId.value
             },
             success: function (message) {
-
                 const newMessage = document.createElement('p');
                 newMessage.textContent = message.message_content;
                 newMessage.style.backgroundColor = 'blue';
@@ -198,5 +186,15 @@
             }
         });
     });
+
+
+
+
+
+
+
+
+
+
 </script>
 @endsection
