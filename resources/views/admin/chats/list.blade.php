@@ -35,7 +35,21 @@
             <div style="display: flex;" class="chat_container">
                 <div style="padding:40px;" class="chat-container">
 
-                    @foreach ($allchatstoadmin as $userId => $chats)
+                    @php
+                        // Sort chats by the latest chat message's created_at
+                        $sortedChats = collect($allchatstoadmin)->sortByDesc(function ($chats) {
+                            // Get the latest chat message for sorting
+                            $latestChat = collect($chats)
+                                ->filter(function ($chat, $key) {
+                                    return $key !== 'user_detail'; // Ignore user_detail key
+                                })
+                                ->sortByDesc('created_at')
+                                ->first();
+                            return $latestChat ? $latestChat->created_at : null;
+                        });
+                    @endphp
+
+                    @foreach ($sortedChats as $userId => $chats)
                                         @if (isset($chats['user_detail']))
                                             <a href="#" onclick='openChat({{$userId}})'>{{ $chats['user_detail']['name'] }}</a>
                                             <!-- Display the User's Name -->
@@ -48,7 +62,7 @@
                                                 })
                                                 ->sortByDesc('created_at')
                                                 ->first();
-                                          @endphp
+                                        @endphp
                                         @if ($latestChat)
                                             <div class="chat-message {{ $latestChat->sender_id === $userId ? 'sent' : '' }}">
                                                 <p><strong>Message:</strong> {{ htmlspecialchars($latestChat->message_content) }}</p>
@@ -56,6 +70,7 @@
                                             </div>
                                         @endif
                     @endforeach
+
                 </div>
                 <div style="width:100%;" id="chatBox" class="chat-box">
                     <div class="chat-header"
@@ -70,7 +85,7 @@
                         style="padding: 10px; border-top: 1px solid #ccc; background-color: #f9f9f9;">
                         <input type="textarea" id="chatMessageInput" placeholder="Type a message..."
                             style="width: calc(100% - 60px); padding: 5px; " />
-                            <input id="receiver_id" type="hidden" value= "">
+                        <input id="receiver_id" type="hidden" value="">
                         <button id="sendMessageBtn"
                             style="padding: 5px 10px; margin-left: 5px; font-size:13px; ">Send</button>
                     </div>
@@ -107,9 +122,10 @@
         $.ajax({
             url: '{{route('chat.chatdisplaybox')}}',
             type: 'post',
-            data: { user_id: user_id,
+            data: {
+                user_id: user_id,
                 _token: "{{ csrf_token() }}",
-             }, // Use correct form ID
+            }, // Use correct form ID
             dataType: 'json', // 'datatype' should be 'dataType'
             success: function (response) {
                 if (response['status'] === true) {
@@ -141,7 +157,14 @@
             }
         });
     }
-    setInterval(openChat, 50);
+
+    setInterval(function () {
+        const receiver_id = document.getElementById('receiver_id');
+        if (receiver_id) {
+            const user_id = receiver_id.value;
+            openChat(user_id);
+        }
+    }, 5000);
 
 
 
@@ -157,7 +180,7 @@
             data: {
                 _token: "{{ csrf_token() }}",
                 message_content: messageInput.value,
-                receiverId:receiverId.value
+                receiverId: receiverId.value
             },
             success: function (message) {
 
