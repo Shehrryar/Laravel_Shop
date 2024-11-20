@@ -29,36 +29,41 @@
                                         <th>Date Purchased</th>
                                         <th>Status</th>
                                         <th>Total</th>
+                                        <th>View Order Detial</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if ($orders->isNotEmpty())
-                                    @foreach ($orders as $order)
+                                        @foreach ($orders as $order)
+                                            <tr>
+                                                <td>
+                                                    {{$order->id}}
+                                                </td>
+                                                <td>{{\Carbon\Carbon::parse($order->created_at)->format('d M, Y')}}</td>
+                                                <td>
+                                                    @if ($order->status == 'pending')
+                                                        <span class="badge bg-danger">Pending</span>
+                                                    @elseif($order->status == 'shipped')
+                                                        <span class="badge bg-info">Shipped</span>
+                                                    @elseif($order->status == 'delivered')
+                                                        <span class="badge bg-success">Delivered </span>
+                                                    @else
+                                                        <span class="badge bg-danger">Cancelled </span>
+                                                    @endif
 
-                                    <tr>
-                                        <td>
-                                            <a href="{{route('account.orderdetail',$order->id)}}">{{$order->id}}</a>
-                                        </td>
-                                        <td>{{\Carbon\Carbon::parse($order->created_at)->format('d M, Y')}}</td>
-                                        <td>
-                                            @if ($order->status == 'pending')
-                                            <span class="badge bg-danger">Pending</span>
-                                            @elseif($order->status == 'shipped')
-                                            <span class="badge bg-info">Shipped</span>
-                                            @elseif($order->status == 'delivered')
-                                            <span class="badge bg-success">Delivered </span>
-                                            @else
-                                            <span class="badge bg-danger">Cancelled </span>
-                                            @endif
+                                                </td>
+                                                <td>${{number_format($order->grandtotal)}}</td>
+                                                <td> <a href="{{ route('account.orderdetail', $order->id) }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <i class="fas fa-eye mr-2"></i> 
+                                                    </a></td>
 
-                                        </td>
-                                        <td>${{number_format($order->grandtotal)}}</td>
-                                    </tr>
-                                    @endforeach
+                                            </tr>
+                                        @endforeach
                                     @else
-                                    <tr>
-                                        <td colspan="3">Orders not found</td>
-                                    </tr>
+                                        <tr>
+                                            <td colspan="3">Orders not found</td>
+                                        </tr>
                                     @endif
                                 </tbody>
                             </table>
