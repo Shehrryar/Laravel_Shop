@@ -85,14 +85,19 @@ class AuthController extends Controller
         $data['keyword'] = '';
         return view('front.account.updateprofile', $data);
     }
-
-
+    
     public function updateProfileData(Request $request)
     {
         echo "<pre>";
         print_r($request->all());
+
+
+
+
+
+
+
         exit;
-        
     }
 
 
