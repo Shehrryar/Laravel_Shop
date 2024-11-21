@@ -461,7 +461,7 @@
             }
 
             // Set up auto-refresh every 5 seconds (adjust the interval as needed)
-            setInterval(fetchMessages, 50);
+            // setInterval(fetchMessages, 50);
 
 
 

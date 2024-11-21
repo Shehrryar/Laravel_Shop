@@ -90,13 +90,6 @@ class AuthController extends Controller
     {
         echo "<pre>";
         print_r($request->all());
-
-
-
-
-
-
-
         exit;
     }
 
