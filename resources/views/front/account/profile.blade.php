@@ -27,7 +27,7 @@
                         <div class="row justify-content-center">
                             <!-- Profile Image -->
                             <div class="col-12 text-center mb-4">
-                                <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('/upload/user/default_user_image.png') }}" 
+                                <img src="{{ Auth::user()->image ? asset(Auth::user()->image) : asset('/upload/user/default_user_image.png') }}" 
                                      alt="Profile Image" 
                                      class="img-fluid rounded-circle border" 
                                      style="object-fit: cover; max-width: 100%; height: 90%; width: 30%;">

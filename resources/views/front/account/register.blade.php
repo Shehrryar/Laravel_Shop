@@ -111,7 +111,7 @@
             error: function (jQXHR, exception) {
                 console.log('something went wrong');
             }
-        })
+        });
 
     });
 

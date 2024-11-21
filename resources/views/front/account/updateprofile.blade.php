@@ -24,13 +24,10 @@
                     </div>
                     <div class="card-body p-4">
                         <form id="updateprofileform" enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT') <!-- This is used to simulate the PUT request for updating -->
-
                             <div class="row">
                                 <!-- Profile Image -->
                                 <div class="col-12 text-center mb-4">
-                                    <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('/upload/user/default_user_image.png') }}"
+                                    <img src="{{ Auth::user()->image ? asset(Auth::user()->image)  : asset('/upload/user/default_user_image.png') }}"
                                         alt="Profile Image" class="img-fluid rounded-circle border"
                                         style="object-fit: cover; max-width: 100%; height: 90%; width: 30%;">
                                     <div class="mt-2">
@@ -69,7 +66,9 @@
 
                                 <!-- Submit Button -->
                                 <div class="col-12 text-end mt-4">
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    <button id="getFormValuesButton"  class="btn btn-primary">Save Change</button>
+
+
                                 </div>
                             </div>
                         </form>
@@ -81,55 +80,44 @@
 </section>
 @endsection
 
-@section('customjs') 
-
-<script>
-    $(document).ready(function () {
-        $("#updateprofileform").click(function (event) {
-            event.preventDefault();
+@section('customJs')
+<script type="text/javascript">
 
 
-            console.log('iouetiireuo');
+
+
+
+$('#updateprofileform').submit(function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    let formData = new FormData(this); // Use FormData for file and input fields
+
+    
+    formData.append('_method', 'PUT'); // Add `_method` for PUT requests in Laravel
+    $.ajax({
+        url: '{{ route("account.updateProfileData") }}', // Ensure this route is correct
+        type: 'POST', // Use POST as PUT requires `_method`
+        data: formData,
+        processData: false, // Prevent jQuery from processing the data
+        contentType: false, // Let the browser set the Content-Type
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}" // CSRF token for Laravel security
+        },
+        dataType: 'json',
+        success: function (response) {
+
+
             
+            if(response.status === true){
+            console.log(response.status);
 
-
-
-
-
-            var formDataArray = $("#brandsform").serializeArray();
-            $.ajax({
-                url: '{{route("brands.store")}}',
-                type: 'POST',
-                data: formDataArray, // Use correct form ID
-                dataType: 'json', // 'datatype' should be 'dataType'
-                success: function (response) {
-                    if (response['status'] == true) {
-                        window.location.href = "{{route('brands.index')}}";
-                    }
-                    else {
-                        var errors = response['errors'];
-                        if (errors['name']) {
-                            // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-
-                            $('#para_name').html(errors['name']);
-
-                        }
-                        if (errors['slug']) {
-                            // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-
-                            $('#para_slug').html(errors['slug']);
-                        }
-
-                    }
-
-
-                },
-                error: function (jqXHR, exception) {
-                    console.log("Something went wrong");
-                }
-            });
-            // Further logic here
-        });
+                window.location.href = "{{route('account.profile')}}";
+            }
+        },
 
     });
+});
+
+
 </script>
+@endsection
