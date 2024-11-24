@@ -1,5 +1,4 @@
 @extends('front.layouts.app')
-
 @section('content')
 <section class="section-5 pt-3 pb-3 mb-3 bg-white">
     <div class="container">
@@ -11,12 +10,10 @@
         </div>
     </div>
 </section>
-
 <section class="section-11">
     <div class="container mt-5">
         <div class="row">
             @include('front.account.sidebar.sidebar')
-
             <div class="col-md-9">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-primary text-white">
@@ -35,40 +32,33 @@
                                         <input type="file" name="profile_image" id="profile_image" class="d-none">
                                     </div>
                                 </div>
-
                                 <!-- Name -->
                                 <div class="col-12 mb-3">
                                     <label for="name" class="form-label font-weight-bold">Name</label>
                                     <input type="text" name="name" id="name" class="form-control"
                                         value="{{ old('name', Auth::user()->name) }}">
                                 </div>
-
                                 <!-- Email -->
                                 <div class="col-12 mb-3">
                                     <label for="email" class="form-label font-weight-bold">Email</label>
                                     <input type="email" name="email" id="email" class="form-control"
                                         value="{{ old('email', Auth::user()->email) }}" readonly>
                                 </div>
-
                                 <!-- Phone -->
                                 <div class="col-12 mb-3">
                                     <label for="phone" class="form-label font-weight-bold">Phone</label>
                                     <input type="text" name="phone" id="phone" class="form-control"
                                         value="{{ old('phone', Auth::user()->phone) }}">
                                 </div>
-
                                 <!-- Address -->
                                 <div class="col-12 mb-3">
                                     <label for="address" class="form-label font-weight-bold">Address</label>
                                     <textarea name="address" id="address" class="form-control"
                                         rows="4">{{ old('address', Auth::user()->address) }}</textarea>
                                 </div>
-
                                 <!-- Submit Button -->
                                 <div class="col-12 text-end mt-4">
                                     <button id="getFormValuesButton"  class="btn btn-primary">Save Change</button>
-
-
                                 </div>
                             </div>
                         </form>
@@ -79,20 +69,11 @@
     </div>
 </section>
 @endsection
-
 @section('customJs')
 <script type="text/javascript">
-
-
-
-
-
 $('#updateprofileform').submit(function (event) {
     event.preventDefault(); // Prevent default form submission
-
     let formData = new FormData(this); // Use FormData for file and input fields
-
-    
     formData.append('_method', 'PUT'); // Add `_method` for PUT requests in Laravel
     $.ajax({
         url: '{{ route("account.updateProfileData") }}', // Ensure this route is correct
@@ -105,19 +86,12 @@ $('#updateprofileform').submit(function (event) {
         },
         dataType: 'json',
         success: function (response) {
-
-
-            
             if(response.status === true){
             console.log(response.status);
-
                 window.location.href = "{{route('account.profile')}}";
             }
         },
-
     });
 });
-
-
 </script>
 @endsection
