@@ -87,7 +87,6 @@ $('#updateprofileform').submit(function (event) {
         dataType: 'json',
         success: function (response) {
             if(response.status === true){
-            console.log(response.status);
                 window.location.href = "{{route('account.profile')}}";
             }
         },
