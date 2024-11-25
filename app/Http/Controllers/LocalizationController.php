@@ -14,7 +14,4 @@ class LocalizationController extends Controller
     }
 
 
-    public function dashborad(){
-        return view('admin.dashboard.list');
-    }
 }

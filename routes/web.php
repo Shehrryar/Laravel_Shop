@@ -107,7 +107,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
     Route::group(['middleware' => 'admin.auth'], function () {
-        Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
+        Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
+
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
         //Localization for admin
         Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('admin.localizationcontroller');
@@ -243,6 +244,5 @@ Route::group(['prefix' => 'admin'], function () {
         // Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
 
         // dashboard
-        Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });
 });
