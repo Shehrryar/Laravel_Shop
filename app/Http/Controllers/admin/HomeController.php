@@ -15,9 +15,11 @@ class HomeController extends Controller
         $data = [];
         $user_count = User::count();
         $order_count = Order::count();
+        $totalSales = Order::where('status', 'delivered')->sum('grandtotal');
 
         $data['order_count'] = $order_count;
         $data['user_count'] = $user_count;
+        $data['totalSales'] = $totalSales;
         return view('admin.dashboard.list', $data);
     }
 

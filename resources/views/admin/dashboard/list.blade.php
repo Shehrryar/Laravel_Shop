@@ -46,7 +46,7 @@
 							<div class="col-lg-4 col-6">							
 								<div class="small-box card">
 									<div class="inner">
-										<h3>$1000</h3>
+										<h3>{{$totalSales}}$</h3>
 										<p>Total Sale</p>
 									</div>
 									<div class="icon">
