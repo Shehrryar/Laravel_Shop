@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -9,9 +7,6 @@ use App\Models\Category;
 use Illuminate\Support\Facades\File;
 use Crypt;
 use App\Models\TempImage;
-
-
-
 class CategoryController extends Controller
 {
     public function index(Request $request){
@@ -35,7 +30,6 @@ class CategoryController extends Controller
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status;
-            $category->save();
          if(!empty($request->image_id)){
             $tempimage = TempImage::find($request->image_id);
             $extarray = explode('.', $tempimage->name);
