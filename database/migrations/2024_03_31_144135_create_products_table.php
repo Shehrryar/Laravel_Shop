@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     /**
@@ -19,8 +17,9 @@ return new class extends Migration
             $table->double('price',10,2);
             $table->double('compare_price', 10, 2)->nullable();
             $table->foreignId('categories_id',10,2)->constrained()->onDelete('cascade');
-            $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->onDelete('cascade');
-            $table->foreignId('brands_id',10,2)->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('sub_category_id')->nullable();
+            $table->foreignId('sub_sub_category_id')->nullable();
+            $table->foreignId('brands_id',10,2)->nullable();
             $table->boolean('is_featured');
             $table->string('sku');
             $table->string('barcode')->nullable();
@@ -30,7 +29,6 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
