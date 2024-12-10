@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable();
             $table->integer('quantity')->default(0);   // Total quantity added
             $table->integer('sold_quantity')->default(0); // Total sold quantity
+            $table->integer('status')->default(0);   // Total quantity added
             $table->timestamps();
         });
     }
