@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('sub_sub_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->nullable();
-            $table->integer('quantity')->default(0);   // Total quantity added
-            $table->integer('sold_quantity')->default(0); // Total sold quantity
+            $table->string('name');
+            $table->string('slug');
+            $table->integer('status');
+            $table->foreignId('category_id')->nullable();
+            $table->foreignId('subcategory_id')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('sub_sub_categories');
     }
 };

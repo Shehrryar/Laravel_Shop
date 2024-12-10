@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_ratings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->nullable();
             $table->string('username');
             $table->string('email');
             $table->string('comment');

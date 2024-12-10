@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->noDelete('cascade');
+            $table->foreignId('user_id')->nullable();
             $table->double('subtotal',10,2);
             $table->double('shipping',10,2);
             $table->string('coupon_code')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('firstname');
             $table->string('lastname');
             $table->string('email');
-            $table->foreignId('country_id')->constrained()->noDelete('cascade');
+            $table->foreignId('country_id')->nullable();
             $table->string('apartment')->nullable();
             $table->text('address');
             $table->string('city');

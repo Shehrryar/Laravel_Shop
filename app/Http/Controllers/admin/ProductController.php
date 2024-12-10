@@ -264,13 +264,18 @@ class ProductController extends Controller
         $filePath = $file->getRealPath();
         $fileData = array_map('str_getcsv', file($filePath));
         $header = array_shift($fileData);
+
+
+
+
         for ($i = 0; $i < count($fileData); $i++) {
             $data = array_combine($header, $fileData[$i]);
             $data = array_map(function ($value) {
                 return $value === 'NULL' ? null : $value;
             }, $data);
+
+            
             $data['is_featured'] = $data['is_featured'] === 'Yes' ? true : false;
-            $data['track_qty'] = $data['track_qty'] === 'Yes' ? true : false;
             $data['status'] = $data['status'] === '1' ? true : false;
             Product::updateOrCreate(
                 ['title' => $data['title']],
@@ -280,17 +285,17 @@ class ProductController extends Controller
                     'short_description' => $data['short_description'],
                     'shipping_returns' => $data['shipping_returns'],
                     'related_products' => $data['related_products'],
-                    'price' => $data['price'],
-                    'compare_price' => $data['compare_price'],
+                    'saling_price' => $data['price'],
+                    // 'compare_price' => $data['compare_price'],
                     'categories_id' => $data['categories_id'],
                     'sub_category_id' => $data['sub_category_id'],
-                    'sub_sub_category_id' => $data['sub_sub_category_id'],
+                    // 'sub_sub_category_id' => $data['sub_sub_category_id'],
                     'brands_id' => $data['brands_id'],
                     'is_featured' => $data['is_featured'] === 'Yes' ? true : false,
                     'sku' => $data['sku'],
                     'barcode' => $data['barcode'],
-                    'track_qty' => $data['track_qty'] === 'Yes' ? true : false,
-                    'qty' => $data['qty'],
+                    // 'track_qty' => $data['track_qty'] === 'Yes' ? true : false,
+                    // 'qty' => $data['qty'],
                     'status' => $data['status'] === '1' ? true : false,
                 ]
             );
