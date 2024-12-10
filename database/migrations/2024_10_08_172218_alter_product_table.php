@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->integer('saling_price')->nullable();
+            $table->integer('price')->nullable();
         });
     }
     /**
@@ -18,7 +18,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('saling_price'); 
+            $table->dropColumn('price'); 
         });
     }
 };

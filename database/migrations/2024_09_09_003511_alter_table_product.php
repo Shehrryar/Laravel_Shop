@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     /**
@@ -16,7 +14,6 @@ return new class extends Migration
             $table->unsignedBigInteger('size_id')->nullable()->after('color_id');
             $table->unsignedBigInteger('stock_id')->nullable()->after('size_id');
         });
-        
     }
     /**
      * Reverse the migrations.
