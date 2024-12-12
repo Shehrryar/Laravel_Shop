@@ -388,6 +388,8 @@
                         }
                     });
                 });
+
+
                 var subDropdownItems = document.querySelectorAll('.dropdown-submenu');
                 // Loop through each sub-dropdown item and add event listeners
                 subDropdownItems.forEach(function (subDropdown) {
@@ -412,10 +414,7 @@
                     window.location.href = url;
                 }
             }
-        </script>
-
-
-
+        </script>        
         <script>
             // Toggle chat box visibility
             document.getElementById('chatboxdisplay').addEventListener('click', function (event) {
@@ -459,12 +458,9 @@
                     }
                 });
             }
-
+            setInterval(fetchMessages,1000);
             // Set up auto-refresh every 5 seconds (adjust the interval as needed)
             // setInterval(fetchMessages, 50);
-
-
-
             // Close chat box when close button is clicked
             document.getElementById('closeChat').addEventListener('click', function () {
                 document.getElementById('chatBox').style.display = 'none';

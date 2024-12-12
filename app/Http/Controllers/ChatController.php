@@ -39,13 +39,11 @@ class ChatController extends Controller
             ->where('role', 2)
             ->where('name', 'admin')
             ->value('id');
-
         $message = Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $adminId,
             'message_content' => $request->message_content,
         ]);
-
         return response()->json($message);
     }
 

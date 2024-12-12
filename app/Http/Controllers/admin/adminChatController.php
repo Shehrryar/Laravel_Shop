@@ -42,7 +42,7 @@ class adminChatController extends Controller
     }
     public function chatDisplayBox(Request $request)
     {
-        $userId = $request->user_id;
+        $userId = $request->receiver_id;
         $specificChat = DB::table('messages')
             ->where(function ($query) use ($userId) {
                 $query->where('sender_id', Auth::id())
@@ -54,8 +54,6 @@ class adminChatController extends Controller
             })
             ->orderBy('created_at', 'asc') // Ensure chats are ordered by creation time.
             ->get();
-
-
         $response = response()->json(
             [
                 'status' => true,
