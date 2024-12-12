@@ -34,7 +34,6 @@
             </form>
             <div style="display: flex;" class="chat_container">
                 <div style="padding:40px;" class="chat-container">
-
                     @php
                         // Sort chats by the latest chat message's created_at
                         $sortedChats = collect($allchatstoadmin)->sortByDesc(function ($chats) {
@@ -48,7 +47,6 @@
                             return $latestChat ? $latestChat->created_at : null;
                         });
                     @endphp
-
                     @foreach ($sortedChats as $userId => $chats)
                             @if (isset($chats['user_detail']))
                                 <a href="#" onclick='openChat({{$userId}})'>{{ $chats['user_detail']['name'] }}</a>
@@ -70,7 +68,6 @@
                                 </div>
                             @endif
                     @endforeach
-
                 </div>
                 <div style="width:100%;" id="chatBox" class="chat-box">
                     <div class="chat-header"
@@ -80,7 +77,6 @@
                     <div class="chat-content" id="chatContent"
                         style="height: calc(100% - 100px); overflow-y: auto; padding: 10px; background-color: #ffffff;">
                     </div>
-
                     <div style="display: flex; width:90%; " class="chat-input"
                         style="padding: 10px; border-top: 1px solid #ccc; background-color: #f9f9f9;">
                         <input type="textarea" id="chatMessageInput" placeholder="Type a message..."
@@ -90,7 +86,6 @@
                             style="padding: 5px 10px; margin-left: 5px; font-size:13px; ">Send</button>
                     </div>
                 </div>
-
             </div>
             <div class="card-footer clearfix">
             </div>
@@ -117,11 +112,7 @@
             });
         }
     }
-
-
-
     let chatPollingInterval;
-
 function openChat(user_id) {
     const chatContent = document.getElementById('chatContent');
     const receiverId = document.getElementById('receiver_id');
@@ -135,11 +126,7 @@ function openChat(user_id) {
     //     fetchMessages(user_id);
     // }, 3000);
 }
-
 function fetchMessages(user_id) {
-
-
-    
     $.ajax({
         url: '{{ route('chat.chatdisplaybox') }}',
         type: 'POST',
@@ -148,12 +135,8 @@ function fetchMessages(user_id) {
             receiver_id: user_id,
         },
         success: function (response) {
-
-
-            
             const chatContent = document.getElementById('chatContent');
             chatContent.innerHTML = ''; // Clear the chat content
-
             response.messages.forEach(message => {
                 const newMessage = document.createElement('p');
                 newMessage.textContent = message.message_content;
@@ -161,7 +144,6 @@ function fetchMessages(user_id) {
                 newMessage.style.padding = '10px';
                 newMessage.style.borderRadius = '10px';
                 newMessage.style.width = '60%';
-
                 if (message.sender_id == user_id) {
                     newMessage.style.backgroundColor = 'blue'; // Received message
                     newMessage.style.color = 'white';
@@ -170,25 +152,17 @@ function fetchMessages(user_id) {
                     newMessage.style.marginLeft = '40%';
                     newMessage.style.color = 'white';
                 }
-
                 chatContent.appendChild(newMessage);
             });
-
             chatContent.scrollTop = chatContent.scrollHeight; // Scroll to the bottom
         },
     });
 }
-
-
-
-
-
     document.getElementById('sendMessageBtn').addEventListener('click', function () {
         event.preventDefault();
         const messageInput = document.getElementById('chatMessageInput');
         const chatContent = document.getElementById('chatContent');
         const receiverId = document.getElementById('receiver_id');
-
         $.ajax({
             url: "{{ route('chat.sentmessage') }}",
             type: 'POST',
@@ -212,6 +186,5 @@ function fetchMessages(user_id) {
             }
         });
     });
-
 </script>
 @endsection

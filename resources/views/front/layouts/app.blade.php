@@ -471,7 +471,7 @@
                 event.preventDefault();
                 const messageInput = document.getElementById('chatMessageInput');
                 const chatContent = document.getElementById('chatContent');
-
+                
                 $.ajax({
                     url: "{{ route('send.message') }}",
                     type: 'POST',
