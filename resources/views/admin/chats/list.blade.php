@@ -41,23 +41,20 @@
                             $latestChat = collect($chats)
                                 ->filter(function ($chat, $key) {
                                     return $key !== 'user_detail'; // Ignore user_detail key
-                                })
-                                ->sortByDesc('created_at')
-                                ->first();
+                                })->sortByDesc('created_at')->first();
                             return $latestChat ? $latestChat->created_at : null;
                         });
                     @endphp
                     @foreach ($sortedChats as $userId => $chats)
                         @if (isset($chats['user_detail']))
-                            <a href="#" onclick='openChat({{$userId}})'>{{ $chats['user_detail']['name'] }}</a>
+                            <a href="#" class="chat-user" id="chat-user-{{$userId}}"
+                                onclick='selectUser({{$userId}})'>{{ $chats['user_detail']['name'] }}</a>
                         @endif
                         @php
                             $latestChat = collect($chats)
                                 ->filter(function ($chat, $key) {
                                     return $key !== 'user_detail'; // Ignore user_detail key
-                                })
-                                ->sortByDesc('created_at')
-                                ->first();
+                                })->sortByDesc('created_at')->first();
                         @endphp
                         @if ($latestChat)
                             <div class="chat-message {{ $latestChat->sender_id === $userId ? 'sent' : '' }}">
@@ -85,8 +82,6 @@
                     </div>
                 </div>
             </div>
-
-            
             <div class="card-footer clearfix">
             </div>
         </div>
@@ -125,6 +120,29 @@
         chatPollingInterval = setInterval(() => {
             fetchMessages(user_id);
         }, 3000);
+    }
+    function selectUser(userId) {
+        // Remove 'selected' class from all chat-user elements
+        document.querySelectorAll('.chat-user').forEach(user => {
+            user.style.backgroundColor = ''; // Reset background
+            user.style.color = ''; // Reset text color
+            user.style.fontWeight = ''; // Reset boldness
+            user.style.padding = ''; // Reset padding
+            user.style.borderRadius = ''; // Reset border-radius
+            user.style.boxShadow = ''; // Reset shadow
+        });
+        // Add 'selected' styles to the clicked user
+        const selectedUser = document.getElementById(`chat-user-${userId}`);
+        if (selectedUser) {
+            selectedUser.style.backgroundColor = '#007bff'; // Blue background
+            selectedUser.style.color = '#fff'; // White text
+            selectedUser.style.fontWeight = 'bold'; // Bold text
+            selectedUser.style.padding = '10px'; // Padding
+            selectedUser.style.borderRadius = '8px'; // Rounded corners
+            selectedUser.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'; // Shadow
+        }
+        // Call the function to open chat
+        openChat(userId);
     }
     function fetchMessages(user_id) {
         $.ajax({

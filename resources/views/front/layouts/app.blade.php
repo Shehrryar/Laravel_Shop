@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en_AU">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title><?php echo (!empty($title)) ? 'Title-' . $title : 'Home'; ?>Laravel Online Shop</title>
@@ -33,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/video-js.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/style.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('front-assets/css/ion.rangeSlider.min.css')}}" />
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
@@ -42,10 +41,7 @@
     <meta name="csrf-token" content="{{csrf_token()}}">
 </head>
 @php
-
-
 @endphp
-
 <body data-instant-intensity="mousedown">
     <div class="bg-light top-header">
         <div class="container">
@@ -157,9 +153,6 @@
                     </a>
                 </div>
             </nav>
-
-
-
             <div id="chatBox" class="chat-box"
                 style="display:none; position: fixed; z-index: 9; bottom: 10%; right: 2%; width: 300px; height: 400px; border: 1px solid #ccc; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
                 <div class="chat-header"
@@ -184,11 +177,6 @@
                         style="padding: 5px 10px; margin-left: 5px; font-size:13px; ">Send</button>
                 </div>
             </div>
-
-
-
-
-
         </div>
     </header>
     <main>
@@ -267,7 +255,7 @@
         <script src="{{asset('front-assets/js/slick.min.js')}}"></script>
         <script src="{{asset('front-assets/js/ion.rangeSlider.min.js')}}"></script>
         <script src="{{asset('front-assets/js/custom.js')}}"></script>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             window.onscroll = function () {
                 myFunction()
@@ -286,9 +274,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
-
-
             function addToCart(id, discount_val, discount_price, actual_price, attribute_Array) {
                 $.ajax({
                     url: '{{ route("front.addToCart") }}',
@@ -365,9 +350,6 @@
                 var url = "{{ route('front.localizationcontroller', ':locale') }}";
                 url = url.replace(':locale', selectedLanguage);
                 window.location.href = url;
-
-
-
             });
             document.addEventListener('DOMContentLoaded', function () {
                 var dropdownItems = document.querySelectorAll('.nav-item.dropdown');
@@ -388,8 +370,6 @@
                         }
                     });
                 });
-
-
                 var subDropdownItems = document.querySelectorAll('.dropdown-submenu');
                 // Loop through each sub-dropdown item and add event listeners
                 subDropdownItems.forEach(function (subDropdown) {
@@ -423,7 +403,6 @@
                 event.preventDefault();
                 fetchMessages(); // Fetch messages immediately when clicked
             });
-
             // Function to fetch and update chat messages
             function fetchMessages() {
                 $.ajax({
@@ -432,7 +411,6 @@
                     success: function (messages) {
                         const chatContent = document.getElementById('chatContent'); // Make sure this element exists
                         chatContent.innerHTML = ''; // Clear existing messages if needed
-
                         for (let i = 0; i < messages.chat_message.length; i++) {
                             const message = messages.chat_message[i];
                             let newMessage = document.createElement('p');
@@ -441,7 +419,6 @@
                             newMessage.style.color = 'white';
                             newMessage.style.borderRadius = '10px';
                             newMessage.style.padding = '10px';
-
                             // Check if the message sender matches
                             if (messages.sender_id == message.sender_id) {
                                 newMessage.style.backgroundColor = 'blue';
@@ -451,7 +428,6 @@
                                 newMessage.style.marginLeft = '107px';
                                 newMessage.textContent = message.message_content;
                             }
-
                             // Append the new message to the chat content container
                             chatContent.appendChild(newMessage);
                         }
@@ -465,13 +441,11 @@
             document.getElementById('closeChat').addEventListener('click', function () {
                 document.getElementById('chatBox').style.display = 'none';
             });
-
             // Optional: Send message logic (dummy example)
             document.getElementById('sendMessageBtn').addEventListener('click', function () {
                 event.preventDefault();
                 const messageInput = document.getElementById('chatMessageInput');
                 const chatContent = document.getElementById('chatContent');
-                
                 $.ajax({
                     url: "{{ route('send.message') }}",
                     type: 'POST',
@@ -480,7 +454,6 @@
                         message_content: messageInput.value
                     },
                     success: function (message) {
-
                         const newMessage = document.createElement('p');
                         newMessage.textContent = message.message_content;
                         newMessage.style.backgroundColor = 'blue';
@@ -498,5 +471,4 @@
         </script>
         @yield('customJs')
 </body>
-
 </html>

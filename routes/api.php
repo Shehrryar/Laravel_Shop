@@ -17,6 +17,7 @@
 //     ]);
 // });
 
+
 Route::prefix('v1')->group(base_path('routes/api_v1.php'));
 Route::prefix('v2')->group(base_path('routes/api_v2.php'));
 
@@ -38,8 +39,6 @@ Route::prefix('v2')->group(base_path('routes/api_v2.php'));
 // Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
 // Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
 // Route::post('search', [SearchController::class, 'search'])->name('product.search');
-
-
 // Route::group(['prefix' => 'account'], function () {
 //     Route::group(['middleware' => 'guest'], function () {
 //         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
