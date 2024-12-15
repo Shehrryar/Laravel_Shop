@@ -14,7 +14,6 @@ class ProductImageControlller extends Controller
         $image = $request->image;
         $ext = $image->getClientOriginalExtension();
         $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME); // Get the original name without extension
-        $spath = $image->getPathName();
         $productimage = new ProductImage();
         $productimage->product_id = $request->product_id;
         $new_image_name = $originalName.'-'.$request->product_id.'-'.$productimage->id.'-'.time().'.'.$ext;

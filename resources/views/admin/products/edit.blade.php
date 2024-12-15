@@ -74,21 +74,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" id="productgallery">
-                        @if($productimage->isNotEmpty())
-                            @foreach($productimage as $image)
-                                <div class="card" id="image_row_{{$image->id}}" style="width: 18rem;">
-                                    <input type="hidden" name="image_array[]" value="{{$image->id}}">
-                                    <img class="card-img-top" src="{{asset('upload/products/' . $image->image)}}"
-                                        alt="Card image cap">
-                                    <div class="card-body">
-                                        <a href="javascript:void(0)" onclick="delete_image({{$image->id}})"
-                                            class="btn btn-danger">Delete</a>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endif
-                    </div>
                     <div class="card mb-3">
                         <div class="card-body">
                             <h2 class="h4 mb-3">Pricing</h2>
@@ -307,6 +292,9 @@
             }
         });
     });
+
+
+
     $("#sub_category").change(function () {
         var subcategory_id = $(this).val();
         $.ajax({
@@ -328,35 +316,56 @@
 
 
 
+
     Dropzone.autoDiscover = false;
+
     const dropzone = $("#image").dropzone({
-        url: "{{route('product-images.update')}}",
+        url: "{{ route('product-images.update') }}",
         maxFiles: 10,
-        params: { 'product_id': '{{$product->id}}' },
+        params: { 'product_id': '{{ $product->id }}' },
         paramName: 'image',
         addRemoveLinks: true,
         acceptedFiles: "image/jpeg,image/png,image/gif",
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }, success: function (file, response) {
-            $("#image_id").val(response.image_id);
-            var html = `<div class="card" id="image_row_${response['image_id']}" style="width: 18rem;">
-            <input type="hidden" name="image_array[]" value="${response['image_id']}">
-            <img class="card-img-top" src="${response['imagepath']}" alt="Card image cap">
-            <div class="card-body">
-            <a href="javascript:void(0)" onclick="delete_image(${response['image_id']})" class="btn btn-danger">Delete</a>
-            </div>
-            </div>`;
-            $('#productgallery').append(html);
         },
-        complete: function (file) {
-            this.removeFile(file);
-        }
+        init: function () {
+            const myDropzone = this;
+
+            // Preload existing images for the product
+            const existingImages = @json($productImages); // Assume $product->images contains an array of image URLs and names
+
+            existingImages.forEach(image => {
+                const mockFile = {
+                    name: image.name, // The file name
+                    size: image.size || 12345, // A dummy size (you can fetch actual size if needed)
+                    url: image.url // Full URL to the image
+                };
+
+                myDropzone.emit("addedfile", mockFile); // Add the file to Dropzone
+                myDropzone.emit("thumbnail", mockFile, image.url); // Generate the thumbnail
+                myDropzone.emit("complete", mockFile); // Mark the file as complete
+                myDropzone.files.push(mockFile); // Push the mock file into Dropzone's file array
+            });
+
+            myDropzone.on("removedfile", function (file) {
+                if (file.url) {
+                    alert('delet et');
+                }
+            });
+        },
     });
 
 
 
-    
+
+
+
+
+
+
+
+
     function delete_image(id) {
         $("#image_row_" + id).remove();
         if (confirm("Are you sure to delete image?")) {

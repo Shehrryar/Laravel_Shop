@@ -352,25 +352,8 @@ const dropzone = $("#image").dropzone({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     },
     success: function(file, response) {
-        $("#image_id").val(response.image_id);
-        var html = `<div class="card" id="image_row_${response['image_id']}" style="width: 18rem;">
-        <input type="hidden" name="image_array[]" value="${response['image_id']}">
-        <img class="card-img-top" src="${response['imagepath']}" alt="Card image cap">
-            <div class="card-body">
-                <a href="javascript:void(0)" onclick="delete_image(${response['image_id']})" class="btn btn-danger">Delete</a>
-            </div>
-        </div>`;
-        $('#productgallery').append(html);
     },
-    complete: function(file) {
-        this.removeFile(file);
-    }
+
 });
-
-
-
-function delete_image(id) {
-    $("#image_row_" + id).remove();
-}
 </script>
 @endsection

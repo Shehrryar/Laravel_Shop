@@ -46,7 +46,7 @@ class ProductController extends Controller
         return view('admin.products.create', $data);
     }
     public function store(Request $request)
-    {        
+    {
         $values = [
             'title' => 'required',
             'slug' => 'required|unique:products',
@@ -138,22 +138,36 @@ class ProductController extends Controller
             $related_products = explode(',', $product->related_products);
             $showrelatedproduct = Product::whereIn('id', $related_products)->get();
         }
-        $productimage = ProductImage::where('product_id', $product->id)->get();
         $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
         $susubcategories = SubSubCategory::where('subcategory_id', $product->sub_category_id)->get();
         $categories = Category::orderBy('name', 'ASC')->get();
         $stocks = Stock::orderBy('id', 'ASC')->get();
-        $colors = Color::orderBy('name', 'ASC')->get();
-        $sizes = Size::orderBy('name', 'ASC')->get();
+        // $colors = Color::orderBy('name', 'ASC')->get();
+        // $sizes = Size::orderBy('name', 'ASC')->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
+
+        $productimage = ProductImage::where('product_id', $product->id)->get();
+        $productImages = $productimage->map(function ($image) {
+            $filePath = "upload/products/{$image->image}"; // Path relative to the 'public' folder
+            
+            return [
+                'name' => $image->image, // Image filename
+                'size' => $image->size, // Directly fetch size from the database
+                'url' => asset($filePath), // Public URL
+            ];
+        });
+        
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['stocks'] = $stocks;
         $data['product'] = $product;
         $data['productimage'] = $productimage;
+        $data['productImages'] = $productImages;
         $data['subcategories'] = $subcategories;
         $data['susubcategories'] = $susubcategories;
         $data['showrelatedproduct'] = $showrelatedproduct;
+
+
         return view('admin.products.edit', $data);
     }
     public function update($id, Request $request)
@@ -274,7 +288,7 @@ class ProductController extends Controller
                 return $value === 'NULL' ? null : $value;
             }, $data);
 
-            
+
             $data['is_featured'] = $data['is_featured'] === 'Yes' ? true : false;
             $data['status'] = $data['status'] === '1' ? true : false;
             Product::updateOrCreate(
