@@ -257,9 +257,6 @@ $(document).on('click', '.remove-attribute', function() {
 
 
 
-
-
-
 $('.releated-product').select2({
     ajax: {
         url: '{{ route("product.getProducts") }}',
@@ -274,6 +271,8 @@ $('.releated-product').select2({
         }
     }
 });
+
+
 $("#title").change(function() {
     var element = $(this).val();
     $("button[type=submit]").prop('disabled', true);
@@ -316,6 +315,8 @@ $("#category").change(function() {
         }
     });
 });
+
+
 $("#sub_category").change(function() {
     var subcategory_id = $(this).val();
     $.ajax({
@@ -337,6 +338,7 @@ $("#sub_category").change(function() {
         }
     });
 });
+
 
 
 Dropzone.autoDiscover = false;
@@ -364,6 +366,8 @@ const dropzone = $("#image").dropzone({
         this.removeFile(file);
     }
 });
+
+
 
 function delete_image(id) {
     $("#image_row_" + id).remove();

@@ -325,6 +325,9 @@
             }
         });
     });
+
+
+
     Dropzone.autoDiscover = false;
     const dropzone = $("#image").dropzone({
         url: "{{route('product-images.update')}}",
@@ -350,6 +353,10 @@
             this.removeFile(file);
         }
     });
+
+
+
+    
     function delete_image(id) {
         $("#image_row_" + id).remove();
         if (confirm("Are you sure to delete image?")) {
@@ -358,11 +365,6 @@
                 type: 'delete',
                 data: { id: id },
                 success: function (response) {
-                    if (response.status == true) {
-                        alert(response.message);
-                    } else {
-                        alert(response.message);
-                    }
                 }
             });
         }
