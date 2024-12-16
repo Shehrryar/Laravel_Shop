@@ -318,7 +318,6 @@
 
 
     Dropzone.autoDiscover = false;
-
     const dropzone = $("#image").dropzone({
         url: "{{ route('product-images.update') }}",
         maxFiles: 10,
@@ -338,7 +337,7 @@
             existingImages.forEach(image => {
                 const mockFile = {
                     name: image.name, // The file name
-                    size: image.size || 12345, // A dummy size (you can fetch actual size if needed)
+                    size: image.size,
                     url: image.url // Full URL to the image
                 };
 
@@ -350,33 +349,26 @@
 
             myDropzone.on("removedfile", function (file) {
                 if (file.url) {
-                    alert('delet et');
+                    $.ajax({
+                        url: "{{ route('product-images.destroy') }}", // Image deletion route
+                        method: "DELETE",
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            product_id: '{{ $product->id }}',
+                            file_name: file.name
+                        },
+                        success: function (response) {
+                            console.log("Image deleted:", response);
+                        },
+                        error: function (error) {
+                            console.error("Error deleting image:", error);
+                        }
+                    });
                 }
             });
         },
     });
 
 
-
-
-
-
-
-
-
-
-
-    function delete_image(id) {
-        $("#image_row_" + id).remove();
-        if (confirm("Are you sure to delete image?")) {
-            $.ajax({
-                url: '{{route("product-images.destroy")}}',
-                type: 'delete',
-                data: { id: id },
-                success: function (response) {
-                }
-            });
-        }
-    }
 </script>
 @endsection
