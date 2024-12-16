@@ -220,6 +220,7 @@
 $("#productform").submit(function(event) {
     event.preventDefault();
     var formData = new FormData(this);
+
     $.ajax({
         url: '{{ route("product.store") }}',
         type: 'post',
@@ -244,16 +245,6 @@ $("#productform").submit(function(event) {
         }
     });
 });
-
-
-// Remove the attribute row and also remove it from the 2D array
-$(document).on('click', '.remove-attribute', function() {
-    var id = $(this).data('id');
-    $('#attribute-row-' + id).remove(); // Remove the row with the specific id
-
-    // Optionally remove from the 2D array if needed (this example doesn't track by id, but you can add logic to handle it)
-});
-
 
 
 
@@ -317,6 +308,8 @@ $("#category").change(function() {
 });
 
 
+
+
 $("#sub_category").change(function() {
     var subcategory_id = $(this).val();
     $.ajax({
@@ -340,7 +333,6 @@ $("#sub_category").change(function() {
 });
 
 
-
 Dropzone.autoDiscover = false;
 const dropzone = $("#image").dropzone({
     url: "{{route('temp-images.create') }}",
@@ -351,9 +343,9 @@ const dropzone = $("#image").dropzone({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     },
-    success: function(file, response) {
-    },
-
 });
+
+
+
 </script>
 @endsection
