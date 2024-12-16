@@ -62,8 +62,6 @@ class adminChatController extends Controller
         );
         return $response;
     }
-
-
     public function sendMessage(Request $request)
     {
         $message = Message::create([

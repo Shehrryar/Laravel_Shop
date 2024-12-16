@@ -79,7 +79,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div id="productgallery" >
+                                </div>
                             </div>
+
+
                             <!-- Pricing -->
                             <div class="card mb-3">
                         <div class="card-body">
@@ -216,11 +220,9 @@
 @endsection
 @section('customjs')
 <script>
-    
 $("#productform").submit(function(event) {
     event.preventDefault();
     var formData = new FormData(this);
-
     $.ajax({
         url: '{{ route("product.store") }}',
         type: 'post',
@@ -246,8 +248,6 @@ $("#productform").submit(function(event) {
     });
 });
 
-
-
 $('.releated-product').select2({
     ajax: {
         url: '{{ route("product.getProducts") }}',
@@ -262,7 +262,6 @@ $('.releated-product').select2({
         }
     }
 });
-
 
 $("#title").change(function() {
     var element = $(this).val();
@@ -307,9 +306,6 @@ $("#category").change(function() {
     });
 });
 
-
-
-
 $("#sub_category").change(function() {
     var subcategory_id = $(this).val();
     $.ajax({
@@ -332,7 +328,6 @@ $("#sub_category").change(function() {
     });
 });
 
-
 Dropzone.autoDiscover = false;
 const dropzone = $("#image").dropzone({
     url: "{{route('temp-images.create') }}",
@@ -343,9 +338,10 @@ const dropzone = $("#image").dropzone({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     },
+    success: function(file, response) {
+        var html = `<input type="hidden" name="image_array[]" value="${response['image_id']}">`;
+        $('#productgallery').append(html);
+    },
 });
-
-
-
 </script>
 @endsection

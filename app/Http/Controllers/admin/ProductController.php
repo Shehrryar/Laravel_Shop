@@ -78,20 +78,16 @@ class ProductController extends Controller
                 $product->related_products = '';
             }
             $product->save();
-
-            
             if (!empty($request->image_array)) {
                 foreach ($request->image_array as $temp_value) {
                     $tempimage = TempImage::find($temp_value);
-                    $extarray = explode(',', $tempimage->name);
-                    $ext = last($extarray);
                     $productimage = new ProductImage();
                     $productimage->product_id = $product->id;
-                    $new_image_name = $product->id . '-' . $productimage->id . '-' . time() . '.' . $ext;
-                    $productimage->image = $new_image_name;
+                    $productimage->image = $tempimage->name;
+                    $productimage->size = $tempimage->size;
                     $productimage->save();
                     $spath = public_path() . '/temp/' . $tempimage->name;
-                    $dpath = public_path() . '/upload/products/' . $new_image_name;
+                    $dpath = public_path() . '/upload/products/' . $tempimage->name;
                     File::copy($spath, $dpath);
                 }
             }
@@ -125,7 +121,6 @@ class ProductController extends Controller
         $productimage = ProductImage::where('product_id', $product->id)->get();
         $productImages = $productimage->map(function ($image) {
             $filePath = "upload/products/{$image->image}"; // Path relative to the 'public' folder
-            
             return [
                 'name' => $image->image, // Image filename
                 'size' => $image->size, // Directly fetch size from the database
@@ -251,17 +246,11 @@ class ProductController extends Controller
         $filePath = $file->getRealPath();
         $fileData = array_map('str_getcsv', file($filePath));
         $header = array_shift($fileData);
-
-
-
-
         for ($i = 0; $i < count($fileData); $i++) {
             $data = array_combine($header, $fileData[$i]);
             $data = array_map(function ($value) {
                 return $value === 'NULL' ? null : $value;
             }, $data);
-
-
             $data['is_featured'] = $data['is_featured'] === 'Yes' ? true : false;
             $data['status'] = $data['status'] === '1' ? true : false;
             Product::updateOrCreate(
