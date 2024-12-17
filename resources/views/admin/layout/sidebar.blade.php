@@ -50,21 +50,21 @@
                 </li>
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i> 
+                        <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i>
                         <p>
-                        Products
+                            Products
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a style = "margin-left: 28px;" href='{{route("product.index")}}' class="nav-link">
+                            <a style="margin-left: 28px;" href='{{route("product.index")}}' class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Product list</p>
                             </a>
                         </li>
-						<li class="nav-item">
-                            <a style = "margin-left: 28px;" href="{{ route('productattribute.index') }}" class="nav-link">
+                        <li class="nav-item">
+                            <a style="margin-left: 28px;" href="{{ route('productattribute.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Product Attribute</p>
                             </a>
@@ -119,13 +119,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a style = "margin-left: 28px;" href="{{ route('discount.index') }}" class="nav-link">
+                            <a style="margin-left: 28px;" href="{{ route('discount.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Discount</p>
                             </a>
                         </li>
-						<li class="nav-item">
-                            <a style = "margin-left: 28px;" href="{{ route('coupon.index') }}" class="nav-link">
+                        <li class="nav-item">
+                            <a style="margin-left: 28px;" href="{{ route('coupon.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Discount by Coupon</p>
                             </a>
@@ -152,10 +152,25 @@
 
                 <li class="nav-item">
                     <a href="{{route('chat.index')}}" class="nav-link">
-                        <i class="nav-icon fas fa-globe"></i>
+                        <i class="nav-icon fas fa-comments"></i>
                         <p>Chat</p>
                     </a>
                 </li>
+
+
+
+
+
+                <li class="nav-item">
+                    <a href="{{route('chat.checkSocketMessage')}}" class="nav-link">
+                        <i class="nav-icon fas fa-globe"></i>
+                        <p>Sockets Chat</p>
+                    </a>
+                </li>
+
+
+
+
 
                 <li class="nav-item">
                     <a href="pages.html" class="nav-link">

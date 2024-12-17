@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers\admin;
+use App\Events\newTrae;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,6 +9,8 @@ use App\Models\User;
 use App\Models\Message;
 class adminChatController extends Controller
 {
+
+    
     public function index()
     {
         $all_chats_array = [];
@@ -72,4 +75,11 @@ class adminChatController extends Controller
 
         return response()->json($message);
     }
+
+
+
+    public function checkSocketMessage(Request $request){
+        // broadcast(new newTrae('This is a test message!'));
+        return view('admin.chats.create');
+    } 
 }

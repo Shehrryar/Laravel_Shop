@@ -60,9 +60,6 @@ Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating
 Route::post('search', [SearchController::class, 'search'])->name('product.search');
 Route::post('color', [AttributeController::class, 'change_color'])->name('product.change_color');
 Route::post('size', [AttributeController::class, 'sizeChange'])->name('product.sizeChange');
-
-
-
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
@@ -87,18 +84,15 @@ Route::group(['prefix' => 'account'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/profileedit', [AuthController::class, 'profileEdit'])->name('account.profileEdit');
         Route::put('/profileedit', [AuthController::class, 'updateProfileData'])->name('account.updateProfileData');
-                
         Route::GET('/my-orders', [AuthController::class, 'order'])->name('account.orders');
         Route::GET('/order-detail/{orderid}', [AuthController::class, 'orderdetail'])->name('account.orderdetail');
         Route::GET('/mywishlist', [AuthController::class, 'wishlist'])->name('account.wishlist');
         Route::POST('/remove-product-from-wishlist', [AuthController::class, 'remove_product_from_wishlist'])->name('account.remove_product_from_wislist');
         Route::GET('/logout', [AuthController::class, 'logout'])->name('account.logout');
-
         Route::get('/chat-box', [ChatController::class, 'renderchatbox'])->name('front.chat');
         Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
         Route::get('/fetch-messages/{receiverId}', [ChatController::class, 'fetchMessages'])->name('fetch.messages');
         Route::post('/mark-as-read/{receiverId}', [ChatController::class, 'markAsRead'])->name('mark.as.read');
-
     });
 });
 Route::group(['prefix' => 'admin'], function () {
@@ -108,7 +102,6 @@ Route::group(['prefix' => 'admin'], function () {
     });
     Route::group(['middleware' => 'admin.auth'], function () {
         Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
-
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
         //Localization for admin
         Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('admin.localizationcontroller');
@@ -118,15 +111,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
         Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
-
-
-
         Route::post('/upload-temp-image', [imageuploadcontroller::class, 'create'])->name('temp-images.create');
-
-
-
-
-        
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.delete');
         Route::get('/getslug', [CategoryController::class, 'slug_function'])->name('getslug');
         // sub-category routes
@@ -170,7 +155,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/product/{delete}', [ProductController::class, 'delete'])->name('product.delete');
         Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
         Route::post('/import-products', [ProductController::class, 'importProducts'])->name('product.importProducts');
-
         // Prodcut attribute Routes
         Route::get('/productattribute', [ProductAttributeController::class, 'index'])->name('productattribute.index');
         Route::get('/productattribute/create', [ProductAttributeController::class, 'create'])->name('productattribute.create');
@@ -204,7 +188,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/discount/{id}/edit', [DiscountController::class, 'edit'])->name('discount.edit');
         Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
         Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
-        
         // user routes
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -212,7 +195,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{userupadate}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
-        
         // add route for the color
         Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
         Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
@@ -220,7 +202,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
         Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
         Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
-        
         // add route for the size
         Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
         Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
@@ -228,7 +209,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
         Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
         Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
-
         // add route for the Stock
         Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
         Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
@@ -236,12 +216,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
         Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
-
-
-
-
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
         Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
+        Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
     });
 });
