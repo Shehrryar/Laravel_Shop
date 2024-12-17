@@ -7,24 +7,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 class ProductImageControlller extends Controller
 {
-    public function store(Request $request)
-    {
-        $image = $request->image;
-        $ext = $image->getClientOriginalExtension();
-        $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME); // Get the original name without extension
-        $productimage = new ProductImage();
-        $productimage->product_id = $request->product_id;
-        $new_image_name = $originalName . '-' . $request->product_id . '-' . $productimage->id . '-' . time() . '.' . $ext;
-        $productimage->image = $new_image_name;
-        $productimage->save();
-        $image->move(public_path() . '/upload/products/', $new_image_name);
-        return response()->json([
-            'status' => true,
-            'image_id' => $productimage->id,
-            'image_path' => asset('upload/products/' . $productimage->image),
-            'message' => 'image added Sucessfully'
-        ]);
-    }
     public function update(Request $request)
     {
         $image = $request->image;
