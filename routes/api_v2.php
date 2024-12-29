@@ -1,6 +1,4 @@
-
 <?php
-
 // use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\API\v2\admin\DiscountCodeController;
 // use App\Http\Controllers\API\v2\admin\DiscountController;

@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class AdminLoginController extends Controller
 {
     public function index(){
-        return view('admin.login');
+        return response()->json([
+            'success' => true,
+            'message' => 'Admin Login',
+        ]);
     }
 
     public function authenticate(Request $request){       

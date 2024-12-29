@@ -1,33 +1,30 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\v1\admin\DiscountCodeController;
-use App\Http\Controllers\API\v1\admin\DiscountController;
-use App\Http\Controllers\API\v1\admin\ShippingController;
-use App\Http\Controllers\API\v1\AuthController;
-use App\Http\Controllers\API\v1\admin\AdminLoginController;
-use App\Http\Controllers\API\v1\admin\HomeController;
-use App\Http\Controllers\API\v1\admin\CategoryController;
-use App\Http\Controllers\API\v1\admin\imageuploadcontroller;
-use App\Http\Controllers\API\v1\admin\SubCategoryController;
-use App\Http\Controllers\API\v1\admin\SubSubCategoryController;
-use App\Http\Controllers\API\v1\admin\BrandController;
-use App\Http\Controllers\API\v1\admin\ProductController;
-use App\Http\Controllers\API\v1\admin\ProductSubCategoryController;
-use App\Http\Controllers\API\v1\admin\ProductImageControlller;
-use App\Http\Controllers\API\v1\FrontController;
-use App\Http\Controllers\API\v1\ShopController;
-use App\Http\Controllers\API\v1\CartController;
-use App\Http\Controllers\API\v1\LocalizationController;
-use App\Http\Controllers\API\v1\admin\LanguageController;
-use App\Http\Controllers\API\v1\admin\OrderController;
-use App\Http\Controllers\API\v1\admin\UserController;
-use App\Http\Controllers\API\v1\admin\ColorController;
-use App\Http\Controllers\API\v1\admin\SizeController;
-use App\Http\Controllers\API\v1\SearchController;
-
-
-
-
+use App\Http\Controllers\API\admin\DiscountCodeController;
+use App\Http\Controllers\API\admin\DiscountController;
+use App\Http\Controllers\API\admin\ShippingController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\admin\AdminLoginController;
+use App\Http\Controllers\API\admin\HomeController;
+use App\Http\Controllers\API\admin\CategoryController;
+use App\Http\Controllers\API\admin\imageuploadcontroller;
+use App\Http\Controllers\API\admin\SubCategoryController;
+use App\Http\Controllers\API\admin\SubSubCategoryController;
+use App\Http\Controllers\API\admin\BrandController;
+use App\Http\Controllers\API\admin\ProductController;
+use App\Http\Controllers\API\admin\ProductSubCategoryController;
+use App\Http\Controllers\API\admin\ProductImageControlller;
+use App\Http\Controllers\API\FrontController;
+use App\Http\Controllers\API\ShopController;
+use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\LocalizationController;
+use App\Http\Controllers\API\admin\LanguageController;
+use App\Http\Controllers\API\admin\OrderController;
+use App\Http\Controllers\API\admin\UserController;
+use App\Http\Controllers\API\admin\ColorController;
+use App\Http\Controllers\API\admin\SizeController;
+use App\Http\Controllers\API\SearchController;
+use App\Http\Controllers\API\admin\StockManagementController;
 
 Route::get('/api', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -46,7 +43,6 @@ Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
 Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
 Route::post('search', [SearchController::class, 'search'])->name('product.search');
-
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
@@ -72,9 +68,14 @@ Route::group(['prefix' => 'account'], function () {
         Route::GET('/logout', [AuthController::class, 'logout'])->name('account.logout');
     });
 });
+
+
+
+
+
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => 'admin.guest'], function () {
-        Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
+        Route::get('/login', action: [AdminLoginController::class, 'index'])->name('admin.login');
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
     Route::group(['middleware' => 'admin.auth'], function () {
@@ -97,7 +98,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/subcategory/store', [SubCategoryController::class, 'store'])->name('subcategory.store');
         Route::get('/subcategory/{subcatedit}/edit', [SubCategoryController::class, 'edit'])->name('subcategory.edit');
         Route::put('/subcategory/{subcategory}', [SubCategoryController::class, 'update'])->name('subcategory.update');
-        Route::delete('/subcategory/{subcategory}', [SubCategoryController::class, 'destroy'])->name('subcategory.delete');
+        Route::delete('/subcategory/{subcategory}', action: [SubCategoryController::class, 'destroy'])->name('subcategory.delete');
         // sub-category routes
         Route::get('/subsubcategory', [SubSubCategoryController::class, 'index'])->name('subsubcategories.index');
         Route::get('/subsubcategory/create', [SubSubCategoryController::class, 'create'])->name('subsubcategory.create');
@@ -178,7 +179,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
         Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
         Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
-
          // add route for the Stock managment
          Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
          Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
