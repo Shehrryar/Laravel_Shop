@@ -20,7 +20,6 @@ class ShopController extends Controller
         $categroy_selected = "";
         $brandsArray = [];
         $subsubcategroy_selected = "";
-
         $categories = Category::orderBy('name', 'DESC')->with('sub_category')->where('status', 1)->get();
         $brands = Brand::orderBy('name', 'DESC')->where('status', 1)->get();
 
@@ -86,8 +85,6 @@ class ShopController extends Controller
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-
-
         return view('front.shop', $data);
     }
     public function product($slug)
@@ -97,7 +94,6 @@ class ShopController extends Controller
         if ($product == NULL) {
             abort(404);
         }
-
         // fetch products according to the category
         if($product != Null){
             $samcatproduct = Product::where('categories_id', $product->categories_id)
@@ -116,7 +112,6 @@ class ShopController extends Controller
         if ($product->product_ratings_count > 0) {
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
         }
-
         $avg_rating_per = 0;
         if ($product->product_ratings_count > 0) {
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
@@ -127,10 +122,7 @@ class ShopController extends Controller
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
         $discount = Discount::where('status',1)->get();
-
         // dd($product_available_color);
-
-
         $data['product'] = $product;
         $data['wishlist'] = $wishlist;
         $data['showrelatedproduct'] = $samcatproduct;

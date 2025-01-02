@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en_AU">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title><?php echo (!empty($title)) ? 'Title-' . $title : 'Home'; ?>Laravel Online Shop</title>
@@ -42,6 +43,7 @@
 </head>
 @php
 @endphp
+
 <body data-instant-intensity="mousedown">
     <div class="bg-light top-header">
         <div class="container">
@@ -256,6 +258,7 @@
         <script src="{{asset('front-assets/js/ion.rangeSlider.min.js')}}"></script>
         <script src="{{asset('front-assets/js/custom.js')}}"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://js.stripe.com/v3/"></script>
         <script>
             window.onscroll = function () {
                 myFunction()
@@ -394,7 +397,7 @@
                     window.location.href = url;
                 }
             }
-        </script>        
+        </script>
         <script>
             // Toggle chat box visibility
             document.getElementById('chatboxdisplay').addEventListener('click', function (event) {
@@ -434,7 +437,7 @@
                     }
                 });
             }
-            setInterval(fetchMessages,1000);
+            // setInterval(fetchMessages,1000);
             // Set up auto-refresh every 5 seconds (adjust the interval as needed)
             // setInterval(fetchMessages, 50);
             // Close chat box when close button is clicked
@@ -471,4 +474,5 @@
         </script>
         @yield('customJs')
 </body>
+
 </html>

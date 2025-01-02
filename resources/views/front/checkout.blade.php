@@ -27,7 +27,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8">
-                    <h2 id="stock_missing" ></h2>
+                    <h2 id="stock_missing"></h2>
                     <div class="sub-title">
                         <h2>Shipping Address</h2>
                     </div>
@@ -140,10 +140,10 @@
                             @endforeach
                             <div class="d-flex justify-content-between summery-end">
                                 <div class="h6"><strong>Discount</strong></div>
-                                @if ($discount_type == 'percent ')  
-                                <div class="h6"><strong id="dicount_coupon">${{$discount}}</strong></div>
+                                @if ($discount_type == 'percent ')
+                                    <div class="h6"><strong id="dicount_coupon">${{$discount}}</strong></div>
                                 @else
-                                <div class="h6"><strong id="dicount_coupon">{{$discount}}%</strong></div>
+                                    <div class="h6"><strong id="dicount_coupon">{{$discount}}%</strong></div>
                                 @endif
                             </div>
                             <div class="d-flex justify-content-between summery-end">
@@ -177,22 +177,22 @@
                     <div class="card payment-form ">
                         <h3 class="card-title h5 mb-3">Payment Details</h3>
                         <div class="">
-                            <input checked type="radio" name='payment_method' value='cod' onclick="payment_method_1()"
-                                id='payment_method_1'>
+                            <input checked type="radio" name='payment_method' value='cod' id='payment_method_1'>
                             <label class="form-check-label" for="payment_method">COD</label>
                         </div>
                         <div class="">
-                            <input type="radio" name='payment_method' value='cod' onclick="payment_method_1()"
-                                id='payment_method_2'>
+                            <input type="radio" name='payment_method' value='stripe' id='payment_method_2'>
                             <label class="form-check-label" for="payment_method">Stripe</label>
                         </div>
                         <div class="card-body p-0 d-none" id='card-payment-form'>
                             <div class="mb-3">
-                                <label for="card_number" class="mb-2">Card Number</label>
+                                <!-- <label for="card_number" class="mb-2">Card Number</label>
                                 <input type="text" name="card_number" id="card_number" placeholder="Valid Card Number"
-                                    class="form-control">
+                                    class="form-control"> -->
+                                <input type='hidden' name='stripeToken' id='stripe-token-id'>
                             </div>
-                            <div class="row">
+                            <div id="card-element" class="form-control"></div>
+                            <!-- <div class="row">
                                 <div class="col-md-6">
                                     <label for="expiry_date" class="mb-2">Expiry Date</label>
                                     <input type="text" name="expiry_date" id="expiry_date" placeholder="MM/YYYY"
@@ -203,11 +203,13 @@
                                     <input type="text" name="expiry_date" id="expiry_date" placeholder="123"
                                         class="form-control">
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="pt-4">
                             <!-- <a href="#" class="btn-dark btn btn-block w-100">Pay Now</a> -->
-                            <button class="btn-dark btn btn-block w-100" type="submit">Pay Now</button>
+                            <button id="submit_payment_1" class="btn-dark btn btn-block w-100" type="submit">Pay
+                                Now</button>
+                            <button id="submit_payment_2" class="btn-dark btn btn-block w-100 d-none">Pay Now</button>
                         </div>
                     </div>
                     <!-- CREDIT CARD FORM ENDS HERE -->
@@ -222,19 +224,47 @@
     $('#payment_method_1').click(function () {
         if ($(this).is(":checked")) {
             $("#card-payment-form").addClass('d-none');
+            $("#submit_payment_1").removeClass('d-none');
+            $("#submit_payment_2").addClass('d-none');
         }
     });
+    
     $('#payment_method_2').click(function () {
         if ($(this).is(":checked")) {
             $("#card-payment-form").removeClass('d-none');
+            $("#submit_payment_1").addClass('d-none');
+            $("#submit_payment_2").removeClass('d-none');
+            const stripe = Stripe('{{env('STRIPE_PUBLIC')}}');
+            var elements = stripe.elements();
+            var cardElement = elements.create('card');
+            cardElement.mount('#card-element');
+            document.getElementById("submit_payment_2").disabled = true;
+            stripe.createToken(cardElement).then(function (result) {
+                if (result.error) {
+                    document.getElementById("submit_payment_2").disabled = false;
+                    alert(result.error.message);
+                } else {
+                    document.getElementById("stripe-token-id").value = result.token.id;
+                }
+            });
         }
     });
-    $('#order_form').submit(function () {
+
+
+    // $('#submit_payment_2').click(function (event) {
+    //     event.preventDefault();
+
+    // });
+
+
+
+    $('#submit_payment_1').click(function (event) {
         event.preventDefault();
+        var form = $('#order_form');
         $.ajax({
             url: '{{route('front.processCheckout')}}',
             type: 'post',
-            data: $(this).serializeArray(),
+            data: form.serializeArray(),
             dataType: 'json',
             success: function (response) {
                 if (response.status == false) {
@@ -285,7 +315,7 @@
                         $('#mobile').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
                     }
                 }
-                else if(response.status == 'stock_missing'){                    
+                else if (response.status == 'stock_missing') {
                     $('#stock_missing').addClass('danger-alert').html(response.message);
                 }
                 else {
@@ -294,7 +324,6 @@
             }
         });
     });
-    
     $("#country").change(function () {
         $.ajax({
             url: '{{route('front.getOrderSummary')}}',
@@ -325,7 +354,6 @@
                 if (response.status == true) {
                     $('#shipping_charges').html(response.shipping_charge);
                     $('#grand_total').html(response.grand_total);
-                    
                     $('#dicount_coupon').html(response.discount);
                     $('#discount-account-wrapper').html(response.discountString);
                 }

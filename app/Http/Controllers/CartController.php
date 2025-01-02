@@ -12,11 +12,12 @@ use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
-
 // use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Stripe\Stripe;
+use Stripe\Charge;
 class CartController extends Controller
 {
     public function addToCart(Request $request)
@@ -35,21 +36,14 @@ class CartController extends Controller
         }
         $cart_attribute = $request->attribute_Array;
         $discountprice = getDiscountedPrice($request->id, Discount::get(), $request->actual_price);
-
         if ($discountprice['discounted_price'] != 0) {
             $price = $discountprice['discounted_price'];
-
-
-
         } else {
             $price = $discountprice['actual_price'];
         }
-
-
         if (Cart::count() > 0) {
             $cartcontent = Cart::get();
             $productAlreadyExist = false;
-
             foreach ($cartcontent as $item) {
                 if (!empty($cart_attribute)) {
                     if ($item->product_id == $product->id && $item->color_id == $cart_attribute['color_id'] && $item->size_id == $cart_attribute['size_id']) {
@@ -62,7 +56,6 @@ class CartController extends Controller
                 }
             }
             if ($productAlreadyExist == false) {
-
                 if (!empty($cart_attribute)) {
                     if ($cart_attribute['controller_type'] == 'color') {
                         Cart::create([
@@ -105,7 +98,6 @@ class CartController extends Controller
                         'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                     ]);
                 }
-
                 $status = true;
                 $message = $product->title . " Added in the Cart";
                 session()->flash('success', $message);
@@ -175,12 +167,9 @@ class CartController extends Controller
         $data['discount'] = $discount;
         $data['keyword'] = '';
         return view('front.cart', $data);
-
     }
     public function updateCart(Request $request)
     {
-
-
         $iteminfo = Cart::find($request->rowid);
         $stock = DB::table('stocks')
             ->where('product_id', $iteminfo->product_id)
@@ -188,7 +177,6 @@ class CartController extends Controller
             ->where('size_id', $iteminfo->size_id)
             ->where('status', 1)
             ->first();
-
         if ($stock) {
             if ($request->qty <= $stock->quantity) {
                 $iteminfo->quantity = $request->qty;
@@ -206,7 +194,6 @@ class CartController extends Controller
             $status = false;
             session()->flash('error', $message);
         }
-
         return response()->json([
             'status' => $status,
             'message' => $message
@@ -244,14 +231,6 @@ class CartController extends Controller
         if ($cartcount == 0) {
             return redirect()->route('front.cart');
         }
-        // if user is not loogin redirect to the login page
-        // if (Auth::check() == false) {
-        //     if (!session()->has('url.intended')) {
-        //         session(['url.intended' => url()->current()]);
-        //     }
-        //     return redirect()->route('account.login');
-        // }
-        // session()->forget('url.intended');
         $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
         $countries = Country::orderBy('name', 'ASC')->get();
         if (session()->has('code')) {
@@ -336,7 +315,6 @@ class CartController extends Controller
                 'country_id' => $request->country,
             ]
         );
-
         if ($request->payment_method == 'cod') {
             $shipping = 0;
             $discount = 0;
@@ -365,7 +343,6 @@ class CartController extends Controller
                 $shipping = 10;
                 $grandtotal = ($subtotal - $discount) + $shipping;
             }
-
             $order = new Order();
             $order->subtotal = $subtotal;
             $order->shipping = $shipping;
@@ -397,21 +374,16 @@ class CartController extends Controller
                 $orderitems->price = $item->price;
                 $orderitems->total = $item->price * $item->quantity;
                 $orderitems->save();
-
-
                 $stock = DB::table('stocks')
                     ->where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
                     ->where('size_id', $item->size_id)
                     ->where('status', 1)
                     ->first();
-
-
                 if (!empty($stock) && $item->quantity <= $stock->quantity) {
                     $currentQuantity = $stock->quantity;
                     $updatedQuantity = $currentQuantity - $item->quantity;
                     $soldQuantity = $stock->sold_quantity + $item->quantity;
-
                     // Update the stock record in the database
                     DB::table('stocks')
                         ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
@@ -425,11 +397,8 @@ class CartController extends Controller
                         'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
                     ]);
                 }
-
             }
-
-
-            orderEmail($order->id, 'customer');
+            // orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
             Cart::where('user_id', Auth::id())->delete();
             return response()->json([
@@ -437,6 +406,23 @@ class CartController extends Controller
                 'message' => 'Order Saved Successfully',
                 'orderId' => $order->id
             ]);
+        } elseif ($request->payment_method == 'stripe') {
+
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+            $charge = Charge::create([
+                'amount' => round(1000 * 100), // Amount in cents
+                'currency' => 'usd',
+                'source' => $request->stripe_token,
+                'description' => 'Order payment for ' . $request->firstname . ' ' . $request->lastname,
+                'metadata' => [
+                    'user_id' => $user->id,
+                    'email' => $request->email,
+                    'order_notes' => $request->order_notes,
+                ],
+            ]);
+            echo "<pre>";
+            print_r($charge);
+            exit;
         }
     }
     public function getOrderSummary(Request $request)
@@ -451,7 +437,7 @@ class CartController extends Controller
             $code = session()->get('code');
             if ($code->type == 'percent') {
                 $discount = ($code->discont_amount / 100) * $subtotal;
-                $discount_amo = '<strong>'.$code->discont_amount.'%</strong>';
+                $discount_amo = '<strong>' . $code->discont_amount . '%</strong>';
             } else {
                 $discount = $code->discont_amount;
                 $discount_amo = $code->discont_amount;
