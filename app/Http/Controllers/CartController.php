@@ -408,6 +408,10 @@ class CartController extends Controller
             ]);
         } elseif ($request->payment_method == 'stripe') {
 
+            echo "<pre>";
+            print_r($request->all());   
+            exit;
+
             Stripe::setApiKey(env('STRIPE_SECRET'));
             $charge = Charge::create([
                 'amount' => round(1000 * 100), // Amount in cents
@@ -420,9 +424,7 @@ class CartController extends Controller
                     'order_notes' => $request->order_notes,
                 ],
             ]);
-            echo "<pre>";
-            print_r($charge);
-            exit;
+
         }
     }
     public function getOrderSummary(Request $request)

@@ -11,6 +11,7 @@
         </div>
     </div>
 </section>
+
 @if(Session::has('success'))
     <div class="dropdown">
         <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
@@ -22,6 +23,7 @@
         </ul>
     </div>
 @endif
+
 <section class="section-9 pt-4">
     <form action="" id="order_form" method="post">
         <div class="container">
@@ -228,7 +230,6 @@
             $("#submit_payment_2").addClass('d-none');
         }
     });
-    
     $('#payment_method_2').click(function () {
         if ($(this).is(":checked")) {
             $("#card-payment-form").removeClass('d-none');
@@ -238,14 +239,84 @@
             var elements = stripe.elements();
             var cardElement = elements.create('card');
             cardElement.mount('#card-element');
-            document.getElementById("submit_payment_2").disabled = true;
-            stripe.createToken(cardElement).then(function (result) {
-                if (result.error) {
-                    document.getElementById("submit_payment_2").disabled = false;
-                    alert(result.error.message);
-                } else {
-                    document.getElementById("stripe-token-id").value = result.token.id;
+            cardElement.addEventListener('change', function (event) {
+                if (event.error) {
+                    alert(event.error.message);
                 }
+            });
+            $('#submit_payment_2').click(function (event) {
+                event.preventDefault();
+                stripe.createToken(cardElement).then(function (result) {
+                    if (result.error) {
+                        alert(result.error.message);
+                    } else {
+                        var form = $('#order_form');
+                        var formData = form.serializeArray();
+                        formData.push({ name: 'stripeToken', value: result.token.id });
+                        $.ajax({
+                            url: '{{route('front.processCheckout')}}',
+                            type: 'post',
+                            data: formData,
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response.status == false) {
+                                    var errors = response.errors;
+                                    if (errors.first_name) {
+                                        $('#firstname').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.firstname);
+                                    } else {
+                                        $('#firstname').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.lastname) {
+                                        $('#lastname').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.lastname);
+                                    } else {
+                                        $('#lastname').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.email) {
+                                        $('#email').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.email);
+                                    } else {
+                                        $('#email').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.country) {
+                                        $('#country').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.country);
+                                    } else {
+                                        $('#country').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.address) {
+                                        $('#address').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.address);
+                                    } else {
+                                        $('#address').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.city) {
+                                        $('#city').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.city);
+                                    } else {
+                                        $('#city').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.state) {
+                                        $('#state').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.state);
+                                    } else {
+                                        $('#state').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.zip) {
+                                        $('#zip').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.zip);
+                                    } else {
+                                        $('#zip').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                    if (errors.mobile) {
+                                        $('#mobile').addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors.mobile);
+                                    } else {
+                                        $('#mobile').removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html('');
+                                    }
+                                }
+                                else if (response.status == 'stock_missing') {
+                                    $('#stock_missing').addClass('danger-alert').html(response.message);
+                                }
+                                else {
+                                    window.location.href = "{{ route('front.thankyou') }}";
+                                }
+                            }
+                        });
+                    }
+                });
             });
         }
     });
