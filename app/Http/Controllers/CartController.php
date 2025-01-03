@@ -318,7 +318,6 @@ class CartController extends Controller
         if ($request->payment_method == 'cod') {
             $shipping = 0;
             $discount = 0;
-            $discountcodeid = '';
             $promocode = '';
             if (session()->has('code')) {
                 $code = session()->get('code');
@@ -407,24 +406,109 @@ class CartController extends Controller
                 'orderId' => $order->id
             ]);
         } elseif ($request->payment_method == 'stripe') {
-
-            echo "<pre>";
-            print_r($request->all());   
-            exit;
-
             Stripe::setApiKey(env('STRIPE_SECRET'));
+            $shipping = 0;
+            $discount = 0;
+            $discountcodeid = '';
+            $promocode = '';
+            if (session()->has('code')) {
+                $code = session()->get('code');
+                if ($code->type == 'percent') {
+                    $discount = ($code->discont_amount / 100) * $subtotal;
+                } else {
+                    $discount = $code->discont_amount;
+                }
+                $discountcodeid = $code->id;
+                $promocode = $code->code;
+            }
+            //calculate shipping 
+            $shipping_info = Shipping::where('country_id', $request->country)->first();
+            $totalqty = 0;
+            foreach ($cartcontent as $item) {
+                $totalqty += $item->quantity;
+            }
+            if (!empty($shipping_info) && $shipping_info != null) {
+                $shipping = $totalqty * $shipping_info->amount;
+                $grandtotal = ($subtotal - $discount) + $shipping;
+            } else {
+                $shipping = 10;
+                $grandtotal = ($subtotal - $discount) + $shipping;
+            }
             $charge = Charge::create([
-                'amount' => round(1000 * 100), // Amount in cents
+                'amount' => round($grandtotal * 100), // Amount in cents
                 'currency' => 'usd',
-                'source' => $request->stripe_token,
+                'source' => $request->stripeTokencard,
                 'description' => 'Order payment for ' . $request->firstname . ' ' . $request->lastname,
                 'metadata' => [
-                    'user_id' => $user->id,
-                    'email' => $request->email,
-                    'order_notes' => $request->order_notes,
-                ],
+                        'user_id' => $user->id,
+                        'email' => $request->email,
+                        'order_notes' => $request->order_notes,
+                    ],
             ]);
-
+            $order = new Order();
+            $order->subtotal = $subtotal;
+            $order->stripe_charge_id = $charge->id;
+            $order->shipping = $shipping;
+            $order->grandtotal = $grandtotal;
+            $order->discount = $discount;
+            $order->coupon_code = $promocode;
+            $order->payment_status = 'paid';
+            $order->status = 'pending';
+            $order->firstname = $request->firstname;
+            $order->user_id = $user->id;
+            $order->lastname = $request->lastname;
+            $order->email = $request->email;
+            $order->address = $request->address;
+            $order->apartment = $request->apartment;
+            $order->state = $request->state;
+            $order->city = $request->city;
+            $order->zip = $request->zip;
+            $order->notes = $request->order_notes;
+            $order->zip = $request->zip;
+            $order->country_id = $request->country;
+            $order->save();
+            // store order item in the order item table
+            foreach ($cartcontent as $item) {
+                $orderitems = new OrderItem();
+                $orderitems->product_id = $item->product_id;
+                $orderitems->order_id = $order->id;
+                $orderitems->name = $item->title;
+                $orderitems->quantity = $item->quantity;
+                $orderitems->price = $item->price;
+                $orderitems->total = $item->price * $item->quantity;
+                $orderitems->save();
+                $stock = DB::table('stocks')
+                    ->where('product_id', $item->product_id)
+                    ->where('color_id', $item->color_id)
+                    ->where('size_id', $item->size_id)
+                    ->where('status', 1)
+                    ->first();
+                if (!empty($stock) && $item->quantity <= $stock->quantity) {
+                    $currentQuantity = $stock->quantity;
+                    $updatedQuantity = $currentQuantity - $item->quantity;
+                    $soldQuantity = $stock->sold_quantity + $item->quantity;
+                    // Update the stock record in the database
+                    DB::table('stocks')
+                        ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
+                        ->update([
+                            'quantity' => $updatedQuantity,
+                            'sold_quantity' => $soldQuantity,
+                        ]);
+                } else {
+                    return response()->json([
+                        'status' => 'stock_missing',
+                        'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
+                    ]);
+                }
+            }
+            // orderEmail($order->id, 'customer');
+            session()->flash('success', 'You have successfully placed your order');
+            Cart::where('user_id', Auth::id())->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'Order Saved Successfully',
+                'orderId' => $order->id
+            ]);
         }
     }
     public function getOrderSummary(Request $request)

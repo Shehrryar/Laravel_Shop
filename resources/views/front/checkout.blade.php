@@ -230,6 +230,9 @@
             $("#submit_payment_2").addClass('d-none');
         }
     });
+
+
+    
     $('#payment_method_2').click(function () {
         if ($(this).is(":checked")) {
             $("#card-payment-form").removeClass('d-none');
@@ -252,7 +255,7 @@
                     } else {
                         var form = $('#order_form');
                         var formData = form.serializeArray();
-                        formData.push({ name: 'stripeToken', value: result.token.id });
+                        formData.push({ name: 'stripeTokencard', value: result.token.id });
                         $.ajax({
                             url: '{{route('front.processCheckout')}}',
                             type: 'post',
