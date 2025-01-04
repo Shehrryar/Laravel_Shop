@@ -9,8 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('cart', function (Blueprint $table) {
-            $table->integer('color_id')->default(0)->after('product_image');
-            $table->integer('size_id')->default(0)->after('color_id');
+            $table->integer('cart_id')->default(0)->after('size_id');
         });
     }
     /**
@@ -19,9 +18,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('cart', function (Blueprint $table) {
-            $table->dropColumn('color_id');
-            $table->dropColumn('size_id');
-
+            $table->dropColumn('cart_id');
         });
     }
 };

@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('orders_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->nullable();
-            $table->foreignId('product_id')->nullable();
+            $table->integer('order_id')->nullable();
+            $table->integer('product_id');
+            $table->integer('cart_id');
             $table->string('name');
             $table->integer('quantity');
             $table->double('price', 10, 2);
