@@ -10,7 +10,7 @@ use App\Models\Message;
 class adminChatController extends Controller
 {
 
-    
+
     public function index()
     {
         $all_chats_array = [];
@@ -78,8 +78,9 @@ class adminChatController extends Controller
 
 
 
-    public function checkSocketMessage(Request $request){
-        // broadcast(new newTrae('This is a test message!'));
+    public function checkSocketMessage(Request $request)
+    {
+        broadcast(new newTrae('This is a test message!'));
         return view('admin.chats.create');
-    } 
+    }
 }

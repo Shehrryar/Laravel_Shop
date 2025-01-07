@@ -5,5 +5,7 @@
 
 @endsection
 @section('customjs') 
+<script>
 
+</script>
 @endsection

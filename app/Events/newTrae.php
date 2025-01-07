@@ -22,7 +22,6 @@ class newTrae implements ShouldBroadcast
     {
         $this->trade = $trade;
     }
-
     /**
      * Get the channels the event should broadcast on.
      *
