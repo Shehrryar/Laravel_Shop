@@ -4,7 +4,7 @@
 	<div class="container-fluid my-2">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1>Create Brand</h1>
+				<h1>Create Color</h1>
 			</div>
 			<div class="col-sm-6 text-right">
 				<a href="{{route('colorss.index')}}" class="btn btn-primary">Back</a>
@@ -39,7 +39,7 @@
 
 						<div class="col-md-6">
 							<div class="mb-3">
-							<label >Select Product</label>
+								<label>Select Product</label>
 								<select name="product_id" id="product_id" class="form-control">
 									<option value="">Select the Product</option>
 									@if($products->isNotEmpty())
