@@ -5,6 +5,7 @@ use App\Models\DiscountCoupon;
 use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ProductView;
 use App\Models\Product;
 use App\Models\Country;
 use App\Models\Shipping;
@@ -152,6 +153,7 @@ class CartController extends Controller
             $message = $product->title . " Added to the Cart";
             session()->flash('success', $message);
         }
+
         return response()->json([
             'status' => $status,
             'message' => $message
@@ -162,6 +164,18 @@ class CartController extends Controller
         $discount = Discount::where('status', 1)->get();
         $cartcontent = Cart::where('user_id', auth()->id())->get();
         $cartcount = Cart::where('user_id', auth()->id())->count();
+
+        foreach ($cartcontent as $content) {
+            $existingProductView = ProductView::where('product_id', $content->product_id)
+                ->where('user_id', auth()->id())
+                ->first();
+            if (!$existingProductView) {
+                ProductView::create([
+                    'product_id' => $content->product_id,
+                    'user_id' => $content->user_id,
+                ]);
+            }
+        }
         $data['cartcount'] = $cartcount;
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
@@ -437,10 +451,10 @@ class CartController extends Controller
                 'source' => $request->stripeTokencard,
                 'description' => 'Order payment for ' . $request->firstname . ' ' . $request->lastname,
                 'metadata' => [
-                        'user_id' => $user->id,
-                        'email' => $request->email,
-                        'order_notes' => $request->order_notes,
-                    ],
+                    'user_id' => $user->id,
+                    'email' => $request->email,
+                    'order_notes' => $request->order_notes,
+                ],
             ]);
             $order = new Order();
             $order->subtotal = $subtotal;
@@ -474,7 +488,7 @@ class CartController extends Controller
                 $orderitems->total = $item->price * $item->quantity;
                 $orderitems->save();
                 $stock = DB::table('stocks')
-                ->where('product_id', $item->product_id)
+                    ->where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
                     ->where('size_id', $item->size_id)
                     ->where('status', 1)
@@ -485,11 +499,11 @@ class CartController extends Controller
                     $soldQuantity = $stock->sold_quantity + $item->quantity;
                     // Update the stock record in the database
                     DB::table('stocks')
-                    ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
-                    ->update([
-                        'quantity' => $updatedQuantity,
-                        'sold_quantity' => $soldQuantity,
-                    ]);
+                        ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
+                        ->update([
+                            'quantity' => $updatedQuantity,
+                            'sold_quantity' => $soldQuantity,
+                        ]);
                 } else {
                     return response()->json([
                         'status' => 'stock_missing',
