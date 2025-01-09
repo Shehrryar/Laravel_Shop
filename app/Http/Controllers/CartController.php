@@ -153,7 +153,6 @@ class CartController extends Controller
             $message = $product->title . " Added to the Cart";
             session()->flash('success', $message);
         }
-
         return response()->json([
             'status' => $status,
             'message' => $message
@@ -164,7 +163,6 @@ class CartController extends Controller
         $discount = Discount::where('status', 1)->get();
         $cartcontent = Cart::where('user_id', auth()->id())->get();
         $cartcount = Cart::where('user_id', auth()->id())->count();
-
         foreach ($cartcontent as $content) {
             $existingProductView = ProductView::where('product_id', $content->product_id)
                 ->where('user_id', auth()->id())
@@ -522,7 +520,6 @@ class CartController extends Controller
             ]);
         }
     }
-
     public function processCheckout2(Request $request)
     {
         $cartcontent = Cart::where('user_id', auth()->id())->get();

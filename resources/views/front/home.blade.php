@@ -120,6 +120,113 @@
         </div>
     </div>
 </section>
+
+
+<section class="section-4 pt-5">
+    <div class="container">
+        <div class="section-title">
+            <h2>{{trans("Recommended Products")}}</h2>
+        </div>
+        <div class="row pb-3">
+            @if($recommended_products->isNotEmpty())
+                    @foreach($recommended_products as $d_product)
+                            @php
+                                $images_prod = $d_product->product_images()->first();
+                                $inWishlist = $wishlist->contains('product_id', $d_product->id);
+                                $getprice = getDiscountedPrice($d_product->id, $discount, $d_product->price);
+                                $stockHandle = handleStock($d_product->id, 0, 0);
+                            @endphp
+                            <div class="col-md-3">
+                                <div class="card product-card">
+                                    <div class="product-image position-relative" style="border-bottom: 1px solid #ddd;">
+                                        <a href="{{route('front.product', $d_product->slug)}}" class="product-img">
+                                            @if(!empty($images_prod))
+                                                <img style="height: 250px; width: 250px;" class="card-img-top"
+                                                    src="{{asset('upload/products/' . $images_prod->image)}}">
+                                            @else
+                                                <img class="card-img-top" src="{{asset('admin-assets/img/default-150x150.png')}}">
+                                            @endif
+                                        </a>
+                                        @if ($getprice['discount_value'] != 0)
+                                            <div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
+                                        @endif
+                                        <!-- Horizontal line with custom styles -->
+                                        <a onclick="addToWishlist({{$d_product->id}})" class="whishlist" href="javascript:void(0)">
+                                            <i id="addwishlist{{$d_product->id}}" class="far fa-heart"
+                                                style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                                        </a>
+                                        <a onclick="removefromWishlist({{$d_product->id}})" class="whishlist" href="javascript:void(0)">
+                                            <i id="removewishlist{{$d_product->id}}" class="redhearticon fas fa-heart"
+                                                style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                                        </a>
+                                    </div>
+                                    <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
+                                    <!-- this is section for handling out of stock products -->
+                                    @if ($stockHandle['status'] == true)
+                                        <a class="btn btn-dark" href="javascript:void(0)"
+                                            onclick="addToCart({{ $d_product->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
+                                            <i class="fa fa-shopping-cart"></i> {{trans($stockHandle['message'])}}
+                                        </a>
+                                    @else
+                                        <a class="btn btn-danger">
+                                            {{trans($stockHandle['message'])}}
+                                        </a>
+                                    @endif
+                                    <div class="card-body text-center">
+                                        <a class="h6 link"
+                                            href="{{route('front.product', $d_product->slug)}}">{{trans($d_product->title)}}</a>
+                                        <div class="price mt-2">
+                                            @if ($getprice['discounted_price'] != 0)
+                                                <span class="h5"><strong>{{$getprice['discounted_price']}}$</strong></span>
+                                                <span class="h5"><del>{{$getprice['actual_price']}}$</del></span>
+                                            @else
+                                                <span class="h5"><strong>{{$getprice['actual_price']}}$</strong></span>
+                                            @endif
+                                        </div>
+                                        <!-- Product Rating -->
+                                        @php
+                                            $avg_rating_per = 0;
+                                            if ($d_product->product_ratings_count > 0) {
+                                                $avg_rating = number_format(($d_product->product_ratings_sum_rating /
+                                                    $d_product->product_ratings_count), 2);
+                                                $avg_rating_per = ($avg_rating * 100) / 5;
+                                            }
+                                        @endphp
+                                        <div style="display: flex; justify-content: center;">
+                                            <div class="star-rating product mt-2" title="">
+                                                <div class="back-stars">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <small class="pt-2 ps-1">({{$d_product->product_ratings_count}} Reviews)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    @endforeach
+            @endif
+            <div class="col-md-12 pt-5">
+                {{$recommended_products->withQueryString()->links()}}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
 <section class="section-4 pt-5">
     <div class="container">
         <div class="section-title">
@@ -132,7 +239,7 @@
                                 $images_prod = $f_product->product_images()->first();
                                 $inWishlist = $wishlist->contains('product_id', $f_product->id);
                                 $getprice = getDiscountedPrice($f_product->id, $discount, $f_product->price);
-                                $stockHandle = handleStock($f_product->id,0,0);
+                                $stockHandle = handleStock($f_product->id, 0, 0);
                             @endphp
                             <div class="col-md-3">
                                 <div class="card product-card">
@@ -159,22 +266,17 @@
                                         </a>
                                     </div>
                                     <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
-
-                                <!-- this is section for handling out of stock products -->
-
-                            
+                                    <!-- this is section for handling out of stock products -->
                                     @if ($stockHandle['status'] == true)
                                         <a class="btn btn-dark" href="javascript:void(0)"
                                             onclick="addToCart({{ $f_product->id }}, {{ $getprice['discount_value']}}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
                                             <i class="fa fa-shopping-cart"></i> {{trans($stockHandle['message'])}}
                                         </a>
                                     @else
-                                    <a class="btn btn-danger">
-                                     {{trans($stockHandle['message'])}}
-                                    </a>
+                                        <a class="btn btn-danger">
+                                            {{trans($stockHandle['message'])}}
+                                        </a>
                                     @endif
-
-
                                     <div class="card-body text-center">
                                         <a class="h6 link"
                                             href="{{route('front.product', $f_product->slug)}}">{{trans($f_product->title)}}</a>
@@ -236,7 +338,7 @@
                             $images_prod = $late_prod->product_images()->first();
                             $inWishlist = $wishlist->contains('product_id', $late_prod->id);
                             $getprice = getDiscountedPrice($late_prod->id, $discount, $late_prod->price);
-                            $stockHandle = handleStock($late_prod->id,0,0);
+                            $stockHandle = handleStock($late_prod->id, 0, 0);
                         @endphp
                         <div class="col-md-3">
                             <div class="card product-card">
@@ -265,9 +367,7 @@
                                 @if ($getprice['discount_value'] != 0)
                                     <div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
                                 @endif
-
                                 <!-- this is section for handling out of stock products -->
-
                                 @if ($stockHandle['status'] == true)
                                     <a class="btn btn-dark" href="javascript:void(0)"
                                         onclick="addToCart({{ $late_prod->id }}, {{ $getprice['discount_value'] }}, {{ $getprice['discounted_price'] }}, {{ $getprice['actual_price'] }})">
@@ -275,15 +375,9 @@
                                     </a>
                                 @else
                                     <a class="btn btn-danger">
-                                     {{trans($stockHandle['message'])}}
+                                        {{trans($stockHandle['message'])}}
                                     </a>
                                 @endif
-
-
-
-
-
-
                                 <div class="card-body text-center mt-3">
                                     <a class="h6 link" href="product.php">{{trans($late_prod->title)}}</a>
                                     <div class="price mt-2">
