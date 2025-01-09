@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use App\Models\Discount;
 use App\Models\ProductView;
-
 class FrontController extends Controller
 {
     public function index()
@@ -27,25 +26,18 @@ class FrontController extends Controller
             ->withSum('product_ratings', 'rating')
             ->paginate(8);
         $discount = Discount::where('status', 1)->get();
-
         $recommended_products = Product::orderBy('id', 'DESC')
             ->where('status', 1)
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->with('product_recommendation')->paginate(8);
-
         $recommended_product_ids = ProductView::where('user_id', Auth::id())->pluck('product_id')->toArray();
-
         $recommended_products = Product::orderBy('id', 'DESC')
             ->where('status', 1)
             ->whereIn('id', $recommended_product_ids)
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->paginate(8);
-
-
-
-
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['recommended_products'] = $recommended_products;
