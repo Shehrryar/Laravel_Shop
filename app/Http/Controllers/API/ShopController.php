@@ -20,12 +20,9 @@ class ShopController extends Controller
         $categroy_selected = "";
         $brandsArray = [];
         $subsubcategroy_selected = "";
-
         $categories = Category::orderBy('name', 'DESC')->with('sub_category')->where('status', 1)->get();
         $brands = Brand::orderBy('name', 'DESC')->where('status', 1)->get();
-
         $products = Product::where('status', 1);
-
         if (!empty($catslug)) {
             $categroy = Category::where('slug', $catslug)->first();
             $products = $products->where('categories_id', $categroy->id);
@@ -41,16 +38,13 @@ class ShopController extends Controller
             $products = $products->where('sub_sub_category_id', $subsubcategroy->id);
             $subsubcategroy_selected = $subsubcategroy->id;
         }
-
         if (!empty($request->get('brand'))) {
             $brandsArray = explode(',', $request->get('brand'));
             $products = $products->whereIn('brands_id', $brandsArray);
         }
-
         if ($request->get('price_max') != '' && $request->get('price_min')) {
             $products = $products->whereBetween('price', [intval($request->get('price_min')), intval($request->get('price_max'))]);
         }
-
         if ($request->get('sort') != '') {
             if ($request->get('sort') == 'latest') {
                 $products = $products->orderBy('id', 'DESC');
@@ -58,7 +52,6 @@ class ShopController extends Controller
                 $products = $products->orderBy('price', 'ASC');
             } else {
                 $products = $products->orderBy('price', 'DESC');
-
             }
         } else {
             $products = $products->withCount('product_ratings')->withSum('product_ratings', 'rating')->orderBy('id', 'DESC');
@@ -71,7 +64,6 @@ class ShopController extends Controller
         if (empty($request->get('price_max'))) {
             $request->merge(['price_max' => 1000]);
         }
-        
         $discount = Discount::where('status',1)->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
@@ -88,7 +80,6 @@ class ShopController extends Controller
         $data['keyword'] = '';
         return response()->json([
             'data' => $data,
-
         ]);
     }
     public function product($slug)
@@ -98,7 +89,6 @@ class ShopController extends Controller
         if ($product == NULL) {
             abort(404);
         }
-
         // fetch products according to the category
         if($product != Null){
             $samcatproduct = Product::where('categories_id', $product->categories_id)
@@ -110,13 +100,10 @@ class ShopController extends Controller
         //     $related_products = explode(',', $product->related_products);
         //     $showrelatedproduct = Product::whereIn('id', $related_products)->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
         // }
-
-
         $avg_rating = '0.00';
         if ($product->product_ratings_count > 0) {
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
         }
-
         $avg_rating_per = 0;
         if ($product->product_ratings_count > 0) {
             $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
@@ -138,21 +125,18 @@ class ShopController extends Controller
             'data' => $data,
         ]);
     }
-
     public function productRating(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'review' => 'required|min:10',
             'rating' => 'required',
         ]);
-
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors()
             ]);
         }
-
         $count = ProductRating::where('email', $request->email)->where('product_id', $id)->count();
         if ($count > 0) {
             session()->flash('error', 'You already rate this product');
@@ -170,7 +154,6 @@ class ShopController extends Controller
             $productrating->rating = $request->rating;
             $productrating->status = 0;
             $productrating->save();
-
             session()->flash('success', 'Thanks for your rating');
             return response()->json([
                 'status' => true,
@@ -183,5 +166,4 @@ class ShopController extends Controller
             ]);
         }
     }
-
 }

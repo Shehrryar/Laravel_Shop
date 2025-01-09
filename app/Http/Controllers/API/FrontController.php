@@ -26,7 +26,6 @@ class FrontController extends Controller
             ->withSum('product_ratings', 'rating')
             ->paginate(8);
         $discount = Discount::where('status', 1)->get();
-
         $recommended_product_ids = ProductView::where('user_id', Auth::id())->pluck('product_id')->toArray();
         $recommended_products = Product::orderBy('id', 'DESC')
             ->where('status', 1)
@@ -34,18 +33,15 @@ class FrontController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->paginate(8);
-
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['recommended_products'] = $recommended_products;
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
         $data['keyword'] = '';
-
         return response()->json([
             'data' => $data
         ]);
-
     }
     public function addToWishlist(Request $request)
     {

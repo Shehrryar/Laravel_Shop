@@ -60,37 +60,46 @@ class AuthController extends Controller
     }
     public function authenticate(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request_name = ["query", "variables"];
+        foreach ($request_name as $name) {
+            if (!empty($request->all()[$name])) {
+                $requested_data = $request->all()[$name];
+                break;
+            }
+        }
+        $validator = Validator::make($requested_data, [
             'email' => 'required|email',
             'password' => 'required',
         ]);
         if ($validator->passes()) {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
-                if (session()->has('url.intended')) {
-                    return redirect(session()->get('url.intended'));
-                }
-                return redirect()->route('account.profile');
+            if (Auth::attempt(['email' => $requested_data["email"], 'password' => $requested_data["password"]], $request->get('remember'))) {
+                $user = User::where('email', $requested_data["email"])->firstOrFail();
+                $token = $user->createToken('auth_token')->plainTextToken;
+                return response()->json([
+                    'status' => true,
+                    'message' => "Your are login Successfully",
+                    'access_token' => $token,
+                    'token_type' => 'Bearer'
+                ]);
             } else {
-                // session()->flash('error', 'Either email/password is incorrect');
-                return redirect()->route('account.login')
-                    ->withInput($request->only('email'))->with('error', 'Either email/password is incorrect');
+                return response()->json([
+                    'status' => false,
+                    'errors' => "Crenditionals are invalid"
+                ]);
             }
         } else {
-            return redirect()
-                ->route('account.login')
-                ->withErrors($validator)
-                ->withInput($request->only('email'));
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
         }
     }
     public function profile()
     {
-        return view('front.account.profile');
-    }
-    public function logout()
-    {
-        Auth::logout();
+        $user = Auth::user();
         return response()->json([
-            'message' => 'Your successfully logout'
+            'status' => true,
+            'User_profile' => $user
         ]);
     }
     public function githubRedirect()
@@ -224,7 +233,6 @@ class AuthController extends Controller
         return response()->json([
             'data' => $data,
         ]);
-
     }
     public function orderdetail($id)
     {
@@ -237,6 +245,14 @@ class AuthController extends Controller
         $data['orderitems'] = $orderitems;
         return response()->json([
             'data' => $data,
+        ]);
+    }
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        // ->tokens()->delete();
+        return response()->json([
+            'message' => 'Your successfully logout'
         ]);
     }
 }
