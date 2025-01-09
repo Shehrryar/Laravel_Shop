@@ -22,21 +22,28 @@ class AuthController extends Controller
     public function register()
     {
         $data['keyword'] = '';
-        return view('front.account.register',$data);
+        return view('front.account.register', $data);
     }
     public function processRegister(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request_name = ["query", "variables"];
+        foreach ($request_name as $name) {
+            if (!empty($request->all()[$name])) {
+                $requested_data = $request->all()[$name];
+                break;
+            }
+        }
+        $validator = Validator::make($requested_data, [
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:5|confirmed',
         ]);
         if ($validator->passes()) {
             $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->password = Hash::make($request->password);
+            $user->name = $requested_data["name"];
+            $user->email = $requested_data["email"];
+            $user->phone = $requested_data["phone"];
+            $user->password = Hash::make($requested_data["password"]);
             $user->save();
             $message = 'You have been registered Successfully';
             session()->flash('success', $message);
@@ -94,13 +101,12 @@ class AuthController extends Controller
     {
         $gitUser = Socialite::driver('github')->stateless()->user();
         $userExists = User::where('email', $gitUser->email)
-        ->first();
+            ->first();
         if ($userExists && $userExists->role == 2) {
             session()->flash('error', 'The email already exists for admin');
             return redirect()->route('admin.login');
-        }
-        else if($userExists && $userExists->role == 1){
-            if($userExists->google_id == $gitUser->id){
+        } else if ($userExists && $userExists->role == 1) {
+            if ($userExists->google_id == $gitUser->id) {
                 Auth::login($userExists);
                 session()->flash('success', 'Welcome to the Dashboard');
                 return redirect()->route('front.home');
@@ -119,19 +125,20 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-    public function googleRedirect(){
+    public function googleRedirect()
+    {
         return Socialite::driver('google')->stateless()->redirect();
     }
-    public function googleCallback(){
+    public function googleCallback()
+    {
         $googleUser = Socialite::driver('google')->stateless()->user();
         $userExists = User::where('email', $googleUser->email)
-        ->first();
+            ->first();
         if ($userExists && $userExists->role == 2) {
             session()->flash('error', 'The email already exists for admin');
             return redirect()->route('admin.login');
-        }
-        else if($userExists && $userExists->role == 1){
-            if($userExists->google_id == $googleUser->id){
+        } else if ($userExists && $userExists->role == 1) {
+            if ($userExists->google_id == $googleUser->id) {
                 Auth::login($userExists);
                 session()->flash('success', 'Welcome to the Dashboard');
                 return redirect()->route('front.home');
@@ -150,19 +157,20 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-    public function facebookRedirect(){
+    public function facebookRedirect()
+    {
         return Socialite::driver('facebook')->stateless()->redirect();
     }
-    public function facebookCallback(){
+    public function facebookCallback()
+    {
         $facebookUser = Socialite::driver('facebook')->stateless()->user();
         $userExists = User::where('email', $facebookUser->email)
-        ->first();
+            ->first();
         if ($userExists && $userExists->role == 2) {
             session()->flash('error', 'The email already exists for admin');
             return redirect()->route('admin.login');
-        }
-        else if($userExists && $userExists->role == 1){
-            if($userExists->facebook_id == $facebookUser->id){
+        } else if ($userExists && $userExists->role == 1) {
+            if ($userExists->facebook_id == $facebookUser->id) {
                 Auth::login($userExists);
                 session()->flash('success', 'Welcome to the Dashboard');
                 return redirect()->route('front.home');
@@ -181,18 +189,20 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-    public function wishlist(){
-       $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
-       $data = [];
-       $data['wishlist'] = $wishlist;
-       return response()->json([
-        'data' =>  $data,
-    ]);
+    public function wishlist()
+    {
+        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
+        $data = [];
+        $data['wishlist'] = $wishlist;
+        return response()->json([
+            'data' => $data,
+        ]);
     }
-    public function remove_product_from_wishlist(Request $request) {
+    public function remove_product_from_wishlist(Request $request)
+    {
         $wishlist = Wishlist::where('user_id', Auth::user()->id)
-                            ->where('product_id', $request->id)
-                            ->first();
+            ->where('product_id', $request->id)
+            ->first();
         if ($wishlist == null) {
             session()->flash('error', 'Product already removed');
             return response()->json([
@@ -206,23 +216,25 @@ class AuthController extends Controller
             ]);
         }
     }
-    public function order(){
+    public function order()
+    {
         $user = Auth::user();
-        $orders = Order::where('user_id', $user->id)->orderby('created_at','DESC')->get();
+        $orders = Order::where('user_id', $user->id)->orderby('created_at', 'DESC')->get();
         $data['orders'] = $orders;
         return response()->json([
             'data' => $data,
         ]);
 
     }
-    public function orderdetail($id){
+    public function orderdetail($id)
+    {
         $user = Auth::user();
-        $order = Order::where('user_id', $user->id)->where('id',$id)->first();
+        $order = Order::where('user_id', $user->id)->where('id', $id)->first();
         $orderitems = OrderItem::where('order_id', $id)->get();
         $orderitemscount = OrderItem::where('order_id', $id)->count();
-        $data['order'] = $order; 
-        $data['orderitemscount'] = $orderitemscount; 
-        $data['orderitems'] = $orderitems; 
+        $data['order'] = $order;
+        $data['orderitemscount'] = $orderitemscount;
+        $data['orderitems'] = $orderitems;
         return response()->json([
             'data' => $data,
         ]);

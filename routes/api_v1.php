@@ -26,7 +26,7 @@ use App\Http\Controllers\API\admin\SizeController;
 use App\Http\Controllers\API\SearchController;
 use App\Http\Controllers\API\admin\StockManagementController;
 
-Route::get('/api', [FrontController::class, 'index'])->name('front.home');
+Route::get('/index', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
 Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
@@ -43,22 +43,24 @@ Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
 Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
 Route::post('search', [SearchController::class, 'search'])->name('product.search');
+
+
+
 Route::group(['prefix' => 'account'], function () {
-    Route::group(['middleware' => 'guest'], function () {
-        Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
-        Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
-        // Register with Githud
-        Route::GET('/auth/redirect', [AuthController::class, 'githubRedirect'])->name('auth.github');
-        Route::GET('/auth/callback', [AuthController::class, 'githubCallback'])->name('auth.githubcallback');
-        // Register with Google
-        Route::GET('/auth/redirect/google', [AuthController::class, 'googleRedirect'])->name('auth.google');
-        Route::GET('/auth/callback/google', [AuthController::class, 'googleCallback'])->name('auth.googlecallback');
-        // Register with Facebook
-        Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
-        Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
-        Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
-        Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
-    });
+
+    Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
+    // Register with Githud
+    Route::GET('/auth/redirect', [AuthController::class, 'githubRedirect'])->name('auth.github');
+    Route::GET('/auth/callback', [AuthController::class, 'githubCallback'])->name('auth.githubcallback');
+    // Register with Google
+    Route::GET('/auth/redirect/google', [AuthController::class, 'googleRedirect'])->name('auth.google');
+    Route::GET('/auth/callback/google', [AuthController::class, 'googleCallback'])->name('auth.googlecallback');
+    // Register with Facebook
+    Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
+    Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
+    Route::GET('/login', [AuthController::class, 'login'])->name('account.login');
+    Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
+
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/my-orders', [AuthController::class, 'order'])->name('account.orders');
@@ -179,13 +181,13 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
         Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
         Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
-         // add route for the Stock managment
-         Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
-         Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
-         Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
-         Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
-         Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
-         Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+        // add route for the Stock managment
+        Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
+        Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
+        Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
+        Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
+        Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
+        Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });

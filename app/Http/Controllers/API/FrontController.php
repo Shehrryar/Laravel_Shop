@@ -3,9 +3,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller; // Import the base controller
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\App;
 use App\Models\Product;
+use App\Models\ProductView;
 use App\Models\Discount;
+// use Illuminate\Support\Facades\App;
 class FrontController extends Controller
 {
     public function index()
@@ -15,27 +16,34 @@ class FrontController extends Controller
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
         $featured_products = Product::where('is_featured', 1)
-                    ->where('status', 1)
-                    ->withCount('product_ratings')
-                    ->withSum('product_ratings', 'rating')
-                    ->paginate(8);
+            ->where('status', 1)
+            ->withCount('product_ratings')
+            ->withSum('product_ratings', 'rating')
+            ->paginate(8);
         $latest_product = Product::orderBy('id', 'DESC')
-                        ->where('status', 1)
-                        ->withCount('product_ratings')
-                        ->withSum('product_ratings', 'rating')
-                        ->paginate(8);
+            ->where('status', 1)
+            ->withCount('product_ratings')
+            ->withSum('product_ratings', 'rating')
+            ->paginate(8);
         $discount = Discount::where('status', 1)->get();
-        // echo "<pre>";
-        // print_r($discount);
-        // exit;
+
+        $recommended_product_ids = ProductView::where('user_id', Auth::id())->pluck('product_id')->toArray();
+        $recommended_products = Product::orderBy('id', 'DESC')
+            ->where('status', 1)
+            ->whereIn('id', $recommended_product_ids)
+            ->withCount('product_ratings')
+            ->withSum('product_ratings', 'rating')
+            ->paginate(8);
+
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
+        $data['recommended_products'] = $recommended_products;
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
         $data['keyword'] = '';
 
         return response()->json([
-            'data'=>$data
+            'data' => $data
         ]);
 
     }
@@ -54,7 +62,7 @@ class FrontController extends Controller
                 'message' => '<div class = "alert alert-danger">Product not found.</div>'
             ]);
         }
-        $wishlist = Wishlist::updateOrCreate(
+        Wishlist::updateOrCreate(
             [
                 'user_id' => Auth::user()->id,
                 'product_id' => $request->id

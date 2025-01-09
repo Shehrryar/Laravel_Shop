@@ -7,6 +7,7 @@ use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\ProductView;
 use App\Models\Country;
 use App\Models\Shipping;
 use Carbon\Carbon;
@@ -66,6 +67,18 @@ class CartController extends Controller
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
         $data['keyword'] = '';
+
+        foreach ($cartcontent as $content) {
+            $existingProductView = ProductView::where('product_id', $content->product_id)
+                ->where('user_id', auth()->id())
+                ->first();
+            if (!$existingProductView) {
+                ProductView::create([
+                    'product_id' => $content->product_id,
+                    'user_id' => $content->user_id,
+                ]);
+            }
+        }
         return response()->json([
             'data' => $data,
         ]);
