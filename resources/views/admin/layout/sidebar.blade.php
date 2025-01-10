@@ -168,6 +168,30 @@
                     </a>
                 </li>
 
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-percent" aria-hidden="true"></i>
+                        <p>
+                            Web Services
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a style="margin-left: 28px;" href="{{ route('discount.index') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>AdminSide APIS</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a style="margin-left: 28px;" href="{{ route('coupon.index') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>FrontSide APIS</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
 
 
 
