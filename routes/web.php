@@ -27,8 +27,9 @@ use App\Http\Controllers\admin\StockManagementController;
 use App\Http\Controllers\admin\ProductAttributeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\AttributeController;  
-use App\Http\Controllers\admin\adminChatController;  
+use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\admin\adminChatController;
+use App\Http\Controllers\admin\ApiRoutesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,7 +37,7 @@ use App\Http\Controllers\admin\adminChatController;
 |
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| be assigned to the "web" middleware ApiRoutesControllergroup. Make something great!
 |
 */
 // Route::get('/test', function(){
@@ -216,9 +217,23 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
         Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+
+
+        // added route for the chat
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
         Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
         Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
+
+
+        // added route for the webservices
+
+        Route::get('/webservice', [ApiRoutesController::class, 'index'])->name('webservice.index');
+        Route::post('/webservice', [ApiRoutesController::class, 'create'])->name('webservice.create');
+
+
+
+
+
     });
 });

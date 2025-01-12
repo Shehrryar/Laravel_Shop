@@ -20,23 +20,22 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{route('categories.index')}}" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
+                        <i class="nav-icon fas fa-list"></i>
                         <p>Category</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('subcategories.index')}}" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
+                        <i class="nav-icon fas fa-list-alt"></i>
                         <p>Sub Category Level 2</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('subsubcategories.index')}}" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
+                        <i class="nav-icon fas fa-list-ul"></i>
                         <p>Sub Category Level 3</p>
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a href="{{route('brands.index')}}" class="nav-link">
                         <svg class="h-6 nav-icon w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -71,31 +70,24 @@
                         </li>
                     </ul>
                 </li>
-
                 <li class="nav-item">
                     <a href='{{route("colorss.index")}}' class="nav-link">
-                        <i class="nav-icon fas fa-tag"></i>
+                        <i class="nav-icon fas fa-palette"></i>
                         <p>Color</p>
                     </a>
                 </li>
-
-
-
                 <li class="nav-item">
                     <a href='{{route("sizes.index")}}' class="nav-link">
-                        <i class="nav-icon fas fa-tag"></i>
+                        <i class="nav-icon fas fa-ruler"></i>
                         <p>Size</p>
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a href='{{route("stock.index")}}' class="nav-link">
-                        <i class="nav-icon fas fa-tag"></i>
+                        <i class="nav-icon fas fa-boxes"></i>
                         <p>Stock Management</p>
                     </a>
                 </li>
-
-
                 <li class="nav-item">
                     <a href="{{route("shipping.create")}}" class="nav-link">
                         <!-- <i class="nav-icon fas fa-tag"></i> -->
@@ -132,45 +124,33 @@
                         </li>
                     </ul>
                 </li>
-
                 <li class="nav-item">
                     <a href="{{route('users.index')}}" class="nav-link">
                         <i class="nav-icon  fas fa-users"></i>
                         <p>Users</p>
                     </a>
                 </li>
-
-
                 <li class="nav-item">
                     <a href="{{route('language.index')}}" class="nav-link">
                         <i class="nav-icon fas fa-globe"></i>
                         <p>Language</p>
                     </a>
                 </li>
-
-
-
                 <li class="nav-item">
                     <a href="{{route('chat.index')}}" class="nav-link">
                         <i class="nav-icon fas fa-comments"></i>
                         <p>Chat</p>
                     </a>
                 </li>
-
-
-
-
-
                 <li class="nav-item">
                     <a href="{{route('chat.checkSocketMessage')}}" class="nav-link">
                         <i class="nav-icon fas fa-globe"></i>
                         <p>Sockets Chat</p>
                     </a>
                 </li>
-
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa fa-percent" aria-hidden="true"></i>
+                        <i class="nav-icon fas fa-cogs" aria-hidden="true"></i>
                         <p>
                             Web Services
                             <i class="right fas fa-angle-left"></i>
@@ -178,7 +158,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a style="margin-left: 28px;" href="{{ route('discount.index') }}" class="nav-link">
+                            <a style="margin-left: 28px;" href="{{ route('webservice.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>AdminSide APIS</p>
                             </a>
@@ -191,11 +171,6 @@
                         </li>
                     </ul>
                 </li>
-
-
-
-
-
                 <li class="nav-item">
                     <a href="pages.html" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>
