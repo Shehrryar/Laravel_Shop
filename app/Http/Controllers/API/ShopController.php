@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 class ShopController extends Controller
 {
-    public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null )
+    public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null)
     {
         $subcategroy_selected = "";
         $categroy_selected = "";
@@ -57,6 +57,12 @@ class ShopController extends Controller
             $products = $products->withCount('product_ratings')->withSum('product_ratings', 'rating')->orderBy('id', 'DESC');
         }
         $products = $products->paginate(10);
+        $totalPages = $products->lastPage(); // Total number of pages
+        $currentPage = $products->currentPage(); // Current page number
+        $productData = $products->items(); // Extract products as an array
+        $newproducts['current_page'] = $currentPage;
+        $newproducts['totalPages'] = $totalPages;
+        $newproducts['productData'] = $productData;
         $wishlist = collect();
         if (!empty(Auth::user())) {
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
@@ -64,10 +70,10 @@ class ShopController extends Controller
         if (empty($request->get('price_max'))) {
             $request->merge(['price_max' => 1000]);
         }
-        $discount = Discount::where('status',1)->get();
+        $discount = Discount::where('status', 1)->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
-        $data['products'] = $products;
+        $data['products'] = $newproducts;
         $data['subcategroy_selected'] = $subcategroy_selected;
         $data['subsubcategroy_selected'] = $subsubcategroy_selected;
         $data['categroy_selected'] = $categroy_selected;
@@ -78,9 +84,7 @@ class ShopController extends Controller
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-        return response()->json([
-            'data' => $data,
-        ]);
+        return response()->json([$data,]);
     }
     public function product($slug)
     {
@@ -90,30 +94,24 @@ class ShopController extends Controller
             abort(404);
         }
         // fetch products according to the category
-        if($product != Null){
+        if ($product != Null) {
             $samcatproduct = Product::where('categories_id', $product->categories_id)
-            ->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
+                ->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
         }
-        // fetch related products 
-        // $related_products = [];
-        // if ($product != null) {
-        //     $related_products = explode(',', $product->related_products);
-        //     $showrelatedproduct = Product::whereIn('id', $related_products)->withCount('product_ratings')->withSum('product_ratings', 'rating')->with('product_images')->get();
-        // }
         $avg_rating = '0.00';
         if ($product->product_ratings_count > 0) {
-            $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
+            $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count), 2);
         }
         $avg_rating_per = 0;
         if ($product->product_ratings_count > 0) {
-            $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count),2);
-            $avg_rating_per = ($avg_rating*100)/5;
+            $avg_rating = number_format(($product->product_ratings_sum_rating / $product->product_ratings_count), 2);
+            $avg_rating_per = ($avg_rating * 100) / 5;
         }
         $wishlist = collect();
         if (!empty(Auth::user())) {
             $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
         }
-        $discount = Discount::where('status',1)->get();
+        $discount = Discount::where('status', 1)->get();
         $data['product'] = $product;
         $data['wishlist'] = $wishlist;
         $data['showrelatedproduct'] = $samcatproduct;
@@ -121,9 +119,9 @@ class ShopController extends Controller
         $data['avg_rating_per'] = $avg_rating_per;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-        return response()->json([
-            'data' => $data,
-        ]);
+        return response()->json(
+            $data,
+        );
     }
     public function productRating(Request $request, $id)
     {

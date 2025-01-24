@@ -73,9 +73,12 @@ Route::group(['prefix' => 'account'], function () {
     // Register with Facebook
     Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
     Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
-
-
     Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
+
+
+
+
+    
     Route::middleware('auth:sanctum')->group(function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/my-orders', [AuthController::class, 'order'])->name('account.orders');

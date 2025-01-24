@@ -23,15 +23,15 @@ class SearchController extends Controller
                 })
                 ->withCount('product_ratings')
                 ->withSum('product_ratings', 'rating')
-                ->paginate(8);
+                ->get();
         }
         $discount = Discount::where('status', 1)->get();
         $data['keyword'] = $keyword;
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['featured_products'] = $featured_products;
-        return response()->json([
-            'data' => $data,
-        ]);
+        return response()->json(
+            $data,
+        );
     }
 }

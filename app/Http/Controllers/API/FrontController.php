@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\ProductView;
 use App\Models\Discount;
+use Illuminate\Http\Request;
+use App\Models\Brand;
+use App\Models\Category;
 // use Illuminate\Support\Facades\App;
 class FrontController extends Controller
 {
@@ -19,12 +22,14 @@ class FrontController extends Controller
             ->where('status', 1)
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
-            ->paginate(8);
+            ->take(8)
+            ->get();
         $latest_product = Product::orderBy('id', 'DESC')
             ->where('status', 1)
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
-            ->paginate(8);
+            ->take(8)
+            ->get();
         $discount = Discount::where('status', 1)->get();
         $recommended_product_ids = ProductView::where('user_id', Auth::id())->pluck('product_id')->toArray();
         $recommended_products = Product::orderBy('id', 'DESC')
@@ -32,16 +37,18 @@ class FrontController extends Controller
             ->whereIn('id', $recommended_product_ids)
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
-            ->paginate(8);
+            ->take(8)
+            ->get();
+        $brands = Brand::orderBy('id', 'asc')->where(['status' => 1])->get();
+        $category = Category::orderBy('id', 'asc')->where(['status' => 1])->get();
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['recommended_products'] = $recommended_products;
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
-        $data['keyword'] = '';
-        return response()->json([
-            'data' => $data
-        ]);
+        $data['brands'] = $brands;
+        $data['category'] = $category;
+        return response()->json($data);
     }
     public function addToWishlist(Request $request)
     {
