@@ -96,11 +96,13 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/mark-as-read/{receiverId}', [ChatController::class, 'markAsRead'])->name('mark.as.read');
     });
 });
+
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => 'admin.guest'], function () {
         Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
+    
     Route::group(['middleware' => 'admin.auth'], function () {
         Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');

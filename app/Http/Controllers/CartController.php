@@ -13,7 +13,6 @@ use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
-// use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -47,11 +46,11 @@ class CartController extends Controller
             $productAlreadyExist = false;
             foreach ($cartcontent as $item) {
                 if (!empty($cart_attribute)) {
-                    if ($item->product_id == $product->id && $item->color_id == $cart_attribute['color_id'] && $item->size_id == $cart_attribute['size_id']) {
+                    if ($item->user_id == Auth::user()->id && $item->product_id == $product->id && $item->color_id == $cart_attribute['color_id'] && $item->size_id == $cart_attribute['size_id']) {
                         $productAlreadyExist = true;
                     }
                 } else {
-                    if ($item->product_id == $product->id && $item->color_id == 0 && $item->size_id == 0) {
+                    if ($item->user_id == Auth::user()->id && $item->product_id == $product->id && $item->color_id == 0 && $item->size_id == 0) {
                         $productAlreadyExist = true;
                     }
                 }

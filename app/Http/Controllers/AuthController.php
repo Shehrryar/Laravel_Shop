@@ -54,9 +54,6 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
-
-
         if ($validator->passes()) {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
                 if (session()->has('url.intended')) {
@@ -85,36 +82,27 @@ class AuthController extends Controller
         $data['keyword'] = '';
         return view('front.account.updateprofile', $data);
     }
-
     public function updateProfileData(Request $request)
     {
-
-
         $userUpdate = User::find(Auth::id());
         $userUpdate->name = $request->name;
         $userUpdate->email = $request->email;
         $userUpdate->phone = $request->phone;
         $userUpdate->address = $request->address;
         $userUpdate->image = $request->profile_image;
-
-
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $fileName = Auth::id() . '_' . $file->getClientOriginalName(); // Unique file name
-            $filePath = 'upload/user'; 
+            $filePath = 'upload/user';
             $file->move(public_path($filePath), $fileName);
             $userUpdate->image = $filePath . '/' . $fileName;
         }
         $userUpdate->save();
-
         return response()->json([
             'status' => true,
             'message' => 'Profile updated successfully!',
         ]);
     }
-
-
-
     public function logout()
     {
         Auth::logout();
@@ -159,8 +147,6 @@ class AuthController extends Controller
     public function googleCallback()
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
-
-
         $userExists = User::where('email', $googleUser->email)
             ->first();
         if ($userExists && $userExists->role == 2) {
@@ -176,7 +162,6 @@ class AuthController extends Controller
                     session()->flash('error', 'Your account  is disabled. Please contact to the admin');
                     return redirect()->route('account.login');
                 }
-
             }
             session()->flash('error', 'Account already exist enter your Email and Password');
             return redirect()->route('account.login');
@@ -192,7 +177,6 @@ class AuthController extends Controller
         session()->flash('success', 'Your account is created successfully');
         return redirect()->route('front.home');
     }
-
     public function facebookRedirect()
     {
         return Socialite::driver('facebook')->stateless()->redirect();
@@ -231,7 +215,6 @@ class AuthController extends Controller
         $data = [];
         $data['wishlist'] = $wishlist;
         $data['keyword'] = '';
-
         return view('front.account.wishlist', $data);
     }
     public function remove_product_from_wishlist(Request $request)

@@ -12,38 +12,40 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminLoginController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('admin.login');
     }
 
-    public function authenticate(Request $request){       
+    public function authenticate(Request $request)
+    {
+        $validater = Validator::make(
+            $request->all(),
+            [
+                'email' => 'required | email',
+                'password' => 'required'
+            ]
+        );
 
-         $validater = Validator::make($request->all(),
-         [
-             'email' =>'required | email',
-             'password'=>'required'
-         ]);
-
-        if($validater->passes()){
-            if(Auth::guard('admin')->attempt(['email'=>$request->email, 'password'=>$request->password],$request->get('remember'))){
+        if ($validater->passes()) {
+            if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
 
                 $admin = Auth::guard('admin')->user();
-                if($admin->role==2){
+
+
+                if ($admin->role == 2) {
                     return redirect()->route('dashboard.index');
-                }
-                else{
-                $admin = Auth::guard('admin')->logout();
-                    return redirect()->route('admin.login')->with('error','you are not authorized to access admin panal');
+                } else {
+                    $admin = Auth::guard('admin')->logout();
+                    return redirect()->route('admin.login')->with('error', 'you are not authorized to access admin panal');
                 }
 
-                
+
+            } else {
+                return redirect()->route('admin.login')->with('error', 'Either Email/Password is incorrect');
             }
-            else{
-                return redirect()->route('admin.login')->with('error','Either Email/Password is incorrect');
-            }
-        }
-        else{
-            return redirect()->route('admin.login') ->withErrors($validater)->withInput($request->only('email'));
+        } else {
+            return redirect()->route('admin.login')->withErrors($validater)->withInput($request->only('email'));
         }
     }
 
