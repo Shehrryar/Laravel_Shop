@@ -7,5 +7,8 @@
 @section('customjs') 
 <script>
 
+
+    // console.log(window.Echo);
+    
 </script>
 @endsection
