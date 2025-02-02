@@ -42,6 +42,12 @@ use App\Http\Controllers\admin\ApiRoutesController;
 */
 // Route::get('/test', function(){
 // });
+
+
+
+
+
+
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
@@ -225,6 +231,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
         Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
+
+
+
         Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
 
 

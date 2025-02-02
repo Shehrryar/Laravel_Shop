@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers\admin;
-use App\Events\newTrae;
+use App\Events\NewTrade;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -80,7 +80,7 @@ class adminChatController extends Controller
 
     public function checkSocketMessage(Request $request)
     {
-        broadcast(new newTrae('This is a test message!'));
+        broadcast(new NewTrade('This is a test message!'));
         return view('admin.chats.create');
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class newTrae implements ShouldBroadcast
+class NewTrade implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,5 +33,10 @@ class newTrae implements ShouldBroadcast
             // new PrivateChannel('channel-name'),
             new Channel('trades'),
         ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'newTrade'; // Event name should match the frontend listener
     }
 }

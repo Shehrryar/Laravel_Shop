@@ -17,6 +17,9 @@
 		<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 		<meta name="csrf-token" content="{{csrf_token()}}">
 		@vite(['resources/js/app.js'])
+
+
+
 	</head>
 	<body class="hold-transition sidebar-mini">
 		<!-- Site wrapper -->
@@ -91,6 +94,9 @@
 		<script src="{{asset('admin-assets/plugins/dropzone/min/dropzone.min.js')}}"></script>
 		<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
 		<script type="text/javascript">
+
+
+
 		$.ajaxSetup({
 			headers: {
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

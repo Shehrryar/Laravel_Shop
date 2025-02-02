@@ -47,10 +47,6 @@
 //     disableStats: true,
 // });
 
-console.log(import.meta.env.VITE_PUSHER_APP_KEY);
-console.log(import.meta.env.VITE_PUSHER_HOST );
-console.log(import.meta.env.VITE_PUSHER_PORT );
-
 import axios from 'axios';
 window.axios = axios;
 
@@ -60,16 +56,16 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 window.Pusher = Pusher;
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: import.meta.env.VITE_PUSHER_APP_KEY,
-//     wsHost: import.meta.env.VITE_PUSHER_HOST || window.location.hostname,
-//     wsPort: import.meta.env.VITE_PUSHER_PORT || 6001,
-//     forceTLS: false,
-//     disableStats: true,
-//     enabledTransports: ['ws', 'wss']
-// });
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER, // Add this line
+    wsHost: import.meta.env.VITE_PUSHER_HOST || window.location.hostname,
+    wsPort: import.meta.env.VITE_PUSHER_PORT || 6001,
+    forceTLS: false,
+    disableStats: true,
+    enabledTransports: ['ws', 'wss']
+});
 
-console.log(window.Echo);
 
 
