@@ -175,7 +175,7 @@ class CartController extends Controller
         $data['cartcount'] = $cartcount;
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
-        return response()->json($data);
+        return response()->json([$data]);
     }
     public function updateCart(Request $request)
     {

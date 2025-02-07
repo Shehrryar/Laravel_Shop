@@ -120,7 +120,7 @@ class ShopController extends Controller
         $data['discount'] = $discount;
         $data['keyword'] = '';
         return response()->json(
-            $data,
+            [$data],
         );
     }
     public function productRating(Request $request, $id)

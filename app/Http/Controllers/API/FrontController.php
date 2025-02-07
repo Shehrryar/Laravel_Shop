@@ -48,7 +48,7 @@ class FrontController extends Controller
         $data['latest_product'] = $latest_product;
         $data['brands'] = $brands;
         $data['category'] = $category;
-        return response()->json($data);
+        return response()->json([$data]);
     }
     public function addToWishlist(Request $request)
     {

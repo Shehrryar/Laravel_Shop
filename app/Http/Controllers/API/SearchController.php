@@ -31,7 +31,7 @@ class SearchController extends Controller
         $data['discount'] = $discount;
         $data['featured_products'] = $featured_products;
         return response()->json(
-            $data,
+            [$data],
         );
     }
 }
