@@ -80,7 +80,7 @@ class adminChatController extends Controller
 
     public function checkSocketMessage(Request $request)
     {
-        broadcast(new NewTrade('This is a test message!'));
+        broadcast(new NewTrade('This is message!'));
         return view('admin.chats.create');
     }
 }
