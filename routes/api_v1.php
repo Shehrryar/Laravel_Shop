@@ -74,7 +74,7 @@ Route::group(['prefix' => 'account'], function () {
     Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
     Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
     Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
-    
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/my-orders', [AuthController::class, 'order'])->name('account.orders');
@@ -88,8 +88,10 @@ Route::group(['prefix' => 'account'], function () {
 
 
 Route::group(['prefix' => 'admin'], function () {
-        Route::get('/login', action: [AdminLoginController::class, 'index'])->name('admin.login');
-        Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
+    Route::get('/login', action: [AdminLoginController::class, 'index'])->name('admin.login');
+    Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
+
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
@@ -98,11 +100,11 @@ Route::group(['prefix' => 'admin'], function () {
         // category routes
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
         Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
-        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
         Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::post('/upload-temp-image', [imageuploadcontroller::class, 'create'])->name('temp-images.create');
-        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.delete');
+        Route::delete('/categories/destroy/{category}', [CategoryController::class, 'destroy'])->name('categories.delete');
         Route::get('/getslug', [CategoryController::class, 'slug_function'])->name('getslug');
         // sub-category routes
         Route::get('/subcategory', [SubCategoryController::class, 'index'])->name('subcategories.index');

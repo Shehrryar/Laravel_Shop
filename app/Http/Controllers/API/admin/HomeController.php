@@ -1,24 +1,27 @@
 <?php
-
 namespace App\Http\Controllers\API\admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-
+use App\Models\Order;
+use App\Models\User;
 class HomeController extends Controller
 {
-    public function index(){
-        return response()->json([
-            'success' => true,
-            'message' => 'Admin Dashboard',
-        ]);
+    public function index()
+    {
+        $data = [];
+        $user_count = User::count();
+        $order_count = Order::count();
+        $totalSales = Order::where('status', 'delivered')->sum('grandtotal');
+        $data['order_count'] = $order_count;
+        $data['user_count'] = $user_count;
+        $data['totalSales'] = $totalSales;
+        return response()->json([$data]);
+        // return view('admin.dashboard.list', $data);
     }
-
-    public function logout(){
-            $admin = Auth::guard('admin')->logout();
-             return redirect()->route('admin.login');
-
+    public function logout()
+    {
+        $admin = Auth::guard('admin')->logout();
+        return redirect()->route('admin.login');
     }
 }

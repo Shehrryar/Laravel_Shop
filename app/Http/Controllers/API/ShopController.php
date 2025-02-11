@@ -84,7 +84,7 @@ class ShopController extends Controller
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-        return response()->json([$data,]);
+        return response()->json([$data]);
     }
     public function product($slug)
     {
