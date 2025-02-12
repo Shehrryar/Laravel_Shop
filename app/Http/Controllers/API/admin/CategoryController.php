@@ -11,9 +11,9 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $categories = Category::latest();
-        // if (!empty($request->get('keyword'))) {
-        //     $categories = $categories->where('name', 'like', '%' . $request->get('keyword') . '%');
-        // }
+        if (!empty($request->get('keyword'))) {
+            $categories = $categories->where('name', 'like', '%' . $request->get('keyword') . '%');
+        }
         $categories = $categories->paginate(10);
         $totalPages = $categories->lastPage(); // Total number of pages
         $currentPage = $categories->currentPage(); // Current page number

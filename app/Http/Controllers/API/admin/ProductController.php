@@ -21,7 +21,7 @@ class ProductController extends Controller
         }
         $products = $products->paginate(10);
         $data['product'] = $products;
-        $data['language'] = $language; 
+        // $data['language'] = $language; 
         return response()->json([
             'data' => $data,
         ]);

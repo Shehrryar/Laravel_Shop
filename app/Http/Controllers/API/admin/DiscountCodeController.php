@@ -1,25 +1,25 @@
 <?php
-
 namespace App\Http\Controllers\API\admin;
-
 use App\Http\Controllers\Controller;
 use App\Models\DiscountCoupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
-
 class DiscountCodeController extends Controller
 {
     public function index(Request $request)
     {
         $DiscountCoupon = DiscountCoupon::latest();
-        if(!empty($request->get('keyword'))){
-            $DiscountCoupon = $DiscountCoupon->where('name','like','%'.$request->get('keyword').'%');
+        if (!empty($request->get('keyword'))) {
+            $DiscountCoupon = $DiscountCoupon->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $DiscountCoupon = $DiscountCoupon->paginate(10);
-        return response()->json([
-            'DiscountCoupon' => $DiscountCoupon,
-        ]);
+        $totalPages = $DiscountCoupon->lastPage(); // Total number of pages
+        $currentPage = $DiscountCoupon->currentPage(); // Current page number
+        $DiscountCouponData = $DiscountCoupon->items(); // Extract DiscountCoupon as an array
+        $newDiscountCoupon['current_page'] = $currentPage;
+        $newDiscountCoupon['totalPages'] = $totalPages;
+        $newDiscountCoupon['DiscountCouponData'] = $DiscountCouponData;
+        return response()->json([$newDiscountCoupon]);
     }
     public function create()
     {
@@ -34,7 +34,6 @@ class DiscountCodeController extends Controller
             'status' => 'required',
         ]);
         if ($validator->passes()) {
-
             $discountcode = new DiscountCoupon();
             $discountcode->code = $request->code;
             $discountcode->name = $request->name;
@@ -48,16 +47,12 @@ class DiscountCodeController extends Controller
             $discountcode->start_at = $request->starts_at;
             $discountcode->expires_at = $request->expires_at;
             $discountcode->save();
-
             $message = 'Discount Coupon added successfully';
-
             session()->flash('sucess', $message);
-
             return response()->json([
                 'status' => true,
                 'message' => $message
             ]);
-
         } else {
             return response()->json([
                 'status' => false,
@@ -68,8 +63,7 @@ class DiscountCodeController extends Controller
     public function edit(Request $request, $id)
     {
         $coupon_edit = DiscountCoupon::find($id);
-
-        if($coupon_edit == null){
+        if ($coupon_edit == null) {
             session()->flash('error', 'Record not found');
             return redirect()->route('coupon.index');
         }
@@ -80,15 +74,13 @@ class DiscountCodeController extends Controller
     public function update(Request $request, $id)
     {
         $discountcode = DiscountCoupon::find($id);
-
-        if($discountcode == null){
+        if ($discountcode == null) {
             session()->flash('error', 'Record not found');
             return response()->json([
                 'status' => true,
                 'message' => 'Record not found'
             ]);
         }
-
         $validator = Validator::make($request->all(), [
             'code' => 'required',
             'type' => 'required',
@@ -96,7 +88,6 @@ class DiscountCodeController extends Controller
             'status' => 'required',
         ]);
         if ($validator->passes()) {
-
             $discountcode->code = $request->code;
             $discountcode->name = $request->name;
             $discountcode->description = $request->description;
@@ -109,14 +100,12 @@ class DiscountCodeController extends Controller
             $discountcode->start_at = $request->starts_at;
             $discountcode->expires_at = $request->expires_at;
             $discountcode->save();
-
             $message = 'Discount Coupon updated successfully';
             session()->flash('sucess', $message);
             return response()->json([
                 'status' => true,
                 'message' => $message
             ]);
-
         } else {
             return response()->json([
                 'status' => false,
@@ -127,7 +116,7 @@ class DiscountCodeController extends Controller
     public function destroy(Request $request, $id)
     {
         $discountcode = DiscountCoupon::find($id);
-        if($discountcode == null){
+        if ($discountcode == null) {
             session()->flash('error', 'Record not found');
             return response()->json([
                 'status' => true,
@@ -139,6 +128,5 @@ class DiscountCodeController extends Controller
             'status' => true,
             'message' => 'Record deleted successfully'
         ]);
-
     }
 }

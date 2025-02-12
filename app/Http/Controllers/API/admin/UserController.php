@@ -1,14 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\API\admin;
-
 use App\Http\Controllers\Controller;
 use Hash;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-
-
 class UserController extends Controller
 {
     public function index(Request $request)
@@ -18,17 +14,18 @@ class UserController extends Controller
             $user = $user->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $user = $user->paginate(10);
-
-        return response()->json([
-            'users' => $user,
-        ]);
+        $totalPages = $user->lastPage(); // Total number of pages
+        $currentPage = $user->currentPage(); // Current page number
+        $userData = $user->items(); // Extract user as an array
+        $newuser['current_page'] = $currentPage;
+        $newuser['totalPages'] = $totalPages;
+        $newuser['userData'] = $userData;
+        return response()->json([$newuser]);
     }
-
     public function create(Request $request)
     {
         return view('admin.users.create');
     }
-
     public function store(Request $request)
     {
         $validater = Validator::make(
@@ -45,7 +42,7 @@ class UserController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
             $user->phone = $request->phone;
-            $user->password = Hash::make($request->name);
+            $user->password = Hash::make($request->password);
             $user->status = $request->status;
             $user->save();
             $message = "User is added Successfully";
@@ -65,28 +62,27 @@ class UserController extends Controller
             );
         }
     }
-
-    public function edit($userid, Request $request){
+    public function edit($userid, Request $request)
+    {
         $user_edit = User::find($userid);
         return response()->json([
             'user_edit' => $user_edit,
         ]);
     }
-
     public function update(Request $request, $user_id)
     {
         $user_edit = User::find($user_id);
-        if(empty($user_edit))
-        return response()->json([
-             'status'=>false,
-             'not found'=>ture,
-             'message'=> 'User not found'
-     ]);
+        if (empty($user_edit))
+            return response()->json([
+                'status' => false,
+                'not found' => true,
+                'message' => 'User not found'
+            ]);
         $validater = Validator::make(
             $request->all(),
             [
                 'name' => 'required',
-                'email' => 'required|email|unique:users',
+                'email' => 'required',
                 'phone' => 'required',
                 'password' => 'required',
             ]
@@ -115,7 +111,6 @@ class UserController extends Controller
             );
         }
     }
-
     public function destroy($user_id, Request $request)
     {
         $user_del = User::find($user_id);

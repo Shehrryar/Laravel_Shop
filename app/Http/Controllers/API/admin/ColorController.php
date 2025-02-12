@@ -13,9 +13,14 @@ class ColorController extends Controller
             $colors = $colors->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $colors = $colors->paginate(10);
-        return response()->json([
-            'colors' => $colors,
-        ]);
+        $categories = $colors->paginate(10);
+        $totalPages = $colors->lastPage(); // Total number of pages
+        $currentPage = $colors->currentPage(); // Current page number
+        $colorsData = $colors->items(); // Extract colors as an array
+        $newcolors['current_page'] = $currentPage;
+        $newcolors['totalPages'] = $totalPages;
+        $newcolors['colorsData'] = $colorsData;
+        return response()->json([$colors,]);
     }
     public function create()
     {

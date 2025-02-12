@@ -28,17 +28,6 @@ use App\Http\Controllers\API\admin\StockManagementController;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/index', [FrontController::class, 'index'])->name('front.home');
     Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -62,7 +51,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::group(['prefix' => 'account'], function () {
-
     Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
     // Register with Githud
     Route::GET('/auth/redirect', [AuthController::class, 'githubRedirect'])->name('auth.github');
@@ -74,7 +62,6 @@ Route::group(['prefix' => 'account'], function () {
     Route::GET('/auth/redirect/facebook', [AuthController::class, 'facebookRedirect'])->name('auth.facebook');
     Route::GET('/auth/callback/facebook', [AuthController::class, 'facebookCallback'])->name('auth.facebookcallback');
     Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
-
     Route::middleware('auth:sanctum')->group(function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/my-orders', [AuthController::class, 'order'])->name('account.orders');
@@ -84,14 +71,9 @@ Route::group(['prefix' => 'account'], function () {
         Route::POST('/logout', [AuthController::class, 'logout'])->name('account.logout');
     });
 });
-
-
-
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/login', action: [AdminLoginController::class, 'index'])->name('admin.login');
     Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
-
-
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
@@ -102,7 +84,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
         Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
         Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::put('/categories/update/{category}', [CategoryController::class, 'update'])->name('categories.update');
         Route::post('/upload-temp-image', [imageuploadcontroller::class, 'create'])->name('temp-images.create');
         Route::delete('/categories/destroy/{category}', [CategoryController::class, 'destroy'])->name('categories.delete');
         Route::get('/getslug', [CategoryController::class, 'slug_function'])->name('getslug');
@@ -111,22 +93,22 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/subcategory/create', [SubCategoryController::class, 'create'])->name('subcategory.create');
         Route::post('/subcategory/store', [SubCategoryController::class, 'store'])->name('subcategory.store');
         Route::get('/subcategory/{subcatedit}/edit', [SubCategoryController::class, 'edit'])->name('subcategory.edit');
-        Route::put('/subcategory/{subcategory}', [SubCategoryController::class, 'update'])->name('subcategory.update');
-        Route::delete('/subcategory/{subcategory}', action: [SubCategoryController::class, 'destroy'])->name('subcategory.delete');
+        Route::put('/subcategory/update/{subcategory}', [SubCategoryController::class, 'update'])->name('subcategory.update');
+        Route::delete('/subcategory/delete/{subcategory}', action: [SubCategoryController::class, 'destroy'])->name('subcategory.delete');
         // sub-category routes
         Route::get('/subsubcategory', [SubSubCategoryController::class, 'index'])->name('subsubcategories.index');
         Route::get('/subsubcategory/create', [SubSubCategoryController::class, 'create'])->name('subsubcategory.create');
         Route::post('/subsubcategory/store', [SubSubCategoryController::class, 'store'])->name('subsubcategory.store');
         Route::get('/subsubcategory/{subcatedit}/edit', [SubSubCategoryController::class, 'edit'])->name('subsubcategory.edit');
-        Route::put('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'update'])->name('subsubcategory.update');
-        Route::delete('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'destroy'])->name('subsubcategory.delete');
+        Route::put('/subsubcategory/update/{subcategory}', [SubSubCategoryController::class, 'update'])->name('subsubcategory.update');
+        Route::delete('/subsubcategory/delete/{subcategory}', [SubSubCategoryController::class, 'destroy'])->name('subsubcategory.delete');
         // these route for the brand
         Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
         Route::get('/brands/create', [BrandController::class, 'create'])->name('brands.create');
         Route::post('/brands/store', [BrandController::class, 'store'])->name('brands.store');
         Route::get('/brands/{brandedit}/edit', [BrandController::class, 'edit'])->name('brands.edit');
-        Route::put('/brands/{brandupadate}', [BrandController::class, 'update'])->name('brands.update');
-        Route::delete('/brands/{brandelete}', [BrandController::class, 'destroy'])->name('brands.delete');
+        Route::put('/brands/update/{brandupadate}', [BrandController::class, 'update'])->name('brands.update');
+        Route::delete('/brands/delete/{brandelete}', [BrandController::class, 'destroy'])->name('brands.delete');
         //these routes is for creating languages
         Route::get('/language', [LanguageController::class, 'index'])->name('language.index');
         Route::get('/language/create', [LanguageController::class, 'create'])->name('language.create');
@@ -177,8 +159,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
-        Route::put('/users/{userupadate}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
+        Route::put('/users/update/{userupadate}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/delete/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
         // add route for the color
         Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
         Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
@@ -197,9 +179,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
         Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
         Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
-        Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
-        Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
-        Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+        Route::get('/stock/{stockedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
+        Route::put('/stock/update/{stockupadate}', [StockManagementController::class, 'update'])->name('stock.update');
+        Route::delete('/stock/delete/{stockelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
         // dashboard
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });
