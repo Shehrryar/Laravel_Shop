@@ -3,6 +3,7 @@ namespace App\Http\Controllers\API\admin;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Color;
 class ColorController extends Controller
 {
@@ -12,19 +13,17 @@ class ColorController extends Controller
         if (!empty($request->get('keyword'))) {
             $colors = $colors->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
+        $products = Product::orderBy('title', 'ASC')->get();
         $colors = $colors->paginate(10);
-        $categories = $colors->paginate(10);
-        $totalPages = $colors->lastPage(); // Total number of pages
-        $currentPage = $colors->currentPage(); // Current page number
-        $colorsData = $colors->items(); // Extract colors as an array
-        $newcolors['current_page'] = $currentPage;
-        $newcolors['totalPages'] = $totalPages;
-        $newcolors['colorsData'] = $colorsData;
-        return response()->json([$colors,]);
+        $data['products'] = $products;
+        $data['colors'] = $colors;
+        return view('admin.colors.list', $data);
     }
     public function create()
     {
-        return view('admin.colors.create');
+        $products = Product::orderBy('title', 'ASC')->get();
+        $data['products'] = $products;
+        return view('admin.colors.create', $data);
     }
     public function store(Request $request)
     {
@@ -32,17 +31,21 @@ class ColorController extends Controller
             $request->all(),
             [
                 'name' => 'required',
-                'value' => 'required|unique:color',
+                'product_id' => 'required',
+                'price' => 'required',
                 'status' => 'required',
+                'value' => 'required',
             ]
         );
         if ($validater->passes()) {
             $colors = new Color();
             $colors->name = $request->name;
             $colors->value = $request->value;
+            $colors->product_id = $request->product_id;
+            $colors->price = $request->price;
             $colors->status = $request->status;
             $colors->save();
-            $request->session()->flash('success', 'Color added sucessfully');
+            // $request->session()->flash('success', 'Color added sucessfully');
             return response()->json([
                 'status' => true,
                 'message' => 'Color added sucessfully'
@@ -56,15 +59,15 @@ class ColorController extends Controller
     }
     public function edit($id, Request $request)
     {
+        $products = Product::orderBy('title', 'ASC')->get();
         $color = Color::find($id);
         if (empty($color)) {
             $request->session()->flash('error', 'Record not found');
             return redirect()->route('colorss.index');
         }
         $data['color'] = $color;
-        return response()->json([
-            'data' => $data,
-        ]);
+        $data['products'] = $products;
+        return view('admin.colors.edit', $data);
     }
     public function update($id, Request $request)
     {
@@ -80,7 +83,9 @@ class ColorController extends Controller
             $request->all(),
             [
                 'name' => 'required',
-                'value' => 'required|unique:color,value,' . $color_edit->id . ',id',
+                'product_id' => 'required',
+                'price' => 'required',
+                // 'value' => 'required|unique:color,value,' . $color_edit->id . ',id',
                 'status' => 'required',
             ]
         );
@@ -88,9 +93,11 @@ class ColorController extends Controller
             $color_edit->name = $request->name;
             $color_edit->value = $request->value;
             $color_edit->status = $request->status;
+            $color_edit->product_id = $request->product_id;
+            $color_edit->price = $request->price;
             $color_edit->save();
             $message = 'Color updated sucessfully';
-            $request->session()->flash('success', $message);
+            // $request->session()->flash('success', $message);
             return response()->json([
                 'status' => true,
                 'message' => $message
@@ -106,14 +113,14 @@ class ColorController extends Controller
     {
         $color_del = Color::find($color_id);
         if (empty($color_del)) {
-            $request->session()->flash("Error", "Color not found");
+            // $request->session()->flash("Error", "Color not found");
             return response()->json([
                 'status' => true,
                 'message' => 'Color not found'
             ]);
         }
         $color_del->delete();
-        $request->session()->flash("success", "Color deleted successfully");
+        // $request->session()->flash("success", "Color deleted successfully");
         return response()->json([
             'status' => true,
             'message' => 'Color deleted successfully'

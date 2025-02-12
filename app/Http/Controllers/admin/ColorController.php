@@ -9,17 +9,15 @@ class ColorController extends Controller
 {
     public function index(Request $request)
     {
-
         $colors = Color::latest('id');
         if (!empty($request->get('keyword'))) {
             $colors = $colors->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $products = Product::orderBy('title', 'ASC')->get();
         $colors = $colors->paginate(10);
-
         $data['products'] = $products;
         $data['colors'] = $colors;
-        return view('admin.colors.list',$data);
+        return view('admin.colors.list', $data);
     }
     public function create()
     {
@@ -35,7 +33,6 @@ class ColorController extends Controller
                 'name' => 'required',
                 'product_id' => 'required',
                 'price' => 'required',
-                // 'value' => 'required|unique:color',
                 'status' => 'required',
             ]
         );

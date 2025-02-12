@@ -25,9 +25,6 @@ use App\Http\Controllers\API\admin\ColorController;
 use App\Http\Controllers\API\admin\SizeController;
 use App\Http\Controllers\API\SearchController;
 use App\Http\Controllers\API\admin\StockManagementController;
-
-
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/index', [FrontController::class, 'index'])->name('front.home');
     Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -47,9 +44,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
     Route::post('search', [SearchController::class, 'search'])->name('product.search');
 });
-
-
-
 Route::group(['prefix' => 'account'], function () {
     Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
     // Register with Githud
@@ -114,8 +108,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/language/create', [LanguageController::class, 'create'])->name('language.create');
         Route::post('/language/store', [LanguageController::class, 'store'])->name('language.store');
         Route::get('/language/{languageedit}/edit', [LanguageController::class, 'edit'])->name('language.edit');
-        Route::put('/language/{languageupadate}', [LanguageController::class, 'update'])->name('language.update');
-        Route::delete('/language/{langdelete}', [LanguageController::class, 'destroy'])->name('language.delete');
+        Route::put('/language/update/{languageupadate}', [LanguageController::class, 'update'])->name('language.update');
+        Route::delete('/language/delete/{langdelete}', [LanguageController::class, 'destroy'])->name('language.delete');
         // these routes are for the Products
         Route::get('/product', [ProductController::class, 'index'])->name('product.index');
         Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
@@ -133,8 +127,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
         Route::post('/shipping/store', [ShippingController::class, 'store'])->name('shipping.store');
         Route::get('/shipping/{id}', [ShippingController::class, 'edit'])->name('shipping.edit');
-        Route::put('/shipping/{id}', [ShippingController::class, 'update'])->name('shipping.update');
-        Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
+        Route::put('/shipping/update/{id}', [ShippingController::class, 'update'])->name('shipping.update');
+        Route::delete('/shipping/delete/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
         // Order Routes
         Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
         Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
@@ -162,12 +156,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/users/update/{userupadate}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/delete/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
         // add route for the color
-        Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
+        Route::get('/colorss/index', [ColorController::class, 'index'])->name('colorss.index');
         Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
         Route::post('/colorss/store', [ColorController::class, 'store'])->name('colorss.store');
         Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
-        Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
-        Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
+        Route::put('/colorss/update/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
+        Route::delete('/colorss/delete/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
         // add route for the size
         Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
         Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
