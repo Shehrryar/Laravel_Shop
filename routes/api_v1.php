@@ -113,14 +113,14 @@ Route::group(['prefix' => 'admin'], function () {
         // these routes are for the Products
         Route::get('/product', [ProductController::class, 'index'])->name('product.index');
         Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
-        Route::post('/product', [ProductController::class, 'store'])->name('product.store');
+        Route::post('/product/store', [ProductController::class, 'store'])->name('product.store');
         Route::get('/product_subcatageries', [ProductSubCategoryController::class, 'index'])->name('productsubcat.index');
         Route::get('/product_subsubcatageries', [ProductSubCategoryController::class, 'subcategory'])->name('productsubcat.subcategory');
         Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
-        Route::put('/product/{productupadate}', [ProductController::class, 'update'])->name('product.update');
+        Route::put('/product/update/{productupadate}', [ProductController::class, 'update'])->name('product.update');
         Route::post('/product-images/update', [ProductImageControlller::class, 'update'])->name('product-images.update');
         Route::delete('/product-images', [ProductImageControlller::class, 'destroy'])->name('product-images.destroy');
-        Route::delete('/product/{delete}', [ProductController::class, 'delete'])->name('product.delete');
+        Route::delete('/product/delete/{delete}', [ProductController::class, 'delete'])->name('product.delete');
         Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
         Route::post('/import-products', [ProductController::class, 'importProducts'])->name('product.importProducts');
         // shipping Routes
@@ -163,12 +163,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/colorss/update/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
         Route::delete('/colorss/delete/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
         // add route for the size
-        Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
+        Route::get('/sizes/index', [SizeController::class, 'index'])->name('sizes.index');
         Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
         Route::post('/sizes/store', [SizeController::class, 'store'])->name('sizes.store');
         Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
-        Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
-        Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
+        Route::put('/sizes/update/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
+        Route::delete('/sizes/delete/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
         // add route for the Stock managment
         Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
         Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');

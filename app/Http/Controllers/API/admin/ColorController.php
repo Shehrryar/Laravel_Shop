@@ -14,10 +14,17 @@ class ColorController extends Controller
             $colors = $colors->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $products = Product::orderBy('title', 'ASC')->get();
+
         $colors = $colors->paginate(10);
-        $data['products'] = $products;
-        $data['colors'] = $colors;
-        return view('admin.colors.list', $data);
+
+        $totalPages = $colors->lastPage(); // Total number of pages
+        $currentPage = $colors->currentPage(); // Current page number
+        $colorsData = $colors->items(); // Extract colors as an array
+        $newcolors['current_page'] = $currentPage;
+        $newcolors['totalPages'] = $totalPages;
+        $newcolors['colorsData'] = $colorsData;
+        $newcolors['products'] = $products;
+        return response()->json([$newcolors]);
     }
     public function create()
     {
