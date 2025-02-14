@@ -371,15 +371,8 @@ class CartController extends Controller
             $order->zip = $request->zip;
             $order->country_id = $request->country;
             // store order item in the order item table
+            $order->save();
             foreach ($cartcontent as $item) {
-                $orderitems = new OrderItem();
-                $orderitems->product_id = $item->product_id;
-                $orderitems->cart_id = $item->id;
-                $orderitems->name = $item->title;
-                $orderitems->quantity = $item->quantity;
-                $orderitems->price = $item->price;
-                $orderitems->total = $item->price * $item->quantity;
-                $orderitems->save();
                 $stock = DB::table('stocks')
                     ->where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
@@ -390,6 +383,15 @@ class CartController extends Controller
                     $currentQuantity = $stock->quantity;
                     $updatedQuantity = $currentQuantity - $item->quantity;
                     $soldQuantity = $stock->sold_quantity + $item->quantity;
+                    $orderitems = new OrderItem();
+                    $orderitems->product_id = $item->product_id;
+                    $orderitems->cart_id = $item->id;
+                    $orderitems->order_id = $order->id;
+                    $orderitems->name = $item->title;
+                    $orderitems->quantity = $item->quantity;
+                    $orderitems->price = $item->price;
+                    $orderitems->total = $item->price * $item->quantity;
+                    $orderitems->save();
                     // Update the stock record in the database
                     DB::table('stocks')
                         ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
@@ -398,13 +400,13 @@ class CartController extends Controller
                             'sold_quantity' => $soldQuantity,
                         ]);
                 } else {
+                    DB::table('order')->where('id', $order->id)->delete();
                     return response()->json([
                         'status' => 'stock_missing',
                         'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
                     ]);
                 }
             }
-            $order->save();
             // orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
             Cart::where('user_id', Auth::id())->delete();
@@ -474,16 +476,9 @@ class CartController extends Controller
             $order->notes = $request->order_notes;
             $order->zip = $request->zip;
             $order->country_id = $request->country;
+            $order->save();
             // store order item in the order item table
             foreach ($cartcontent as $item) {
-                $orderitems = new OrderItem();
-                $orderitems->product_id = $item->product_id;
-                $orderitems->cart_id = $item->id;
-                $orderitems->name = $item->title;
-                $orderitems->quantity = $item->quantity;
-                $orderitems->price = $item->price;
-                $orderitems->total = $item->price * $item->quantity;
-                $orderitems->save();
                 $stock = DB::table('stocks')
                     ->where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
@@ -494,6 +489,15 @@ class CartController extends Controller
                     $currentQuantity = $stock->quantity;
                     $updatedQuantity = $currentQuantity - $item->quantity;
                     $soldQuantity = $stock->sold_quantity + $item->quantity;
+                    $orderitems = new OrderItem();
+                    $orderitems->product_id = $item->product_id;
+                    $orderitems->cart_id = $item->id;
+                    $orderitems->order_id = $order->id;
+                    $orderitems->name = $item->title;
+                    $orderitems->quantity = $item->quantity;
+                    $orderitems->price = $item->price;
+                    $orderitems->total = $item->price * $item->quantity;
+                    $orderitems->save();
                     // Update the stock record in the database
                     DB::table('stocks')
                         ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
@@ -502,13 +506,13 @@ class CartController extends Controller
                             'sold_quantity' => $soldQuantity,
                         ]);
                 } else {
+                    DB::table('order')->where('id', $order->id)->delete();
                     return response()->json([
                         'status' => 'stock_missing',
                         'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
                     ]);
                 }
             }
-            $order->save();
             // orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
             Cart::where('user_id', Auth::id())->delete();

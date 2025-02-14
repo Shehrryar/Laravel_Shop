@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use App\Models\CustomerAddress;
 use App\Models\DiscountCoupon;
 use App\Models\Discount;
@@ -12,7 +13,10 @@ use App\Models\Country;
 use App\Models\Shipping;
 use App\Models\Cart;
 use App\Models\Stock;
+
 use Carbon\Carbon;
+use Stripe\Stripe;
+use Stripe\Charge;
 // use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -177,6 +181,8 @@ class CartController extends Controller
         $data['discount'] = $discount;
         return response()->json([$data]);
     }
+
+
     public function updateCart(Request $request)
     {
         $iteminfo = Cart::find($request->rowid);
@@ -208,6 +214,7 @@ class CartController extends Controller
             'message' => $message
         ]);
     }
+
     public function deleteitem(Request $request)
     {
         $iteminfo = Cart::find($request->rowid);
@@ -369,15 +376,8 @@ class CartController extends Controller
             $order->zip = $request->zip;
             $order->country_id = $request->country;
             // store order item in the order item table
+            $order->save();
             foreach ($cartcontent as $item) {
-                $orderitems = new OrderItem();
-                $orderitems->product_id = $item->product_id;
-                $orderitems->cart_id = $item->id;
-                $orderitems->name = $item->title;
-                $orderitems->quantity = $item->quantity;
-                $orderitems->price = $item->price;
-                $orderitems->total = $item->price * $item->quantity;
-                $orderitems->save();
                 $stock = DB::table('stocks')
                     ->where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
@@ -388,6 +388,15 @@ class CartController extends Controller
                     $currentQuantity = $stock->quantity;
                     $updatedQuantity = $currentQuantity - $item->quantity;
                     $soldQuantity = $stock->sold_quantity + $item->quantity;
+                    $orderitems = new OrderItem();
+                    $orderitems->product_id = $item->product_id;
+                    $orderitems->cart_id = $item->id;
+                    $orderitems->order_id = $order->id;
+                    $orderitems->name = $item->title;
+                    $orderitems->quantity = $item->quantity;
+                    $orderitems->price = $item->price;
+                    $orderitems->total = $item->price * $item->quantity;
+                    $orderitems->save();
                     // Update the stock record in the database
                     DB::table('stocks')
                         ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
@@ -396,13 +405,13 @@ class CartController extends Controller
                             'sold_quantity' => $soldQuantity,
                         ]);
                 } else {
+                    DB::table('order')->where('id', $order->id)->delete();
                     return response()->json([
                         'status' => 'stock_missing',
                         'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
                     ]);
                 }
             }
-            $order->save();
             // orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
             Cart::where('user_id', Auth::id())->delete();
@@ -472,16 +481,9 @@ class CartController extends Controller
             $order->notes = $request->order_notes;
             $order->zip = $request->zip;
             $order->country_id = $request->country;
+            $order->save();
             // store order item in the order item table
             foreach ($cartcontent as $item) {
-                $orderitems = new OrderItem();
-                $orderitems->product_id = $item->product_id;
-                $orderitems->cart_id = $item->id;
-                $orderitems->name = $item->title;
-                $orderitems->quantity = $item->quantity;
-                $orderitems->price = $item->price;
-                $orderitems->total = $item->price * $item->quantity;
-                $orderitems->save();
                 $stock = DB::table('stocks')
                     ->where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
@@ -492,6 +494,15 @@ class CartController extends Controller
                     $currentQuantity = $stock->quantity;
                     $updatedQuantity = $currentQuantity - $item->quantity;
                     $soldQuantity = $stock->sold_quantity + $item->quantity;
+                    $orderitems = new OrderItem();
+                    $orderitems->product_id = $item->product_id;
+                    $orderitems->cart_id = $item->id;
+                    $orderitems->order_id = $order->id;
+                    $orderitems->name = $item->title;
+                    $orderitems->quantity = $item->quantity;
+                    $orderitems->price = $item->price;
+                    $orderitems->total = $item->price * $item->quantity;
+                    $orderitems->save();
                     // Update the stock record in the database
                     DB::table('stocks')
                         ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
@@ -500,13 +511,13 @@ class CartController extends Controller
                             'sold_quantity' => $soldQuantity,
                         ]);
                 } else {
+                    DB::table('order')->where('id', $order->id)->delete();
                     return response()->json([
                         'status' => 'stock_missing',
                         'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
                     ]);
                 }
             }
-            $order->save();
             // orderEmail($order->id, 'customer');
             session()->flash('success', 'You have successfully placed your order');
             Cart::where('user_id', Auth::id())->delete();
@@ -516,97 +527,6 @@ class CartController extends Controller
                 'orderId' => $order->id
             ]);
         }
-    }
-    public function processCheckout2(Request $request)
-    {
-        $cartcontent = Cart::where('user_id', auth()->id())->get();
-        $subtotal = getcartquantityandtotal()['totalPrice'];
-        $validator = Validator::make($request->all(), [
-            'firstname' => 'required|min:5',
-            'lastname' => 'required',
-            'email' => 'required|email',
-            'country' => 'required',
-            'address' => 'required|min:30',
-            'city' => 'required',
-            'state' => 'required',
-            'zip' => 'required',
-            'mobile' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'please fix the error',
-                'errors' => $validator->errors()
-            ]);
-        }
-        $user = Auth::user();
-        CustomerAddress::updateOrCreate(
-            ['user_id' => $user->id],
-            $request->only('firstname', 'lastname', 'email', 'mobile', 'address', 'city', 'apartment', 'state', 'zip', 'country')
-        );
-        $discount = 0;
-        $promocode = '';
-        if (session()->has('code')) {
-            $code = session()->get('code');
-            $discount = $code->type == 'percent' ? ($code->discont_amount / 100) * $subtotal : $code->discont_amount;
-            $promocode = $code->code;
-        }
-        $shipping_info = Shipping::where('country_id', $request->country)->first();
-        $totalqty = $cartcontent->sum('quantity');
-        $shipping = $shipping_info ? $totalqty * $shipping_info->amount : 10;
-        $grandtotal = ($subtotal - $discount) + $shipping;
-        $orderData = array_merge($request->only('firstname', 'lastname', 'email', 'address', 'apartment', 'state', 'city', 'zip', 'country', 'order_notes'), [
-            'user_id' => $user->id,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'grandtotal' => $grandtotal,
-            'discount' => $discount,
-            'coupon_code' => $promocode,
-            'payment_status' => $request->payment_method == 'stripe' ? 'paid' : 'not paid',
-            'status' => 'pending',
-        ]);
-        if ($request->payment_method == 'stripe') {
-            Stripe::setApiKey(env('STRIPE_SECRET'));
-            $charge = Charge::create([
-                'amount' => round($grandtotal * 100),
-                'currency' => 'usd',
-                'source' => $request->stripeTokencard,
-                'description' => 'Order payment for ' . $request->firstname . ' ' . $request->lastname,
-            ]);
-            $orderData['stripe_charge_id'] = $charge->id;
-        }
-        foreach ($cartcontent as $item) {
-            OrderItem::create([
-                'product_id' => $item->product_id,
-                'name' => $item->title,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
-                'total' => $item->price * $item->quantity,
-            ]);
-            $stock = Stock::where([
-                ['product_id', $item->product_id],
-                ['color_id', $item->color_id],
-                ['size_id', $item->size_id],
-                ['status', 1]
-            ])->first();
-            if ($stock && $item->quantity <= $stock->quantity) {
-                $stock->decrement('quantity', $item->quantity);
-                $stock->increment('sold_quantity', $item->quantity);
-            } else {
-                return response()->json([
-                    'status' => 'stock_missing',
-                    'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
-                ]);
-            }
-        }
-        $order = Order::create($orderData);
-        session()->flash('success', 'You have successfully placed your order');
-        Cart::where('user_id', Auth::id())->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Order Saved Successfully',
-            'orderId' => $order->id
-        ]);
     }
     public function getOrderSummary(Request $request)
     {
