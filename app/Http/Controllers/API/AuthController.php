@@ -46,7 +46,7 @@ class AuthController extends Controller
             $user->password = Hash::make($requested_data["password"]);
             $user->save();
             $message = 'You have been registered Successfully';
-            session()->flash('success', $message);
+            // session()->flash('success', $message);
             return response()->json([
                 'status' => true,
                 'message' => $message
@@ -75,6 +75,8 @@ class AuthController extends Controller
             if (Auth::attempt(['email' => $requested_data["email"], 'password' => $requested_data["password"]], $request->get('remember'))) {
                 $user = User::where('email', $requested_data["email"])->firstOrFail();
                 $token = $user->createToken('auth_token')->plainTextToken;
+                $user->personal_access_token_id = $token;
+                $user->save();
                 return response()->json([
                     'status' => true,
                     'message' => "Your are login Successfully",
@@ -249,10 +251,18 @@ class AuthController extends Controller
     }
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
-        // ->tokens()->delete();
-        return response()->json([
-            'message' => 'Your successfully logout'
-        ]);
+        $user = Auth::user();
+        if ($user) {
+            $user->tokens()->where('id', $user->personal_access_token_id)->delete();
+            $user->personal_access_token_id = null;
+            $user->save();
+            return response()->json([
+                'message' => 'You have successfully logged out'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
     }
 }

@@ -67,7 +67,7 @@ Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating
 Route::post('search', [SearchController::class, 'search'])->name('product.search');
 Route::post('color', [AttributeController::class, 'change_color'])->name('product.change_color');
 Route::post('size', [AttributeController::class, 'sizeChange'])->name('product.sizeChange');
-
+Route::get('/load-product-modal/{productId}', [FrontController::class, 'loadProductModal'])->name('load-product-modal');
 
 
 Route::group(['prefix' => 'account'], function () {
@@ -115,7 +115,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
-    
+
     Route::group(['middleware' => 'admin.auth'], function () {
         Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');

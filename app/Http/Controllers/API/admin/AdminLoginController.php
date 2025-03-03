@@ -27,6 +27,8 @@ class AdminLoginController extends Controller
                 $admin = Auth::guard('admin')->user();
                 if ($admin->role == 2) {
                     $token = $admin->createToken('auth_token')->plainTextToken;
+                    $admin->personal_access_token_id = $token;
+                    $admin->save();
                     return response()->json([
                         'status' => true,
                         'message' => " loggedin Successfully",
@@ -55,6 +57,22 @@ class AdminLoginController extends Controller
                 'status' => false,
                 'message' => 'Invalid Credinatials',
             ]);
+        }
+    }
+    public function logout(Request $request)
+    {
+        $admin = Auth::user();
+        if ($admin) {
+            $admin->tokens()->where('id', $admin->personal_access_token_id)->delete();
+            $admin->personal_access_token_id = null;
+            $admin->save();
+            return response()->json([
+                'message' => 'You have successfully logged out'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
         }
     }
 }

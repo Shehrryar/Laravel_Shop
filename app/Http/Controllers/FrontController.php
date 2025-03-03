@@ -76,4 +76,11 @@ class FrontController extends Controller
             'message' => '<div class = "alert alert-success"><strong>"' . $product->title . '"</strong> is added to the Wishlist.</div>'
         ]);
     }
+
+
+    function loadProductModal($productId)
+    {
+        $product = Product::with(['size', 'color'])->findOrFail($productId);
+        return view('front.layouts.ajax-files.product-popup-modal', compact('product'))->render();
+    }
 }

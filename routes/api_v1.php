@@ -25,10 +25,15 @@ use App\Http\Controllers\API\admin\ColorController;
 use App\Http\Controllers\API\admin\SizeController;
 use App\Http\Controllers\API\SearchController;
 use App\Http\Controllers\API\admin\StockManagementController;
+
+
+
+Route::get('/index', [FrontController::class, 'index'])->name('front.home');
+Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
+Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
+Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
+Route::post('search', [SearchController::class, 'search'])->name('product.search');
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/index', [FrontController::class, 'index'])->name('front.home');
-    Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
-    Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
     Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
     Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');
     Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.updateCart');
@@ -40,10 +45,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
     Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
     Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
-    Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
     Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
-    Route::post('search', [SearchController::class, 'search'])->name('product.search');
 });
+
+
 Route::group(['prefix' => 'account'], function () {
     Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
     // Register with Githud
@@ -68,6 +73,7 @@ Route::group(['prefix' => 'account'], function () {
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/login', action: [AdminLoginController::class, 'index'])->name('admin.login');
     Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
+    Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');

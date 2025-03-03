@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\API\admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
@@ -34,10 +32,8 @@ class OrderController extends Controller
             ->where('orders.id', $orderid)
             ->leftJoin('countries', 'countries.id', 'orders.country_id')
             ->first();
-
         $orderitems = OrderItem::where('order_id', $orderid)->get();
         $data = [];
-
         $data['order'] = $order;
         $data['orderitems'] = $orderitems;
         return response()->json([
@@ -61,7 +57,6 @@ class OrderController extends Controller
     {
         $message = 'Order email sent successfully';
         orderEmail($order_id, $request->userType);
-
         session()->flash('success', $message);
         return response()->json([
             'status' => true,

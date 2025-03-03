@@ -1,0 +1,77 @@
+<?php
+namespace App\Http\Controllers\API;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\ProductImage;
+use App\Models\Discount;
+use App\Models\Color;
+use App\Models\Size;
+class AttributeController extends Controller
+{
+    public function change_color(Request $request)
+    {
+        $message = 'out_stock';
+        $controller_type = 'color';
+        $color_image_name = array();
+        $color = $request->input('color');
+        $product_attribute_data = Color::where('id', $color)->first();
+        $all_images = ProductImage::where('product_id', $product_attribute_data->product_id)
+            ->pluck('image');
+        foreach ($all_images as $value) {
+            $colorName = preg_quote(strtolower($product_attribute_data->name), '/');
+            if (preg_match("/$colorName/i", strtolower($value), $matches)) {
+                $color_image_name['image_name_with_color'] = $value;
+            }
+        }
+        $discount = Discount::where('status', 1)->get();
+        $discountedPrice = getDiscountedPrice($product_attribute_data->product_id, $discount, $product_attribute_data->price);
+        if (handleStock($product_attribute_data->product_id, $color, 0)['status'] == true) {
+            $message = 'in_stock';
+        }
+        return response()->json([
+            'status' => true,
+            'controller_type' => $controller_type,
+            'image_name_with_color' => $color_image_name,
+            'product_attribute_price' => $product_attribute_data->price,
+            'discountedPrice' => $discountedPrice,
+            'color_id' => $color,
+            'size_id' => 0,
+            'message' => $message,
+            'color_name' => $product_attribute_data->name,
+            'size_name' => '',
+        ]);
+    }
+    public function sizeChange(Request $request)
+    {
+        $message = 'out_stock';
+        $controller_type = 'size';
+        $size_image_name = array();
+        $size_id = $request->input('size_id');
+        $product_attribute_data = Size::where('id', $size_id)->first();
+        $all_images = ProductImage::where('product_id', $product_attribute_data->product_id)
+            ->pluck('image');
+        foreach ($all_images as $value) {
+            $sizeName = preg_quote(strtolower($product_attribute_data->name), '/');
+            if (preg_match("/$sizeName/i", strtolower($value), $matches)) {
+                $size_image_name['image_name_with_size'] = $value;
+            }
+        }
+        $discount = Discount::where('status', 1)->get();
+        $discountedPrice = getDiscountedPrice($product_attribute_data->product_id, $discount, $product_attribute_data->price);
+        if (handleStock($product_attribute_data->product_id, 0, $size_id)['status'] == true) {
+            $message = 'in_stock';
+        }
+        return response()->json([
+            'status' => true,
+            'controller_type' => $controller_type,
+            'image_name_with_size' => $size_image_name,
+            'product_attribute_price' => $product_attribute_data->price,
+            'discountedPrice' => $discountedPrice,
+            'size_id' => $size_id,
+            'color_id' => 0,
+            'message' => $message,
+            'size_name' => $product_attribute_data->code,
+            'color_name' => '',
+        ]);
+    }
+}

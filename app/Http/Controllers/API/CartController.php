@@ -13,7 +13,6 @@ use App\Models\Country;
 use App\Models\Shipping;
 use App\Models\Cart;
 use App\Models\Stock;
-
 use Carbon\Carbon;
 use Stripe\Stripe;
 use Stripe\Charge;
@@ -25,6 +24,10 @@ class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
+
+
+
+
         if (Auth::check() == false) {
             return response()->json([
                 'userlogin' => 'isnotlogged',
@@ -181,8 +184,6 @@ class CartController extends Controller
         $data['discount'] = $discount;
         return response()->json([$data]);
     }
-
-
     public function updateCart(Request $request)
     {
         $iteminfo = Cart::find($request->rowid);
@@ -214,7 +215,6 @@ class CartController extends Controller
             'message' => $message
         ]);
     }
-
     public function deleteitem(Request $request)
     {
         $iteminfo = Cart::find($request->rowid);
