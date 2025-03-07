@@ -37,6 +37,16 @@ class ColorController extends Controller
             ]
         );
         if ($validater->passes()) {
+            $colors = Color::latest('id')->get();
+            foreach ($colors as $c) {
+                if ($c->value == $request->value && $c->product_id == $request->product_id) {
+                    return response()->json([
+                        'status' => false,
+                        'exist' => true,
+                        'message' => 'Color value already exists'
+                    ]);
+                }
+            }
             $colors = new Color();
             $colors->name = $request->name;
             $colors->value = $request->value;
@@ -89,6 +99,16 @@ class ColorController extends Controller
             ]
         );
         if ($validater->passes()) {
+            $colors = Color::latest('id')->get();
+            foreach ($colors as $c) {
+                if ($c->value == $request->value && $c->product_id == $request->product_id) {
+                    return response()->json([
+                        'status' => false,
+                        'exist' => true,
+                        'message' => 'Color value already exists'
+                    ]);
+                }
+            }
             $color_edit->name = $request->name;
             $color_edit->value = $request->value;
             $color_edit->status = $request->status;

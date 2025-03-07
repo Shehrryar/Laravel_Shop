@@ -131,6 +131,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{route('currency.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-dollar-sign"></i>
+                        <p>Currencies</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{route('language.index')}}" class="nav-link">
                         <i class="nav-icon fas fa-globe"></i>
                         <p>Language</p>

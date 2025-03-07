@@ -25,6 +25,7 @@ use App\Http\Controllers\admin\ColorController;
 use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\StockManagementController;
 use App\Http\Controllers\admin\ProductAttributeController;
+use App\Http\Controllers\admin\CurrencyController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AttributeController;
@@ -232,6 +233,22 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
         Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+
+
+        // added route for the currencies
+        Route::get('/currencies', [CurrencyController::class, 'index'])->name('currency.index');
+        Route::get('/currencies/create', [CurrencyController::class, 'create'])->name('currency.create');
+        Route::post('/currencies/store', [CurrencyController::class, 'store'])->name('currency.store');
+        Route::get('/currencies/edit/{currenedit}', [CurrencyController::class, 'edit'])->name('currency.edit');
+        Route::put('/currencies/update/{currenedit}', [CurrencyController::class, 'update'])->name('currency.update');
+        Route::delete('/currencies/delete/{currenedit}', [CurrencyController::class, 'delete'])->name('currency.delete');
+
+
+
+
+
+
+
 
 
         // added route for the chat

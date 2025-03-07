@@ -372,6 +372,8 @@
             });
         });
     });
+
+    
     function handleColorChange(element) {
         const selectedColor = element.value; // Get the selected color value
         $('#product-carousel').carousel('pause'); // Pause the carousel while updating

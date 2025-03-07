@@ -17,7 +17,7 @@ class SizeController extends Controller
         $products = Product::orderBy('title', 'ASC')->get();
         $data['products'] = $products;
         $data['sizes'] = $sizes;
-        return view('admin.size.list',$data);
+        return view('admin.size.list', $data);
     }
     public function create()
     {
@@ -33,11 +33,21 @@ class SizeController extends Controller
                 'name' => 'required',
                 'product_id' => 'required',
                 'price' => 'required',
-                'code' => 'required|unique:size',
+                'code' => 'required',
                 'status' => 'required',
             ]
         );
         if ($validater->passes()) {
+            $sizes = Size::latest('id')->get();
+            foreach ($sizes as $s) {
+                if ($s->code == $request->code && $s->product_id == $request->product_id) {
+                    return response()->json([
+                        'status' => false,
+                        'exist' => true,
+                        'message' => 'Size code already exists'
+                    ]);
+                }
+            }
             $size = new Size();
             $size->name = $request->name;
             $size->code = $request->code;
@@ -90,6 +100,16 @@ class SizeController extends Controller
             ]
         );
         if ($validater->passes()) {
+            $sizes = Size::latest('id')->get();
+            foreach ($sizes as $s) {
+                if ($s->code == $request->code && $s->product_id == $request->product_id) {
+                    return response()->json([
+                        'status' => false,
+                        'exist' => true,
+                        'message' => 'Size code already exists'
+                    ]);
+                }
+            }
             $size_edit->name = $request->name;
             $size_edit->code = $request->code;
             $size_edit->product_id = $request->product_id;
