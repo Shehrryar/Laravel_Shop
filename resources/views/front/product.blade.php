@@ -1,4 +1,3 @@
-
 @extends('front.layouts.app')
 @section('content')
     <section class="section-5 pt-3 pb-3 mb-3 bg-white">
@@ -93,21 +92,21 @@
 
 
 
-                        @if ($product_available_size->exists())
-                            <div class="details_size">
-                                <h5>select size</h5>
+                        <!-- @if ($product_available_size->exists())
+                                <div class="details_size">
+                                    <h5>select size</h5>
 
-                                <div class="col-sm-5">
-                                    <select class="form-control v_product_size" name="product_size" id="size" required>
-                                        <option value=null>Select Size </option>
-                                        @foreach ($product_available_size as $productSize)   
-                                            <option id="size-{{ $productSize->id }}" value="{{ $productSize->id }}"
-                                                data-name="{{ $productSize->price }}">{{ $productSize->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="col-sm-5">
+                                        <select class="form-control v_product_size" name="product_size" id="size" required>
+                                            <option value=null>Select Size </option>
+                                            @foreach ($product_available_size as $productSize)   
+                                                <option id="size-{{ $productSize->id }}" value="{{ $productSize->id }}"
+                                                    data-name="{{ $productSize->price }}">{{ $productSize->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif -->
 
 
 
