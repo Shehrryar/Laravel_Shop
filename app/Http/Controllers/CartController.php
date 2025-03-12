@@ -20,13 +20,9 @@ use Stripe\Stripe;
 use Stripe\Charge;
 class CartController extends Controller
 {
-    public function addToCart(Request $request)
+    public function addToCartold(Request $request)
     {
-        if (Auth::check() == false) {
-            return response()->json([
-                'userlogin' => 'isnotlogged',
-            ]);
-        }
+
         $product = Product::with('product_images')->find($request->id);
         if ($product == null) {
             return response()->json([
@@ -159,57 +155,73 @@ class CartController extends Controller
     }
 
 
-    function addToCartnew(Request $request)
+    function addToCart(Request $request)
     {
-        $product = Product::with(['productSizes', 'productOptions'])->findOrFail($request->product_id);
-        if ($product->quantity < $request->quantity) {
-            throw ValidationException::withMessages(['Quantity is not available!']);
-        }
 
-        try {
-            $productSize = $product->productSizes->where('id', $request->product_size)->first();
-            $productOptions = $product->productOptions->whereIn('id', $request->product_option);
-
-            $options = [
-                'product_size' => [],
-                'product_options' => [],
-                'product_info' => [
-                    'image' => $product->thumb_image,
-                    'slug' => $product->slug
-                ]
-            ];
-
-            if ($productSize !== null) {
-                $options['product_size'] = [
-                    'id' => $productSize?->id,
-                    'name' => $productSize?->name,
-                    //'price' => $productSize?->price
-                ];
-            }
-
-            foreach ($productOptions as $option) {
-                $options['product_options'][] = [
-                    'id' => $option->id,
-                    'name' => $option->name,
-                    'price' => $option->price
-                ];
-            }
-
-            Cart::add([
-                'id' => $product->id,
-                'name' => $product->name,
-                'qty' => $request->quantity,
-                //'price' => $product->offer_price > 0 ? $product->offer_price : $product->price,
-                'price' => $productSize?->price == null ? $product->offer_price > 0 ? $product->offer_price : $product->price : $productSize?->price,
-                'weight' => 0,
-                'options' => $options
+        if (Auth::check() == false) {
+            return response()->json([
+                'status' => false,
+                'userlogin' => false,
+                'message' => 'Please login to add product in cart'
             ]);
-
-            return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
-        } catch (\Exception $e) {
-            logger($e);
-            return response(['status' => 'error', 'message' => 'Something went wrong!'], 500);
         }
+
+        $stock_product = handleStock($request->product_id, $request->color_id, $request->size_id);
+
+        if ($stock_product['status'] == false) {
+            return response()->json([
+                'status' => false,
+                'stock' => false,
+                'message' => 'Stock is not Added for this Product'
+            ]);
+        }
+
+
+
+        // try {
+        //     $productSize = $product->productSizes->where('id', $request->product_size)->first();
+        //     $productOptions = $product->productOptions->whereIn('id', $request->product_option);
+
+        //     $options = [
+        //         'product_size' => [],
+        //         'product_options' => [],
+        //         'product_info' => [
+        //             'image' => $product->thumb_image,
+        //             'slug' => $product->slug
+        //         ]
+        //     ];
+
+        //     if ($productSize !== null) {
+        //         $options['product_size'] = [
+        //             'id' => $productSize?->id,
+        //             'name' => $productSize?->name,
+        //             //'price' => $productSize?->price
+        //         ];
+        //     }
+
+        //     foreach ($productOptions as $option) {
+        //         $options['product_options'][] = [
+        //             'id' => $option->id,
+        //             'name' => $option->name,
+        //             'price' => $option->price
+        //         ];
+        //     }
+
+        //     Cart::add([
+        //         'id' => $product->id,
+        //         'name' => $product->name,
+        //         'qty' => $request->quantity,
+        //         //'price' => $product->offer_price > 0 ? $product->offer_price : $product->price,
+        //         'price' => $productSize?->price == null ? $product->offer_price > 0 ? $product->offer_price : $product->price : $productSize?->price,
+        //         'weight' => 0,
+        //         'options' => $options
+        //     ]);
+
+        //     return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
+        // } catch (\Exception $e) {
+        //     logger($e);
+        //     return response(['status' => 'error', 'message' => 'Something went wrong!'], 500);
+        // }
     }
     public function Cart()
     {

@@ -108,7 +108,9 @@ function handleStock($product_id, $color_id, $size_id)
                 // In stock - return a message or action to add to cart
                 return [
                     'status' => true,
-                    'message' => 'Add to Cart'
+                    'message' => 'Add to Cart',
+                    'stock' => $stoc
+
                 ];
             }
         }

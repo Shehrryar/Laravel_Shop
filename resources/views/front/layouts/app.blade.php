@@ -277,32 +277,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            function addToCart(id, discount_val, discount_price, actual_price, attribute_Array) {
-                $.ajax({
-                    url: '{{ route("front.addToCart") }}',
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        discount_val: discount_val,
-                        discount_price: discount_price,
-                        actual_price: actual_price,
-                        attribute_Array: attribute_Array,
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status === true) {
-                            window.location.href = "{{ route('front.cart') }}"; // Redirect to cart if product added
-                        } else if (response.userlogin == 'isnotlogged') {
-                            window.location.href = "{{ route('account.login') }}"; // Redirect to login if not logged in
-                        } else {
-                            alert(response.message); // Show the error message
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.log('Error:', error); // Optional: log the error for debugging
-                    }
-                });
-            }
             $('.redhearticon').css({
                 'color': 'red'
             });
