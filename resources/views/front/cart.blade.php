@@ -48,11 +48,11 @@
                                       <td>
                                           <div class="d-flex align-items-center">
                                               @if(!empty($item->product_image))
-                                                  <img src="{{asset('upload/products/' . $item->product_image)}}">
+                                                  <img src="{{asset('upload/products/' . $item->product_image)}}" class="img-thumbnail" style="width: 50px; height: 50px; margin-right: 10px;">
                                               @else
-                                                  <img src="{{asset('admin-assets\img\default-150x150.png')}}">
+                                                  <img src="{{asset('admin-assets/img/default-150x150.png')}}" class="img-thumbnail" style="width: 50px; height: 50px; margin-right: 10px;">
                                               @endif
-                                              <h2>{{trans($item->title)}}</h2>
+                                              <h2 class="h5 mb-0">{{trans($item->title)}}</h2>
                                           </div>
                                       </td>
                                       @php
