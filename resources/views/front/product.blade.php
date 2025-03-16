@@ -410,13 +410,11 @@
                 $('#v_total_price').text("{{ config('settings.site_currency_icon') }}" + totalPrice);
             }
         });
-
-
         function addToCart($product_id, discount_value, discounted_price, actual_price) {
             let size_id = $('#size').val();
             let color_id = $('#color').val();
             let quantity = $('#v_quantity').val();
-            let selectedSize = $(".v_product_size");
+            let selectedSize = $(".v_product_size");            
             if (selectedSize != '') {
                 console.log(selectedSize);
                 if ($("#size").val() === null || $("#size").val() === 'null') {
@@ -442,12 +440,8 @@
                         alert('Please login to add product in cart');
                     } else if (response.status == false && response.stock == false) {
                         alert(response.message);
-
                     }
                 },
-                error: function () {
-                    alert('An error occurred. Please try again.');
-                }
             });
         }
     </script>
