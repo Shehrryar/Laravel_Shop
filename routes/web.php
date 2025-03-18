@@ -244,13 +244,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/currencies/delete/{currenedit}', [CurrencyController::class, 'delete'])->name('currency.delete');
 
 
-
-
-
-
-
-
-
         // added route for the chat
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
