@@ -82,7 +82,7 @@
                                         <th>API URL</th>
                                         <th>API Type</th>
                                         <th>API Payload</th>
-                                        <th>API Response</th>
+                                        <th>API Description</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -93,7 +93,7 @@
                                             <td>{{ $webservice->api_url }}</td>
                                             <td>{{ strtoupper($webservice->api_type) }}</td>
                                             <td>{{ $webservice->api_payload }}</td>
-                                            <td>{{ $webservice->api_response }}</td>
+                                            <td>{{ $webservice->api_description }}</td>
                                             <td>
                                                 <button class="btn btn-danger"
                                                     onclick="deleteapi({{ $webservice->id }})">Delete</button>
@@ -106,6 +106,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="card-footer clearfix">
+
+            {{ $Webservice->links()}}
         </div>
         <!-- /.card -->
     </section>
@@ -133,7 +138,7 @@
         });
 
 
-        
+
         function deleteshipping(shipping_id) {
             var delurl = '{{ route("shipping.delete", "ID") }}'.replace("ID", shipping_id);
             if (confirm("Are you sure you want to delete " + shipping_id + "?")) {
