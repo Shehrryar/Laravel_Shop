@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('product_id'); // ID of the product
             $table->unsignedBigInteger('size_id'); // ID of the product
             $table->unsignedBigInteger('color_id'); // ID of the product
+            $table->unsignedBigInteger('user_id'); // ID of the product
             $table->unsignedBigInteger('product_attribute_id'); // ID of the product attribute
             $table->string('title');                 // Product title
             $table->integer('quantity')->default(1); // Quantity (default is 1)

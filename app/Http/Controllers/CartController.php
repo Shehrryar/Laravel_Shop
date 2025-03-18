@@ -22,133 +22,139 @@ use Stripe\Stripe;
 use Stripe\Charge;
 class CartController extends Controller
 {
-
-    // public function addToCart(Request $request)
-    // {
-    //     $product = Product::with(['product_images', 'color', 'size'])->find($request->product_id);
-    //     if ($product == null) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Product not Found'
-    //         ]);
-    //     }
-    //     if (Auth::check() == false) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'userlogin' => false,
-    //             'message' => 'Please login to add product in cart'
-    //         ]);
-    //     }
-    //     $stock_product = handleStock($request->product_id, $request->color_id, $request->size_id);
-    //     if ($stock_product['status'] == false) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'stock' => false,
-    //             'message' => 'Out of Stock'
-    //         ]);
-    //     }
-    //     $discountprice = getDiscountedPrice($request->product_id, Discount::get(), $request->actual_price);
-    //     $price = $discountprice['discounted_price'] != 0 ? $discountprice['discounted_price'] : $discountprice['actual_price'];
-    //     $product_size = $product->size->where('id', $request->size_id)->first();
-    //     $product_color = $product->color->where('id', $request->color_id)->first();
-    //     if ($product_size) {
-    //         $price = $price + $product_size->price;
-    //     }
-    //     if ($product_color) {
-    //         $price = $price + $product_color->price;
-    //     }
-    //     if (Cart::count() > 0) {
-    //         $cartcontent = Cart::get();
-    //         $productAlreadyExist = false;
-    //         foreach ($cartcontent as $item) {
-    //             if (
-    //                 $item->user_id == Auth::user()->id && $item->product_id == $request->product_id
-    //                 && $item->color_id == $request->color_id && $item->size_id == $request->size_id
-    //             ) {
-    //                 $productAlreadyExist = true;
-    //             }
-    //         }
-    //         if ($productAlreadyExist == false) {
-    //             try {
-    //                 Cart::create([
-    //                     'user_id' => Auth::user()->id,
-    //                     'product_id' => $request->product_id,
-    //                     'product_attribute_id' => $product->id,
-    //                     'title' => $product->title,
-    //                     'quantity' => $request->quantity,
-    //                     'color_id' => $request->color_id,
-    //                     'size_id' => $request->size_id,
-    //                     'price' => $price,
-    //                     'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
-    //                 ]);
-    //                 return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
-    //             } catch (\Exception $e) {
-    //                 logger($e);
-    //                 return response(
-    //                     [
-    //                         'status' => false,
-    //                         'message' => 'Something went wrong!',
-    //                         'errors' => $e->getMessage()
-    //                     ],
-    //                     500
-    //                 );
-    //             }
-    //         } else {
-    //             try {
-    //                 $cartItem = Cart::where('user_id', Auth::user()->id)
-    //                     ->where('product_id', $request->product_id)
-    //                     ->where('color_id', $request->color_id)
-    //                     ->where('size_id', $request->size_id)
-    //                     ->first();
-    //                 if ($cartItem) {
-    //                     $cartItem->update([
-    //                         'product_attribute_id' => $product->id,
-    //                         'title' => $product->title,
-    //                         'quantity' => $request->quantity + $cartItem->quantity,
-    //                         'price' => $price,
-    //                         'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
-    //                     ]);
-    //                 }
-    //                 return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
-    //             } catch (\Exception $e) {
-    //                 logger($e);
-    //                 return response(
-    //                     [
-    //                         'status' => false,
-    //                         'message' => 'Something went wrong!',
-    //                         'errors' => $e->getMessage()
-    //                     ],
-    //                     500
-    //                 );
-    //             }
-    //         }
-    //     } else {
-    //         try {
-    //             Cart::create([
-    //                 'user_id' => Auth::user()->id,
-    //                 'product_id' => $request->product_id,
-    //                 'product_attribute_id' => $product->id,
-    //                 'title' => $product->title,
-    //                 'quantity' => $request->quantity,
-    //                 'color_id' => $request->color_id,
-    //                 'size_id' => $request->size_id,
-    //                 'price' => $price,
-    //                 'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
-    //             ]);
-    //             return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
-    //         } catch (\Exception $e) {
-    //             logger($e);
-    //             return response(
-    //                 [
-    //                     'status' => false,
-    //                     'message' => 'Something went wrong!',
-    //                     'errors' => $e->getMessage()
-    //                 ],
-    //                 500
-    //             );
-    //         }
-    //     }
-    // }
+    public function addToCart(Request $request)
+    {
+        $product = Product::with(['product_images', 'color', 'size'])->find($request->product_id);
+        if ($product == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Product not Found'
+            ]);
+        }
+        if (Auth::check() == false) {
+            return response()->json([
+                'status' => false,
+                'userlogin' => false,
+                'message' => 'Please login to add product in cart'
+            ]);
+        }
+        $stock_product = handleStock($request->product_id, $request->color_id, $request->size_id);
+        if ($stock_product['status'] == false) {
+            return response()->json([
+                'status' => false,
+                'stock' => false,
+                'message' => 'Out of Stock'
+            ]);
+        }
+        $discountprice = getDiscountedPrice($request->product_id, Discount::get(), $request->actual_price);
+        $price = $discountprice['discounted_price'] != 0 ? $discountprice['discounted_price'] : $discountprice['actual_price'];
+        $product_size = $product->size->where('id', $request->size_id)->first();
+        $product_color = $product->color->where('id', $request->color_id)->first();
+        if ($product_size) {
+            $price = $price + $product_size->price;
+        }
+        if ($product_color) {
+            $price = $price + $product_color->price;
+        }
+        $additional_attributes = json_encode([
+            'size' => $product_size ? $product_size->name : null,
+            'color' => $product_color ? $product_color->name : null
+        ]);
+        if (Cart::count() > 0) {
+            $cartcontent = Cart::get();
+            $productAlreadyExist = false;
+            foreach ($cartcontent as $item) {
+                if (
+                    $item->user_id == Auth::user()->id && $item->product_id == $request->product_id
+                    && $item->color_id == $request->color_id && $item->size_id == $request->size_id
+                ) {
+                    $productAlreadyExist = true;
+                }
+            }
+            if ($productAlreadyExist == false) {
+                try {
+                    Cart::create([
+                        'user_id' => Auth::user()->id,
+                        'product_id' => $request->product_id,
+                        'product_attribute_id' => $product->id,
+                        'title' => $product->title,
+                        'quantity' => $request->quantity,
+                        'color_id' => $request->color_id,
+                        'size_id' => $request->size_id,
+                        'price' => $price,
+                        'additional_attributes' => $additional_attributes,
+                        'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
+                    ]);
+                    return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
+                } catch (\Exception $e) {
+                    logger($e);
+                    return response(
+                        [
+                            'status' => false,
+                            'message' => 'Something went wrong!',
+                            'errors' => $e->getMessage()
+                        ],
+                        500
+                    );
+                }
+            } else {
+                try {
+                    $cartItem = Cart::where('user_id', Auth::user()->id)
+                        ->where('product_id', $request->product_id)
+                        ->where('color_id', $request->color_id)
+                        ->where('size_id', $request->size_id)
+                        ->first();
+                    if ($cartItem) {
+                        $cartItem->update([
+                            'product_attribute_id' => $product->id,
+                            'title' => $product->title,
+                            'quantity' => $request->quantity + $cartItem->quantity,
+                            'price' => $price,
+                            'additional_attributes' => $additional_attributes,
+                            'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
+                        ]);
+                    }
+                    return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
+                } catch (\Exception $e) {
+                    logger($e);
+                    return response(
+                        [
+                            'status' => false,
+                            'message' => 'Something went wrong!',
+                            'errors' => $e->getMessage()
+                        ],
+                        500
+                    );
+                }
+            }
+        } else {
+            try {
+                Cart::create([
+                    'user_id' => Auth::user()->id,
+                    'product_id' => $request->product_id,
+                    'product_attribute_id' => $product->id,
+                    'title' => $product->title,
+                    'quantity' => $request->quantity,
+                    'color_id' => $request->color_id,
+                    'size_id' => $request->size_id,
+                    'price' => $price,
+                    'additional_attributes' => $additional_attributes,
+                    'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
+                ]);
+                return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
+            } catch (\Exception $e) {
+                logger($e);
+                return response(
+                    [
+                        'status' => false,
+                        'message' => 'Something went wrong!',
+                        'errors' => $e->getMessage()
+                    ],
+                    500
+                );
+            }
+        }
+    }
     public function Cart()
     {
         $discount = Discount::where('status', 1)->get();

@@ -15,6 +15,7 @@ class Cart extends Model
         'size_id',
         'quantity',
         'price',
-        'product_image'
+        'product_image',
+        'additional_attributes'
     ];
 }
