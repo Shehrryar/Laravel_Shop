@@ -31,6 +31,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\admin\adminChatController;
 use App\Http\Controllers\admin\ApiRoutesController;
+use App\Http\Controllers\admin\FrontApiController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -256,8 +257,14 @@ Route::group(['prefix' => 'admin'], function () {
 
         // added route for the webservices
 
+
+        // route for admin side 
         Route::get('/webservice', [ApiRoutesController::class, 'index'])->name('webservice.index');
         Route::post('/webservice', [ApiRoutesController::class, 'create'])->name('webservice.create');
+
+        // route for front side 
+        Route::get('/webservice/front', [FrontApiController::class, 'index'])->name('Frontapi.index');
+        Route::post('/webservice/front', [FrontApiController::class, 'create'])->name('FrontApi.create');
 
 
 

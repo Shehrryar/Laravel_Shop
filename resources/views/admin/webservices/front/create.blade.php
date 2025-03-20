@@ -5,9 +5,7 @@
         <div class="container-fluid my-2">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Adminside Webservice</h1>
-                </div>
-                <div class="col-sm-6 text-right">
+                    <h1>Frontside Webservice</h1>
                 </div>
             </div>
         </div>
@@ -26,6 +24,9 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <input type="hidden" name="api_side" value="2">
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <label for="api_type">API Type</label>
                                 <select name="api_type" id="api_type" class="form-control">
@@ -107,9 +108,7 @@
                 </div>
             </div>
         </div>
-
         <div class="card-footer clearfix">
-
             {{ $Webservice->links()}}
         </div>
         <!-- /.card -->
@@ -117,18 +116,17 @@
     <!-- /.content -->
 @endsection
 @section('customjs')
-
     <script>
         $("#webservice_form").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '{{ route("webservice.create") }}',
+                url: '{{ route("FrontApi.create") }}',
                 type: 'post',
                 data: $(this).serializeArray(),
                 dataType: 'json',
                 success: function (response) {
                     if (response['status'] == true) {
-                        window.location.href = "{{ route('webservice.create') }}";
+                        window.location.href = "{{ route('Frontapi.index') }}";
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -136,9 +134,6 @@
                 }
             });
         });
-
-
-
         function deleteshipping(shipping_id) {
             var delurl = '{{ route("shipping.delete", "ID") }}'.replace("ID", shipping_id);
             if (confirm("Are you sure you want to delete " + shipping_id + "?")) {
@@ -156,6 +151,5 @@
             }
         }
     </script>
-
     <!-- /.content -->
 @endsection

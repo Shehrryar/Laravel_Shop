@@ -170,7 +170,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a style="margin-left: 28px;" href="{{ route('coupon.index') }}" class="nav-link">
+                            <a style="margin-left: 28px;" href="{{ route('Frontapi.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>FrontSide APIS</p>
                             </a>
