@@ -12,6 +12,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "hardevine/shoppingcart": "^3.3",
         "intervention/image": "*",
+        "kreait/firebase-php": "^7.18",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/socialite": "^5.15",
