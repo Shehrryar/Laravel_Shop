@@ -32,6 +32,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\admin\adminChatController;
 use App\Http\Controllers\admin\ApiRoutesController;
 use App\Http\Controllers\admin\FrontApiController;
+use App\Http\Controllers\admin\promotionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -245,11 +246,18 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/currencies/delete/{currenedit}', [CurrencyController::class, 'delete'])->name('currency.delete');
 
 
+        // added route for the promotions
+        Route::get('/promotions', [promotionController::class, 'index'])->name('promotion.index');
+        Route::get('/promotions/create', [promotionController::class, 'create'])->name('promotion.create');
+        Route::post('/promotions/store', [promotionController::class, 'store'])->name('promotion.store');
+        Route::get('/promotions/edit/{currenedit}', [promotionController::class, 'edit'])->name('promotion.edit');
+        Route::put('/promotions/update/{currenedit}', [promotionController::class, 'update'])->name('promotion.update');
+        Route::delete('/promotions/delete/{currenedit}', [promotionController::class, 'delete'])->name('promotion.delete');
+
         // added route for the chat
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
         Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
-
 
 
         Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');

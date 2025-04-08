@@ -142,6 +142,13 @@
                         <p>Language</p>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{route('promotion.index')}}" class="nav-link">
+                        <i class="nav-icon fas fa-bullhorn"></i>
+                        <p>Promotions</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{route('chat.index')}}" class="nav-link">
                         <i class="nav-icon fas fa-comments"></i>
