@@ -11,5 +11,8 @@
         "laravel-vite-plugin": "^1.1.1",
         "pusher-js": "^8.4.0-rc2",
         "vite": "^6.0.3"
+    },
+    "dependencies": {
+        "firebase": "^11.6.0"
     }
 }
