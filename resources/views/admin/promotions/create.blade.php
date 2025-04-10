@@ -65,7 +65,6 @@
                     dataType: 'json',
                     success: function (response) {
                         if (response['status'] == true) {
-                            window.location.href = "{{route('promotion.index')}}";
                         } else {
                             var errors = response['errors'];
                             if (errors['description']) {

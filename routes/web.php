@@ -72,7 +72,6 @@ Route::post('color', [AttributeController::class, 'change_color'])->name('produc
 Route::post('size', [AttributeController::class, 'sizeChange'])->name('product.sizeChange');
 Route::get('/load-product-modal/{productId}', [FrontController::class, 'loadProductModal'])->name('load-product-modal');
 
-
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
@@ -250,9 +249,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/promotions', [promotionController::class, 'index'])->name('promotion.index');
         Route::get('/promotions/create', [promotionController::class, 'create'])->name('promotion.create');
         Route::post('/promotions/store', [promotionController::class, 'store'])->name('promotion.store');
-        Route::get('/promotions/edit/{currenedit}', [promotionController::class, 'edit'])->name('promotion.edit');
-        Route::put('/promotions/update/{currenedit}', [promotionController::class, 'update'])->name('promotion.update');
-        Route::delete('/promotions/delete/{currenedit}', [promotionController::class, 'delete'])->name('promotion.delete');
+        Route::get('/promotions/edit/{promoedit}', [promotionController::class, 'edit'])->name('promotion.edit');
+        Route::put('/promotions/update/{promoedit}', [promotionController::class, 'update'])->name('promotion.update');
+        Route::delete('/promotions/delete/{promoedit}', [promotionController::class, 'destroy'])->name('promotion.delete');
 
         // added route for the chat
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');

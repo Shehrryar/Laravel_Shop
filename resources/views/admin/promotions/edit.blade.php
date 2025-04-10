@@ -7,7 +7,7 @@
 					<h1>Edit Promotion</h1>
 				</div>
 				<div class="col-sm-6 text-right">
-					<a href="{{route('promotions.index')}}" class="btn btn-primary">Back</a>
+					<a href="{{route('promotion.index')}}" class="btn btn-primary">Back</a>
 				</div>
 			</div>
 		</div>
@@ -36,7 +36,7 @@
 				</div>
 				<div class="pb-5 pt-3">
 					<button id="getFormValuesButton" type="submit" class="btn btn-primary">Update</button>
-					<a href="{{route('promotions.index')}}" class="btn btn-outline-dark ml-3">Cancel</a>
+					<a href="{{route('promotion.index')}}" class="btn btn-outline-dark ml-3">Cancel</a>
 				</div>
 			</form>
 		</div>
@@ -50,13 +50,13 @@
 				event.preventDefault();
 				var formDataArray = $("#editpromotionform").serializeArray();
 				$.ajax({
-					url: '{{route("promotions.update", $promotion->id)}}',
+					url: '{{route("promotion.update", $promotion->id)}}',
 					type: 'PUT',
 					data: formDataArray,
 					dataType: 'json',
 					success: function (response) {
 						if (response['status'] == true) {
-							window.location.href = "{{route('promotions.index')}}";
+							window.location.href = "{{route('promotion.index')}}";
 						} else {
 							var error = response['error'];
 							if (error['description']) {

@@ -4,6 +4,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Promotion;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
 class promotionController extends Controller
 {
     public function index(Request $request)
@@ -22,9 +24,20 @@ class promotionController extends Controller
         ]);
         if ($validator->passes()) {
             Promotion::create($request->all());
+            $firebase = (new Factory)->withServiceAccount(base_path('config/firebase_credentials.json'));
+            $messaging = $firebase->createMessaging();
+            $message = CloudMessage::fromArray([
+                'notification' => [
+                    'title' => 'Hello from Firebase!',
+                    'body' => 'This is a test notification.'
+                ],
+                'topic' => 'global'
+            ]);
+            $response = $messaging->send($message);
             return response()->json([
                 'status' => true,
-                'success' => "Promotion Created Successfully",
+                'message' => 'Push notification sent successfully',
+                'response' => $response,
             ]);
         } else {
             return response()->json([
