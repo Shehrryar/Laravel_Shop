@@ -29,7 +29,7 @@ class promotionController extends Controller
             $message = CloudMessage::fromArray([
                 'notification' => [
                     'title' => 'Hello from Firebase!',
-                    'body' => 'This is a test notification.'
+                    'body' => $request->description
                 ],
                 'topic' => 'global'
             ]);
@@ -70,9 +70,20 @@ class promotionController extends Controller
             }
             $promotion->description = $request->description;
             $promotion->save();
+            $firebase = (new Factory)->withServiceAccount(base_path('config/firebase_credentials.json'));
+            $messaging = $firebase->createMessaging();
+            $message = CloudMessage::fromArray([
+                'notification' => [
+                    'title' => 'Hello from Firebase!',
+                    'body' => $request->description
+                ],
+                'topic' => 'global'
+            ]);
+            $response = $messaging->send($message);
             return response()->json([
                 'status' => true,
-                'success' => "Promotion Updated Successfully",
+                'message' => 'Push notification sent successfully',
+                'response' => $response,
             ]);
         } else {
             return response()->json([
