@@ -54,14 +54,10 @@
     </div>
 </section>
 @endsection
-
-
-
 @section('customJs')
 <script type="text/javascript">
     $('#registerationForm').submit(function (event) {
         event.preventDefault();
-
         $.ajax({
             url: '{{route('account.processRegister')}}',
             type: 'post',
