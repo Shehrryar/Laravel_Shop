@@ -16,6 +16,7 @@
                 <form name="registerationForm" id="registerationForm" action="post">
                     <h4 class="modal-title">{{trans("Register Now")}}</h4>
                     <div class="form-group">
+                        <input type="hidden" id="fcm_token" name="fcm_token">
                         <input type="text" class="form-control" placeholder="{{trans("Name")}}" id="name" name="name">
                         <p></p>
                     </div>
@@ -55,37 +56,7 @@
     </section>
 @endsection
 @section('customJs')
-    <script type="module">
-        import { initializeApp } from "firebase/app";
-        // import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-        import { getMessaging, getToken } from "firebase/messaging";
-        const firebaseConfig = {
-            apiKey: "AIzaSyByRxHs3ymietU3OwnHqWwhW9zOguk2YR8",
-            authDomain: "laravelecommerenceproject.firebaseapp.com",
-            projectId: "laravelecommerenceproject",
-            storageBucket: "laravelecommerenceproject.appspot.com",
-            messagingSenderId: "349713004767",
-            appId: "1:349713004767:web:d474590c465b9990a7116a",
-            measurementId: "G-09PYT8H8FK"
-        };
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const messaging = getMessaging(app);
-        console.log(messaging);
-        getToken(messaging, { vapidKey: '<YOUR_PUBLIC_VAPID_KEY_HERE>' }).then((currentToken) => {
-            if (currentToken) {
-                // Send the token to your server and update the UI if necessary
-                // ...
-            } else {
-                // Show permission request UI
-                console.log('No registration token available. Request permission to generate one.');
-                // ...
-            }
-        }).catch((err) => {
-            console.log('An error occurred while retrieving token. ', err);
-            // ...
-        });
-    </script>
+    <script type="module" src="{{ asset('front-assets/js/firebase-messaging.js') }}"></script>
     <script type="text/javascript">
         $('#registerationForm').submit(function (event) {
             event.preventDefault();

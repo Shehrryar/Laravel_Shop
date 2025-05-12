@@ -31,6 +31,7 @@ class AuthController extends Controller
         if ($validator->passes()) {
             $user = new User();
             $user->name = $request->name;
+            $user->fcm_token = $request->fcm_token;
             $user->email = $request->email;
             $user->phone = $request->phone;
             $user->password = Hash::make($request->password);
@@ -86,6 +87,7 @@ class AuthController extends Controller
     {
         $userUpdate = User::find(Auth::id());
         $userUpdate->name = $request->name;
+        $userUpdate->fcm_token = $request->fcm_token;
         $userUpdate->email = $request->email;
         $userUpdate->phone = $request->phone;
         $userUpdate->address = $request->address;
