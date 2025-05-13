@@ -37,7 +37,6 @@
 								</div>
 								<p id="para_value"></p>
 							</div>
-
 							<!-- <div class="col-md-6">
 								<div class="mb-3">
 									<label>Select Product</label>
@@ -53,12 +52,6 @@
 									</select>
 								</div>
 							</div> -->
-							
-
-
-
-
-
 							<div class="col-md-6">
 								<div class="mb-3">
 									<label>Select Size</label>
@@ -67,7 +60,7 @@
 										@if($Size->isNotEmpty() && $products->isNotEmpty())
 											@foreach($Size as $size_pro)
 												@php
-													$product = $products->firstWhere('id', $size_pro->id);
+													$product = $products->firstWhere('id', $size_pro->product_id);
 												@endphp
 												@if ($product)
 													<option value="{{$size_pro->id}}" {{$color->size_id == $size_pro->id ? 'selected' : '' }}>
@@ -79,7 +72,6 @@
 									</select>
 								</div>
 							</div>
-
 							<div class="col-md-6">
 								<div class="mb-3">
 									<label for="price">Price</label>
@@ -88,7 +80,6 @@
 								</div>
 								<p id="para_cod"></p>
 							</div>
-
 							<div class="col-md-6">
 								<div class="mb-3">
 									<label for="status">Status</label>
