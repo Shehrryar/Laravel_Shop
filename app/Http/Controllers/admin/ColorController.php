@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Color;
+use App\Models\Size;
 use App\Models\Product;
 class ColorController extends Controller
 {
@@ -15,14 +16,18 @@ class ColorController extends Controller
         }
         $products = Product::orderBy('title', 'ASC')->get();
         $colors = $colors->paginate(10);
+        $Size = Size::orderBy('name', 'ASC')->get();
         $data['products'] = $products;
         $data['colors'] = $colors;
+        $data['Size'] = $Size;
         return view('admin.colors.list', $data);
     }
     public function create()
     {
         $products = Product::orderBy('title', 'ASC')->get();
+        $Size = Size::orderBy('name', 'ASC')->get();
         $data['products'] = $products;
+        $data['Size'] = $Size;
         return view('admin.colors.create', $data);
     }
     public function store(Request $request)
@@ -31,7 +36,7 @@ class ColorController extends Controller
             $request->all(),
             [
                 'name' => 'required',
-                'product_id' => 'required',
+                // 'product_id' => 'required',
                 'price' => 'required',
                 'status' => 'required',
             ]
@@ -51,6 +56,7 @@ class ColorController extends Controller
             $colors->name = $request->name;
             $colors->value = $request->value;
             $colors->product_id = $request->product_id;
+            $colors->size_id = $request->size_id;
             $colors->price = $request->price;
             $colors->status = $request->status;
             $colors->save();
@@ -69,12 +75,14 @@ class ColorController extends Controller
     public function edit($id, Request $request)
     {
         $products = Product::orderBy('title', 'ASC')->get();
+        $Size = Size::orderBy('name', 'ASC')->get();
         $color = Color::find($id);
         if (empty($color)) {
             $request->session()->flash('error', 'Record not found');
             return redirect()->route('colorss.index');
         }
         $data['color'] = $color;
+        $data['Size'] = $Size;
         $data['products'] = $products;
         return view('admin.colors.edit', $data);
     }
@@ -92,7 +100,7 @@ class ColorController extends Controller
             $request->all(),
             [
                 'name' => 'required',
-                'product_id' => 'required',
+                // 'product_id' => 'required',
                 'price' => 'required',
                 // 'value' => 'required|unique:color,value,' . $color_edit->id . ',id',
                 'status' => 'required',
@@ -112,7 +120,8 @@ class ColorController extends Controller
             $color_edit->name = $request->name;
             $color_edit->value = $request->value;
             $color_edit->status = $request->status;
-            $color_edit->product_id = $request->product_id;
+            $color_edit->size_id = $request->size_id;
+            // $color_edit->product_id = $request->product_id;
             $color_edit->price = $request->price;
             $color_edit->save();
             $message = 'Color updated sucessfully';

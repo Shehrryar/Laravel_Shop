@@ -1,5 +1,5 @@
 @extends('admin.layout.app')
-@section('content') 
+@section('content')
 	<section class="content-header">
 		<div class="container-fluid my-2">
 			<div class="row mb-2">
@@ -36,7 +36,8 @@
 								</div>
 								<p id="para_cod"></p>
 							</div>
-							<div class="col-md-6">
+
+							<!-- <div class="col-md-6">
 								<div class="mb-3">
 									<label>Select Product</label>
 									<select name="product_id" id="product_id" class="form-control">
@@ -48,7 +49,29 @@
 										@endif
 									</select>
 								</div>
+							</div> -->
+
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label>Select Size</label>
+									<select name="size_id" id="size_id" class="form-control">
+										<option value="">Select the Size</option>
+										@if($Size->isNotEmpty() && $products->isNotEmpty())
+											@foreach($Size as $size_pro)
+												@php
+													$product = $products->firstWhere('id', $size_pro->id);
+												@endphp
+												@if ($product)
+													<option value="{{$size_pro->id}}">
+														{{$size_pro->name}} - {{$product->title}}
+													</option>
+												@endif
+											@endforeach
+										@endif
+									</select>
+								</div>
 							</div>
+							
 							<div class="col-md-6">
 								<div class="mb-3">
 									<label for="price">Price</label>
@@ -79,7 +102,7 @@
 		<!-- /.card -->
 	</section>
 @endsection
-@section('customjs') 
+@section('customjs')
 	<script>
 		$(document).ready(function () {
 			$("#getFormValuesButton").click(function (event) {
