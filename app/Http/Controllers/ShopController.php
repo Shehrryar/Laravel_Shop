@@ -94,36 +94,29 @@ class ShopController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->firstOrFail(); // `firstOrFail()` automatically aborts with 404 if not found
-
         // Fetch related products by category
         $samcatproduct = Product::where('categories_id', $product->categories_id)
             ->with(['product_ratings', 'product_images'])
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->get();
-
         // Calculate average rating
         $avg_rating = $product->product_ratings_count > 0
             ? number_format($product->product_ratings_sum_rating / $product->product_ratings_count, 2)
             : '0.00';
-
         $avg_rating_per = ($avg_rating * 100) / 5;
-
         // Fetch wishlist only if user is logged in
         $wishlist = collect();
         if (auth()->check()) {
             $wishlist = Wishlist::where('user_id', auth()->id())->pluck('product_id'); // Only fetch product IDs
         }
-
         // Fetch active discounts
         $discount = Discount::where('status', 1)->get();
-
         // Track product view without redundant query
         ProductView::firstOrCreate([
             'product_id' => $product->id,
             'user_id' => auth()->id(),
         ]);
-
         // Prepare data for the view
         return view('front.product', [
             'product' => $product,
@@ -137,7 +130,6 @@ class ShopController extends Controller
             'keyword' => '',
         ]);
     }
-
     public function productRating(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [

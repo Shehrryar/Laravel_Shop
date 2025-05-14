@@ -74,4 +74,7 @@ class AttributeController extends Controller
             'color_name' => '',
         ]);
     }
+    public function getcolors(){
+        
+    }
 }

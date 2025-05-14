@@ -47,8 +47,8 @@
                                 <div class="discount-banner">{{$getprice['discount_value']}}% OFF</div>
                             </div>
                         @else
-                            <h1>{{$product->title}}</h1>
-                        @endif
+                        <h1>{{$product->title}}</h1>
+                    @endif
                     <div class="d-flex mb-3">
                         <div class="star-rating product mt-2" title="">
                             <div class="back-stars">
@@ -86,6 +86,9 @@
                             </div>
                         </div>
                     @endif
+
+
+
                     @if ($product->color()->exists())
                         <div class="details_extra_item">
                             <h5>Select Colour</h5>
@@ -100,6 +103,10 @@
                             </div>
                         </div>
                     @endif
+
+
+
+
                     <div class="details_quentity">
                         <h5>Select Quantity</h5>
                         <div class="quentity_btn_area d-flex flex-wrap align-items-center">
@@ -206,29 +213,29 @@
                                 </div>
                             </div>
                             @if ($product->product_ratings->isNotEmpty())
-                                                @foreach ($product->product_ratings as $rating)
-                                                                    @php
-                                                                        $ratingper = ($rating->rating * 100) / 5;
-                                                                    @endphp
-                                                                    <div class="rating-group mb-4">
-                                                                        <span><strong>{{$rating->username}}</strong></span>
-                                                                        <div class="star-rating mt-2" title="">
-                                                                            <div class="back-stars">
-                                                                                @for ($i = 0; $i < 5; $i++)
-                                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                @endfor
-                                                                                <div class="front-stars" style="width:{{$ratingper}}%">
-                                                                                    @for ($i = 0; $i < 5; $i++)
-                                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                                    @endfor
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="my-3">
-                                                                            <p>{{$rating->comment}}</p>
-                                                                        </div>
-                                                                    </div>
-                                                @endforeach
+                                @foreach ($product->product_ratings as $rating)
+                                    @php
+                                        $ratingper = ($rating->rating * 100) / 5;
+                                    @endphp
+                                    <div class="rating-group mb-4">
+                                        <span><strong>{{$rating->username}}</strong></span>
+                                        <div class="star-rating mt-2" title="">
+                                            <div class="back-stars">
+                                                @for ($i = 0; $i < 5; $i++)
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                @endfor
+                                                <div class="front-stars" style="width:{{$ratingper}}%">
+                                                    @for ($i = 0; $i < 5; $i++)
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="my-3">
+                                            <p>{{$rating->comment}}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
                             @endif
                         </div>
                     </div>
@@ -245,69 +252,69 @@
             <div class="col-md-12">
                 <div id="related-products" class="carousel">
                     @if(!empty($showrelatedproduct))
-                                @foreach ($showrelatedproduct as $relatedproduct)
-                                            @php
-                                                $images_prod = $relatedproduct->product_images()->first();
-                                                $inWishlist = $wishlist->contains('product_id', $relatedproduct->id);
-                                                $getprice = getDiscountedPrice($relatedproduct->id, $discount, $product->price);
-                                                $stockHandle = handleStock($relatedproduct->id, 0, 0);
-                                            @endphp
-                                            <div class="card product-card">
-                                                <div class="product-image position-relative">
-                                                    <a href="{{route("front.product", $relatedproduct->slug)}}" class="product-img">
-                                                        @if(!empty($images_prod))
-                                                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
-                                                        @else
-                                                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
-                                                        @endif
-                                                    </a>
-                                                    @if ($getprice['discount_value'] != 0)
-                                                        <div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
-                                                    @endif
-                                                    <a onclick="addToWishlist({{$relatedproduct->id}})" class="whishlist" href="javascript:void(0)">
-                                                        <i id="addwishlist{{$relatedproduct->id}}" class="far fa-heart"
-                                                            style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
-                                                    </a>
-                                                    <a onclick="removefromWishlist({{$relatedproduct->id}})" class="whishlist"
-                                                        href="javascript:void(0)">
-                                                        <i id="removewishlist{{$relatedproduct->id}}" class="redhearticon fas fa-heart"
-                                                            style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
-                                                    </a>
-                                                </div>
-                                                <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
-                                                <div class="card-body text-center mt-3">
-                                                    <a class="h6 link" href="">{{$relatedproduct->title}}</a>
-                                                    <div class="price mt-2">
-                                                        <span class="h5"><strong>{{$relatedproduct->price}}$</strong></span>
-                                                        @if($relatedproduct->compare_price > 0)
-                                                            <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}$</del></span>
-                                                        @endif
-                                                    </div>
-                                                    @php
-                                                        $avg_rating_per = 0;
-                                                        if ($relatedproduct->product_ratings_count > 0) {
-                                                            $avg_rating = number_format(($relatedproduct->product_ratings_sum_rating / $relatedproduct->product_ratings_count), 2);
-                                                            $avg_rating_per = ($avg_rating * 100) / 5;
-                                                        }
-                                                    @endphp
-                                                    <div class="d-flex justify-content-center">
-                                                        <div class="star-rating product mt-2" title="">
-                                                            <div class="back-stars">
-                                                                @for ($i = 0; $i < 5; $i++)
-                                                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                                                @endfor
-                                                                <div class="front-stars" style="width: {{$avg_rating_per}}%">
-                                                                    @for ($i = 0; $i < 5; $i++)
-                                                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                                                    @endfor
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <small class="pt-2 ps-1">({{$relatedproduct->product_ratings_count}} Reviews)</small>
-                                                    </div>
+                        @foreach ($showrelatedproduct as $relatedproduct)
+                            @php
+                                $images_prod = $relatedproduct->product_images()->first();
+                                $inWishlist = $wishlist->contains('product_id', $relatedproduct->id);
+                                $getprice = getDiscountedPrice($relatedproduct->id, $discount, $product->price);
+                                $stockHandle = handleStock($relatedproduct->id, 0, 0);
+                            @endphp
+                            <div class="card product-card">
+                                <div class="product-image position-relative">
+                                    <a href="{{route("front.product", $relatedproduct->slug)}}" class="product-img">
+                                        @if(!empty($images_prod))
+                                            <img class="card-img-top" src="{{asset('upload/products/' . $images_prod->image)}}">
+                                        @else
+                                            <img class="card-img-top" src="{{asset('admin-assets\img\default-150x150.png')}}">
+                                        @endif
+                                    </a>
+                                    @if ($getprice['discount_value'] != 0)
+                                        <div class="discount-badge">{{ $getprice['discount_value'] }}% OFF</div>
+                                    @endif
+                                    <a onclick="addToWishlist({{$relatedproduct->id}})" class="whishlist" href="javascript:void(0)">
+                                        <i id="addwishlist{{$relatedproduct->id}}" class="far fa-heart"
+                                            style="{{ $inWishlist ? 'display:none;' : '' }}"></i>
+                                    </a>
+                                    <a onclick="removefromWishlist({{$relatedproduct->id}})" class="whishlist"
+                                        href="javascript:void(0)">
+                                        <i id="removewishlist{{$relatedproduct->id}}" class="redhearticon fas fa-heart"
+                                            style="{{ $inWishlist ? '' : 'display:none;' }}"></i>
+                                    </a>
+                                </div>
+                                <hr style="border: none; border-top: 2px solid #000; width: 50%; margin: 20px auto;">
+                                <div class="card-body text-center mt-3">
+                                    <a class="h6 link" href="">{{$relatedproduct->title}}</a>
+                                    <div class="price mt-2">
+                                        <span class="h5"><strong>{{$relatedproduct->price}}$</strong></span>
+                                        @if($relatedproduct->compare_price > 0)
+                                            <span class="h6 text-underline"><del>{{$relatedproduct->compare_price}}$</del></span>
+                                        @endif
+                                    </div>
+                                    @php
+                                        $avg_rating_per = 0;
+                                        if ($relatedproduct->product_ratings_count > 0) {
+                                            $avg_rating = number_format(($relatedproduct->product_ratings_sum_rating / $relatedproduct->product_ratings_count), 2);
+                                            $avg_rating_per = ($avg_rating * 100) / 5;
+                                        }
+                                    @endphp
+                                    <div class="d-flex justify-content-center">
+                                        <div class="star-rating product mt-2" title="">
+                                            <div class="back-stars">
+                                                @for ($i = 0; $i < 5; $i++)
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                @endfor
+                                                <div class="front-stars" style="width: {{$avg_rating_per}}%">
+                                                    @for ($i = 0; $i < 5; $i++)
+                                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                                    @endfor
                                                 </div>
                                             </div>
-                                @endforeach
+                                        </div>
+                                        <small class="pt-2 ps-1">({{$relatedproduct->product_ratings_count}} Reviews)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     @endif
                 </div>
             </div>
@@ -363,7 +370,10 @@
             });
             $('#v_quantity').val(1);
             $('.v_product_size').on('change', function () {
-                v_updateTotalPrice()
+                v_updateTotalPrice();
+                ajaxcallforcolors();
+
+
             });
             $('.v_product_option').on('change', function () {
                 v_updateTotalPrice()
@@ -409,12 +419,27 @@
                 totalPrice = (basePrice + selectedSizePrice + selectedOptionsPrice) * quantity;
                 $('#v_total_price').text("{{ config('settings.site_currency_icon') }}" + totalPrice);
             }
+
+            function ajaxcallforcolors() {
+                $.ajax({
+                url: '{{ route("front.") }}',
+                type: 'post',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    size_id: $('#size').val(),
+                },
+                success: function (response) {
+                    if (response.status == true) {
+                    } 
+                },
+            });
+            }
         });
         function addToCart($product_id, discount_value, discounted_price, actual_price) {
             let size_id = $('#size').val();
             let color_id = $('#color').val();
             let quantity = $('#v_quantity').val();
-            let selectedSize = $(".v_product_size");            
+            let selectedSize = $(".v_product_size");
             if (selectedSize != '') {
                 console.log(selectedSize);
                 if ($("#size").val() === null || $("#size").val() === 'null') {
