@@ -70,6 +70,7 @@ Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating
 Route::post('search', [SearchController::class, 'search'])->name('product.search');
 Route::post('color', [AttributeController::class, 'change_color'])->name('product.change_color');
 Route::post('size', [AttributeController::class, 'sizeChange'])->name('product.sizeChange');
+Route::post('getcolor', [AttributeController::class, 'getcolors'])->name('product.getcolor');
 Route::get('/load-product-modal/{productId}', [FrontController::class, 'loadProductModal'])->name('load-product-modal');
 
 Route::group(['prefix' => 'account'], function () {

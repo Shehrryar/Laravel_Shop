@@ -91,18 +91,22 @@
 
                     @if ($product->color()->exists())
                         <div class="details_extra_item">
-                            <h5>Select Colour</h5>
-                            <div class="col-sm-5">
-                                <select class="form-control v_product_option" name="product_option" id="color" required>
-                                    <option value=null>Select Colour</option>
-                                    @foreach ($product->color as $productOption)
-                                        <option id="option-{{ $productOption->id }}" value="{{ $productOption->id }}"
-                                            data-name="{{ $productOption->price }}">{{ $productOption->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <!-- <h5>Select Colour</h5>
+                                    <div class="col-sm-5">
+                                        <select class="form-control v_product_option" name="product_option" id="color" required>
+                                            <option value=null>Select Colour</option>
+                                            @foreach ($product->color as $productOption)
+                                                <option id="option-{{ $productOption->id }}" value="{{ $productOption->id }}"
+                                                    data-name="{{ $productOption->price }}">{{ $productOption->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div> -->
                         </div>
                     @endif
+
+
+
+
 
 
 
@@ -375,9 +379,9 @@
 
 
             });
-            $('.v_product_option').on('change', function () {
-                v_updateTotalPrice()
-            });
+            // $('.v_product_option').on('change', function () {
+            //     v_updateTotalPrice()
+            // });
             // Event handlers for increment and decrement buttons
             $('.v_increment').on('click', function (e) {
                 e.preventDefault()
@@ -403,6 +407,8 @@
                 let quantity = parseFloat($('#v_quantity').val());
                 // Calculate the selected size price
                 let selectedSize = $("#size option:selected").data("name");
+                
+                
                 if (selectedSize > 0) {
                     selectedSizePrice = selectedSize;
                 } else if (selectedSize === undefined) {
@@ -410,7 +416,8 @@
                 }
                 // Calculate selected options price
                 //let selectedOptions = $('.v_product_option:checked');
-                let selectedOptions = $("#color option:selected").data("name");
+                let selectedOptions = $("input[name='product_option']:checked").data("name");
+                // let selectedOptions = $("#color option:selected").data("name");
                 if (selectedOptions > 0) {
                     selectedOptionsPrice += selectedOptions;
                 } else if (selectedOptions === undefined) {
@@ -422,17 +429,60 @@
 
             function ajaxcallforcolors() {
                 $.ajax({
-                url: '{{ route("front.") }}',
-                type: 'post',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    size_id: $('#size').val(),
-                },
-                success: function (response) {
-                    if (response.status == true) {
-                    } 
-                },
-            });
+                    url: '{{ route("product.getcolor") }}',
+                    type: 'post',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        size_id: $('#size').val(),
+                    },
+                    success: function (response) {
+                        if (response.status == true) {
+                            let colorHtml = `
+                                <h5>Select Colour</h5>
+                                <div class="col-sm-12">
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                            `;
+                            $.each(response.colors, function (index, color) {
+                                colorHtml += `
+                                    <label class="color-label d-flex align-items-center mb-2" style="cursor:pointer; margin-right: 16px;">
+                                        <input id="color" type="radio" class="v_product_option d-none" name="product_option" value="${color.id}" data-name="${color.price}">
+                                        <span style="
+                                            display:inline-block;
+                                            width:28px;
+                                            height:28px;
+                                            border-radius:50%;
+                                            background:${color.value};
+                                            border:2px solid #ddd;
+                                            box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+                                            margin-right: 8px;
+                                            transition: border 0.2s;
+                                        "></span>
+                                        <span style="font-size: 1rem; color: #333;">${color.name}</span>
+                                    </label>
+                                `;
+                            });
+                            colorHtml += `
+                                    </div>
+                                </div>
+                                <style>
+                                    .color-label input[type="radio"]:checked + span {
+                                        border: 2px solid #222 !important;
+                                    }
+                                </style>
+                            `;
+                            $('.details_extra_item').html(colorHtml);
+
+                            // Add active border on selected color
+                            $('.v_product_option').on('change', function() {
+                                $('.color-label span').css('border', '2px solid #ddd');
+                                if ($(this).is(':checked')) {
+                                    $(this).next('span').css('border', '2px solid #222');
+                                    v_updateTotalPrice()
+                                }
+                            });
+                        }
+                    },
+                });
             }
         });
         function addToCart($product_id, discount_value, discounted_price, actual_price) {

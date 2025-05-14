@@ -74,7 +74,14 @@ class AttributeController extends Controller
             'color_name' => '',
         ]);
     }
-    public function getcolors(){
-        
+    public function getcolors(Request $request)
+    {
+        $colors = Color::where('size_id', $request->size_id)->get()->toArray();
+        if (!empty($colors)) {
+            return response()->json([
+            'status' => true,
+            'colors' => $colors
+            ]);
+        }
     }
 }
