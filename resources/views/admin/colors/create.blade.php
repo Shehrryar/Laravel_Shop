@@ -59,7 +59,7 @@
 										@if($Size->isNotEmpty() && $products->isNotEmpty())
 											@foreach($Size as $size_pro)
 												@php
-													$product = $products->firstWhere('id', $size_pro->id);
+													$product = $products->firstWhere('id', $size_pro->product_id);
 												@endphp
 												@if ($product)
 													<option value="{{$size_pro->id}}">

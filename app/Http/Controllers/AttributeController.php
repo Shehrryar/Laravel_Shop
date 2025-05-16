@@ -79,9 +79,14 @@ class AttributeController extends Controller
         $colors = Color::where('size_id', $request->size_id)->get()->toArray();
         if (!empty($colors)) {
             return response()->json([
-            'status' => true,
-            'colors' => $colors
+                'status' => true,
+                'colors' => $colors
             ]);
         }
+        return response()->json([
+            'status' => False,
+            'message' => "color for this size is not available"
+        ]);
+
     }
 }

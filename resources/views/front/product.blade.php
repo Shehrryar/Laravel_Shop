@@ -481,6 +481,9 @@
                                 }
                             });
                         }
+                        else if(response.status == false){
+                            $('.details_extra_item').html('');
+                        }
                     },
                 });
             }

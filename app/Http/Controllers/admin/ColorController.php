@@ -55,7 +55,7 @@ class ColorController extends Controller
             $colors = new Color();
             $colors->name = $request->name;
             $colors->value = $request->value;
-            $colors->product_id = $request->product_id;
+            $colors->product_id = 0;
             $colors->size_id = $request->size_id;
             $colors->price = $request->price;
             $colors->status = $request->status;
@@ -121,7 +121,7 @@ class ColorController extends Controller
             $color_edit->value = $request->value;
             $color_edit->status = $request->status;
             $color_edit->size_id = $request->size_id;
-            // $color_edit->product_id = $request->product_id;
+            $color_edit->product_id = 0;
             $color_edit->price = $request->price;
             $color_edit->save();
             $message = 'Color updated sucessfully';
