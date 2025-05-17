@@ -35,7 +35,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7" id = "detial_product">
                     <div class="bg-light right">
                         @php
                             $getprice = getDiscountedPrice($product->id, $discount, $product->price);
@@ -85,10 +85,8 @@
                                 </select>
                             </div>
                         </div>
+                        <p></p>
                     @endif
-
-
-
                     @if ($product->color()->exists())
                         <div class="details_extra_item">
                             <!-- <h5>Select Colour</h5>
@@ -103,14 +101,6 @@
                                     </div> -->
                         </div>
                     @endif
-
-
-
-
-
-
-
-
                     <div class="details_quentity">
                         <h5>Select Quantity</h5>
                         <div class="quentity_btn_area d-flex flex-wrap align-items-center">
@@ -376,8 +366,7 @@
             $('.v_product_size').on('change', function () {
                 v_updateTotalPrice();
                 ajaxcallforcolors();
-
-
+                $("#size").removeClass('is-invalid').siblings("p").removeClass('invalid-feedback');
             });
             // $('.v_product_option').on('change', function () {
             //     v_updateTotalPrice()
@@ -407,8 +396,6 @@
                 let quantity = parseFloat($('#v_quantity').val());
                 // Calculate the selected size price
                 let selectedSize = $("#size option:selected").data("name");
-                
-                
                 if (selectedSize > 0) {
                     selectedSizePrice = selectedSize;
                 } else if (selectedSize === undefined) {
@@ -426,7 +413,6 @@
                 totalPrice = (basePrice + selectedSizePrice + selectedOptionsPrice) * quantity;
                 $('#v_total_price').text("{{ config('settings.site_currency_icon') }}" + totalPrice);
             }
-
             function ajaxcallforcolors() {
                 $.ajax({
                     url: '{{ route("product.getcolor") }}',
@@ -471,7 +457,6 @@
                                 </style>
                             `;
                             $('.details_extra_item').html(colorHtml);
-
                             // Add active border on selected color
                             $('.v_product_option').on('change', function() {
                                 $('.color-label span').css('border', '2px solid #ddd');
@@ -490,13 +475,12 @@
         });
         function addToCart($product_id, discount_value, discounted_price, actual_price) {
             let size_id = $('#size').val();
-            let color_id = $('#color').val();
+            let color_id = $('input[name="product_option"]:checked').val();
             let quantity = $('#v_quantity').val();
             let selectedSize = $(".v_product_size");
             if (selectedSize != '') {
-                console.log(selectedSize);
                 if ($("#size").val() === null || $("#size").val() === 'null') {
-                    alert('Please select a size');
+                    $("#size").addClass('is-invalid').siblings("p").addClass('invalid-feedback').html('Please select a size');
                     return;
                 }
             }
@@ -517,7 +501,13 @@
                     if (response.status == false && response.userlogin == false) {
                         alert('Please login to add product in cart');
                     } else if (response.status == false && response.stock == false) {
-                        alert(response.message);
+                        $('#outofstock-message').remove();
+                        $('#detial_product').prepend('<div class="alert alert-danger" id="outofstock-message">Sorry, this product is out of stock.</div>');
+                    }
+                     else if (response.status == true && response.add_to_cart == true) {
+                        $('#outofstock-message').remove();
+                        window.location = "{{ route('front.home') }}";
+
                     }
                 },
             });

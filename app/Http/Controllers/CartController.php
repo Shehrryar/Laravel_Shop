@@ -85,7 +85,7 @@ class CartController extends Controller
                         'additional_attributes' => $additional_attributes,
                         'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                     ]);
-                    return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
+                    return response(['status' => true, 'add_to_cart' => true, 'message' => 'Product added into cart!'], 200);
                 } catch (\Exception $e) {
                     logger($e);
                     return response(
@@ -114,7 +114,7 @@ class CartController extends Controller
                             'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                         ]);
                     }
-                    return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
+                    return response(['status' => true, 'add_to_cart' => true,'message' => 'Product added into cart!'], 200);
                 } catch (\Exception $e) {
                     logger($e);
                     return response(
@@ -141,7 +141,7 @@ class CartController extends Controller
                     'additional_attributes' => $additional_attributes,
                     'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                 ]);
-                return response(['status' => 'success', 'message' => 'Product added into cart!'], 200);
+                return response(['status' => true, 'add_to_cart' => true, 'message' => 'Product added into cart!'], 200);
             } catch (\Exception $e) {
                 logger($e);
                 return response(
