@@ -39,7 +39,8 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="subtitle">Sub Title</label>
-                                    <input type="text" name="subtitle" id="subtitle" class="form-control" placeholder="subtitle">
+                                    <input type="text" name="subtitle" id="subtitle" class="form-control"
+                                        placeholder="subtitle">
                                     <p id="para_subtitle"></p>
                                 </div>
                             </div>
@@ -59,14 +60,20 @@
 @section('customjs')
     <script>
         $(document).ready(function () {
-            $("#onboarding_form").click(function (event) {
+            $("#getFormValuesButton").click(function (event) {
                 event.preventDefault();
-                var formDataArray = $("#onboarding_form").serializeArray();
+                var formData = new FormData($('#onboarding_form')[0]);
                 $.ajax({
                     url: '{{route("onboarding.store")}}',
-                    type: 'POST',
-                    data: formDataArray, // Use correct form ID
-                    dataType: 'json', // 'datatype' should be 'dataType'
+                    data: formData,
+                    type: 'POST', // For PUT method, override belo
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-HTTP-Method-Override': 'POST'
+                    },
                     success: function (response) {
                         if (response['status'] === true) {
                             window.location.href = "{{ route('onboarding.index') }}";
@@ -74,15 +81,15 @@
                             var errors = response['errors'];
                             if (errors['name']) {
                                 // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-                                $('#para_image').html(errors['name']);
+                                $('#para_image').html(errors['image']);
                             }
                             if (errors['email']) {
                                 // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-                                $('#para_title').html(errors['email']);
+                                $('#para_title').html(errors['title']);
                             }
                             if (errors['phone']) {
                                 // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-                                $('#para_subtitle').html(errors['phone']);
+                                $('#para_subtitle').html(errors['subtitle']);
                             }
                         }
                     },

@@ -97,7 +97,6 @@ class onboardingController extends Controller
                 }
             }
             $onbord_edit->save();
-            $request->session()->flash("success", "onboarding updated successfully");
             return response()->json([
                 'status' => true,
                 'message' => 'onboarding updated successfully'

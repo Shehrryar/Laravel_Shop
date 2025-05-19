@@ -18,7 +18,7 @@
     <section class="content">
         <!-- Default box -->
         <div class="container-fluid">
-            <form action="" method="post" id="onboarding_form" enctype="multipart/form-data">
+            <form action="" method="put" id="onboarding_form" enctype="multipart/form-data">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -40,7 +40,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="subtitle">Sub Title</label>
-                                    <input type="text" name="subtitle" value={{ $onboard_edit->subtitle }}" id="subtitle"
+                                    <input type="text" name="subtitle" value="{{ $onboard_edit->subtitle }}" id="subtitle"
                                         class="form-control" placeholder="subtitle">
                                     <p id="para_subtitle"></p>
                                 </div>
@@ -61,38 +61,40 @@
 @section('customjs')
     <script>
         $(document).ready(function () {
-            $("#onboarding_form").click(function (event) {
+            $("#getFormValuesButton").click(function (event) {
                 event.preventDefault();
-                var formDataArray = $("#onboarding_form").serializeArray();
+                var formData = new FormData($('#onboarding_form')[0]);
                 $.ajax({
-                    url: '{{route("onboarding.update", $onboard_edit->id)}}',
-                    type: 'PUT',
-                    data: formDataArray, // Use correct form ID
-                    dataType: 'json', // 'datatype' should be 'dataType'
+                    url: '{{ route("onboarding.update", $onboard_edit->id) }}',
+                    type: 'POST', // For PUT method, override below
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-HTTP-Method-Override': 'PUT'
+                    },
                     success: function (response) {
                         if (response['status'] === true) {
                             window.location.href = "{{ route('onboarding.index') }}";
                         } else {
                             var errors = response['errors'];
-                            if (errors['name']) {
-                                // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-                                $('#para_image').html(errors['name']);
+                            if (errors['image']) {
+                                $('#para_image').html(errors['image']);
                             }
-                            if (errors['email']) {
-                                // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-                                $('#para_title').html(errors['email']);
+                            if (errors['title']) {
+                                $('#para_title').html(errors['title']);
                             }
-                            if (errors['phone']) {
-                                // $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
-                                $('#para_subtitle').html(errors['phone']);
+                            if (errors['subtitle']) {
+                                $('#para_subtitle').html(errors['subtitle']);
                             }
                         }
                     },
                     error: function (jqXHR, exception) {
-                        console.log("Something went wrong");
+                        console.log("Something went wrong", jqXHR.responseText);
                     }
                 });
-                // Further logic here
             });
         });
     </script>
