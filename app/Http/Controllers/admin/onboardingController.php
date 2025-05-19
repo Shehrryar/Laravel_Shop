@@ -62,8 +62,8 @@ class onboardingController extends Controller
     }
     public function edit($catid, Request $request)
     {
-        $cat_edit = Onboarding::find($catid);
-        return view('admin.onboarding.edit', compact('cat_edit'));
+        $onboard_edit = Onboarding::find($catid);
+        return view('admin.onboarding.edit', compact('onboard_edit'));
     }
     public function update($cat_id, Request $request)
     {

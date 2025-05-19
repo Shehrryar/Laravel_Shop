@@ -32,15 +32,16 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="title">Title</label>
-                                    <input type="text" name="title" id="title" class="form-control" placeholder="title">
+                                    <input type="text" name="title" id="title" value="{{ $onboard_edit->title }}"
+                                        class="form-control" placeholder="title">
                                     <p id="para_title"></p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="subtitle">Sub Title</label>
-                                    <input type="text" name="subtitle" id="subtitle" class="form-control"
-                                        placeholder="subtitle">
+                                    <input type="text" name="subtitle" value={{ $onboard_edit->subtitle }}" id="subtitle"
+                                        class="form-control" placeholder="subtitle">
                                     <p id="para_subtitle"></p>
                                 </div>
                             </div>
@@ -64,7 +65,7 @@
                 event.preventDefault();
                 var formDataArray = $("#onboarding_form").serializeArray();
                 $.ajax({
-                    url: '{{route("onboarding.update",$cat_edit->id)}}',
+                    url: '{{route("onboarding.update", $onboard_edit->id)}}',
                     type: 'PUT',
                     data: formDataArray, // Use correct form ID
                     dataType: 'json', // 'datatype' should be 'dataType'
