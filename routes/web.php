@@ -33,6 +33,7 @@ use App\Http\Controllers\admin\adminChatController;
 use App\Http\Controllers\admin\ApiRoutesController;
 use App\Http\Controllers\admin\FrontApiController;
 use App\Http\Controllers\admin\promotionController;
+use App\Http\Controllers\admin\onboardingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -254,12 +255,21 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/promotions/update/{promoedit}', [promotionController::class, 'update'])->name('promotion.update');
         Route::delete('/promotions/delete/{promoedit}', [promotionController::class, 'destroy'])->name('promotion.delete');
 
+
+        // added route for the onboarding
+        Route::get('/onboarding', [onboardingController::class, 'index'])->name('onboarding.index');
+        Route::get('/onboarding/create', [onboardingController::class, 'create'])->name('onboarding.create');
+        Route::post('/onboarding/store', [onboardingController::class, 'store'])->name('onboarding.store');
+        Route::get('/onboarding/edit/{bordedit}', [onboardingController::class, 'edit'])->name('onboarding.edit');
+        Route::put('/onboarding/update/{bordupdate}', [onboardingController::class, 'update'])->name('onboarding.update');
+        Route::delete('/onboarding/delete/{borddel}', [onboardingController::class, 'destroy'])->name('onboarding.delete');
+
+
+
         // added route for the chat
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
         Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
-
-
         Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
 
 

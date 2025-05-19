@@ -185,6 +185,12 @@
                     </ul>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('onboarding.index') }}" class="nav-link">
+                        <i class="nav-icon  far fa-file-alt"></i>
+                        <p>Onboarding</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="pages.html" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>
                         <p>Pages</p>
