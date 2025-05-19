@@ -33,6 +33,7 @@ class ApiRoutesController extends Controller
             $Webservice->api_description = $request->api_description;
             $Webservice->api_payload = $request->api_payload;
             $Webservice->api_response = $request->api_response;
+            $Webservice->api_side = 0;
             $Webservice->save();
 
             $request->session()->flash('success', 'API URL added successfully');

@@ -1,11 +1,10 @@
 <?php
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\API\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Onboarding;
 use Illuminate\Support\Facades\File;
-use Crypt;
 class onboardingController extends Controller
 {
     public function index(Request $request)
@@ -15,11 +14,13 @@ class onboardingController extends Controller
             $onboarding = $onboarding->where('title', 'like', '%' . $request->get('keyword') . '%');
         }
         $onboarding = $onboarding->paginate(10);
-        return view('admin.onboarding.list', compact('onboarding'));
-    }
-    public function create()
-    {
-        return view('admin.onboarding.create');
+        $totalPages = $onboarding->lastPage(); // Total number of pages
+        $currentPage = $onboarding->currentPage(); // Current page number
+        $onboardingData = $onboarding->items(); // Extract onboarding as an array
+        $newonboarding['current_page'] = $currentPage;
+        $newonboarding['totalPages'] = $totalPages;
+        $newonboarding['onboardingData'] = $onboardingData;
+        return response()->json([$newonboarding]);
     }
     public function store(Request $request)
     {
@@ -45,7 +46,6 @@ class onboardingController extends Controller
                 $Onboarding->image = $imageName;
             }
             $Onboarding->save();
-            $request->session()->flash("success", "Onboarding is added");
             return response()->json([
                 'status' => true,
                 'message' => 'Onboarding is added'
@@ -56,11 +56,6 @@ class onboardingController extends Controller
                 'errors' => $validater->errors()
             ]);
         }
-    }
-    public function edit($catid, Request $request)
-    {
-        $onboard_edit = Onboarding::find($catid);
-        return view('admin.onboarding.edit', compact('onboard_edit'));
     }
     public function update($onbord_id, Request $request)
     {
@@ -112,7 +107,6 @@ class onboardingController extends Controller
     {
         $onbord_del = Onboarding::find($onbord_id);
         if (empty($onbord_del)) {
-            $request->session()->flash("Error", "onboarding not found");
             return response()->json([
                 'status' => true,
                 'message' => 'onboarding not found'

@@ -25,6 +25,7 @@ use App\Http\Controllers\API\admin\ColorController;
 use App\Http\Controllers\API\admin\SizeController;
 use App\Http\Controllers\API\SearchController;
 use App\Http\Controllers\API\admin\StockManagementController;
+use App\Http\Controllers\API\admin\onboardingController;
 
 
 
@@ -183,6 +184,16 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/stock/update/{stockupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         Route::delete('/stock/delete/{stockelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
         // dashboard
+
+        Route::get('/onboarding', [onboardingController::class, 'index'])->name('onboarding.index');
+        Route::get('/onboarding/create', [onboardingController::class, 'create'])->name('onboarding.create');
+        Route::post('/onboarding/store', [onboardingController::class, 'store'])->name('onboarding.store');
+        Route::get('/onboarding/edit/{bordedit}', [onboardingController::class, 'edit'])->name('onboarding.edit');
+        Route::put('/onboarding/update/{bordupdate}', [onboardingController::class, 'update'])->name('onboarding.update');
+        Route::delete('/onboarding/delete/{borddel}', [onboardingController::class, 'destroy'])->name('onboarding.delete');
+        
+        
+        
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });
 });
