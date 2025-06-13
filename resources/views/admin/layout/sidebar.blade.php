@@ -76,6 +76,14 @@
                         <p>Color</p>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href='{{route("themes.index")}}' class="nav-link">
+                        <i class="nav-icon fas fa-palette"></i>
+                        <p>Theme</p>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a href='{{route("sizes.index")}}' class="nav-link">
                         <i class="nav-icon fas fa-ruler"></i>

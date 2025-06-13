@@ -34,6 +34,8 @@ use App\Http\Controllers\admin\ApiRoutesController;
 use App\Http\Controllers\admin\FrontApiController;
 use App\Http\Controllers\admin\promotionController;
 use App\Http\Controllers\admin\onboardingController;
+use App\Http\Controllers\admin\ThemeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -222,6 +224,15 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
         Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
         Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
+
+
+        Route::get('/themes/index', [ThemeController::class, 'index'])->name('themes.index');
+        Route::get('/themes/create', [ThemeController::class, 'create'])->name('themes.create');
+        Route::post('/themes/store', [ThemeController::class, 'store'])->name('themes.store');
+        Route::get('/themes/{themeedit}/edit', [ThemeController::class, 'edit'])->name('themes.edit');
+        Route::put('/themes/{themeupdate}/update', [ThemeController::class, 'update'])->name('themes.update');
+        Route::delete('/themes/{themedelete}/delete', [ThemeController::class, 'destroy'])->name('themes.delete');
+
         // add route for the size
         Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
         Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
