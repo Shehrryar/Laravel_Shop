@@ -90,7 +90,7 @@ if (!function_exists('transFront')) {
 function handleStock($product_id, $color_id, $size_id)
 {
     // Iterate through stock array
-    $stock = Stock::get();
+    $stock = Stock::where('status', 1)->get(); // Fetch only active stock items
     if (!empty($stock)) {
         foreach ($stock as $stoc) {
             // Check if the product ID matches and color and size are both zero

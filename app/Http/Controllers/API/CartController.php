@@ -12,7 +12,6 @@ use App\Models\ProductView;
 use App\Models\Country;
 use App\Models\Shipping;
 use App\Models\Cart;
-use App\Models\Stock;
 use Carbon\Carbon;
 use Stripe\Stripe;
 use Stripe\Charge;
@@ -24,144 +23,135 @@ class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
-
-
-
-
-        if (Auth::check() == false) {
-            return response()->json([
-                'userlogin' => 'isnotlogged',
-            ]);
-        }
-        $product = Product::with('product_images')->find($request->id);
+        $product = Product::with(['product_images', 'color', 'size'])->find($request->product_id);
         if ($product == null) {
             return response()->json([
                 'status' => false,
                 'message' => 'Product not Found'
             ]);
         }
-        $cart_attribute = $request->attribute_Array;
-        $discountprice = getDiscountedPrice($request->id, Discount::get(), $request->actual_price);
-        if ($discountprice['discounted_price'] != 0) {
-            $price = $discountprice['discounted_price'];
-        } else {
-            $price = $discountprice['actual_price'];
+        if (Auth::check() == false) {
+            return response()->json([
+                'status' => false,
+                'userlogin' => false,
+                'message' => 'Please login to add product in cart'
+            ]);
         }
+        $stock_product = handleStock($request->product_id, $request->color_id, $request->size_id);
+        if ($stock_product['status'] == false) {
+            return response()->json([
+                'status' => false,
+                'stock' => false,
+                'message' => 'Out of Stock'
+            ]);
+        }
+        $discountprice = getDiscountedPrice($request->product_id, Discount::get(), $request->actual_price);
+        $price = $discountprice['discounted_price'] != 0 ? $discountprice['discounted_price'] : $discountprice['actual_price'];
+        $product_size = $product->size->where('id', $request->size_id)->first();
+        $product_color = $product->color->where('id', $request->color_id)->first();
+        if ($product_size) {
+            $price = $price + $product_size->price;
+        }
+        if ($product_color) {
+            $price = $price + $product_color->price;
+        }
+        $additional_attributes = json_encode([
+            'size' => $product_size ? $product_size->name : null,
+            'color' => $product_color ? $product_color->name : null
+        ]);
         if (Cart::count() > 0) {
             $cartcontent = Cart::get();
             $productAlreadyExist = false;
             foreach ($cartcontent as $item) {
-                if (!empty($cart_attribute)) {
-                    if ($item->user_id == Auth::user()->id && $item->product_id == $product->id && $item->color_id == $cart_attribute['color_id'] && $item->size_id == $cart_attribute['size_id']) {
-                        $productAlreadyExist = true;
-                    }
-                } else {
-                    if ($item->user_id == Auth::user()->id && $item->product_id == $product->id && $item->color_id == 0 && $item->size_id == 0) {
-                        $productAlreadyExist = true;
-                    }
+                if (
+                    $item->user_id == Auth::user()->id && $item->product_id == $request->product_id
+                    && $item->color_id == $request->color_id && $item->size_id == $request->size_id
+                ) {
+                    $productAlreadyExist = true;
                 }
             }
             if ($productAlreadyExist == false) {
-                if (!empty($cart_attribute)) {
-                    if ($cart_attribute['controller_type'] == 'color') {
-                        Cart::create([
-                            'user_id' => Auth::user()->id, // Assuming the user is logged in
-                            'product_id' => $product->id,
-                            'product_attribute_id' => $product->id,
-                            'title' => $product->title . ' ' . $cart_attribute['color_name'] . ' ' . $cart_attribute['size_name'],
-                            'color_id' => $cart_attribute['color_id'],
-                            'size_id' => $cart_attribute['size_id'],
-                            'quantity' => 1,
-                            'price' => $price,
-                            'product_image' => $cart_attribute['image_name_with_color']['image_name_with_color']
-                            // 'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
-                        ]);
-                    } elseif ($cart_attribute['controller_type'] == 'size') {
-                        Cart::create([
-                            'user_id' => Auth::user()->id, // Assuming the user is logged in
-                            'product_id' => $product->id,
-                            'product_attribute_id' => $product->id,
-                            'title' => $product->title . ' ' . $cart_attribute['color_name'] . ' ' . $cart_attribute['size_name'],
-                            'color_id' => $cart_attribute['color_id'],
-                            'size_id' => $cart_attribute['size_id'],
-                            'quantity' => 1,
-                            'price' => $price,
-                            'product_image' => $cart_attribute['image_name_with_size']['image_name_with_size']
-                            // 'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
-                        ]);
-                    }
-                } else {
+                try {
                     Cart::create([
-                        'user_id' => Auth::user()->id, // Assuming the user is logged in
-                        'product_id' => $product->id,
+                        'user_id' => Auth::user()->id,
+                        'product_id' => $request->product_id,
                         'product_attribute_id' => $product->id,
                         'title' => $product->title,
-                        'color_id' => 0,
-                        'size_id' => 0,
-                        'quantity' => 1,
+                        'quantity' => $request->quantity,
+                        'color_id' => ($request->color_id) ? $request->color_id : 0,
+                        'size_id' => ($request->size_id) ? $request->size_id : 0,
                         'price' => $price,
-                        // 'product_image' => $cart_attribute['image_name_with_size']['image_name_with_size']
+                        'additional_attributes' => $additional_attributes,
                         'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                     ]);
+                    return response(['status' => true, 'add_to_cart' => true, 'message' => 'Product added into cart!'], 200);
+                } catch (\Exception $e) {
+                    return response(
+                        [
+                            'status' => false,
+                            'message' => 'Something went wrong!',
+                            'errors' => $e->getMessage()
+                        ],
+                        500
+                    );
                 }
-                $status = true;
-                $message = $product->title . " Added in the Cart";
-                session()->flash('success', $message);
             } else {
-                $status = false;
-                $message = $product->title . " Already added in the Cart";
+                try {
+                    $cartItem = Cart::where('user_id', Auth::user()->id)
+                        ->where('product_id', $request->product_id)
+                        ->where('color_id', $request->color_id)
+                        ->where('size_id', $request->size_id)
+                        ->first();
+                    if ($cartItem) {
+                        $cartItem->update([
+                            'product_attribute_id' => $product->id,
+                            'title' => $product->title,
+                            'quantity' => $request->quantity + $cartItem->quantity,
+                            'price' => $price,
+                            'additional_attributes' => $additional_attributes,
+                            'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
+                        ]);
+                    }
+                    return response(['status' => true, 'add_to_cart' => true, 'message' => 'Product added into cart!'], 200);
+                } catch (\Exception $e) {
+                    return response(
+                        [
+                            'status' => false,
+                            'message' => 'Something went wrong!',
+                            'errors' => $e->getMessage()
+                        ],
+                        500
+                    );
+                }
             }
         } else {
-            if (!empty($cart_attribute)) {
-                if ($cart_attribute['controller_type'] == 'color') {
-                    Cart::create([
-                        'user_id' => Auth::user()->id, // Assuming the user is logged in
-                        'product_id' => $product->id,
-                        'product_attribute_id' => $product->id,
-                        'title' => $product->title . ' ' . $cart_attribute['color_name'] . ' ' . $cart_attribute['size_name'],
-                        'color_id' => $cart_attribute['color_id'],
-                        'size_id' => $cart_attribute['size_id'],
-                        'quantity' => 1,
-                        'price' => $price,
-                        'product_image' => $cart_attribute['image_name_with_color']['image_name_with_color']
-                        // 'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
-                    ]);
-                } elseif ($cart_attribute['controller_type'] == 'size') {
-                    Cart::create([
-                        'user_id' => Auth::user()->id, // Assuming the user is logged in
-                        'product_id' => $product->id,
-                        'product_attribute_id' => $product->id,
-                        'title' => $product->title . ' ' . $cart_attribute['color_name'] . ' ' . $cart_attribute['size_name'],
-                        'color_id' => $cart_attribute['color_id'],
-                        'size_id' => $cart_attribute['size_id'],
-                        'quantity' => 1,
-                        'price' => $price,
-                        'product_image' => $cart_attribute['image_name_with_size']['image_name_with_size']
-                        // 'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
-                    ]);
-                }
-            } else {
+
+            try {
                 Cart::create([
-                    'user_id' => Auth::user()->id, // Assuming the user is logged in
-                    'product_id' => $product->id,
+                    'user_id' => Auth::user()->id,
+                    'product_id' => $request->product_id,
                     'product_attribute_id' => $product->id,
                     'title' => $product->title,
-                    'color_id' => 0,
-                    'size_id' => 0,
-                    'quantity' => 1,
+                    'quantity' => $request->quantity,
+                    'color_id' => ($request->color_id) ? $request->color_id : 0,
+                    'size_id' => ($request->size_id) ? $request->size_id : 0,
                     'price' => $price,
-                    // 'product_image' => $cart_attribute['image_name_with_size']['image_name_with_size']
+                    'additional_attributes' => $additional_attributes,
                     'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                 ]);
+                return response(['status' => true, 'add_to_cart' => true, 'message' => 'Product added into cart!'], 200);
+            } catch (\Exception $e) {
+                logger($e);
+                return response(
+                    [
+                        'status' => false,
+                        'message' => 'Something went wrong!',
+                        'errors' => $e->getMessage()
+                    ],
+                    500
+                );
             }
-            $status = true;
-            $message = $product->title . " Added to the Cart";
-            session()->flash('success', $message);
         }
-        return response()->json([
-            'status' => $status,
-            'message' => $message
-        ]);
     }
     public function Cart()
     {

@@ -27,8 +27,6 @@ use App\Http\Controllers\API\SearchController;
 use App\Http\Controllers\API\admin\StockManagementController;
 use App\Http\Controllers\API\admin\onboardingController;
 use App\Http\Controllers\API\admin\ThemeController;
-
-
 Route::get('/index', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
@@ -48,8 +46,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
     Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
 });
-
-
 Route::group(['prefix' => 'account'], function () {
     Route::post('/process-register', [AuthController::class, 'processRegister'])->name('account.processRegister');
     // Register with Githud
@@ -169,7 +165,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
         Route::put('/colorss/update/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
         Route::delete('/colorss/delete/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
-
         // add route for the theme
         Route::get('/themes/index', [ThemeController::class, 'index'])->name('themes.index');
         Route::get('/themes/create', [ThemeController::class, 'create'])->name('themes.create');
@@ -177,8 +172,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/themes/{themeedit}/edit', [ThemeController::class, 'edit'])->name('themes.edit');
         Route::put('/themes/{themeupdate}/update', [ThemeController::class, 'update'])->name('themes.update');
         Route::delete('/themes/{themedelete}/delete', [ThemeController::class, 'destroy'])->name('themes.delete');
-
-
         // add route for the size
         Route::get('/sizes/index', [SizeController::class, 'index'])->name('sizes.index');
         Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
@@ -194,15 +187,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/stock/update/{stockupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         Route::delete('/stock/delete/{stockelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
         // dashboard
-
         Route::get('/onboarding', [onboardingController::class, 'index'])->name('onboarding.index');
         Route::get('/onboarding/create', [onboardingController::class, 'create'])->name('onboarding.create');
         Route::post('/onboarding/store', [onboardingController::class, 'store'])->name('onboarding.store');
         Route::get('/onboarding/edit/{bordedit}', [onboardingController::class, 'edit'])->name('onboarding.edit');
         Route::put('/onboarding/update/{bordupdate}', [onboardingController::class, 'update'])->name('onboarding.update');
         Route::delete('/onboarding/delete/{borddel}', [onboardingController::class, 'destroy'])->name('onboarding.delete');
-
-
         Route::get('/dashboard/index', [LocalizationController::class, 'dashborad'])->name('dashboard.index');
     });
 });

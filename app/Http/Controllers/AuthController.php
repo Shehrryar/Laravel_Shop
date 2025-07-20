@@ -16,6 +16,13 @@ class AuthController extends Controller
         $data['keyword'] = '';
         return view('front.account.login', $data);
     }
+
+    public function address()
+    {
+        $data['keyword'] = '';
+        return view('front.account.address', $data);
+    }
+
     public function register()
     {
         $data['keyword'] = '';

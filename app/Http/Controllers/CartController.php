@@ -79,15 +79,14 @@ class CartController extends Controller
                         'product_attribute_id' => $product->id,
                         'title' => $product->title,
                         'quantity' => $request->quantity,
-                        'color_id' => $request->color_id,
-                        'size_id' => $request->size_id,
+                        'color_id' => ($request->color_id) ? $request->color_id : 0,
+                        'size_id' => ($request->size_id) ? $request->size_id : 0,
                         'price' => $price,
                         'additional_attributes' => $additional_attributes,
                         'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                     ]);
                     return response(['status' => true, 'add_to_cart' => true, 'message' => 'Product added into cart!'], 200);
                 } catch (\Exception $e) {
-                    logger($e);
                     return response(
                         [
                             'status' => false,
@@ -114,9 +113,8 @@ class CartController extends Controller
                             'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                         ]);
                     }
-                    return response(['status' => true, 'add_to_cart' => true,'message' => 'Product added into cart!'], 200);
+                    return response(['status' => true, 'add_to_cart' => true, 'message' => 'Product added into cart!'], 200);
                 } catch (\Exception $e) {
-                    logger($e);
                     return response(
                         [
                             'status' => false,
@@ -128,6 +126,7 @@ class CartController extends Controller
                 }
             }
         } else {
+
             try {
                 Cart::create([
                     'user_id' => Auth::user()->id,
@@ -135,8 +134,8 @@ class CartController extends Controller
                     'product_attribute_id' => $product->id,
                     'title' => $product->title,
                     'quantity' => $request->quantity,
-                    'color_id' => $request->color_id,
-                    'size_id' => $request->size_id,
+                    'color_id' => ($request->color_id) ? $request->color_id : 0,
+                    'size_id' => ($request->size_id) ? $request->size_id : 0,
                     'price' => $price,
                     'additional_attributes' => $additional_attributes,
                     'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
@@ -155,6 +154,11 @@ class CartController extends Controller
             }
         }
     }
+
+
+
+
+
     public function Cart()
     {
         $discount = Discount::where('status', 1)->get();
@@ -252,6 +256,9 @@ class CartController extends Controller
                 $discount_type = $code->type;
             }
         }
+
+
+
         // Calculate shiping here
         if (!empty($customerAddress->country_id)) {
             $usercountry = $customerAddress->country_id;
@@ -261,7 +268,12 @@ class CartController extends Controller
             foreach ($cartcontent as $item) {
                 $totalqty += $item->quantity;
             }
-            $total_shipping = $totalqty * $shipping_info->amount;
+
+            if (!empty($shipping_info) && $shipping_info != null) {
+                $total_shipping = $totalqty * $shipping_info->amount;
+            } else {
+                $total_shipping = 0; // Default shipping if no info found
+            }
             $grand_total = ($subtotal - $discount) + $total_shipping;
         } else {
             $total_shipping = 0;
