@@ -17,7 +17,7 @@
                 <div class="col-md-9">
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h2 class="h5 mb-0">Personal Information</h2>
+                            <h2 style="color:black;" class="mb-0">Personal Information</h2>
                         </div>
                         <div class="card-body p-4">
                             <div class="row justify-content-center">

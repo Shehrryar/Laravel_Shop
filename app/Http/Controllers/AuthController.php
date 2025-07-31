@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Wishlist;
+use App\Models\Country;
+use App\Models\CustomerAddress;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 class AuthController extends Controller
@@ -16,13 +18,33 @@ class AuthController extends Controller
         $data['keyword'] = '';
         return view('front.account.login', $data);
     }
-
     public function address()
     {
         $data['keyword'] = '';
+        $customer_address = CustomerAddress::where('user_id', Auth::id())->first();
+        $countries = Country::all();
+        $data['customer_address'] = $customer_address;
+        $data['countries'] = $countries;
         return view('front.account.address', $data);
     }
-
+    public function addressupdate(Request $request)
+    {
+        $customer_address = CustomerAddress::where('user_id', Auth::id())->first();
+        if ($customer_address) {
+            $customer_address->address = $request->address;
+            $customer_address->city = $request->city;
+            $customer_address->state = $request->state;
+            $customer_address->country_id = $request->country_id;
+            $customer_address->zip = $request->zip;
+            $customer_address->save();
+        }
+        $message = 'Address updated successfully!';
+        // session()->flash('success', $message);
+        return response()->json([
+            'status' => true,
+            'message' => $message
+        ]);
+    }
     public function register()
     {
         $data['keyword'] = '';
