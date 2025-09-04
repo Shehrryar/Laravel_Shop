@@ -10,13 +10,15 @@ use App\Models\Wishlist;
 use App\Models\Country;
 use App\Models\CustomerAddress;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 class AuthController extends Controller
 {
     public function login()
     {
         $data['keyword'] = '';
-        return view('front.account.login', $data);
+        return Inertia::render('Login');
+        // return view('front.account.login', $data);
     }
     public function address()
     {

@@ -1,6 +1,11 @@
 @extends('front.layouts.app')
 @section('content')
-    <section class="section-1">
+   
+
+
+
+
+<section class="section-1">
         <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel"
             data-bs-interval="false">
             <div class="carousel-inner">
@@ -64,6 +69,15 @@
             </button>
         </div>
     </section>
+
+
+
+
+
+
+
+
+
     <section class="section-2">
         <div class="container">
             <div class="row">

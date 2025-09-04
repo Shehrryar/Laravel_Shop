@@ -13,6 +13,7 @@ use App\Models\ProductAttribute;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ProductView;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 class ShopController extends Controller
 {
     public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null)
@@ -93,32 +94,44 @@ class ShopController extends Controller
             ])
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
-            ->firstOrFail(); // `firstOrFail()` automatically aborts with 404 if not found
+            ->firstOrFail();
+
         // Fetch related products by category
         $samcatproduct = Product::where('categories_id', $product->categories_id)
             ->with(['product_ratings', 'product_images'])
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->get();
+
         // Calculate average rating
         $avg_rating = $product->product_ratings_count > 0
             ? number_format($product->product_ratings_sum_rating / $product->product_ratings_count, 2)
             : '0.00';
+
         $avg_rating_per = ($avg_rating * 100) / 5;
+
         // Fetch wishlist only if user is logged in
         $wishlist = collect();
         if (auth()->check()) {
             $wishlist = Wishlist::where('user_id', auth()->id())->pluck('product_id'); // Only fetch product IDs
         }
+
         // Fetch active discounts
         $discount = Discount::where('status', 1)->get();
+
         // Track product view without redundant query
         ProductView::firstOrCreate([
             'product_id' => $product->id,
             'user_id' => auth()->id(),
         ]);
-        // Prepare data for the view
-        return view('front.product', [
+
+
+        
+        $getprice = getDiscountedPrice($product->id, $discount, $product->price);
+        $stockHandle = handleStock($product->id, 0, 0);
+
+        // Return Inertia response
+        return Inertia::render('Product', [
             'product' => $product,
             'wishlist' => $wishlist,
             'showrelatedproduct' => $samcatproduct,
@@ -127,9 +140,12 @@ class ShopController extends Controller
             'discount' => $discount,
             'product_available_color' => $product->color,
             'product_available_size' => $product->size,
+            'getPrice' => $getprice,       // ✅ Pass to frontend
+            'stockHandle' => $stockHandle, // ✅ Pass to frontend
             'keyword' => '',
         ]);
     }
+
     public function productRating(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [

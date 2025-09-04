@@ -1,0 +1,168 @@
+import React from "react";
+import Layout from "../Layouts/Layout";
+import { Link, router } from "@inertiajs/react";
+import axios from "axios";
+export default function Product({
+  product,
+  wishlist,
+  showrelatedproduct,
+  avg_rating,
+  avg_rating_per,
+  discount,
+  getPrice
+}) {
+
+
+
+
+  const handleAddToCart = () => {  
+    // TODO: Implement add to cart functionality
+    axios.post('/add-to-cart', {
+      product_id: product.id,
+      discount_value: getPrice.discount_value,
+      discounted_price: getPrice.discounted_price,
+      actual_price: getPrice.actual_price,
+    })
+    .then(response => {
+      if(response.data.status == false && response.data.userlogin == false){
+        router.visit('/account/login');
+      }
+    })
+    .catch(error => {
+      console.error("Error adding product to cart:", error);
+    });
+  };
+
+
+
+
+
+
+
+
+  return (
+    <Layout title={product.title}>
+      {/* Breadcrumb */}
+      <section className="section-5 pt-3 pb-3 mb-3 bg-white">
+        <div className="container">
+          <div className="light-font">
+            <ol className="breadcrumb primary-color mb-0">
+              <li className="breadcrumb-item">
+                <Link href="/">Home</Link>
+              </li>
+              <li className="breadcrumb-item">
+                <Link href="/shop">Shop</Link>
+              </li>
+              <li className="breadcrumb-item active">{product.title}</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+      {/* Product Details */}
+      <section className="section-7 pt-3 mb-3">
+        <div className="container">
+          <div className="row">
+            {/* Product Images */}
+            <div className="col-md-5">
+              <div id="product-carousel" className="carousel slide">
+                <div className="carousel-inner bg-light">
+                  {product.product_images?.map((img, index) => (
+                    <div
+                      key={img.id}
+                      className={`carousel-item ${index === 0 ? "active" : ""}`}
+                    >
+                      <img
+                        className="w-100 h-100"
+                        src={`/upload/products/${img.image}`}
+                        alt={product.title}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* Product Info */}
+            <div className="col-md-7">
+              <h1>{product.title}</h1>
+              <p>{product.short_description}</p>
+              {/* Price */}
+              <h3>
+                {product.discounted_price ? (
+                  <>
+                    <span className="h5 text-danger">
+                      {product.discounted_price}$
+                    </span>{" "}
+                    <del>{product.price}$</del>
+                  </>
+                ) : (
+                  <span>{product.price}$</span>
+                )}
+              </h3>
+              {/* Rating */}
+              <div className="d-flex mb-3">
+                <div className="star-rating">
+                  <div className="back-stars">
+                    {[...Array(5)].map((_, i) => (
+                      <i key={i} className="fa fa-star" />
+                    ))}
+                    <div
+                      className="front-stars"
+                      style={{ width: `${avg_rating_per}%` }}
+                    >
+                      {[...Array(5)].map((_, i) => (
+                        <i key={i} className="fa fa-star" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <small className="ps-2">
+                  ({product.product_ratings_count} Reviews)
+                </small>
+              </div>
+              {/* Add to Cart Button */}
+              <button onClick={handleAddToCart} className="btn btn-dark">
+                <i className="fas fa-shopping-cart"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Related Products */}
+      <section className="pt-5 section-8">
+        <div className="container">
+          <h2>Related Products</h2>
+          <div className="row">
+            {showrelatedproduct?.map((related) => (
+              <div key={related.id} className="col-md-3">
+                <div className="card product-card">
+                  <div className="product-image">
+                    <Link href={`/product/${related.slug}`}>
+                      <img
+                        className="card-img-top"
+                        src={
+                          related.product_images?.[0]
+                            ? `/upload/products/${related.product_images[0].image}`
+                            : "/admin-assets/img/default-150x150.png"
+                        }
+                        alt={related.title}
+                      />
+                    </Link>
+                  </div>
+                  <div className="card-body text-center">
+                    <h6>{related.title}</h6>
+                    <p>
+                      <strong>{related.price}$</strong>
+                      {related.compare_price > 0 && (
+                        <del className="ms-2">{related.compare_price}$</del>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+}

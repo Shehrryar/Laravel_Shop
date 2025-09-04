@@ -12,8 +12,8 @@ use App\Models\Shipping;
 use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Stock;
-use App\Models\Color;
-use App\Models\Size;
+// use App\Models\Color;
+// use App\Models\Size;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -126,7 +126,6 @@ class CartController extends Controller
                 }
             }
         } else {
-
             try {
                 Cart::create([
                     'user_id' => Auth::user()->id,
@@ -154,11 +153,6 @@ class CartController extends Controller
             }
         }
     }
-
-
-
-
-
     public function Cart()
     {
         $discount = Discount::where('status', 1)->get();
@@ -256,9 +250,6 @@ class CartController extends Controller
                 $discount_type = $code->type;
             }
         }
-
-
-
         // Calculate shiping here
         if (!empty($customerAddress->country_id)) {
             $usercountry = $customerAddress->country_id;
@@ -268,7 +259,6 @@ class CartController extends Controller
             foreach ($cartcontent as $item) {
                 $totalqty += $item->quantity;
             }
-
             if (!empty($shipping_info) && $shipping_info != null) {
                 $total_shipping = $totalqty * $shipping_info->amount;
             } else {

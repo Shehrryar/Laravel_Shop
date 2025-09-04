@@ -26,24 +26,18 @@ class AuthController extends Controller
     }
     public function processRegister(Request $request)
     {
-        $request_name = ["query", "variables"];
-        foreach ($request_name as $name) {
-            if (!empty($request->all()[$name])) {
-                $requested_data = $request->all()[$name];
-                break;
-            }
-        }
-        $validator = Validator::make($requested_data, [
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:5|confirmed',
         ]);
         if ($validator->passes()) {
             $user = new User();
-            $user->name = $requested_data["name"];
-            $user->email = $requested_data["email"];
-            $user->phone = $requested_data["phone"];
-            $user->password = Hash::make($requested_data["password"]);
+            $user->name = $request->input("name");
+            $user->email = $request->input("email");
+            $user->phone = $request->input("phone");
+            $user->password = Hash::make($request->input("password"));
             $user->save();
             $message = 'You have been registered Successfully';
             // session()->flash('success', $message);
@@ -60,20 +54,15 @@ class AuthController extends Controller
     }
     public function authenticate(Request $request)
     {
-        $request_name = ["query", "variables"];
-        foreach ($request_name as $name) {
-            if (!empty($request->all()[$name])) {
-                $requested_data = $request->all()[$name];
-                break;
-            }
-        }
-        $validator = Validator::make($requested_data, [
+
+
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
         if ($validator->passes()) {
-            if (Auth::attempt(['email' => $requested_data["email"], 'password' => $requested_data["password"]], $request->get('remember'))) {
-                $user = User::where('email', $requested_data["email"])->firstOrFail();
+            if (Auth::attempt(['email' => $request->input("email"), 'password' => $request->input("password")], $request->get('remember'))) {
+                $user = User::where('email', $request->input("email"))->firstOrFail();
                 $token = $user->createToken('auth_token')->plainTextToken;
                 $user->personal_access_token_id = $token;
                 $user->save();

@@ -49,11 +49,6 @@ use App\Http\Controllers\admin\ThemeController;
 // Route::get('/test', function(){
 // });
 
-
-
-
-
-
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
@@ -96,6 +91,9 @@ Route::group(['prefix' => 'account'], function () {
         // Login with Facebook
         Route::GET('/auth/callbacklogin/facebook', [AuthController::class, 'facebookCallbacklogin'])->name('auth.facebookcallbacklogin');
     });
+
+
+    
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/address', [AuthController::class, 'address'])->name('account.address');
@@ -113,6 +111,11 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/mark-as-read/{receiverId}', [ChatController::class, 'markAsRead'])->name('mark.as.read');
     });
 });
+
+
+
+
+
 
 
 

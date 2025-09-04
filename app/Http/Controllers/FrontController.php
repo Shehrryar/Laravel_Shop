@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use App\Models\Discount;
 use App\Models\ProductView;
+use Inertia\Inertia;
 class FrontController extends Controller
 {
     public function index()
@@ -44,7 +45,9 @@ class FrontController extends Controller
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
         $data['keyword'] = '';
-        return view('front.home', $data);
+
+        return Inertia::render('Home', $data);
+        // return view('front.home', $data);
     }
     public function addToWishlist(Request $request)
     {
