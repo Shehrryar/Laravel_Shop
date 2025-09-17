@@ -24,6 +24,8 @@
             {{Session::get('error')}}
         </div>
         @endif
+
+
         <div class="login-form">
             <form action="{{route('account.authenticate')}}" method="post">
                 @csrf
@@ -51,6 +53,7 @@
 
                 <div class="form-group social-login">
                     <a href="{{route('auth.google')}}" class="btn btn-success">{{trans("Login with Google")}}</a>
+                    
                     <a href="{{route('auth.facebook')}}" class="btn btn-primary">{{trans("Login with Facebook")}}</a>
                 </div>
             </form>

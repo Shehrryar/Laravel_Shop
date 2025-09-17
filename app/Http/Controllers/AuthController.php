@@ -107,7 +107,9 @@ class AuthController extends Controller
     public function profile()
     {
         $data['keyword'] = '';
-        return view('front.account.profile', $data);
+        return Inertia::render('Account/Profile', [
+            'data' => $data,   
+        ]);
     }
     public function profileEdit()
     {

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Laravel Online Shop</title>
     @viteReactRefresh
+    @routes
     @vite('resources/js/app.jsx')
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/slick.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/slick-theme.css') }}" />
@@ -26,4 +27,5 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://js.stripe.com/v3/"></script>
 </body>
+
 </html>
