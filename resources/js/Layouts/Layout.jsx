@@ -148,6 +148,9 @@ export default function Layout({ children, title }) {
                 <i className="fa-solid fa-cart-shopping" style={{ fontSize: "29px" }}></i>
                 <span className="badge">{cart?.totalQuantity || 0}</span>
               </Link>
+
+
+              
             </div>
           </nav>
         </div>

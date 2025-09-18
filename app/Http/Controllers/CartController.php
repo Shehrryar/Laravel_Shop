@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 use Stripe\Stripe;
 use Stripe\Charge;
 class CartController extends Controller
@@ -173,7 +174,8 @@ class CartController extends Controller
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-        return view('front.cart', $data);
+        return Inertia::render('Cart', $data);
+        // return view('front.cart', $data);
     }
     public function updateCart(Request $request)
     {

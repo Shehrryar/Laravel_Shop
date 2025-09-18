@@ -372,6 +372,9 @@
             //     v_updateTotalPrice()
             // });
             // Event handlers for increment and decrement buttons
+
+
+
             $('.v_increment').on('click', function (e) {
                 e.preventDefault()
                 let quantity = $('#v_quantity');
@@ -379,6 +382,8 @@
                 quantity.val(currentQuantity + 1);
                 v_updateTotalPrice()
             })
+
+
             $('.v_decrement').on('click', function (e) {
                 e.preventDefault()
                 let quantity = $('#v_quantity');
@@ -388,6 +393,10 @@
                     v_updateTotalPrice()
                 }
             })
+
+
+
+            
             function v_updateTotalPrice() {
                 let basePrice = parseFloat($('.v_base_price').val());
                 let selectedSizePrice = 0;

@@ -11,12 +11,7 @@ export default function Login() {
     email: "",
     password: "",
   });
-
-
-    const handleChange = (e) => {
-
-      console.log(e.target.name, e.target.value);
-      
+    const handleChange = (e) => {      
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -36,6 +31,8 @@ export default function Login() {
       },
     });
   };
+
+  
 
 
 

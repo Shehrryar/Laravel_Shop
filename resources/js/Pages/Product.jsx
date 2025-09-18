@@ -2,6 +2,7 @@ import React from "react";
 import Layout from "../Layouts/Layout";
 import { Link, router } from "@inertiajs/react";
 import axios from "axios";
+import { useState } from "react";
 export default function Product({
   product,
   wishlist,
@@ -12,16 +13,22 @@ export default function Product({
   getPrice
 }) {
 
+  const [quantity, setQuantity] = useState(1);
+    const increment = () => {
+    setQuantity((prev) => prev + 1);
+  };
 
-
-
-  const handleAddToCart = () => {  
+  const decrement = () => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1)); // prevent going below 1
+  };
+    const handleAddToCart = () => {  
     // TODO: Implement add to cart functionality
     axios.post('/add-to-cart', {
       product_id: product.id,
       discount_value: getPrice.discount_value,
       discounted_price: getPrice.discounted_price,
       actual_price: getPrice.actual_price,
+      quantity: quantity,
     })
     .then(response => {
       if(response.data.status == false && response.data.userlogin == false){
@@ -32,13 +39,6 @@ export default function Product({
       console.error("Error adding product to cart:", error);
     });
   };
-
-
-
-
-
-
-
 
   return (
     <Layout title={product.title}>
@@ -119,6 +119,29 @@ export default function Product({
                   ({product.product_ratings_count} Reviews)
                 </small>
               </div>
+
+
+
+              <div className="d-flex align-items-center mb-3">
+                <h5 className="me-3">Select Quantity:</h5>
+                <div className="d-flex align-items-center">
+                  <button className="btn btn-secondary" onClick={decrement}>
+                    <i className="fal fa-minus"></i>
+                  </button>
+                  <input
+                    type="text"
+                    className="form-control text-center mx-2"
+                    style={{ width: "60px" }}
+                    value={quantity}
+                    readOnly
+                  />
+                  <button className="btn btn-secondary" onClick={increment}>
+                    <i className="fal fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+
+
               {/* Add to Cart Button */}
               <button onClick={handleAddToCart} className="btn btn-dark">
                 <i className="fas fa-shopping-cart"></i> Add to Cart
@@ -127,6 +150,12 @@ export default function Product({
           </div>
         </div>
       </section>
+
+
+
+
+
+
       {/* Related Products */}
       <section className="pt-5 section-8">
         <div className="container">
