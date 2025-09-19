@@ -10,9 +10,17 @@ export default function Product({
   avg_rating,
   avg_rating_per,
   discount,
-  getPrice
+  getPrice,
+  product_available_size
 }) {
 
+
+  const [selectedSize, setSelectedSize] = useState("");
+
+
+
+  
+  // const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
     const increment = () => {
     setQuantity((prev) => prev + 1);
@@ -122,6 +130,28 @@ export default function Product({
 
 
 
+              {/* Size Selection */}
+              {product_available_size?.length > 0 && (
+                <div className="mb-3">
+                  <h5>Select Size</h5>
+                  <select
+                    className="form-control"
+                    value={selectedSize}
+                    onChange={(e) => setSelectedSize(e.target.value)}
+                  >
+                    <option value="">Select Size</option>
+                    {product_available_size.map((size) => (
+                      <option key={size.id} value={size.id}>
+                        {size.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+
+
+            {/* handle quantity */}
               <div className="d-flex align-items-center mb-3">
                 <h5 className="me-3">Select Quantity:</h5>
                 <div className="d-flex align-items-center">
@@ -142,6 +172,9 @@ export default function Product({
               </div>
 
 
+
+
+
               {/* Add to Cart Button */}
               <button onClick={handleAddToCart} className="btn btn-dark">
                 <i className="fas fa-shopping-cart"></i> Add to Cart
@@ -149,6 +182,9 @@ export default function Product({
             </div>
           </div>
         </div>
+
+
+
       </section>
 
 
