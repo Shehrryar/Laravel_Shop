@@ -16,9 +16,32 @@ export default function Product({
 
 
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  
 
 
+const handleSizeChange = async (sizeId) => {
+  setSelectedSize(sizeId);
+  setSelectedColor(""); // reset color when size changes
+  if (!sizeId) {
+    setColors([]); // reset if no size selected
+    return;
+  }
+  try {
+    const response = await axios.post(route("product.getcolor"), {
+      size_id: sizeId,
+    });
+    console.log(response);
 
+    // if (response.data.status) {
+    //   setColors(response.data.colors);
+    // } else {
+    //   setColors([]);
+    // }
+  } catch (error) {
+    console.error("Error fetching colors:", error);
+  }
+};
   
   // const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -47,6 +70,10 @@ export default function Product({
       console.error("Error adding product to cart:", error);
     });
   };
+
+
+
+
 
   return (
     <Layout title={product.title}>
@@ -137,7 +164,7 @@ export default function Product({
                   <select
                     className="form-control"
                     value={selectedSize}
-                    onChange={(e) => setSelectedSize(e.target.value)}
+                    onChange={(e) => handleSizeChange(e.target.value)}
                   >
                     <option value="">Select Size</option>
                     {product_available_size.map((size) => (
@@ -186,10 +213,6 @@ export default function Product({
 
 
       </section>
-
-
-
-
 
 
       {/* Related Products */}
