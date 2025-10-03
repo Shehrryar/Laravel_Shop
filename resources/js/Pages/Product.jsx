@@ -13,13 +13,8 @@ export default function Product({
   getPrice,
   product_available_size
 }) {
-
-
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
-  
-
-
 const handleSizeChange = async (sizeId) => {
   setSelectedSize(sizeId);
   setSelectedColor(""); // reset color when size changes
@@ -32,7 +27,6 @@ const handleSizeChange = async (sizeId) => {
       size_id: sizeId,
     });
     console.log(response);
-
     // if (response.data.status) {
     //   setColors(response.data.colors);
     // } else {
@@ -42,13 +36,11 @@ const handleSizeChange = async (sizeId) => {
     console.error("Error fetching colors:", error);
   }
 };
-  
   // const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
     const increment = () => {
     setQuantity((prev) => prev + 1);
   };
-
   const decrement = () => {
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1)); // prevent going below 1
   };
@@ -70,11 +62,6 @@ const handleSizeChange = async (sizeId) => {
       console.error("Error adding product to cart:", error);
     });
   };
-
-
-
-
-
   return (
     <Layout title={product.title}>
       {/* Breadcrumb */}
@@ -154,9 +141,6 @@ const handleSizeChange = async (sizeId) => {
                   ({product.product_ratings_count} Reviews)
                 </small>
               </div>
-
-
-
               {/* Size Selection */}
               {product_available_size?.length > 0 && (
                 <div className="mb-3">
@@ -175,9 +159,6 @@ const handleSizeChange = async (sizeId) => {
                   </select>
                 </div>
               )}
-
-
-
             {/* handle quantity */}
               <div className="d-flex align-items-center mb-3">
                 <h5 className="me-3">Select Quantity:</h5>
@@ -197,11 +178,6 @@ const handleSizeChange = async (sizeId) => {
                   </button>
                 </div>
               </div>
-
-
-
-
-
               {/* Add to Cart Button */}
               <button onClick={handleAddToCart} className="btn btn-dark">
                 <i className="fas fa-shopping-cart"></i> Add to Cart
@@ -209,12 +185,7 @@ const handleSizeChange = async (sizeId) => {
             </div>
           </div>
         </div>
-
-
-
       </section>
-
-
       {/* Related Products */}
       <section className="pt-5 section-8">
         <div className="container">

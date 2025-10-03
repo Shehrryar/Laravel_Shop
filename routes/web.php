@@ -35,7 +35,6 @@ use App\Http\Controllers\admin\FrontApiController;
 use App\Http\Controllers\admin\promotionController;
 use App\Http\Controllers\admin\onboardingController;
 use App\Http\Controllers\admin\ThemeController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -48,7 +47,6 @@ use App\Http\Controllers\admin\ThemeController;
 */
 // Route::get('/test', function(){
 // });
-
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
@@ -70,7 +68,6 @@ Route::post('color', [AttributeController::class, 'change_color'])->name('produc
 Route::post('size', [AttributeController::class, 'sizeChange'])->name('product.sizeChange');
 Route::post('getcolor', [AttributeController::class, 'getcolors'])->name('product.getcolor');
 Route::get('/load-product-modal/{productId}', [FrontController::class, 'loadProductModal'])->name('load-product-modal');
-
 Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'guest'], function () {
         Route::GET('/register', [AuthController::class, 'register'])->name('account.register');
@@ -91,9 +88,6 @@ Route::group(['prefix' => 'account'], function () {
         // Login with Facebook
         Route::GET('/auth/callbacklogin/facebook', [AuthController::class, 'facebookCallbacklogin'])->name('auth.facebookcallbacklogin');
     });
-
-
-    
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/address', [AuthController::class, 'address'])->name('account.address');
@@ -111,22 +105,11 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/mark-as-read/{receiverId}', [ChatController::class, 'markAsRead'])->name('mark.as.read');
     });
 });
-
-
-
-
-
-
-
-
-
-
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => 'admin.guest'], function () {
         Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
-
     Route::group(['middleware' => 'admin.auth'], function () {
         Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
@@ -229,15 +212,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
         Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
         Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
-
-
         Route::get('/themes/index', [ThemeController::class, 'index'])->name('themes.index');
         Route::get('/themes/create', [ThemeController::class, 'create'])->name('themes.create');
         Route::post('/themes/store', [ThemeController::class, 'store'])->name('themes.store');
         Route::get('/themes/{themeedit}/edit', [ThemeController::class, 'edit'])->name('themes.edit');
         Route::put('/themes/{themeupdate}/update', [ThemeController::class, 'update'])->name('themes.update');
         Route::delete('/themes/{themedelete}/delete', [ThemeController::class, 'destroy'])->name('themes.delete');
-
         // add route for the size
         Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
         Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
@@ -252,8 +232,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
         Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
         Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
-
-
         // added route for the currencies
         Route::get('/currencies', [CurrencyController::class, 'index'])->name('currency.index');
         Route::get('/currencies/create', [CurrencyController::class, 'create'])->name('currency.create');
@@ -261,8 +239,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/currencies/edit/{currenedit}', [CurrencyController::class, 'edit'])->name('currency.edit');
         Route::put('/currencies/update/{currenedit}', [CurrencyController::class, 'update'])->name('currency.update');
         Route::delete('/currencies/delete/{currenedit}', [CurrencyController::class, 'delete'])->name('currency.delete');
-
-
         // added route for the promotions
         Route::get('/promotions', [promotionController::class, 'index'])->name('promotion.index');
         Route::get('/promotions/create', [promotionController::class, 'create'])->name('promotion.create');
@@ -270,8 +246,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/promotions/edit/{promoedit}', [promotionController::class, 'edit'])->name('promotion.edit');
         Route::put('/promotions/update/{promoedit}', [promotionController::class, 'update'])->name('promotion.update');
         Route::delete('/promotions/delete/{promoedit}', [promotionController::class, 'destroy'])->name('promotion.delete');
-
-
         // added route for the onboarding
         Route::get('/onboarding', [onboardingController::class, 'index'])->name('onboarding.index');
         Route::get('/onboarding/create', [onboardingController::class, 'create'])->name('onboarding.create');
@@ -279,30 +253,17 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/onboarding/edit/{bordedit}', [onboardingController::class, 'edit'])->name('onboarding.edit');
         Route::put('/onboarding/update/{bordupdate}', [onboardingController::class, 'update'])->name('onboarding.update');
         Route::delete('/onboarding/delete/{borddel}', [onboardingController::class, 'destroy'])->name('onboarding.delete');
-
-
-
         // added route for the chat
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
         Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
         Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
-
-
         // added route for the webservices
-
-
         // route for admin side 
         Route::get('/webservice', [ApiRoutesController::class, 'index'])->name('webservice.index');
         Route::post('/webservice', [ApiRoutesController::class, 'create'])->name('webservice.create');
-
         // route for front side 
         Route::get('/webservice/front', [FrontApiController::class, 'index'])->name('Frontapi.index');
         Route::post('/webservice/front', [FrontApiController::class, 'create'])->name('FrontApi.create');
-
-
-
-
-
     });
 });
