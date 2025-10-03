@@ -45,8 +45,7 @@ class FrontController extends Controller
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
         $data['keyword'] = '';
-
-        return Inertia::render('Home', $data);
+        return Inertia::render('Front/Index', $data);
         // return view('front.home', $data);
     }
     public function addToWishlist(Request $request)
@@ -79,8 +78,6 @@ class FrontController extends Controller
             'message' => '<div class = "alert alert-success"><strong>"' . $product->title . '"</strong> is added to the Wishlist.</div>'
         ]);
     }
-
-
     function loadProductModal($productId)
     {
         $product = Product::with(['size', 'color'])->findOrFail($productId);
