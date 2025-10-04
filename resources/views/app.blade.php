@@ -33,8 +33,8 @@
     <!-- bootstrap css -->
     <link rel="stylesheet" id="rtl-link" type="text/css" href="{{ asset('front-assets/css/vendors/bootstrap.css') }}">
     <!-- slick css -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/vendors/slick-theme.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/vendors/slick.css') }}">
+    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/vendors/slick-theme.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/vendors/slick.css') }}"> -->
     <!-- iconly css -->
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/vendors/iconly.css') }}">
     <!-- Theme css -->

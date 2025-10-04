@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -27,6 +31,21 @@ export default function HomePage() {
   function toggleSidebar() {
     
     setSidebarOpen(prev => !prev);
+  }
+
+
+  {/* setting for brands section start */}
+    const settings = {
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    arrows: false,
+    dots: false,
+    responsive: [
+      { breakpoint: 992, settings: { slidesToShow: 3 } },
+      { breakpoint: 576, settings: { slidesToShow: 2 } },
+    ],
   }
 
   return (
@@ -431,61 +450,80 @@ export default function HomePage() {
       {/* timer banner end */}
 
       {/* brands section start */}
-      <section className="brand-section pl-15">
-        <h2 className="title">Biggest Deals on Top Brands</h2>
-        <div className="brand-slider slick-default">
-          {[1,2,3,4,5].map(i => (
-            <div key={i}>
-              <a className="brand-box" href="shop.html">
-                <img src={`assets/images/brand-logos/${i}.png`} className="img-fluid" alt={`brand-${i}`} />
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
+    <section className="brand-section pl-15">
+      <h2 className="title">Biggest Deals on Top Brands</h2>
+      <Slider {...settings} className="brand-slider slick-default">
+        {[1, 2, 3, 4, 5,6].map((i) => (
+          <div key={i}>
+            <a className="brand-box" href="shop.html">
+              <img
+                src={`front-assets/images/brand-logos/${i}.png`}
+                className="img-fluid"
+                alt={`brand-${i}`}
+              />
+            </a>
+          </div>
+        ))}
+      </Slider>
+    </section>
       <div className="divider" />
       {/* brands section end */}
 
       {/* kids corner section start */}
-      <section className="pt-0 product-slider-section overflow-hidden">
-        <div className="title-section px-15">
-          <h2>The Kids Corner</h2>
-          <h3>Clothing for your Li’l One’s </h3>
-        </div>
-        <div className="product-slider slick-default pl-15">
-          {[9,10,8].map(i => (
-            <div key={i}>
-              <div className="product-box ratio_square">
-                <div className="img-part">
-                  <a href="product.html"><img src={`assets/images/products/${i}.jpg`} alt="" className="img-fluid bg-img" /></a>
-                  <div className="wishlist-btn">
-                    <i className="iconly-Heart icli" />
-                    <i className="iconly-Heart icbo" />
-                    <div className="effect-group">
-                      <span className="effect" />
-                      <span className="effect" />
-                      <span className="effect" />
-                      <span className="effect" />
-                      <span className="effect" />
-                    </div>
+    <section className="pt-0 product-slider-section overflow-hidden">
+      <div className="title-section px-15">
+        <h2>The Kids Corner</h2>
+        <h3>Clothing for your Li’l One’s</h3>
+      </div>
+
+      <Slider {...settings} className="product-slider slick-default pl-15">
+        {[9, 10, 8].map((i) => (
+          <div key={i}>
+            <div className="product-box ratio_square">
+              <div className="img-part">
+                <a href="product.html">
+                  <img
+                    src={`front-assets/images/products/${i}.jpg`}
+                    alt={`product-${i}`}
+                    className="img-fluid bg-img"
+                  />
+                </a>
+                <div className="wishlist-btn">
+                  <i className="iconly-Heart icli" />
+                  <i className="iconly-Heart icbo" />
+                  <div className="effect-group">
+                    {[...Array(5)].map((_, idx) => (
+                      <span key={idx} className="effect" />
+                    ))}
                   </div>
                 </div>
-                <div className="product-content">
-                  <ul className="ratings">
-                    <li><i className="iconly-Star icbo" /></li>
-                    <li><i className="iconly-Star icbo" /></li>
-                    <li><i className="iconly-Star icbo" /></li>
-                    <li><i className="iconly-Star icbo" /></li>
-                    <li><i className="iconly-Star icbo empty" /></li>
-                  </ul>
-                  <a href="product.html"><h4>Blue Denim Jacket</h4></a>
-                  <div className="price"><h4>$32.00 <del>$35.00</del><span>20%</span></h4></div>
+              </div>
+              <div className="product-content">
+                <ul className="ratings">
+                  {[1, 2, 3, 4].map((r) => (
+                    <li key={r}>
+                      <i className="iconly-Star icbo" />
+                    </li>
+                  ))}
+                  <li>
+                    <i className="iconly-Star icbo empty" />
+                  </li>
+                </ul>
+                <a href="product.html">
+                  <h4>Blue Denim Jacket</h4>
+                </a>
+                <div className="price">
+                  <h4>
+                    $32.00 <del>$35.00</del>
+                    <span>20%</span>
+                  </h4>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        ))}
+      </Slider>
+    </section>
       {/* kids corner section end */}
 
       {/* offer corner start */}
