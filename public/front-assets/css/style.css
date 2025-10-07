@@ -1293,6 +1293,9 @@ header {
   [class="dark"] .white-logo {
     display: block; }
 
+
+
+    
 .overlay-sidebar {
   position: fixed;
   top: 0;
@@ -1305,6 +1308,9 @@ header {
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
   z-index: 3; }
+
+
+  
   .overlay-sidebar.show {
     opacity: 1;
     visibility: visible;

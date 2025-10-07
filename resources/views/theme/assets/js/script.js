@@ -57,6 +57,10 @@
       'overflow': 'hidden'
     });
   });
+
+
+
+  
   $(".overlay-sidebar").on('click', function () {
     $(".header-sidebar").removeClass("show");
     $(".overlay-sidebar").removeClass("show");

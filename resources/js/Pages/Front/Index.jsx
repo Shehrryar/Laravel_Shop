@@ -31,10 +31,13 @@ export default function HomePage() {
   function toggleSidebar() {
     
     setSidebarOpen(prev => !prev);
+
+
+    console.log("Sidebar state:", !sidebarOpen);
+    
   }
 
 
-  {/* setting for brands section start */}
     const settings = {
     slidesToShow: 5,
     slidesToScroll: 1,
