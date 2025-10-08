@@ -1338,6 +1338,10 @@ header {
     [dir="rtl"] .header-sidebar.show {
       left: unset;
       right: 0; }
+
+
+
+      
   .header-sidebar .user-panel {
     padding: 16px;
     width: 100%;

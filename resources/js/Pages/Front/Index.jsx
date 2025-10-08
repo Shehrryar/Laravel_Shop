@@ -28,14 +28,7 @@ export default function HomePage() {
   }, [rtl]);
 
   // small helper to toggle sidebar
-  function toggleSidebar() {
-    
-    setSidebarOpen(prev => !prev);
 
-
-    console.log("Sidebar state:", !sidebarOpen);
-    
-  }
 
 
     const settings = {
@@ -51,24 +44,43 @@ export default function HomePage() {
     ],
   }
 
+
+   /*=====================
+    03.  Header sidebar 
+  ==========================*/
+
+    function toggleSidebar() {
+      $(".header-sidebar").addClass("show");
+      $(".overlay-sidebar").addClass("show");
+      $('body').css({
+        'overflow': 'hidden'
+      });
+  }
+
+
+    $(".overlay-sidebar").on('click', function () {
+    $(".header-sidebar").removeClass("show");
+    $(".overlay-sidebar").removeClass("show");
+    $('body').css({
+      'overflow': 'auto'
+    });
+  });
+
+  
+
   return (
     <>
       {/* loader start */}
-      {loading && (
-        <div className="loader">
-          <span />
-          <span />
-        </div>
-      )}
+
       {/* loader end */}
 
       {/* header start */}
       <header>
-        <div className="nav-bar" onClick={toggleSidebar}>
+        <div className="nav-bar" id='opensidebar' onClick={toggleSidebar}>
           <img src="front-assets/svg/bar.svg" className="img-fluid" alt="menu" />
         </div>
 
-        <a href="index.html" className="brand-logo">
+        <a className="brand-logo">
           <img src="front-assets/images/logo.png" className="img-fluid main-logo" alt="logo" />
           <img src="front-assets/images/logo-white.png" className="img-fluid white-logo" alt="logo white" />
         </a>
@@ -92,12 +104,12 @@ export default function HomePage() {
       </header>
 
       <a
-        href="#"
-        className={`overlay-sidebar ${sidebarOpen ? 'open' : ''}`}
-        onClick={() => setSidebarOpen(false)}
+        href="javascript:void(0)"
+        className={`overlay-sidebar`}
+
       />
 
-      <div className={`header-sidebar ${sidebarOpen ? 'open' : ''}`}>
+      <div className={`header-sidebar`}>
         <a href="profile-setting.html" className="user-panel">
           <img src="front-assets/images/user/1.png" className="img-fluid user-img" alt="user" />
           <span>Hello, Paige Turner</span>
