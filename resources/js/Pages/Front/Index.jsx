@@ -2,35 +2,29 @@ import React, { useEffect, useState } from 'react';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import { Link, usePage } from "@inertiajs/react";
 
 export default function HomePage() {
+    const { categories, recommended_products, featured_products, latest_products, wishlist, discount } =
+      usePage().props;
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [rtl, setRtl] = useState(false);
-
   useEffect(() => {
     // simulate loader finishing
     const t = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(t);
   }, []);
-
   useEffect(() => {
     // apply dark mode class on document body
     if (darkMode) document.body.classList.add('dark-mode');
     else document.body.classList.remove('dark-mode');
   }, [darkMode]);
-
   useEffect(() => {
     // apply RTL on html dir attribute
     document.documentElement.dir = rtl ? 'rtl' : 'ltr';
   }, [rtl]);
-
   // small helper to toggle sidebar
-
-
-
     const settings = {
     slidesToShow: 5,
     slidesToScroll: 1,
@@ -43,12 +37,9 @@ export default function HomePage() {
       { breakpoint: 576, settings: { slidesToShow: 2 } },
     ],
   }
-
-
    /*=====================
     03.  Header sidebar 
   ==========================*/
-
     function toggleSidebar() {
       $(".header-sidebar").addClass("show");
       $(".overlay-sidebar").addClass("show");
@@ -56,8 +47,6 @@ export default function HomePage() {
         'overflow': 'hidden'
       });
   }
-
-
     $(".overlay-sidebar").on('click', function () {
     $(".header-sidebar").removeClass("show");
     $(".overlay-sidebar").removeClass("show");
@@ -65,26 +54,19 @@ export default function HomePage() {
       'overflow': 'auto'
     });
   });
-
-  
-
   return (
     <>
       {/* loader start */}
-
       {/* loader end */}
-
       {/* header start */}
       <header>
         <div className="nav-bar" id='opensidebar' onClick={toggleSidebar}>
           <img src="front-assets/svg/bar.svg" className="img-fluid" alt="menu" />
         </div>
-
         <a className="brand-logo">
           <img src="front-assets/images/logo.png" className="img-fluid main-logo" alt="logo" />
           <img src="front-assets/images/logo-white.png" className="img-fluid white-logo" alt="logo white" />
         </a>
-
         <div className="header-option">
           <ul>
             <li>
@@ -102,13 +84,7 @@ export default function HomePage() {
           </ul>
         </div>
       </header>
-
-      <a
-        href="javascript:void(0)"
-        className={`overlay-sidebar`}
-
-      />
-
+      <a className={`overlay-sidebar`}/>
       <div className={`header-sidebar`}>
         <a href="profile-setting.html" className="user-panel">
           <img src="front-assets/images/user/1.png" className="img-fluid user-img" alt="user" />
@@ -140,7 +116,6 @@ export default function HomePage() {
                 </div>
               </div>
             </li>
-
             <li>
               <div>
                 <i className="iconly-Setting icli" />
@@ -164,7 +139,6 @@ export default function HomePage() {
                 </div>
               </div>
             </li>
-
             <li>
               <a href="pages.html">
                 <i className="iconly-Paper icli" />
@@ -174,7 +148,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="index.html">
                 <i className="iconly-Home icli" />
@@ -184,7 +157,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="category.html">
                 <i className="iconly-Category icli" />
@@ -194,7 +166,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="order-history.html">
                 <i className="iconly-Document icli" />
@@ -204,7 +175,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="wishlist.html">
                 <i className="iconly-Heart icli" />
@@ -214,7 +184,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="profile.html">
                 <i className="iconly-Profile icli" />
@@ -224,7 +193,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="#">
                 <img src="front-assets/images/flag.png" className="img-fluid" alt="flag" />
@@ -234,7 +202,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="notification.html">
                 <i className="iconly-Notification icli" />
@@ -244,7 +211,6 @@ export default function HomePage() {
                 </div>
               </a>
             </li>
-
             <li>
               <a href="settings.html">
                 <i className="iconly-Setting icli" />
@@ -255,9 +221,7 @@ export default function HomePage() {
               </a>
             </li>
           </ul>
-
           <div className="divider" />
-
           <ul className="link-section">
             <li>
               <a href="about-us.html">
@@ -281,21 +245,26 @@ export default function HomePage() {
         </div>
       </div>
       {/* header end */}
-
       {/* category start */}
       <section className="category-section top-space">
         <ul className="category-slide">
-          <li>
-            <a href="inner-category.html" className="category-box">
-              <img src="front-assets/images/top-category/kids.png" className="img-fluid" alt="kids" />
-              <h4>Kids</h4>
-            </a>
-          </li>
+
+
+          {categories?.map((cat) => (
+            <li key={cat.id || cat.name}>
+              <a href="inner-category.html" className="category-box">
+                <img src={`/upload/category/${cat.image}`} alt={cat.name} className="img-fluid" />
+                <h4>{cat.name || 'Kids'}</h4>
+              </a>
+            </li>
+          ))}
+
+
+
         </ul>
       </section>
       <div className="divider t-12 b-20" />
       {/* category end */}
-
       {/* home slider start */}
       <section className="pt-0 home-section ratio_55">
         <div className="home-slider slick-default theme-dots">
@@ -315,7 +284,6 @@ export default function HomePage() {
         </div>
       </section>
       {/* home slider end */}
-
       {/* deals section start */}
       <section className="deals-section px-15 pt-0">
         <div className="title-part">
@@ -360,14 +328,12 @@ export default function HomePage() {
       </section>
       <div className="divider" />
       {/* deals section end */}
-
       {/* tab section start */}
       <section className="pt-0 tab-section">
         <div className="title-section px-15">
           <h2>Find your Style</h2>
           <h3>Super Summer Sale</h3>
         </div>
-
         <div className="tab-section">
           <ul className="nav nav-tabs theme-tab pl-15">
             <li className="nav-item">
@@ -386,7 +352,6 @@ export default function HomePage() {
               <button className="nav-link" type="button">Ready to ship</button>
             </li>
           </ul>
-
           <div className="tab-content px-15">
             <div className="tab-pane fade show active" id="trending">
               <div className="row gy-3 gx-3">
@@ -421,14 +386,11 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-
             {/* other tab panes can be built similarly - keeping structure concise */}
-
           </div>
         </div>
       </section>
       {/* tab section end */}
-
       {/* timer banner start */}
       <section className="banner-timer">
         <div className="banner-bg">
@@ -463,7 +425,6 @@ export default function HomePage() {
         </div>
       </section>
       {/* timer banner end */}
-
       {/* brands section start */}
     <section className="brand-section pl-15">
       <h2 className="title">Biggest Deals on Top Brands</h2>
@@ -483,14 +444,12 @@ export default function HomePage() {
     </section>
       <div className="divider" />
       {/* brands section end */}
-
       {/* kids corner section start */}
     <section className="pt-0 product-slider-section overflow-hidden">
       <div className="title-section px-15">
         <h2>The Kids Corner</h2>
         <h3>Clothing for your Li’l One’s</h3>
       </div>
-
       <Slider {...settings} className="product-slider slick-default pl-15">
         {[9, 10, 8].map((i) => (
           <div key={i}>
@@ -540,7 +499,6 @@ export default function HomePage() {
       </Slider>
     </section>
       {/* kids corner section end */}
-
       {/* offer corner start */}
       <section className="offer-corner-section px-15">
         <h2 className="title">Offer Corner</h2>
@@ -553,21 +511,25 @@ export default function HomePage() {
         </div>
       </section>
       {/* offer corner end */}
-
       <section className="panel-space" />
-
       {/* bottom panel start */}
       <div className="bottom-panel">
         <ul>
-          {[{href:'index.html',label:'home',icon:'Home'},{href:'category.html',label:'category',icon:'Category'},{href:'cart.html',label:'cart',icon:'Buy'},{href:'wishlist.html',label:'wishlist',icon:'Heart'},{href:'profile.html',label:'profile',icon:'Profile'}].map((it, idx) => (
-            <li className={idx === 0 ? 'active' : ''} key={it.label}>
-              <a href={it.href}>
+          {[
+            { to: '/', label: 'Home', icon: 'Home' },
+            { to: '/category', label: 'Category', icon: 'Category' },
+            { to: '/cart', label: 'Cart', icon: 'Buy' },
+            { to: '/wishlist', label: 'Wishlist', icon: 'Heart' },
+            { to: '/profile', label: 'Profile', icon: 'Profile' }
+          ].map((item, index) => (
+            <li className={index === 0 ? 'active' : ''} key={item.label}>
+              <Link to={item.to} href={item.to}>
                 <div className="icon">
-                  <i className={`iconly-${it.icon} icli`} />
-                  <i className={`iconly-${it.icon} icbo`} />
+                  <i className={`iconly-${item.icon.toLowerCase()} icli`} />
+                  <i className={`iconly-${item.icon.toLowerCase()} icbo`} />
                 </div>
-                <span>{it.label}</span>
-              </a>
+                <span>{item.label}</span>
+              </Link>
             </li>
           ))}
         </ul>

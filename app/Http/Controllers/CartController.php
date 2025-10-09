@@ -174,7 +174,7 @@ class CartController extends Controller
         $data['cartcontent'] = $cartcontent;
         $data['discount'] = $discount;
         $data['keyword'] = '';
-        return Inertia::render('Cart', $data);
+        return Inertia::render('Front/Cart', $data);
         // return view('front.cart', $data);
     }
     public function updateCart(Request $request)
