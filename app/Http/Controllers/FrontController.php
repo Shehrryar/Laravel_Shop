@@ -4,8 +4,9 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\App;
+// use Illuminate\Support\Facades\App;
 use App\Models\Discount;
+use App\Models\Category;
 use App\Models\ProductView;
 use Inertia\Inertia;
 class FrontController extends Controller
@@ -39,44 +40,60 @@ class FrontController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->paginate(8);
+        $categories = Category::latest()->get();
+
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['recommended_products'] = $recommended_products;
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
+        // $data['categories'] = $categories;
         $data['keyword'] = '';
         return Inertia::render('Front/Index', $data);
         // return view('front.home', $data);
     }
     public function addToWishlist(Request $request)
     {
+
         if (Auth::check() == false) {
             session(['url.intended' => url()->previous()]);
             return response()->json([
-                'status' => false
+                'status' => false,
+                'userlodin' => false
             ]);
         }
-        $product = Product::where('id', $request->id)->first();
+        $product = Product::where('id', $request->product_id)->first();
         if ($product == null) {
             return response()->json([
                 'status' => true,
                 'message' => '<div class = "alert alert-danger">Product not found.</div>'
             ]);
         }
-        Wishlist::updateOrCreate(
-            [
-                'user_id' => Auth::user()->id,
-                'product_id' => $request->id
-            ],
-            [
-                'user_id' => Auth::user()->id,
-                'product_id' => $request->id
-            ]
-        );
-        return response()->json([
-            'status' => true,
-            'message' => '<div class = "alert alert-success"><strong>"' . $product->title . '"</strong> is added to the Wishlist.</div>'
-        ]);
+
+        if ($request->has('action') && $request->action == 'remove') {
+            Wishlist::where('user_id', Auth::user()->id)
+                ->where('product_id', $request->product_id)
+                ->delete();
+            return response()->json([
+                'status' => true,
+                'message' => '<div class = "alert alert-success"><strong>"' . $product->title . '"</strong> is removed from the Wishlist.</div>'
+            ]);
+        } else {
+            Wishlist::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'product_id' => $request->product_id
+                ],
+                [
+                    'user_id' => Auth::user()->id,
+                    'product_id' => $request->product_id
+                ]
+            );
+            return response()->json([
+                'status' => true,
+                'message' => '<div class = "alert alert-success"><strong>"' . $product->title . '"</strong> is added to the Wishlist.</div>'
+            ]);
+        }
     }
     function loadProductModal($productId)
     {

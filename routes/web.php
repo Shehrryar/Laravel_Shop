@@ -3,6 +3,7 @@ use App\Http\Controllers\admin\DiscountCodeController;
 use App\Http\Controllers\admin\DiscountController;
 use App\Http\Controllers\admin\ShippingController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FrontCategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\HomeController;
@@ -48,9 +49,14 @@ use App\Http\Controllers\admin\ThemeController;
 // Route::get('/test', function(){
 // });
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
+
+
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
+// Route::post('/shopfilter', [ShopController::class, 'filterRequest'])->name('front.shopfilter');
+
+
+
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
-Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.updateCart');
 Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.deleteitem.cart');
@@ -62,8 +68,18 @@ Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name(
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
-Route::post('rating-saving/{product_id}', [ShopController::class, 'productRating'])->name('front.productRating');
-Route::post('search', [SearchController::class, 'search'])->name('product.search');
+Route::post('rating-saving/{product_id}', action: [ShopController::class, 'productRating'])->name('front.productRating');
+
+
+Route::get('Categories', [FrontCategoryController::class, 'getAllCategory'])->name('product.getCategories');
+Route::get('InnerCategory/{categoryid}', [FrontCategoryController::class, 'getInnerCategory'])->name('product.getInnerCategory');
+
+
+
+
+
+Route::get('search', [SearchController::class, 'search'])->name('product.search');
+// Route::post('search', [SearchController::class, 'search'])->name('product.search');
 Route::post('color', [AttributeController::class, 'change_color'])->name('product.change_color');
 Route::post('size', [AttributeController::class, 'sizeChange'])->name('product.sizeChange');
 Route::post('getcolor', [AttributeController::class, 'getcolors'])->name('product.getcolor');
@@ -103,6 +119,8 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
         Route::get('/fetch-messages/{receiverId}', [ChatController::class, 'fetchMessages'])->name('fetch.messages');
         Route::post('/mark-as-read/{receiverId}', [ChatController::class, 'markAsRead'])->name('mark.as.read');
+        Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
+
     });
 });
 Route::group(['prefix' => 'admin'], function () {

@@ -1501,15 +1501,26 @@ header {
   [dir="rtl"] .wishlist-btn {
     left: 10px;
     right: unset; }
+
+
   .wishlist-btn .icli {
     color: #777777; }
   .wishlist-btn .icbo {
     display: none; }
-  .wishlist-btn.active .icli {
+
+
+
+  .wishlist-btn .active .icli {
     display: none; }
-  .wishlist-btn.active .icbo {
+
+
+  .wishlist-btn .active .icbo {
     display: block;
-    color: #FF4C3B; }
+    color: #FF4C3B; 
+  }
+
+
+
   .wishlist-btn.active .effect:before {
     -webkit-animation: fireworkLine 0.5s linear 0.1s;
             animation: fireworkLine 0.5s linear 0.1s; }
@@ -1523,6 +1534,14 @@ header {
   border-radius: 3px;
   position: relative;
   overflow: hidden; }
+
+
+
+
+
+
+
+
   .product-box .img-part label {
     font-size: 9px;
     font-weight: 700;
@@ -2329,7 +2348,7 @@ header {
   4.8 Home page CSS start
 ==========================*/
 .top-space {
-  margin-top: 54px; }
+  margin-top: 70px; }
 
 .category-section {
   padding-top: 0;

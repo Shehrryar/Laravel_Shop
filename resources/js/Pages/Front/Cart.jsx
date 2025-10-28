@@ -1,35 +1,48 @@
 import React from "react";
+import Slider from "react-slick";
+import { Link, usePage } from "@inertiajs/react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel";
-
 export default function CartPage() {
-
+    // small helper to toggle sidebar
+    const settings = {
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    arrows: false,
+    dots: false,
+    responsive: [
+      { breakpoint: 992, settings: { slidesToShow: 3 } },
+      { breakpoint: 576, settings: { slidesToShow: 2 } },
+    ],
+  }
   return (
     <div>
       {/* Header Start */}
       <header>
         <div className="back-links">
-          <a href="index.html">
+          <Link to='/' href='/'>
             <i className="iconly-Arrow-Left icli"></i>
             <div className="content">
               <h2>Shopping Cart</h2>
               <h6>Step 1 of 3</h6>
             </div>
-          </a>
+          </Link>
         </div>
         <div className="header-option">
           <ul>
             <li>
-              <a href="wishlist.html">
+              <Link href={route('account.wishlist')}>
+
+                
                 <i className="iconly-Heart icli"></i>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
       </header>
       {/* Header End */}
-
       {/* Cart Items Start */}
       <section className="cart-section pt-0 top-space">
         {[1, 2, 3].map((item) => (
@@ -37,7 +50,7 @@ export default function CartPage() {
             <div className="cart-box px-15">
               <a href="product.html" className="cart-img">
                 <img
-                  src={`assets/images/products/${item}.jpg`}
+                  src={`front-assets/images/products/${item}.jpg`}
                   className="img-fluid"
                   alt="Product"
                 />
@@ -55,7 +68,6 @@ export default function CartPage() {
                 </div>
                 <div className="select-size-sec">
                   <a
-                    href="javascript:void(0)"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#selectQty"
                     className="opion"
@@ -64,7 +76,6 @@ export default function CartPage() {
                     <i className="iconly-Arrow-Down-2 icli"></i>
                   </a>
                   <a
-                    href="javascript:void(0)"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#selectSize"
                     className="opion"
@@ -89,20 +100,20 @@ export default function CartPage() {
         ))}
       </section>
       {/* Cart Items End */}
-
       {/* You May Also Like Section */}
       <section className="pt-0 product-slider-section overflow-hidden">
         <div className="title-section px-15">
           <h2>You May also Like</h2>
         </div>
         <div className="product-slider slick-default pl-15">
-          {[9, 10, 8, 2].map((item) => (
+      <Slider {...settings} className="product-slider slick-default pl-15">
+          {[9, 10, 8, 2, 4].map((item) => (
             <div key={item}>
               <div className="product-box ratio_square">
                 <div className="img-part">
                   <a href="product.html">
                     <img
-                      src={`assets/images/products/${item}.jpg`}
+                      src={`front-assets/images/products/${item}.jpg`}
                       alt="Product"
                       className="img-fluid bg-img"
                     />
@@ -141,11 +152,10 @@ export default function CartPage() {
               </div>
             </div>
           ))}
+          </Slider>
         </div>
       </section>
-
       <div className="divider"></div>
-
       {/* Coupon Section */}
       <section className="px-15 pt-0">
         <h2 className="title">Coupons:</h2>
@@ -158,9 +168,7 @@ export default function CartPage() {
           <i className="iconly-Arrow-Right-2 icli icon-right"></i>
         </div>
       </section>
-
       <div className="divider"></div>
-
       {/* Order Details */}
       <section id="order-details" className="px-15 pt-0">
         <h2 className="title">Order Details:</h2>
@@ -196,14 +204,12 @@ export default function CartPage() {
             </h4>
           </div>
           <div className="delivery-info">
-            <img src="assets/images/truck.gif" className="img-fluid" alt="" />
+            <img src="front-assets/images/truck.gif" className="img-fluid" alt="" />
             <h4>No Delivery Charges applied on this order </h4>
           </div>
         </div>
       </section>
-
       <div className="divider"></div>
-
       {/* Service Section */}
       <section className="service-wrapper px-15 pt-0">
         <div className="row">
@@ -216,7 +222,7 @@ export default function CartPage() {
               <div className="service-wrap">
                 <div className="icon-box">
                   <img
-                    src={`assets/svg/${service.img}`}
+                    src={`front-assets/svg/${service.img}`}
                     className="img-fluid"
                     alt=""
                   />
@@ -227,9 +233,7 @@ export default function CartPage() {
           ))}
         </div>
       </section>
-
       <section className="panel-space"></section>
-
       {/* Bottom Panel */}
       <div className="cart-bottom">
         <div>
@@ -244,7 +248,6 @@ export default function CartPage() {
           </a>
         </div>
       </div>
-
       {/* Offcanvas Components */}
       {/* Quantity Offcanvas */}
       <div className="offcanvas offcanvas-bottom h-auto qty-canvas" id="selectQty">
@@ -253,7 +256,7 @@ export default function CartPage() {
           <div className="qty-counter">
             <div className="input-group">
               <button type="button" className="btn quantity-left-minus">
-                <img src="assets/svg/minus-square.svg" className="img-fluid" alt="" />
+                <img src="front-assets/svg/minus-square.svg" className="img-fluid" alt="" />
               </button>
               <input
                 type="text"
@@ -262,7 +265,7 @@ export default function CartPage() {
                 defaultValue="1"
               />
               <button type="button" className="btn quantity-right-plus">
-                <img src="assets/svg/plus-square.svg" className="img-fluid" alt="" />
+                <img src="front-assets/svg/plus-square.svg" className="img-fluid" alt="" />
               </button>
             </div>
           </div>
@@ -271,7 +274,6 @@ export default function CartPage() {
           </a>
         </div>
       </div>
-
       {/* Size Offcanvas */}
       <div className="offcanvas offcanvas-bottom h-auto qty-canvas" id="selectSize">
         <div className="offcanvas-body small">
@@ -290,12 +292,11 @@ export default function CartPage() {
               <span>20%</span>
             </h4>
           </div>
-          <a href="javascript:void(0)" className="btn btn-solid w-100" data-bs-dismiss="offcanvas">
+          <a className="btn btn-solid w-100" data-bs-dismiss="offcanvas">
             DONE
           </a>
         </div>
       </div>
-
       {/* Remove Item Offcanvas */}
       <div className="offcanvas offcanvas-bottom h-auto removecart-canvas" id="removecart">
         <div className="offcanvas-body small">

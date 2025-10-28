@@ -21,10 +21,11 @@ function getcartquantityandtotal()
 }
 function getcategories()
 {
-    return Category::OrderBy('name', 'ASC')
+    $categories = Category::OrderBy('name', 'ASC')
         ->with('sub_category')
         ->where('status', 1)
         ->get();
+    return $categories;
 }
 function getProductImage($product_id)
 {

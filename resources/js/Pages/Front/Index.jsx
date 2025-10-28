@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Slider from "react-slick";
+import { route } from "ziggy-js";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link, usePage } from "@inertiajs/react";
@@ -7,6 +8,7 @@ import { Link, usePage } from "@inertiajs/react";
 export default function HomePage() {
     const { categories, recommended_products, featured_products, latest_products, wishlist, discount } =
       usePage().props;
+    
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [rtl, setRtl] = useState(false);
@@ -24,6 +26,9 @@ export default function HomePage() {
     // apply RTL on html dir attribute
     document.documentElement.dir = rtl ? 'rtl' : 'ltr';
   }, [rtl]);
+  
+  
+  
   // small helper to toggle sidebar
     const settings = {
     slidesToShow: 5,
@@ -70,16 +75,16 @@ export default function HomePage() {
         <div className="header-option">
           <ul>
             <li>
-              <a href="search.html"><i className="iconly-Search icli" /></a>
+              <Link href={route('product.search')} ><i className="iconly-Search icli" /></Link>
             </li>
             <li>
               <a href="notification.html"><i className="iconly-Notification icli" /></a>
             </li>
             <li>
-              <a href="wishlist.html"><i className="iconly-Heart icli" /></a>
+              <Link href={route('account.wishlist')}><i className="iconly-Heart icli" /></Link>
             </li>
             <li>
-              <a href="cart.html"><i className="iconly-Buy icli" /></a>
+              <Link href={route('front.cart')}><i className="iconly-Buy icli" /></Link>
             </li>
           </ul>
         </div>
@@ -149,13 +154,13 @@ export default function HomePage() {
               </a>
             </li>
             <li>
-              <a href="index.html">
+              <Link href={route('front.home')}>
                 <i className="iconly-Home icli" />
                 <div className="content">
                   <h4>Home</h4>
                   <h6>Offers, Top Deals, Top Brands</h6>
                 </div>
-              </a>
+              </Link>
             </li>
             <li>
               <a href="category.html">
@@ -252,10 +257,10 @@ export default function HomePage() {
 
           {categories?.map((cat) => (
             <li key={cat.id || cat.name}>
-              <a href="inner-category.html" className="category-box">
+              <Link href={route('product.getInnerCategory',{ categoryid: cat.id })} className="category-box">
                 <img src={`/upload/category/${cat.image}`} alt={cat.name} className="img-fluid" />
                 <h4>{cat.name || 'Kids'}</h4>
-              </a>
+              </Link>
             </li>
           ))}
 
@@ -516,14 +521,14 @@ export default function HomePage() {
       <div className="bottom-panel">
         <ul>
           {[
-            { to: '/', label: 'Home', icon: 'Home' },
-            { to: '/category', label: 'Category', icon: 'Category' },
-            { to: '/cart', label: 'Cart', icon: 'Buy' },
-            { to: '/wishlist', label: 'Wishlist', icon: 'Heart' },
-            { to: '/profile', label: 'Profile', icon: 'Profile' }
+            { to: route('front.home'), label: 'Home', icon: 'Home' },
+            { to: route('product.getCategories'), label: 'Category', icon: 'Category' },
+            { to: route('front.cart'), label: 'Cart', icon: 'Buy' },
+            { to: route('account.wishlist'), label: 'Wishlist', icon: 'Heart' },
+            { to: route('account.profile'), label: 'Profile', icon: 'Profile' }
           ].map((item, index) => (
             <li className={index === 0 ? 'active' : ''} key={item.label}>
-              <Link to={item.to} href={item.to}>
+              <Link href={item.to}>
                 <div className="icon">
                   <i className={`iconly-${item.icon.toLowerCase()} icli`} />
                   <i className={`iconly-${item.icon.toLowerCase()} icbo`} />

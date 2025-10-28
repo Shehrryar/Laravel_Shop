@@ -19,6 +19,7 @@
     <meta name="apple-mobile-web-app-title" content="multikart">
     <meta name="msapplication-TileImage" content="assets/images/favicon.png">
     <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @viteReactRefresh
     @routes
     @vite('resources/js/app.jsx')

@@ -16,8 +16,8 @@ class AuthController extends Controller
 {
     public function login()
     {
-        $data['keyword'] = '';
-        return Inertia::render('Login');
+        // $data['keyword'] = '';
+        return Inertia::render('Front/Account/Login');
         // return view('front.account.login', $data);
     }
     public function address()
@@ -49,8 +49,9 @@ class AuthController extends Controller
     }
     public function register()
     {
-        $data['keyword'] = '';
-        return view('front.account.register', $data);
+        // $data['keyword'] = '';
+        // return view('front.account.register', $data);
+        return Inertia::render('Front/Account/Register');
     }
     public function processRegister(Request $request)
     {
@@ -62,22 +63,25 @@ class AuthController extends Controller
         if ($validator->passes()) {
             $user = new User();
             $user->name = $request->name;
-            $user->fcm_token = $request->fcm_token;
+            // $user->fcm_token = $request->fcm_token;
             $user->email = $request->email;
             $user->phone = $request->phone;
             $user->password = Hash::make($request->password);
             $user->save();
             $message = 'You have been registered Successfully';
-            session()->flash('success', $message);
-            return response()->json([
-                'status' => true,
-                'message' => $message
-            ]);
+            return redirect()
+                ->route('account.login')
+                ->with('success', $message);
+            // return response()->json([
+            //     'status' => true,
+            //     'message' => $message
+            // ]);
         } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
+            return back()->withErrors($validator)->withInput();
+            // return response()->json([
+            //     'status' => false,
+            //     'errors' => $validator->errors()
+            // ]);
         }
     }
     public function authenticate(Request $request)
@@ -88,10 +92,14 @@ class AuthController extends Controller
         ]);
         if ($validator->passes()) {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
-                // if (session()->has('url.intended')) {
-                //     return redirect(session()->get('url.intended'));
-                // }
-                return redirect()->route('account.profile');
+                if (session()->has('url.intended')) {
+                    return redirect(session()->get('url.intended'));
+                }
+                $message = 'Your Successfully logged in';
+                return redirect()
+                    ->route('front.home')
+                    ->with('success', $message);
+                // return redirect()->route('account.profile');
             } else {
                 // session()->flash('error', 'Either email/password is incorrect');
                 return redirect()->route('account.login')
@@ -106,37 +114,44 @@ class AuthController extends Controller
     }
     public function profile()
     {
-        $data['keyword'] = '';
-        return Inertia::render('Account/Profile', [
-            'data' => $data,   
+        $user = Auth::user();
+        return Inertia::render('Front/Account/Profile', [
+            'user' => $user,
         ]);
     }
     public function profileEdit()
     {
-        $data['keyword'] = '';
-        return view('front.account.updateprofile', $data);
+        $user = Auth::user();
+        return Inertia::render('Front/Account/ProfileSetting', [
+            'user' => $user,
+        ]);
     }
     public function updateProfileData(Request $request)
     {
-        $userUpdate = User::find(Auth::id());
-        $userUpdate->name = $request->name;
-        $userUpdate->fcm_token = $request->fcm_token;
-        $userUpdate->email = $request->email;
-        $userUpdate->phone = $request->phone;
-        $userUpdate->address = $request->address;
-        $userUpdate->image = $request->profile_image;
-        if ($request->hasFile('profile_image')) {
-            $file = $request->file('profile_image');
-            $fileName = Auth::id() . '_' . $file->getClientOriginalName(); // Unique file name
-            $filePath = 'upload/user';
-            $file->move(public_path($filePath), $fileName);
-            $userUpdate->image = $filePath . '/' . $fileName;
-        }
-        $userUpdate->save();
-        return response()->json([
-            'status' => true,
-            'message' => 'Profile updated successfully!',
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'dob' => 'required|date',
+            'gender' => 'required|string',
+            'mobile_number' => 'required|string|max:20',
+            'password' => 'nullable|min:6',
         ]);
+        if ($validator->passes()) {
+            $user = auth()->user();
+            $user->update([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'date_of_birth' => $request->dob,
+                'gender' => $request->gender,
+                'phone' => $request->mobile_number,
+                'password' => $request->filled('password')
+                    ? bcrypt($request->password)
+                    : $user->password,
+            ]);
+            return redirect()->route('account.profile')->with('success', 'Profile updated successfully!');
+        } else {
+            return back()->withErrors($validator)->withInput();
+        }
     }
     public function logout()
     {
@@ -250,7 +265,8 @@ class AuthController extends Controller
         $data = [];
         $data['wishlist'] = $wishlist;
         $data['keyword'] = '';
-        return view('front.account.wishlist', $data);
+        return Inertia::render('Front/Account/Wishlist', $data);
+        // return view('front.account.wishlist', $data);
     }
     public function remove_product_from_wishlist(Request $request)
     {

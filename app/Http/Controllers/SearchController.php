@@ -5,6 +5,7 @@ use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Discount;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 class SearchController extends Controller
 {
     public function search(Request $request)
@@ -29,6 +30,7 @@ class SearchController extends Controller
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
         $data['featured_products'] = $featured_products;
-        return view('front.search', $data);
+        return Inertia::render('Front/Search', $data);
+        // return view('front.search', $data);
     }
 }

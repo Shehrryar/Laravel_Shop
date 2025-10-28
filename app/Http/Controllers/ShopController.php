@@ -13,6 +13,8 @@ use App\Models\ProductAttribute;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ProductView;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Size;
+use App\Models\Color;
 use Inertia\Inertia;
 class ShopController extends Controller
 {
@@ -29,7 +31,9 @@ class ShopController extends Controller
             $categroy = Category::where('slug', $catslug)->first();
             $products = $products->where('categories_id', $categroy->id);
             $categroy_selected = $categroy->id;
+
         }
+
         if (!empty($subcatslug)) {
             $subcategroy = SubCategory::where('slug', $subcatslug)->first();
             $products = $products->where('sub_category_id', $subcategroy->id);
@@ -40,29 +44,41 @@ class ShopController extends Controller
             $products = $products->where('sub_sub_category_id', $subsubcategroy->id);
             $subsubcategroy_selected = $subsubcategroy->id;
         }
-        if (!empty($request->get('brand'))) {
-            $brandsArray = explode(',', $request->get('brand'));
+
+        if (!empty($request->get('brand_id'))) {
+
+            $brandsArray = $request->get('brand_id');
+            // $brandsArray = explode(',', $request->get('brand_id'));
             $products = $products->whereIn('brands_id', $brandsArray);
         }
-        if ($request->get('price_max') != '' && $request->get('price_min')) {
-            $products = $products->whereBetween('price', [intval($request->get('price_min')), intval($request->get('price_max'))]);
+        if ($request->get('price') != '') {
+            $products = $products->whereBetween('price', [intval(value: 0), intval($request->get('price'))]);
         }
-        if ($request->get('sort') != '') {
-            if ($request->get('sort') == 'latest') {
+
+        if ($request->get('sortValue') != '') {
+            if ($request->get('sortValue') == 'latest') {
                 $products = $products->orderBy('id', 'DESC');
-            } elseif ($request->get('sort') == 'pricelow') {
+            } elseif ($request->get('sortValue') == 'pricelow') {
                 $products = $products->orderBy('price', 'ASC');
-            } else {
+            } elseif ($request->get('sortValue') == 'pricehigh') {
                 $products = $products->orderBy('price', 'DESC');
             }
         } else {
             $products = $products->withCount('product_ratings')->withSum('product_ratings', 'rating')->orderBy('id', 'DESC');
         }
+
+
         $products = $products->paginate(10);
+
         $wishlist = collect();
         if (!empty(Auth::user())) {
-            $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
+            $wishlist = Wishlist::where('user_id', Auth::id())
+                ->with('product')
+                ->get()
+                ->keyBy('product_id');
         }
+        $sizes = Size::get();
+        $colors = Color::get();
         if (empty($request->get('price_max'))) {
             $request->merge(['price_max' => 1000]);
         }
@@ -79,8 +95,14 @@ class ShopController extends Controller
         $data['sort'] = $request->get('sort');
         $data['wishlist'] = $wishlist;
         $data['discount'] = $discount;
+        $data['sizes'] = $sizes;
+        $data['colors'] = $colors;
+        $data['cat_slug'] = $catslug;
+        $data['subcat_slug'] = $subcatslug;
+        $data['subsubcat_slug'] = $subsubcatslug;
         $data['keyword'] = '';
-        return view('front.shop', $data);
+        // return view('front.shop', $data);
+        return Inertia::render('Front/Shop', $data);
     }
     public function product($slug)
     {
@@ -95,43 +117,33 @@ class ShopController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->firstOrFail();
-
         // Fetch related products by category
         $samcatproduct = Product::where('categories_id', $product->categories_id)
             ->with(['product_ratings', 'product_images'])
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->get();
-
         // Calculate average rating
         $avg_rating = $product->product_ratings_count > 0
             ? number_format($product->product_ratings_sum_rating / $product->product_ratings_count, 2)
             : '0.00';
-
         $avg_rating_per = ($avg_rating * 100) / 5;
-
         // Fetch wishlist only if user is logged in
         $wishlist = collect();
         if (auth()->check()) {
             $wishlist = Wishlist::where('user_id', auth()->id())->pluck('product_id'); // Only fetch product IDs
         }
-
         // Fetch active discounts
         $discount = Discount::where('status', 1)->get();
-
         // Track product view without redundant query
         ProductView::firstOrCreate([
             'product_id' => $product->id,
             'user_id' => auth()->id(),
         ]);
-
-
-        
         $getprice = getDiscountedPrice($product->id, $discount, $product->price);
         $stockHandle = handleStock($product->id, 0, 0);
-
         // Return Inertia response
-        return Inertia::render('Product', [
+        return Inertia::render('Front/Product', [
             'product' => $product,
             'wishlist' => $wishlist,
             'showrelatedproduct' => $samcatproduct,
@@ -145,7 +157,6 @@ class ShopController extends Controller
             'keyword' => '',
         ]);
     }
-
     public function productRating(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [

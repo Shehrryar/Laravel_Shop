@@ -22,6 +22,11 @@ class User extends Authenticatable
         'facebook_id',
         'googel_id',
         'fcm_token',
+        'first_name',
+        'last_name',
+        'date_of_birth',
+        'gender',
+
     ];
     /**
      * The attributes that should be hidden for serialization.
