@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Wishlist;
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 class AuthController extends Controller
@@ -26,7 +27,6 @@ class AuthController extends Controller
     }
     public function processRegister(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users',
@@ -54,8 +54,6 @@ class AuthController extends Controller
     }
     public function authenticate(Request $request)
     {
-
-
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
@@ -253,5 +251,10 @@ class AuthController extends Controller
                 'message' => 'User not found'
             ], 404);
         }
+    }
+    public function newAddress()
+    {
+        $user = Auth::user();
+        return Inertia::render('Front/Account/Address');
     }
 }

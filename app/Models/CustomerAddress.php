@@ -1,14 +1,27 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class CustomerAddress extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id','firstname','lastname', 'email',
-    'mobile','country_id','address', 'apartemnt','state', 'city', 'zip'
-];
+    protected $fillable = [
+        'user_id',
+        'firstname',
+        'lastname',
+        'email',
+        'mobile',
+        'country_id',
+        'address',
+        'apartemnt',
+        'state',
+        'city',
+        'zip',
+        'address_type',
+        'is_default',
+        'landmark',
+        'pin_code',
+        'flat',
+        'area',
+    ];
 }

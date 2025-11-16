@@ -52,10 +52,11 @@ class ColorController extends Controller
                     ]);
                 }
             }
+            $product_id = Size::where('id', $request->size_id)->value('product_id');
             $colors = new Color();
             $colors->name = $request->name;
             $colors->value = $request->value;
-            $colors->product_id = 0;
+            $colors->product_id = $product_id;
             $colors->size_id = $request->size_id;
             $colors->price = $request->price;
             $colors->status = $request->status;
@@ -88,6 +89,7 @@ class ColorController extends Controller
     }
     public function update($id, Request $request)
     {
+
         $color_edit = Color::find($id);
         if (empty($color_edit)) {
             $request->session()->flash('error', 'Record not found');
@@ -117,11 +119,13 @@ class ColorController extends Controller
                     ]);
                 }
             }
+
+            // $product_id = Size::where('id', $request->size_id)->value('product_id');
             $color_edit->name = $request->name;
             $color_edit->value = $request->value;
             $color_edit->status = $request->status;
-            $color_edit->size_id = $request->size_id;
-            $color_edit->product_id = 0;
+            $color_edit->size_id = $request->size_id ? $request->size_id : "";
+            $color_edit->product_id = $request->product_id;
             $color_edit->price = $request->price;
             $color_edit->save();
             $message = 'Color updated sucessfully';

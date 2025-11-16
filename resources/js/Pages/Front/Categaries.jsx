@@ -1,6 +1,8 @@
 import React from "react";
 import { route } from "ziggy-js";
 import { Link, usePage } from "@inertiajs/react";
+import BottomNav from './Components/BottomNav';
+
 
 const CategoryPage = () => {
   const { categories } = usePage().props;
@@ -68,27 +70,7 @@ const CategoryPage = () => {
       {/* Panel Space */}
       <section className="panel-space"></section>
       {/* Bottom Panel */}
-      <div className="bottom-panel">
-        <ul>
-          {[
-            { to: route('front.home'), label: 'Home', icon: 'Home' },
-            { to: route('product.getCategories'), label: 'Category', icon: 'Category' },
-            { to: route('front.cart'), label: 'Cart', icon: 'Buy' },
-            { to: route('account.wishlist'), label: 'Wishlist', icon: 'Heart' },
-            { to: route('account.profile'), label: 'Profile', icon: 'Profile' }
-              ].map((item, index) => (
-            <li className={index === 0 ? 'active' : ''} key={item.label}>
-              <Link href={item.to}>
-                <div className="icon">
-                  <i className={`iconly-${item.icon.toLowerCase()} icli`} />
-                  <i className={`iconly-${item.icon.toLowerCase()} icbo`} />
-                </div>
-                <span>{item.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <BottomNav/>
     </>
   );
 };

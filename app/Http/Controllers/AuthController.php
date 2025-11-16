@@ -306,4 +306,97 @@ class AuthController extends Controller
         $data['keyword'] = '';
         return view('front.account.orderdetail', $data);
     }
+    public function newAddress()
+    {
+        $user = Auth::user();
+        $countries = Country::orderBy('name', 'ASC')->get();
+        $data['user'] = $user;
+        $data['countries'] = $countries;
+        return Inertia::render('Front/Account/Address', $data);
+    }
+    public function savedAddress()
+    {
+        $customeraddresses = collect(); // empty collection by default
+        if (Auth::check()) {
+            $customeraddresses = CustomerAddress::where('user_id', Auth::id())->get();
+        }
+        $data = [
+            'customeraddresses' => $customeraddresses,
+        ];
+        return Inertia::render('Front/Account/SavedAddress', $data);
+    }
+    public function storeAddress(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'country_id' => 'required|exists:countries,id',
+            'pin_code' => 'required|string|max:20',
+            'flat' => 'required|string|max:255',
+            'area' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'address_type' => 'required|string|max:50',
+            'is_default' => 'nullable|boolean',
+            'landmark' => 'nullable|string|max:255',
+        ]);
+        //  Create the address record
+        $address = CustomerAddress::create([
+            'user_id' => $validated['user_id'],
+            'firstname' => auth()->user()->name ?? '',
+            'lastname' => '', // Add if needed
+            'email' => auth()->user()->email ?? '',
+            'mobile' => auth()->user()->phone ?? '',
+            'country_id' => $validated['country_id'],
+            'flat' => $validated['flat'],
+            'area' => $validated['area'],
+            'landmark' => $request->landmark ?? null,
+            'city' => $validated['city'],
+            'state' => $validated['state'],
+            'zip' => $validated['pin_code'],
+            'pin_code' => $validated['pin_code'],
+            'address_type' => $validated['address_type'],
+            'is_default' => $request->is_default ?? 0,
+            'apartment' => $request->flat ?? null,
+            'address' => $validated['area'],
+        ]);
+        //  Return success message
+        return response()->json([
+            'status' => true,
+            'message' => 'Address added successfully!',
+            'data' => $address,
+        ]);
+    }
+    public function removeAddress(Request $request)
+    {
+        $address = CustomerAddress::where('id', $request->id)
+            ->where('user_id', Auth::id())
+            ->first();
+        if (!$address) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Address not found or unauthorized.',
+            ]);
+        }
+        $address->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Address removed successfully.',
+        ]);
+    }
+
+
+
+    public function EditAddress($id)
+    {
+        $address = CustomerAddress::where('id', $id)->first();
+        $user = Auth::user();
+        $countries = Country::orderBy('name', 'ASC')->get();
+        $data['editaddress'] = $address;
+        $data['user'] = $user;
+        $data['countries'] = $countries;
+        return Inertia::render('Front/Account/Address', $data);
+    }
+
+
+
 }

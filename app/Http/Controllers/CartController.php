@@ -12,19 +12,28 @@ use App\Models\Shipping;
 use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Stock;
-// use App\Models\Color;
-// use App\Models\Size;
+use App\Models\Color;
+use App\Models\Size;
+use App\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Stripe\Coupon;
 use Stripe\Stripe;
-use Stripe\Charge;
+use Stripe\Checkout\Session;
 class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
+
+        if ($request->color_id == null) {
+            $request->color_id = 0;
+        }
+        if ($request->size_id == null) {
+            $request->size_id = 0;
+        }
         $product = Product::with(['product_images', 'color', 'size'])->find($request->product_id);
         if ($product == null) {
             return response()->json([
@@ -35,11 +44,11 @@ class CartController extends Controller
         if (Auth::check() == false) {
             return response()->json([
                 'status' => false,
-                'userlogin' => false,
+                // 'userlogin' => false,
                 'message' => 'Please login to add product in cart'
             ]);
         }
-        $stock_product = handleStock($request->product_id, $request->color_id, $request->size_id);
+        $stock_product = handleStockforCart($request->product_id, $request->color_id, $request->size_id, $request->quantity);
         if ($stock_product['status'] == false) {
             return response()->json([
                 'status' => false,
@@ -47,16 +56,21 @@ class CartController extends Controller
                 'message' => 'Out of Stock'
             ]);
         }
-        $discountprice = getDiscountedPrice($request->product_id, Discount::get(), $request->actual_price);
-        $price = $discountprice['discounted_price'] != 0 ? $discountprice['discounted_price'] : $discountprice['actual_price'];
+        // $discountprice = getDiscountedPrice($request->product_id, Discount::get(), $request->actual_price);
+        // $price = $discountprice['discounted_price'] != 0 ? $discountprice['discounted_price'] : $discountprice['actual_price'];
         $product_size = $product->size->where('id', $request->size_id)->first();
         $product_color = $product->color->where('id', $request->color_id)->first();
-        if ($product_size) {
-            $price = $price + $product_size->price;
-        }
-        if ($product_color) {
-            $price = $price + $product_color->price;
-        }
+
+
+
+        // if ($product_size) {
+        //     $price = $price + $product_size->price;
+        // }
+        // if ($product_color) {
+        //     $price = $price + $product_color->price;
+        // }
+
+
         $additional_attributes = json_encode([
             'size' => $product_size ? $product_size->name : null,
             'color' => $product_color ? $product_color->name : null
@@ -72,7 +86,11 @@ class CartController extends Controller
                     $productAlreadyExist = true;
                 }
             }
+
+
+
             if ($productAlreadyExist == false) {
+
                 try {
                     Cart::create([
                         'user_id' => Auth::user()->id,
@@ -82,7 +100,9 @@ class CartController extends Controller
                         'quantity' => $request->quantity,
                         'color_id' => ($request->color_id) ? $request->color_id : 0,
                         'size_id' => ($request->size_id) ? $request->size_id : 0,
-                        'price' => $price,
+                        'price' => $request->price['actual'],
+                        'discounted_price' => $request->price['discounted'],
+                        'discounted_value' => $request->price['discount_value'],
                         'additional_attributes' => $additional_attributes,
                         'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                     ]);
@@ -108,8 +128,10 @@ class CartController extends Controller
                         $cartItem->update([
                             'product_attribute_id' => $product->id,
                             'title' => $product->title,
-                            'quantity' => $request->quantity + $cartItem->quantity,
-                            'price' => $price,
+                            'quantity' => $request->quantity,
+                            'price' => $request->price['actual'],
+                            'discounted_price' => $request->price['discounted'],
+                            'discounted_value' => $request->price['discount_value'],
                             'additional_attributes' => $additional_attributes,
                             'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                         ]);
@@ -127,6 +149,7 @@ class CartController extends Controller
                 }
             }
         } else {
+
             try {
                 Cart::create([
                     'user_id' => Auth::user()->id,
@@ -136,7 +159,9 @@ class CartController extends Controller
                     'quantity' => $request->quantity,
                     'color_id' => ($request->color_id) ? $request->color_id : 0,
                     'size_id' => ($request->size_id) ? $request->size_id : 0,
-                    'price' => $price,
+                    'price' => $request->price['actual'],
+                    'discounted_price' => $request->price['discounted'],  // REQUIRED
+                    'discounted_value' => $request->price['discount_value'],
                     'additional_attributes' => $additional_attributes,
                     'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                 ]);
@@ -156,9 +181,16 @@ class CartController extends Controller
     }
     public function Cart()
     {
-        $discount = Discount::where('status', 1)->get();
-        $cartcontent = Cart::where('user_id', auth()->id())->get();
-        $cartcount = Cart::where('user_id', auth()->id())->count();
+        // $cartcontent = Cart::where('user_id', auth()->id())->get();
+        $cartcontent = Cart::where('user_id', auth()->id())
+            ->with('product')->with('size')
+            ->get();
+        $cartcontent->transform(function ($item) {
+            if ($item->product) {
+                $item->product->applyDiscount();
+            }
+            return $item;
+        });
         foreach ($cartcontent as $content) {
             $existingProductView = ProductView::where('product_id', $content->product_id)
                 ->where('user_id', auth()->id())
@@ -170,10 +202,76 @@ class CartController extends Controller
                 ]);
             }
         }
-        $data['cartcount'] = $cartcount;
+        $wishlistProductIds = Wishlist::where('user_id', Auth::id())
+            ->pluck('product_id');
+        $products = Product::with(['product_images', 'color', 'size'])
+            ->whereIn('id', $wishlistProductIds)
+            ->get();
+        $discounts = Discount::where('status', 1)->get();
+        $products->transform(function ($product) use ($discounts) {
+            $discountData = getDiscountedPrice($product->id, $discounts, $product->price);
+            $product->discount_value = $discountData['discount_value'];
+            $product->discounted_price = $discountData['discounted_price'];
+            $product->actual_price = $discountData['actual_price'];
+            return $product;
+        });
+        $wishlistitems = collect();
+        if (!empty(Auth::user())) {
+            $wishlistitems = Wishlist::where('user_id', Auth::id())
+                ->with('product')
+                ->get()
+                ->keyBy('product_id');
+        }
+        $cartTotalAmount = $cartcontent->sum(function ($item) {
+            return $item->price;
+        });
+
+
+
+        $cartTotaldiscountAmount = $cartcontent->sum(function ($item) {
+            return $item->discounted_price;
+        });
+
+
+
+        $bagsavingvalue = $cartTotalAmount - $cartTotaldiscountAmount;
+
+
+
+
+
+        $user = Auth::user();
+        $shippingAmount = 100;
+        $customerAddress = CustomerAddress::where('user_id', $user->id)->first();
+
+
+
+        if ($customerAddress && $customerAddress->country_id) {
+            $shipping = Shipping::where('country_id', $customerAddress->country_id)->first();
+
+            if ($shipping) {
+                // Apply shipping per product quantity
+                foreach ($cartcontent as $item) {
+                    $shippingAmount += $shipping->amount * $item->quantity;
+                }
+            }
+        }
+
+        // Total payable amount
+        $totalPayable = $cartTotalAmount + $shippingAmount;
+        $data['wishlist'] = $products;
+        $data['wishlistitems'] = $wishlistitems;
         $data['cartcontent'] = $cartcontent;
-        $data['discount'] = $discount;
-        $data['keyword'] = '';
+        $data['colors'] = Color::get();
+        $data['sizes'] = Size::get();
+        $data['bagsavingvalue'] = $bagsavingvalue;
+
+
+
+
+        $data['carttotalamount'] = $cartTotalAmount;
+        $data['shippingAmount'] = $shippingAmount;
+        $data['totalPayable'] = $totalPayable;
         return Inertia::render('Front/Cart', $data);
         // return view('front.cart', $data);
     }
@@ -210,7 +308,7 @@ class CartController extends Controller
     }
     public function deleteitem(Request $request)
     {
-        $iteminfo = Cart::find($request->rowid);
+        $iteminfo = Cart::find($request->item_id);
         if ($iteminfo == null) {
             $error_message = 'item not found';
             session()->flash('error', $error_message);
@@ -219,401 +317,274 @@ class CartController extends Controller
                 'message' => $error_message
             ]);
         } else {
-            $iteminfo->delete();
-            $message = 'item removed successfully';
-            session()->flash('success', $message);
-            return response()->json([
-                'status' => true,
-                'message' => $message
-            ]);
+            if ($request->action == "removefromcart") {
+                $iteminfo->delete();
+                $message = 'item removed successfully';
+                session()->flash('success', $message);
+                return response()->json([
+                    'status' => true,
+                    'message' => $message
+                ]);
+            } elseif ($request->action == "AddtoWishlist") {
+                Wishlist::updateOrCreate(
+                    [
+                        'user_id' => $request->user_id,
+                        'product_id' => $request->product_id
+                    ],
+                    [
+                        'user_id' => $request->user_id,
+                        'product_id' => $request->product_id
+                    ]
+                );
+                $iteminfo->delete();
+            }
         }
     }
-    public function checkout()
+    // public function checkout()
+    // {
+    //     $discount = 0;
+    //     $discount_amo = 0;
+    //     $discount_type = '';
+    //     $cartcount = Cart::where('user_id', auth()->id())->count();
+    //     $cartcontent = Cart::where('user_id', auth()->id())->get();
+    //     $subtotal = getcartquantityandtotal()['totalPrice'];
+    //     if ($cartcount == 0) {
+    //         return redirect()->route('front.cart');
+    //     }
+    //     $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
+    //     $countries = Country::orderBy('name', 'ASC')->get();
+    //     if (session()->has('code')) {
+    //         $code = session()->get('code');
+    //         if ($code->type == 'percent') {
+    //             $discount = ($code->discont_amount / 100) * $subtotal;
+    //             $discount_amo = $code->discont_amount;
+    //             $discount_type = $code->type;
+    //         } else {
+    //             $discount_amo = $code->discont_amount;
+    //             $discount_type = $code->type;
+    //         }
+    //     }
+    //     // Calculate shiping here
+    //     if (!empty($customerAddress->country_id)) {
+    //         $usercountry = $customerAddress->country_id;
+    //         $shipping_info = Shipping::where('country_id', $usercountry)->first();
+    //         $totalqty = 0;
+    //         $total_shipping = 0;
+    //         foreach ($cartcontent as $item) {
+    //             $totalqty += $item->quantity;
+    //         }
+    //         if (!empty($shipping_info) && $shipping_info != null) {
+    //             $total_shipping = $totalqty * $shipping_info->amount;
+    //         } else {
+    //             $total_shipping = 0; // Default shipping if no info found
+    //         }
+    //         $grand_total = ($subtotal - $discount) + $total_shipping;
+    //     } else {
+    //         $total_shipping = 0;
+    //         $grand_total = ($subtotal - $discount) + $total_shipping;
+    //     }
+    //     $data = [
+    //         'cartcontent' => $cartcontent,
+    //         'countries' => $countries,
+    //         'customerAddress' => $customerAddress,
+    //         'discount' => $discount_amo,
+    //         'discount_type' => $discount_type,
+    //         'subtotal' => $subtotal,
+    //         'total_shipping' => number_format($total_shipping, 2),
+    //         'grand_total' => $grand_total,
+    //         'keyword' => ''
+    //     ];
+    //     // return view(
+    //     //     'front.checkout',
+    //     // );
+    //     return Inertia::render('Front/Delivery', $data);
+    // }
+    public function checkout(Request $request)
     {
-        $discount = 0;
-        $discount_amo = 0;
-        $discount_type = '';
-        $cartcount = Cart::where('user_id', auth()->id())->count();
-        $cartcontent = Cart::where('user_id', auth()->id())->get();
-        $subtotal = getcartquantityandtotal()['totalPrice'];
-        if ($cartcount == 0) {
-            return redirect()->route('front.cart');
-        }
-        $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
+        // echo '<pre>';
+        // print_r($request->all());
+        // echo '</pre>';
+        // exit;
         $countries = Country::orderBy('name', 'ASC')->get();
-        if (session()->has('code')) {
-            $code = session()->get('code');
-            if ($code->type == 'percent') {
-                $discount = ($code->discont_amount / 100) * $subtotal;
-                $discount_amo = $code->discont_amount;
-                $discount_type = $code->type;
-            } else {
-                $discount_amo = $code->discont_amount;
-                $discount_type = $code->type;
-            }
+        $customerAddresses = collect(); // empty collection by default
+        if (Auth::check()) {
+            $customerAddresses = CustomerAddress::where('user_id', Auth::id())->get();
         }
-        // Calculate shiping here
-        if (!empty($customerAddress->country_id)) {
-            $usercountry = $customerAddress->country_id;
-            $shipping_info = Shipping::where('country_id', $usercountry)->first();
-            $totalqty = 0;
-            $total_shipping = 0;
-            foreach ($cartcontent as $item) {
-                $totalqty += $item->quantity;
-            }
-            if (!empty($shipping_info) && $shipping_info != null) {
-                $total_shipping = $totalqty * $shipping_info->amount;
-            } else {
-                $total_shipping = 0; // Default shipping if no info found
-            }
-            $grand_total = ($subtotal - $discount) + $total_shipping;
-        } else {
-            $total_shipping = 0;
-            $grand_total = ($subtotal - $discount) + $total_shipping;
-        }
-        return view(
-            'front.checkout',
-            [
-                'cartcontent' => $cartcontent,
-                'countries' => $countries,
-                'customerAddress' => $customerAddress,
-                'discount' => $discount_amo,
-                'discount_type' => $discount_type,
-                'subtotal' => $subtotal,
-                'total_shipping' => number_format($total_shipping, 2),
-                'grand_total' => $grand_total,
-                'keyword' => ''
-            ]
-        );
+        $totalcartamount = $request->totalcartamount;
+        $cartcontent = $request->cartcontent;
+        $data = [
+            'countries' => $countries,
+            'customerAddresses' => $customerAddresses,
+            'totalcartamount' => $totalcartamount,
+            'cartcontent' => $cartcontent,
+        ];
+        return Inertia::render('Front/Delivery', $data);
+    }
+    public function Payment(Request $request)
+    {
+        $totalcartamount = $request->totalcartamount;
+        $cartcontent = $request->cartcontent;
+        $data = [
+            'totalcartamount' => $totalcartamount,
+            'cartcontent' => $cartcontent,
+        ];
+        return Inertia::render('Front/Payment', $data);
     }
     public function processCheckout(Request $request)
     {
-        $cartcontent = Cart::where('user_id', auth()->id())->get();
-        $subtotal = getcartquantityandtotal()['totalPrice'];
-        $validator = Validator::make($request->all(), [
-            'firstname' => 'required|min:5',
-            'lastname' => 'required',
-            'email' => 'required|email',
-            'country' => 'required',
-            'address' => 'required|min:30',
-            'city' => 'required',
-            'state' => 'required',
-            'zip' => 'required',
-            'mobile' => 'required',
-        ]);
-        if ($validator->fails()) {
+        $user = Auth::user();
+        // Validate payment method
+        if (!in_array($request->paymentMethod, ['cod', 'card'])) {
+            return response()->json(['status' => false, 'message' => 'Invalid payment method.']);
+        }
+        // Get default address
+        $customerAddress = CustomerAddress::where('user_id', $user->id)
+            ->where('is_default', 1)
+            ->first();
+        if (!$customerAddress) {
             return response()->json([
                 'status' => false,
-                'message' => 'please fix the error',
-                'errors' => $validator->errors()
+                'message' => 'No default address found. Please set one before proceeding to checkout.',
             ]);
         }
-        $user = Auth::user();
-        CustomerAddress::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'user_id' => $user->id,
-                'firstname' => $request->firstname,
-                'lastname' => $request->lastname,
-                'email' => $request->email,
-                'mobile' => $request->mobile,
-                'address' => $request->address,
-                'city' => $request->city,
-                'apartment' => $request->apartment,
-                'state' => $request->state,
-                'zip' => $request->zip,
-                'country_id' => $request->country,
-            ]
-        );
-        if ($request->payment_method == 'cod') {
-            $shipping = 0;
-            $discount = 0;
-            $promocode = '';
-            if (session()->has('code')) {
-                $code = session()->get('code');
-                if ($code->type == 'percent') {
-                    $discount = ($code->discont_amount / 100) * $subtotal;
-                } else {
-                    $discount = $code->discont_amount;
-                }
-                $discountcodeid = $code->id;
-                $promocode = $code->code;
-            }
-            //calculate shipping 
-            $shipping_info = Shipping::where('country_id', $request->country)->first();
-            $totalqty = 0;
-            foreach ($cartcontent as $item) {
-                $totalqty += $item->quantity;
-            }
-            if (!empty($shipping_info) && $shipping_info != null) {
-                $shipping = $totalqty * $shipping_info->amount;
-                $grandtotal = ($subtotal - $discount) + $shipping;
-            } else {
-                $shipping = 10;
-                $grandtotal = ($subtotal - $discount) + $shipping;
-            }
+        // Get user cart
+        $cartItems = Cart::where('user_id', $user->id)->get();
+        if ($cartItems->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Your cart is empty.',
+            ]);
+        }
+        $subtotal = $request->totalcartamount;
+        $shipping = 100.00;
+        $grandTotal = $subtotal + $shipping;
+        try {
+            // Create Order first (common for both methods)
             $order = new Order();
+            $order->user_id = $user->id;
             $order->subtotal = $subtotal;
+            $order->discount = 0.00;
             $order->shipping = $shipping;
-            $order->grandtotal = $grandtotal;
-            $order->discount = $discount;
-            $order->coupon_code = $promocode;
+            $order->grandtotal = $grandTotal;
             $order->payment_status = 'not paid';
             $order->status = 'pending';
-            $order->firstname = $request->firstname;
-            $order->user_id = $user->id;
-            $order->lastname = $request->lastname;
-            $order->email = $request->email;
-            $order->address = $request->address;
-            $order->apartment = $request->apartment;
-            $order->state = $request->state;
-            $order->city = $request->city;
-            $order->zip = $request->zip;
-            $order->notes = $request->order_notes;
-            $order->zip = $request->zip;
-            $order->country_id = $request->country;
-            // store order item in the order item table
+            $order->stripe_charge_id = null;
+            $order->shipping_date = null;
+            $order->coupon_code = null;
+            $order->firstname = $customerAddress->firstname;
+            $order->lastname = $customerAddress->lastname;
+            $order->email = $customerAddress->email;
+            $order->country_id = $customerAddress->country_id;
+            $order->apartment = $customerAddress->apartment;
+            $order->address = $customerAddress->address;
+            $order->city = $customerAddress->city;
+            $order->state = $customerAddress->state;
+            $order->zip = $customerAddress->zip;
+            $order->notes = $request->order_notes ?? null;
             $order->save();
-            foreach ($cartcontent as $item) {
+            // Create order items and update stock
+            foreach ($cartItems as $item) {
                 $stock = DB::table('stocks')
                     ->where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
                     ->where('size_id', $item->size_id)
                     ->where('status', 1)
                     ->first();
-                if (!empty($stock) && $item->quantity <= $stock->quantity) {
-                    $currentQuantity = $stock->quantity;
-                    $updatedQuantity = $currentQuantity - $item->quantity;
-                    $soldQuantity = $stock->sold_quantity + $item->quantity;
-                    $orderitems = new OrderItem();
-                    $orderitems->product_id = $item->product_id;
-                    $orderitems->cart_id = $item->id;
-                    $orderitems->order_id = $order->id;
-                    $orderitems->name = $item->title;
-                    $orderitems->quantity = $item->quantity;
-                    $orderitems->price = $item->price;
-                    $orderitems->total = $item->price * $item->quantity;
-                    $orderitems->save();
-                    // Update the stock record in the database
-                    DB::table('stocks')
-                        ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
-                        ->update([
-                            'quantity' => $updatedQuantity,
-                            'sold_quantity' => $soldQuantity,
-                        ]);
-                } else {
-                    DB::table('order')->where('id', $order->id)->delete();
+                if (!$stock || $item->quantity > $stock->quantity) {
+                    $order->delete();
                     return response()->json([
-                        'status' => 'stock_missing',
-                        'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
+                        'status' => false,
+                        'message' => 'Stock is low for product: <strong>' . e($item->title) . '</strong>',
                     ]);
                 }
-            }
-            // orderEmail($order->id, 'customer');
-            session()->flash('success', 'You have successfully placed your order');
-            Cart::where('user_id', Auth::id())->delete();
-            return response()->json([
-                'status' => true,
-                'message' => 'Order Saved Successfully',
-                'orderId' => $order->id
-            ]);
-        } elseif ($request->payment_method == 'stripe') {
-            Stripe::setApiKey(env('STRIPE_SECRET'));
-            $shipping = 0;
-            $discount = 0;
-            $discountcodeid = '';
-            $promocode = '';
-            if (session()->has('code')) {
-                $code = session()->get('code');
-                if ($code->type == 'percent') {
-                    $discount = ($code->discont_amount / 100) * $subtotal;
-                } else {
-                    $discount = $code->discont_amount;
-                }
-                $discountcodeid = $code->id;
-                $promocode = $code->code;
-            }
-            //calculate shipping 
-            $shipping_info = Shipping::where('country_id', $request->country)->first();
-            $totalqty = 0;
-            foreach ($cartcontent as $item) {
-                $totalqty += $item->quantity;
-            }
-            if (!empty($shipping_info) && $shipping_info != null) {
-                $shipping = $totalqty * $shipping_info->amount;
-                $grandtotal = ($subtotal - $discount) + $shipping;
-            } else {
-                $shipping = 10;
-                $grandtotal = ($subtotal - $discount) + $shipping;
-            }
-            $charge = Charge::create([
-                'amount' => round($grandtotal * 100), // Amount in cents
-                'currency' => 'usd',
-                'source' => $request->stripeTokencard,
-                'description' => 'Order payment for ' . $request->firstname . ' ' . $request->lastname,
-                'metadata' => [
-                    'user_id' => $user->id,
-                    'email' => $request->email,
-                    'order_notes' => $request->order_notes,
-                ],
-            ]);
-            $order = new Order();
-            $order->subtotal = $subtotal;
-            $order->stripe_charge_id = $charge->id;
-            $order->shipping = $shipping;
-            $order->grandtotal = $grandtotal;
-            $order->discount = $discount;
-            $order->coupon_code = $promocode;
-            $order->payment_status = 'paid';
-            $order->status = 'pending';
-            $order->firstname = $request->firstname;
-            $order->user_id = $user->id;
-            $order->lastname = $request->lastname;
-            $order->email = $request->email;
-            $order->address = $request->address;
-            $order->apartment = $request->apartment;
-            $order->state = $request->state;
-            $order->city = $request->city;
-            $order->zip = $request->zip;
-            $order->notes = $request->order_notes;
-            $order->zip = $request->zip;
-            $order->country_id = $request->country;
-            $order->save();
-            // store order item in the order item table
-            foreach ($cartcontent as $item) {
-                $stock = DB::table('stocks')
-                    ->where('product_id', $item->product_id)
-                    ->where('color_id', $item->color_id)
-                    ->where('size_id', $item->size_id)
-                    ->where('status', 1)
-                    ->first();
-                if (!empty($stock) && $item->quantity <= $stock->quantity) {
-                    $currentQuantity = $stock->quantity;
-                    $updatedQuantity = $currentQuantity - $item->quantity;
-                    $soldQuantity = $stock->sold_quantity + $item->quantity;
-                    $orderitems = new OrderItem();
-                    $orderitems->product_id = $item->product_id;
-                    $orderitems->cart_id = $item->id;
-                    $orderitems->order_id = $order->id;
-                    $orderitems->name = $item->title;
-                    $orderitems->quantity = $item->quantity;
-                    $orderitems->price = $item->price;
-                    $orderitems->total = $item->price * $item->quantity;
-                    $orderitems->save();
-                    // Update the stock record in the database
-                    DB::table('stocks')
-                        ->where('id', $stock->id)  // Assuming you have a unique identifier for the stock item
-                        ->update([
-                            'quantity' => $updatedQuantity,
-                            'sold_quantity' => $soldQuantity,
-                        ]);
-                } else {
-                    DB::table('order')->where('id', $order->id)->delete();
-                    return response()->json([
-                        'status' => 'stock_missing',
-                        'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
-                    ]);
-                }
-            }
-            // orderEmail($order->id, 'customer');
-            session()->flash('success', 'You have successfully placed your order');
-            Cart::where('user_id', Auth::id())->delete();
-            return response()->json([
-                'status' => true,
-                'message' => 'Order Saved Successfully',
-                'orderId' => $order->id
-            ]);
-        }
-    }
-    public function processCheckout2(Request $request)
-    {
-        $cartcontent = Cart::where('user_id', auth()->id())->get();
-        $subtotal = getcartquantityandtotal()['totalPrice'];
-        $validator = Validator::make($request->all(), [
-            'firstname' => 'required|min:5',
-            'lastname' => 'required',
-            'email' => 'required|email',
-            'country' => 'required',
-            'address' => 'required|min:30',
-            'city' => 'required',
-            'state' => 'required',
-            'zip' => 'required',
-            'mobile' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'please fix the error',
-                'errors' => $validator->errors()
-            ]);
-        }
-        $user = Auth::user();
-        CustomerAddress::updateOrCreate(
-            ['user_id' => $user->id],
-            $request->only('firstname', 'lastname', 'email', 'mobile', 'address', 'city', 'apartment', 'state', 'zip', 'country')
-        );
-        $discount = 0;
-        $promocode = '';
-        if (session()->has('code')) {
-            $code = session()->get('code');
-            $discount = $code->type == 'percent' ? ($code->discont_amount / 100) * $subtotal : $code->discont_amount;
-            $promocode = $code->code;
-        }
-        $shipping_info = Shipping::where('country_id', $request->country)->first();
-        $totalqty = $cartcontent->sum('quantity');
-        $shipping = $shipping_info ? $totalqty * $shipping_info->amount : 10;
-        $grandtotal = ($subtotal - $discount) + $shipping;
-        $orderData = array_merge($request->only('firstname', 'lastname', 'email', 'address', 'apartment', 'state', 'city', 'zip', 'country', 'order_notes'), [
-            'user_id' => $user->id,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'grandtotal' => $grandtotal,
-            'discount' => $discount,
-            'coupon_code' => $promocode,
-            'payment_status' => $request->payment_method == 'stripe' ? 'paid' : 'not paid',
-            'status' => 'pending',
-        ]);
-        if ($request->payment_method == 'stripe') {
-            Stripe::setApiKey(env('STRIPE_SECRET'));
-            $charge = Charge::create([
-                'amount' => round($grandtotal * 100),
-                'currency' => 'usd',
-                'source' => $request->stripeTokencard,
-                'description' => 'Order payment for ' . $request->firstname . ' ' . $request->lastname,
-            ]);
-            $orderData['stripe_charge_id'] = $charge->id;
-        }
-        foreach ($cartcontent as $item) {
-            OrderItem::create([
-                'product_id' => $item->product_id,
-                'name' => $item->title,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
-                'total' => $item->price * $item->quantity,
-            ]);
-            $stock = Stock::where([
-                ['product_id', $item->product_id],
-                ['color_id', $item->color_id],
-                ['size_id', $item->size_id],
-                ['status', 1]
-            ])->first();
-            if ($stock && $item->quantity <= $stock->quantity) {
-                $stock->decrement('quantity', $item->quantity);
-                $stock->increment('sold_quantity', $item->quantity);
-            } else {
-                return response()->json([
-                    'status' => 'stock_missing',
-                    'message' => 'Stock is low for the --(<strong>' . $item->title . '</strong>)',
+                DB::table('stocks')->where('id', $stock->id)->update([
+                    'quantity' => $stock->quantity - $item->quantity,
+                    'sold_quantity' => $stock->sold_quantity + $item->quantity,
+                ]);
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'cart_id' => $item->id,
+                    'name' => $item->title,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'total' => $item->price * $item->quantity,
                 ]);
             }
+            // Empty cart
+            Cart::where('user_id', $user->id)->delete();
+            // --------------------------
+            // CASH ON DELIVERY
+            // --------------------------
+            if ($request->paymentMethod === 'cod') {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Order placed successfully (COD)!',
+                    'orderId' => $order->id,
+                ]);
+            }
+            // --------------------------
+            // STRIPE PAYMENT
+            // --------------------------
+            if ($request->paymentMethod === 'card') {
+                Stripe::setApiKey(env('STRIPE_SECRET'));
+                $session = Session::create([
+                    'payment_method_types' => ['card'],
+                    'line_items' => [
+                        [
+                            'price_data' => [
+                                'currency' => 'usd',
+                                'product_data' => [
+                                    'name' => 'Order #' . $order->id,
+                                ],
+                                'unit_amount' => intval($grandTotal * 100),
+                            ],
+                            'quantity' => 1,
+                        ]
+                    ],
+                    'mode' => 'payment',
+                    'success_url' => route('front.orderPlaced') . '?session_id={CHECKOUT_SESSION_ID}',
+                    'cancel_url' => route('front.checkout'),
+                    'metadata' => [
+                        'order_id' => $order->id,
+                        'user_id' => $user->id,
+                    ],
+                ]);
+                // Save Stripe session ID
+                $order->stripe_charge_id = $session->id;
+                $order->save();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Stripe checkout session created successfully.',
+                    'orderId' => $order->id,
+                    'url' => $session->url,
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Rollback if any error occurs
+            if (isset($order)) {
+                $order->delete();
+            }
+            return response()->json([
+                'status' => false,
+                'message' => 'Checkout failed: ' . $e->getMessage(),
+            ], 500);
         }
-        $order = Order::create($orderData);
-        session()->flash('success', 'You have successfully placed your order');
-        Cart::where('user_id', Auth::id())->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Order Saved Successfully',
-            'orderId' => $order->id
+    }
+    public function orderPlaced(Request $request)
+    {
+        $order = Order::with('orderItems.product') // eager load items + product details
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->first();
+        //  If no order found, redirect safely
+        if (!$order) {
+            return redirect()->route('front.cart')->with('error', 'No order found.');
+        }
+        //  Pass order and order_items to the React page
+        return Inertia::render('Front/OrderPlaced', [
+            'order' => $order,
+            'order_items' => $order->orderItems,
         ]);
     }
     public function getOrderSummary(Request $request)
@@ -677,34 +648,26 @@ class CartController extends Controller
     }
     public function apply_discount(Request $request)
     {
-        $code = DiscountCoupon::where('code', $request->code)->first();
-        if ($code == null) {
-            return response()->json([
-                'status' => false,
-                'message' => 'invalid discount coupon'
-            ]);
+        $coupon = DiscountCoupon::where('code', $request->coupon_code)
+            ->where('status', 1)
+            ->first();
+        if (!$coupon) {
+            return redirect()->back()->withErrors(['coupon' => 'Invalid coupon']);
         }
-        $now = Carbon::now();
-        if ($code->start_at != "") {
-            $start_date = Carbon::createFromFormat('Y-m-d H:i:s', $code->start_at);
-            if ($now->lt($start_date)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'The coupon cannot match the start date'
-                ]);
-            }
+        // Example: calculate discount
+        $cartTotal = $request->cart_total;
+        if ($coupon->type === 'percent') {
+            $discount = ($cartTotal * $coupon->discont_amount) / 100;
+        } else {
+            $discount = $coupon->discont_amount;
         }
-        if ($code->expires_at != "") {
-            $expire_date = Carbon::createFromFormat('Y-m-d H:i:s', $code->expires_at);
-            if ($now->gt($expire_date)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'The coupon cannot match the end date'
-                ]);
-            }
-        }
-        session()->put('code', $code);
-        return $this->getOrderSummary($request);
+        $newTotal = $cartTotal - $discount;
+        // Return updated total back to Inertia
+        return response()->json([
+            'cartTotalAmount' => $newTotal,
+            'couponApplied' => $coupon->code,
+            'successapplied' => true,
+        ]);
     }
     public function removecoupon(Request $request)
     {
@@ -715,5 +678,19 @@ class CartController extends Controller
     {
         $data['keyword'] = '';
         return view('front.thanks', $data);
+    }
+    public function couponPage(Request $request)
+    {
+        // if (!empty(Auth::user())) {
+        //     $cartcontent = Cart::where('user_id', Auth::user()->id)->get();
+        // }
+        // $cartTotalAmount = $cartcontent->sum(function ($item) {
+        //     return $item->price;
+        // });
+        $discountCoupons = DiscountCoupon::where('status', 1)->get();
+        $data['coupons'] = $discountCoupons;
+        // $data['cartcontent'] = $cartcontent;
+        $data['totalPayable'] = $request->totalPayable;
+        return Inertia::render('Front/CouponPage', $data);
     }
 }

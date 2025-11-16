@@ -43,7 +43,6 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn() => $request->session()->get('error'),
 
             ],
-
             'categories' => fn() => getcategories(),
             'cart' => fn() => getcartquantityandtotal(),
         ]);

@@ -49,35 +49,51 @@ use App\Http\Controllers\admin\ThemeController;
 // Route::get('/test', function(){
 // });
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
-
-
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 // Route::post('/shopfilter', [ShopController::class, 'filterRequest'])->name('front.shopfilter');
-
-
-
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
+
+
+
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');
+Route::post('/updateCartItem', [CartController::class, 'updateCartItem'])->name('front.updateCartItem');
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('front.updateCart');
 Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.deleteitem.cart');
+Route::post('/move-item', [CartController::class, 'moveItemToWishlist'])->name('front.moveitemtowishlist.cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
+Route::get('/payment', [CartController::class, 'Payment'])->name('front.payment');
 Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
+Route::get('/order-placed', [CartController::class, 'orderPlaced'])->name('front.orderPlaced');
 Route::get('/thanks', [CartController::class, 'thankyou'])->name('front.thankyou');
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
-Route::post('/apply-discount', [CartController::class, 'apply_discount'])->name('front.applydiscount');
+
+
+
+
+
+
+Route::post('/apply-coupon', [CartController::class, 'apply_discount'])->name('front.applycoupon');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
+
+Route::get('/coupons', [CartController::class, 'couponPage'])->name('front.coupons');
+
 Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
-Route::post('rating-saving/{product_id}', action: [ShopController::class, 'productRating'])->name('front.productRating');
+
+
+
+Route::post('rating-saving/', action: [ShopController::class, 'productRating'])->name('front.productRating');
+Route::get('/brand/{id}', [ShopController::class, 'brandProducts'])->name('front.brandProducts');
+
+
+
+
+
+
 
 
 Route::get('Categories', [FrontCategoryController::class, 'getAllCategory'])->name('product.getCategories');
 Route::get('InnerCategory/{categoryid}', [FrontCategoryController::class, 'getInnerCategory'])->name('product.getInnerCategory');
-
-
-
-
-
 Route::get('search', [SearchController::class, 'search'])->name('product.search');
 // Route::post('search', [SearchController::class, 'search'])->name('product.search');
 Route::post('color', [AttributeController::class, 'change_color'])->name('product.change_color');
@@ -107,6 +123,17 @@ Route::group(['prefix' => 'account'], function () {
     Route::group(['middleware' => 'auth'], function () {
         Route::GET('/profile', [AuthController::class, 'profile'])->name('account.profile');
         Route::GET('/address', [AuthController::class, 'address'])->name('account.address');
+        Route::GET('/savedAddress', [AuthController::class, 'savedAddress'])->name('account.savedAddress');
+        Route::GET('/newAddress', [AuthController::class, 'newAddress'])->name('account.newAddress');
+        Route::GET('/editAddress/{address_id}', [AuthController::class, 'EditAddress'])->name('account.EditAddress');
+
+
+
+
+
+
+        Route::POST('/storeAddress', [AuthController::class, 'storeAddress'])->name('account.storeAddress');
+        Route::post('/remove-address', [AuthController::class, 'removeAddress'])->name('account.removeAddress');
         Route::PUT('/addressupdate', [AuthController::class, 'addressupdate'])->name('account.addressupdate');
         Route::GET('/profileedit', [AuthController::class, 'profileEdit'])->name('account.profileEdit');
         Route::put('/profileedit', [AuthController::class, 'updateProfileData'])->name('account.updateProfileData');

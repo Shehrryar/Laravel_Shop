@@ -67,21 +67,21 @@
 											{{ optional($Size->firstWhere('id', $color->size_id))->name ?? 'N/A' }}
 										</td>
 
-										<td>
-											{{ optional($products->firstWhere('id', optional($Size->firstWhere('id', $color->size_id))->product_id))->title ?? 'N/A' }}
-										</td>
-
-
-
 										<!-- <td>
-																				<ul class="product-list">
-																					@foreach ($products as $product)
-																						@if ($color->product_id == $product->id)
-																							<li>{{ $product->title }}</li>
-																						@endif
-																					@endforeach
-																				</ul>
-																			</td> -->
+											{{ optional($products->firstWhere('id', optional($Size->firstWhere('id', $color->size_id))->product_id))->title ?? 'N/A' }}
+										</td> -->
+
+
+
+										<td>
+											<ul class="product-list">
+												@foreach ($products as $product)
+													@if ($color->product_id == $product->id)
+														<li>{{ $product->title }}</li>
+													@endif
+												@endforeach
+											</ul>
+										</td>
 
 										<td>
 											@if($color->status == 1)

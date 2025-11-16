@@ -36,7 +36,7 @@
 								</div>
 								<p id="para_cod"></p>
 							</div>
-							<!-- <div class="col-md-6">
+							<div class="col-md-6">
 								<div class="mb-3">
 									<label>Select Product</label>
 									<select name="product_id" id="product_id" class="form-control">
@@ -48,7 +48,7 @@
 										@endif
 									</select>
 								</div>
-							</div> -->
+							</div>
 							<div class="col-md-6">
 								<div class="mb-3">
 									<label>Select Size</label>
@@ -64,8 +64,10 @@
 														{{$size_pro->name}} - {{$product->title}}
 													</option>
 												@endif
+												
 											@endforeach
 										@endif
+										
 									</select>
 								</div>
 							</div>

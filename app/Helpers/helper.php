@@ -94,6 +94,12 @@ function handleStock($product_id, $color_id, $size_id)
     $stock = Stock::where('status', 1)->get(); // Fetch only active stock items
     if (!empty($stock)) {
         foreach ($stock as $stoc) {
+            if ($stoc->quantity == 0) {
+                return [
+                    'status' => false,
+                    'message' => 'Out of Stock'
+                ];
+            }
             // Check if the product ID matches and color and size are both zero
             if ($stoc->product_id == $product_id && $stoc->color_id == $color_id && $stoc->size_id == $size_id) {
                 // In stock - return a message or action to add to cart
@@ -110,5 +116,27 @@ function handleStock($product_id, $color_id, $size_id)
         'status' => false,
         'message' => 'Out of Stock'
     ];
+}
+function handleStockforCart($product_id, $color_id, $size_id, $quantity)
+{
+    // Iterate through stock array
+    $stock = Stock::where('status', 1)->get(); // Fetch only active stock items
+    $stock = Stock::where('product_id', $product_id)
+        ->where('color_id', $color_id)
+        ->where('size_id', $size_id)
+        ->where('status', 1)
+        ->first();
+    if (empty($stock) || $stock->quantity == 0 || $quantity > $stock->quantity) {
+        return [
+            'status' => false,
+            'message' => 'Out of Stock'
+        ];
+    } else {
+        return [
+            'status' => true,
+            'message' => 'Add to Cart',
+            'stock' => $stock
+        ];
+    }
 }
 ?>

@@ -89,16 +89,6 @@
                     @endif
                     @if ($product->color()->exists())
                         <div class="details_extra_item">
-                            <!-- <h5>Select Colour</h5>
-                                    <div class="col-sm-5">
-                                        <select class="form-control v_product_option" name="product_option" id="color" required>
-                                            <option value=null>Select Colour</option>
-                                            @foreach ($product->color as $productOption)
-                                                <option id="option-{{ $productOption->id }}" value="{{ $productOption->id }}"
-                                                    data-name="{{ $productOption->price }}">{{ $productOption->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div> -->
                         </div>
                     @endif
                     <div class="details_quentity">
