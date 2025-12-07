@@ -54,6 +54,9 @@ function orderEmail($orderId, $userType)
     ];
     Mail::to($email)->send(new OrderEmail($maildata));
 }
+
+
+
 function getDiscountedPrice($product, $discounts, $price)
 {
     $discountedPrice = 0;
@@ -76,6 +79,10 @@ function getDiscountedPrice($product, $discounts, $price)
         'actual_price' => $price,
     ];
 }
+
+
+
+
 if (!function_exists('transAdmin')) {
     function transAdmin($key, $replace = [], $locale = null)
     {

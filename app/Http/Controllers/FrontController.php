@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Wishlist;
@@ -8,26 +9,67 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Discount;
 use App\Models\Category;
 use App\Models\ProductView;
+use App\Models\HomepageLabel;
 use Inertia\Inertia;
 class FrontController extends Controller
 {
     public function index()
     {
-        $wishlist = collect();
-        if (!empty(Auth::user())) {
-            $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
-        }
+        $brands = Brand::OrderBy('name', 'ASC')->where('status', 1)->get();
+        $homelables = HomepageLabel::OrderBy('label_name', 'ASC')->where('is_active', 1)->get();
+
         $featured_products = Product::where('is_featured', 1)
             ->where('status', 1)
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
-            ->paginate(8);
+            ->get();
         $latest_product = Product::orderBy('id', 'DESC')
             ->where('status', 1)
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->paginate(8);
-        $discount = Discount::where('status', 1)->get();
+        $today = now()->toDateString();
+        $discounts = Discount::where('status', 1)
+            ->whereDate('start_at', '<=', $today)
+            ->whereDate('expires_at', '>=', $today)
+            ->get();
+
+        $products = Product::where('status', 1)
+            ->with('product_images')        // ← load images
+            ->get()
+            ->filter(function ($product) use ($discounts) {
+
+                foreach ($discounts as $dis) {
+
+                    // Clean product_ids: remove quotes "1,2,3"
+                    $cleanIds = trim($dis->product_ids, '"');
+
+                    // Convert string → array [1,2,3]
+                    $productIds = explode(',', $cleanIds);
+
+                    // Check if product has discount
+                    if (in_array($product->id, $productIds)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            })->values();
+
+        $dis_products = $products->map(function ($product) use ($discounts) {
+
+            $priceData = getDiscountedPrice($product->id, $discounts, $product->price);
+
+            $product->discount_value = $priceData['discount_value'];
+            $product->actual_price = $priceData['actual_price'];
+            $product->discounted_price = $priceData['discounted_price'];
+            $product->discounted_price = $priceData['discounted_price'];
+
+            return $product;
+        });
+
+
+
         $recommended_products = Product::orderBy('id', 'DESC')
             ->where('status', 1)
             ->withCount('product_ratings')
@@ -40,18 +82,33 @@ class FrontController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->paginate(8);
-        $categories = Category::latest()->get();
 
-        $data['wishlist'] = $wishlist;
-        $data['discount'] = $discount;
+        $wishlistitems = collect();
+        if (!empty(Auth::user())) {
+            $wishlistitems = Wishlist::where('user_id', Auth::id())
+                ->with('product')
+                ->get()
+                ->keyBy('product_id');
+        }
+
+
+        $data['wishlistitems'] = $wishlistitems;
+        $data['discount'] = $discounts;
         $data['recommended_products'] = $recommended_products;
         $data['featured_products'] = $featured_products;
         $data['latest_product'] = $latest_product;
-        // $data['categories'] = $categories;
-        $data['keyword'] = '';
+        $data['dis_products'] = $dis_products;
+        $data['brands'] = $brands;
+        $data['homelables'] = $homelables;
+
+
+        
         return Inertia::render('Front/Index', $data);
         // return view('front.home', $data);
     }
+
+
+
     public function addToWishlist(Request $request)
     {
 

@@ -3,25 +3,42 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 export default function CouponPage() {
-    const { coupons, totalPayable } = usePage().props;
+    const {
+        coupons,
+        totalcartamount,
+        couponApplied,
+        couponcode,
+        shippingAmount,
+    } = usePage().props;
 
-    const [originalTotalAmount] = useState(totalPayable); // keep original total fixed
-    const [TotalAmount, setCartTotalAmount] = useState(totalPayable);
-    const [successApplied, setSuccessApplied] = useState(false);
-    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [TotalcartAmount, setCartTotalAmount] = useState(totalcartamount);
+    const [newTotalcartAmount, setnewCartTotalAmount] =
+        useState(totalcartamount);
+    const [successApplied, setSuccessApplied] = useState(couponApplied);
+    const [discount_coupon_amount, setDiscountCoupon] = useState(null);
+    const [originalTotalAmount, setOriginalTotalAmount] = useState(
+        Number(totalcartamount) + Number(shippingAmount)
+    );
+
+    const [appliedCoupon, setAppliedCoupon] = useState(couponcode);
 
     const applyCoupon = async (couponCode, type, amount) => {
         try {
             const response = await axios.post(route("front.applycoupon"), {
                 coupon_code: couponCode,
-                cart_total: originalTotalAmount,
+                cart_total: TotalcartAmount,
                 type: type,
+                shippingAmount: shippingAmount,
                 ammount: amount,
             });
             // Update state with returned data
             setAppliedCoupon(response.data.couponApplied);
-            setCartTotalAmount(response.data.cartTotalAmount);
+            setnewCartTotalAmount(response.data.cartTotalAmount);
+            setOriginalTotalAmount(
+                response.data.cartTotalAmount + Number(shippingAmount)
+            );
             setSuccessApplied(response.data.successapplied);
+            setDiscountCoupon(response.data.discount_coupon);
         } catch (err) {
             // Handle errors
             console.error(err.response?.data || err);
@@ -30,8 +47,13 @@ export default function CouponPage() {
 
     const handlePlaceOrder = (e) => {
         e.preventDefault();
-        router.get(route("front.checkout"), {
-            totalcartamount: TotalAmount,
+        router.get(route("front.payment"), {
+            totalcartamount: TotalcartAmount,
+            newTotalcartAmount: newTotalcartAmount,
+            originalTotalAmount: originalTotalAmount,
+            couponApplied: successApplied,
+            couponcode: appliedCoupon,
+            discount_coupon_amount: discount_coupon_amount,
         });
     };
 
@@ -138,7 +160,7 @@ export default function CouponPage() {
             <div className="cart-bottom">
                 <div>
                     <div className="left-content">
-                        <h4>${TotalAmount}</h4>
+                        <h4>${originalTotalAmount}</h4>
                         <a href="#order-details" className="theme-color">
                             View details
                         </a>

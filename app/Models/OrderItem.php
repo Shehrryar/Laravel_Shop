@@ -18,6 +18,8 @@ class OrderItem extends Model
         'quantity',
         'price',
         'total',
+        'additional_attributes',
+
     ];
 
 

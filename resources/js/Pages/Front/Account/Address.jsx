@@ -3,37 +3,28 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 export default function AddAddress() {
-    const { user, countries, editaddress } = usePage().props;
-    const [selectedCountry, setSelectedCountry] = useState("");
+    const { user, countries, editaddress, editdata } = usePage().props;
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
 
-    console.log(editaddress);
-
     const [formData, setFormData] = useState({
-        pin_code: editaddress?.pin_code || "",
-        flat: editaddress?.flat || "",
-        area: editaddress?.area || "",
-        landmark: editaddress?.landmark || "",
-        city: editaddress?.city || "",
-        state: editaddress?.state || "",
-        address_type: editaddress?.address_type || "home",
-        default: editaddress?.is_default || true,
-        firstname: editaddress?.firstname || "",
-        lastname: editaddress?.lastname || "",
-        email: editaddress?.email || "",
+        id: editaddress?.id ?? "",
+        pin_code: editaddress?.pin_code ?? "",
+        country_id: editaddress?.country_id
+            ? String(editaddress.country_id)
+            : "",
+        flat: editaddress?.flat ?? "",
+        area: editaddress?.area ?? "",
+        landmark: editaddress?.landmark ?? "",
+        city: editaddress?.city ?? "",
+        state: editaddress?.state ?? "",
+        address_type: editaddress?.address_type ?? "home",
+        default: editaddress?.is_default ?? true,
+        firstname: editaddress?.firstname ?? "",
+        lastname: editaddress?.lastname ?? "",
+        email: editaddress?.email ?? "",
+        editform: editdata ?? "newForm",
     });
-
-    // const [formData, setFormData] = useState({
-    //     pin_code: "",
-    //     flat: "",
-    //     area: "",
-    //     landmark: "",
-    //     city: "",
-    //     state: "",
-    //     address_type: "home",
-    //     default: true,
-    // });
 
     const [errors, setErrors] = useState({});
     //  Handle Input Changes
@@ -52,11 +43,13 @@ export default function AddAddress() {
     // Handle Submit
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+
         setMessage({ text: "", type: "" });
         setErrors({});
         // Basic validation
         const newErrors = {};
-        if (!selectedCountry) newErrors.country_id = "Country is required";
+        if (!formData.country_id) newErrors.country_id = "Country is required";
         if (!formData.pin_code) newErrors.pin_code = "Pin Code is required";
         if (!formData.flat)
             newErrors.flat = "Flat or building info is required";
@@ -70,8 +63,9 @@ export default function AddAddress() {
         setLoading(true);
         try {
             const response = await axios.post(route("account.storeAddress"), {
+                id: formData.id,
                 user_id: user.id,
-                country_id: selectedCountry,
+                country_id: formData.country_id,
                 pin_code: formData.pin_code,
                 flat: formData.flat,
                 area: formData.area,
@@ -79,6 +73,7 @@ export default function AddAddress() {
                 city: formData.city,
                 state: formData.state,
                 address_type: formData.address_type,
+                editform: formData.editform,
                 is_default: formData.default ? 1 : 0,
             });
             console.log(response);
@@ -146,33 +141,28 @@ export default function AddAddress() {
                             </div>
                         )}
                         {/* Country Select */}
-                        <div className="form-floating mb-4">
-                            <select
-                                className="form-select"
-                                id="country_id"
-                                value={selectedCountry}
-                                onChange={(e) =>
-                                    setSelectedCountry(e.target.value)
-                                }
-                            >
-                                <option value="">Select Country</option>
-                                {countries &&
-                                    countries.map((country) => (
-                                        <option
-                                            key={country.id}
-                                            value={country.id}
-                                        >
-                                            {country.name}
-                                        </option>
-                                    ))}
-                            </select>
-                            <label htmlFor="country_id">Country/Region</label>
-                            {errors.country_id && (
-                                <small className="text-danger">
-                                    {errors.country_id}
-                                </small>
-                            )}
-                        </div>
+                        <select
+                            className="form-select"
+                            id="country_id"
+                            value={String(formData.country_id)}
+                            onChange={(e) =>
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    country_id: e.target.value, // now works
+                                }))
+                            }
+                        >
+                            <option value="">Select Country</option>
+                            {countries.map((country) => (
+                                <option
+                                    key={country.id}
+                                    value={String(country.id)}
+                                >
+                                    {country.name}
+                                </option>
+                            ))}
+                        </select>
+
                         {/* Name & Phone */}
                         <div className="form-floating mb-4">
                             <input

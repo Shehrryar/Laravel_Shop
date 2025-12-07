@@ -11,6 +11,10 @@ use App\Models\Country;
 use App\Models\Shipping;
 use Carbon\Carbon;
 use App\Models\Cart;
+
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderEmail;
 use App\Models\Stock;
 use App\Models\Color;
 use App\Models\Size;
@@ -20,14 +24,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-use Stripe\Coupon;
-use Stripe\Stripe;
-use Stripe\Checkout\Session;
+
 class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
-
         if ($request->color_id == null) {
             $request->color_id = 0;
         }
@@ -56,21 +57,8 @@ class CartController extends Controller
                 'message' => 'Out of Stock'
             ]);
         }
-        // $discountprice = getDiscountedPrice($request->product_id, Discount::get(), $request->actual_price);
-        // $price = $discountprice['discounted_price'] != 0 ? $discountprice['discounted_price'] : $discountprice['actual_price'];
         $product_size = $product->size->where('id', $request->size_id)->first();
         $product_color = $product->color->where('id', $request->color_id)->first();
-
-
-
-        // if ($product_size) {
-        //     $price = $price + $product_size->price;
-        // }
-        // if ($product_color) {
-        //     $price = $price + $product_color->price;
-        // }
-
-
         $additional_attributes = json_encode([
             'size' => $product_size ? $product_size->name : null,
             'color' => $product_color ? $product_color->name : null
@@ -86,11 +74,7 @@ class CartController extends Controller
                     $productAlreadyExist = true;
                 }
             }
-
-
-
             if ($productAlreadyExist == false) {
-
                 try {
                     Cart::create([
                         'user_id' => Auth::user()->id,
@@ -100,9 +84,9 @@ class CartController extends Controller
                         'quantity' => $request->quantity,
                         'color_id' => ($request->color_id) ? $request->color_id : 0,
                         'size_id' => ($request->size_id) ? $request->size_id : 0,
-                        'price' => $request->price['actual'],
-                        'discounted_price' => $request->price['discounted'],
-                        'discounted_value' => $request->price['discount_value'],
+                        'price' => $request->variantPrice['actual'],
+                        'discounted_price' => $request->variantPrice['discounted'],
+                        'discounted_value' => $request->variantPrice['discount_value'],
                         'additional_attributes' => $additional_attributes,
                         'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                     ]);
@@ -125,13 +109,23 @@ class CartController extends Controller
                         ->where('size_id', $request->size_id)
                         ->first();
                     if ($cartItem) {
+
+                        if ($request->page == "product") {
+                            $newQuantity = $request->quantity + $cartItem->quantity;
+                            $price_actual = $request->variantPrice['baseactualprice'] * $newQuantity;
+                            $discounted_price = $request->variantPrice['basediscountedprice'] * $newQuantity;
+                        } else {
+                            $newQuantity = $request->quantity;
+                            $price_actual = $request->variantPrice['actual'];
+                            $discounted_price = $request->variantPrice['discounted'];
+                        }
                         $cartItem->update([
                             'product_attribute_id' => $product->id,
                             'title' => $product->title,
-                            'quantity' => $request->quantity,
-                            'price' => $request->price['actual'],
-                            'discounted_price' => $request->price['discounted'],
-                            'discounted_value' => $request->price['discount_value'],
+                            'quantity' => $newQuantity,
+                            'price' => $price_actual,
+                            'discounted_price' => $discounted_price,
+                            'discounted_value' => $request->variantPrice['discount_value'],
                             'additional_attributes' => $additional_attributes,
                             'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                         ]);
@@ -149,7 +143,6 @@ class CartController extends Controller
                 }
             }
         } else {
-
             try {
                 Cart::create([
                     'user_id' => Auth::user()->id,
@@ -159,9 +152,9 @@ class CartController extends Controller
                     'quantity' => $request->quantity,
                     'color_id' => ($request->color_id) ? $request->color_id : 0,
                     'size_id' => ($request->size_id) ? $request->size_id : 0,
-                    'price' => $request->price['actual'],
-                    'discounted_price' => $request->price['discounted'],  // REQUIRED
-                    'discounted_value' => $request->price['discount_value'],
+                    'price' => $request->variantPrice['actual'],
+                    'discounted_price' => $request->variantPrice['discounted'],  // REQUIRED
+                    'discounted_value' => $request->variantPrice['discount_value'],
                     'additional_attributes' => $additional_attributes,
                     'product_image' => (!empty($product->product_images->first()->image)) ? $product->product_images->first()->image : ''
                 ]);
@@ -207,7 +200,11 @@ class CartController extends Controller
         $products = Product::with(['product_images', 'color', 'size'])
             ->whereIn('id', $wishlistProductIds)
             ->get();
-        $discounts = Discount::where('status', 1)->get();
+        $today = now()->toDateString();
+        $discounts = Discount::where('status', 1)
+            ->whereDate('start_at', '<=', $today)
+            ->whereDate('expires_at', '>=', $today)
+            ->get();
         $products->transform(function ($product) use ($discounts) {
             $discountData = getDiscountedPrice($product->id, $discounts, $product->price);
             $product->discount_value = $discountData['discount_value'];
@@ -225,30 +222,21 @@ class CartController extends Controller
         $cartTotalAmount = $cartcontent->sum(function ($item) {
             return $item->price;
         });
-
-
-
-        $cartTotaldiscountAmount = $cartcontent->sum(function ($item) {
-            return $item->discounted_price;
+        $cartTotalDiscountAmount = $cartcontent->sum(function ($item) {
+            // Only apply discount if discounted_value > 0
+            if ($item->discounted_value > 0) {
+                return $item->discounted_price;
+            }
+            return 0; // No discount applied for this item
         });
-
-
-
-        $bagsavingvalue = $cartTotalAmount - $cartTotaldiscountAmount;
-
-
-
-
-
+        $bagsavingvalue = $cartTotalDiscountAmount > 0
+            ? $cartTotalAmount - $cartTotalDiscountAmount
+            : 0;
         $user = Auth::user();
         $shippingAmount = 100;
         $customerAddress = CustomerAddress::where('user_id', $user->id)->first();
-
-
-
         if ($customerAddress && $customerAddress->country_id) {
             $shipping = Shipping::where('country_id', $customerAddress->country_id)->first();
-
             if ($shipping) {
                 // Apply shipping per product quantity
                 foreach ($cartcontent as $item) {
@@ -256,7 +244,6 @@ class CartController extends Controller
                 }
             }
         }
-
         // Total payable amount
         $totalPayable = $cartTotalAmount + $shippingAmount;
         $data['wishlist'] = $products;
@@ -265,10 +252,6 @@ class CartController extends Controller
         $data['colors'] = Color::get();
         $data['sizes'] = Size::get();
         $data['bagsavingvalue'] = $bagsavingvalue;
-
-
-
-
         $data['carttotalamount'] = $cartTotalAmount;
         $data['shippingAmount'] = $shippingAmount;
         $data['totalPayable'] = $totalPayable;
@@ -337,240 +320,109 @@ class CartController extends Controller
                     ]
                 );
                 $iteminfo->delete();
+                $message = 'item moved to wishlist successfully';
+                return response()->json([
+                    'status' => true,
+                    'message' => $message
+                ]);
             }
         }
     }
-    // public function checkout()
-    // {
-    //     $discount = 0;
-    //     $discount_amo = 0;
-    //     $discount_type = '';
-    //     $cartcount = Cart::where('user_id', auth()->id())->count();
-    //     $cartcontent = Cart::where('user_id', auth()->id())->get();
-    //     $subtotal = getcartquantityandtotal()['totalPrice'];
-    //     if ($cartcount == 0) {
-    //         return redirect()->route('front.cart');
-    //     }
-    //     $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
-    //     $countries = Country::orderBy('name', 'ASC')->get();
-    //     if (session()->has('code')) {
-    //         $code = session()->get('code');
-    //         if ($code->type == 'percent') {
-    //             $discount = ($code->discont_amount / 100) * $subtotal;
-    //             $discount_amo = $code->discont_amount;
-    //             $discount_type = $code->type;
-    //         } else {
-    //             $discount_amo = $code->discont_amount;
-    //             $discount_type = $code->type;
-    //         }
-    //     }
-    //     // Calculate shiping here
-    //     if (!empty($customerAddress->country_id)) {
-    //         $usercountry = $customerAddress->country_id;
-    //         $shipping_info = Shipping::where('country_id', $usercountry)->first();
-    //         $totalqty = 0;
-    //         $total_shipping = 0;
-    //         foreach ($cartcontent as $item) {
-    //             $totalqty += $item->quantity;
-    //         }
-    //         if (!empty($shipping_info) && $shipping_info != null) {
-    //             $total_shipping = $totalqty * $shipping_info->amount;
-    //         } else {
-    //             $total_shipping = 0; // Default shipping if no info found
-    //         }
-    //         $grand_total = ($subtotal - $discount) + $total_shipping;
-    //     } else {
-    //         $total_shipping = 0;
-    //         $grand_total = ($subtotal - $discount) + $total_shipping;
-    //     }
-    //     $data = [
-    //         'cartcontent' => $cartcontent,
-    //         'countries' => $countries,
-    //         'customerAddress' => $customerAddress,
-    //         'discount' => $discount_amo,
-    //         'discount_type' => $discount_type,
-    //         'subtotal' => $subtotal,
-    //         'total_shipping' => number_format($total_shipping, 2),
-    //         'grand_total' => $grand_total,
-    //         'keyword' => ''
-    //     ];
-    //     // return view(
-    //     //     'front.checkout',
-    //     // );
-    //     return Inertia::render('Front/Delivery', $data);
-    // }
-    public function checkout(Request $request)
+
+
+
+
+    public function checkout()
     {
-        // echo '<pre>';
-        // print_r($request->all());
-        // echo '</pre>';
-        // exit;
         $countries = Country::orderBy('name', 'ASC')->get();
         $customerAddresses = collect(); // empty collection by default
         if (Auth::check()) {
             $customerAddresses = CustomerAddress::where('user_id', Auth::id())->get();
+            $customerFirstAddresses = CustomerAddress::where('user_id', Auth::id())->first();
         }
-        $totalcartamount = $request->totalcartamount;
-        $cartcontent = $request->cartcontent;
+        $cartcontent = Cart::where('user_id', auth()->id())
+            ->with('product')->with('size')
+            ->get();
+        $cartTotalAmount = $cartcontent->sum(function ($item) {
+            return $item->price;
+        });
+        $cartTotaldiscountAmount = $cartcontent->sum(function ($item) {
+            return $item->discounted_price;
+        });
+        $bagsavingvalue = $cartTotaldiscountAmount > 0
+            ? $cartTotalAmount - $cartTotaldiscountAmount
+            : 0;
+        $shippingAmount = 100;
+        if ($customerFirstAddresses && $customerFirstAddresses->country_id) {
+            $shipping = Shipping::where('country_id', $customerFirstAddresses->country_id)->first();
+            if ($shipping) {
+                // Apply shipping per product quantity
+                foreach ($cartcontent as $item) {
+                    $shippingAmount += $shipping->amount * $item->quantity;
+                }
+            }
+        }
+        // Total payable amount
+        $totalPayable = $cartTotalAmount + $shippingAmount;
         $data = [
             'countries' => $countries,
             'customerAddresses' => $customerAddresses,
-            'totalcartamount' => $totalcartamount,
-            'cartcontent' => $cartcontent,
+            'totalcartamount' => $cartTotalAmount,
+            'bagsavingvalue' => $bagsavingvalue,
+            'totalPayable' => $totalPayable,
         ];
         return Inertia::render('Front/Delivery', $data);
     }
     public function Payment(Request $request)
     {
-        $totalcartamount = $request->totalcartamount;
-        $cartcontent = $request->cartcontent;
+        if (Auth::check()) {
+            $customerFirstAddresses = CustomerAddress::where('user_id', Auth::id())->first();
+        }
+        $cartcontent = Cart::where('user_id', auth()->id())
+            ->with('product')->with('size')
+            ->get();
+        $cartTotalAmount = $cartcontent->sum(function ($item) {
+            return $item->price;
+        });
+        $cartTotaldiscountAmount = $cartcontent->sum(function ($item) {
+            return $item->discounted_price;
+        });
+        $bagsavingvalue = $cartTotaldiscountAmount > 0
+            ? $cartTotalAmount - $cartTotaldiscountAmount
+            : 0;
+        $shippingAmount = 100;
+        if ($customerFirstAddresses && $customerFirstAddresses->country_id) {
+            $shipping = Shipping::where('country_id', $customerFirstAddresses->country_id)->first();
+            if ($shipping) {
+                // Apply shipping per product quantity
+                foreach ($cartcontent as $item) {
+                    $shippingAmount += $shipping->amount * $item->quantity;
+                }
+            }
+        }
+        if ($request->couponApplied == true) {
+            $totalPayable = $request->newTotalcartAmount + $shippingAmount;
+        } else {
+            $totalPayable = $cartTotalAmount + $shippingAmount;
+        }
+        //total payable amount
         $data = [
-            'totalcartamount' => $totalcartamount,
-            'cartcontent' => $cartcontent,
+            'totalcartamount' => $cartTotalAmount,
+            'newTotalcartAmount' => $request->newTotalcartAmount,
+            'totalPayable' => $totalPayable,
+            'bagsavingvalue' => $bagsavingvalue,
+            'shippingAmount' => $shippingAmount,
+            'couponApplied' => $request->couponApplied,
+            'couponcode' => $request->couponcode,
+            'discount_coupon_amount' => $request->discount_coupon_amount
         ];
         return Inertia::render('Front/Payment', $data);
     }
-    public function processCheckout(Request $request)
-    {
-        $user = Auth::user();
-        // Validate payment method
-        if (!in_array($request->paymentMethod, ['cod', 'card'])) {
-            return response()->json(['status' => false, 'message' => 'Invalid payment method.']);
-        }
-        // Get default address
-        $customerAddress = CustomerAddress::where('user_id', $user->id)
-            ->where('is_default', 1)
-            ->first();
-        if (!$customerAddress) {
-            return response()->json([
-                'status' => false,
-                'message' => 'No default address found. Please set one before proceeding to checkout.',
-            ]);
-        }
-        // Get user cart
-        $cartItems = Cart::where('user_id', $user->id)->get();
-        if ($cartItems->isEmpty()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Your cart is empty.',
-            ]);
-        }
-        $subtotal = $request->totalcartamount;
-        $shipping = 100.00;
-        $grandTotal = $subtotal + $shipping;
-        try {
-            // Create Order first (common for both methods)
-            $order = new Order();
-            $order->user_id = $user->id;
-            $order->subtotal = $subtotal;
-            $order->discount = 0.00;
-            $order->shipping = $shipping;
-            $order->grandtotal = $grandTotal;
-            $order->payment_status = 'not paid';
-            $order->status = 'pending';
-            $order->stripe_charge_id = null;
-            $order->shipping_date = null;
-            $order->coupon_code = null;
-            $order->firstname = $customerAddress->firstname;
-            $order->lastname = $customerAddress->lastname;
-            $order->email = $customerAddress->email;
-            $order->country_id = $customerAddress->country_id;
-            $order->apartment = $customerAddress->apartment;
-            $order->address = $customerAddress->address;
-            $order->city = $customerAddress->city;
-            $order->state = $customerAddress->state;
-            $order->zip = $customerAddress->zip;
-            $order->notes = $request->order_notes ?? null;
-            $order->save();
-            // Create order items and update stock
-            foreach ($cartItems as $item) {
-                $stock = DB::table('stocks')
-                    ->where('product_id', $item->product_id)
-                    ->where('color_id', $item->color_id)
-                    ->where('size_id', $item->size_id)
-                    ->where('status', 1)
-                    ->first();
-                if (!$stock || $item->quantity > $stock->quantity) {
-                    $order->delete();
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Stock is low for product: <strong>' . e($item->title) . '</strong>',
-                    ]);
-                }
-                DB::table('stocks')->where('id', $stock->id)->update([
-                    'quantity' => $stock->quantity - $item->quantity,
-                    'sold_quantity' => $stock->sold_quantity + $item->quantity,
-                ]);
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item->product_id,
-                    'cart_id' => $item->id,
-                    'name' => $item->title,
-                    'quantity' => $item->quantity,
-                    'price' => $item->price,
-                    'total' => $item->price * $item->quantity,
-                ]);
-            }
-            // Empty cart
-            Cart::where('user_id', $user->id)->delete();
-            // --------------------------
-            // CASH ON DELIVERY
-            // --------------------------
-            if ($request->paymentMethod === 'cod') {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Order placed successfully (COD)!',
-                    'orderId' => $order->id,
-                ]);
-            }
-            // --------------------------
-            // STRIPE PAYMENT
-            // --------------------------
-            if ($request->paymentMethod === 'card') {
-                Stripe::setApiKey(env('STRIPE_SECRET'));
-                $session = Session::create([
-                    'payment_method_types' => ['card'],
-                    'line_items' => [
-                        [
-                            'price_data' => [
-                                'currency' => 'usd',
-                                'product_data' => [
-                                    'name' => 'Order #' . $order->id,
-                                ],
-                                'unit_amount' => intval($grandTotal * 100),
-                            ],
-                            'quantity' => 1,
-                        ]
-                    ],
-                    'mode' => 'payment',
-                    'success_url' => route('front.orderPlaced') . '?session_id={CHECKOUT_SESSION_ID}',
-                    'cancel_url' => route('front.checkout'),
-                    'metadata' => [
-                        'order_id' => $order->id,
-                        'user_id' => $user->id,
-                    ],
-                ]);
-                // Save Stripe session ID
-                $order->stripe_charge_id = $session->id;
-                $order->save();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Stripe checkout session created successfully.',
-                    'orderId' => $order->id,
-                    'url' => $session->url,
-                ]);
-            }
-        } catch (\Exception $e) {
-            // Rollback if any error occurs
-            if (isset($order)) {
-                $order->delete();
-            }
-            return response()->json([
-                'status' => false,
-                'message' => 'Checkout failed: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
+
+
+
+
+
     public function orderPlaced(Request $request)
     {
         $order = Order::with('orderItems.product') // eager load items + product details
@@ -587,6 +439,15 @@ class CartController extends Controller
             'order_items' => $order->orderItems,
         ]);
     }
+
+
+
+
+
+
+
+
+
     public function getOrderSummary(Request $request)
     {
         $cartcontent = Cart::where('user_id', auth()->id())->get();
@@ -666,6 +527,7 @@ class CartController extends Controller
         return response()->json([
             'cartTotalAmount' => $newTotal,
             'couponApplied' => $coupon->code,
+            'discount_coupon' => $discount,
             'successapplied' => true,
         ]);
     }
@@ -679,18 +541,25 @@ class CartController extends Controller
         $data['keyword'] = '';
         return view('front.thanks', $data);
     }
+
+
+
+
+
+
+
+
     public function couponPage(Request $request)
     {
-        // if (!empty(Auth::user())) {
-        //     $cartcontent = Cart::where('user_id', Auth::user()->id)->get();
-        // }
-        // $cartTotalAmount = $cartcontent->sum(function ($item) {
-        //     return $item->price;
-        // });
-        $discountCoupons = DiscountCoupon::where('status', 1)->get();
+        $discountCoupons = DiscountCoupon::where('status', 1)
+            ->where('start_at', '<=', now())
+            ->where('expires_at', '>=', now())
+            ->get();
         $data['coupons'] = $discountCoupons;
-        // $data['cartcontent'] = $cartcontent;
-        $data['totalPayable'] = $request->totalPayable;
+        $data['totalcartamount'] = $request->totalcartamount;
+        $data['couponApplied'] = $request->couponApplied;
+        $data['couponcode'] = $request->couponcode;
+        $data['shippingAmount'] = $request->shippingAmount;
         return Inertia::render('Front/CouponPage', $data);
     }
 }

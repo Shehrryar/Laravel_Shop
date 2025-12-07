@@ -3,7 +3,7 @@ import { route } from "ziggy-js";
 import { Link, usePage } from "@inertiajs/react";
 import BottomNav from "./Components/BottomNav";
 const InnerCategoryPage = () => {
-    const { category, subcategories, brands } = usePage().props;
+    const { category, subcategories, brands, cartquantity } = usePage().props;
     return (
         <>
             {/* Header */}
@@ -32,6 +32,7 @@ const InnerCategoryPage = () => {
                         <li>
                             <Link href={route("front.cart")}>
                                 <i className="iconly-Buy icli" />
+                                <span>{cartquantity.totalQuantity}</span>
                             </Link>
                         </li>
                     </ul>
@@ -191,7 +192,9 @@ const InnerCategoryPage = () => {
                     {brands.map((num) => (
                         <div className="col-4" key={num.id}>
                             <Link
-                                href={route("front.brandProducts", num.id)}
+                                href={route("front.shop", {
+                                    brand_id: [num.id],
+                                })}
                                 className="brand-box"
                             >
                                 <h4

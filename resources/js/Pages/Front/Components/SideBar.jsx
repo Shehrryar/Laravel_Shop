@@ -107,13 +107,13 @@ const Sidebar = () => {
                             </Link>
                         </li>
                         <li>
-                            <a href="order-history.html">
+                            <Link href={route("account.orders")}>
                                 <i className="iconly-Document icli" />
                                 <div className="content">
                                     <h4>Orders</h4>
                                     <h6>Ongoing Orders, Recent Orders..</h6>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                         <li>
                             <Link href={route("account.wishlist")}>

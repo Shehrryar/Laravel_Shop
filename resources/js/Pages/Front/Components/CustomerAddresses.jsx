@@ -41,8 +41,10 @@ export default function CustomerAddresses({ customerAddresses = [] }) {
                                         type="radio"
                                         name="flexRadioDefault"
                                         id={`flexRadioDefault${index}`}
-                                        defaultChecked={index === 0}
+                                        checked={address.is_default === 1}
+                                        readOnly
                                     />
+
                                     <label
                                         className="form-check-label"
                                         htmlFor={`flexRadioDefault${index}`}
@@ -85,9 +87,6 @@ export default function CustomerAddresses({ customerAddresses = [] }) {
                                 >
                                     Edit
                                 </Link>
-
-
-
                             </div>
                         </li>
                     ))}

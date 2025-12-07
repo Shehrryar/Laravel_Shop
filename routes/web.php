@@ -18,6 +18,7 @@ use App\Http\Controllers\admin\ProductImageControlller;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\admin\LanguageController;
 use App\Http\Controllers\admin\OrderController;
@@ -36,6 +37,10 @@ use App\Http\Controllers\admin\FrontApiController;
 use App\Http\Controllers\admin\promotionController;
 use App\Http\Controllers\admin\onboardingController;
 use App\Http\Controllers\admin\ThemeController;
+use App\Http\Controllers\admin\HomepageLabelController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -62,7 +67,18 @@ Route::post('/delete-cart', [CartController::class, 'deleteitem'])->name('front.
 Route::post('/move-item', [CartController::class, 'moveItemToWishlist'])->name('front.moveitemtowishlist.cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('front.checkout');
 Route::get('/payment', [CartController::class, 'Payment'])->name('front.payment');
-Route::post('/process-checkout', [CartController::class, 'processCheckout'])->name('front.processCheckout');
+
+
+
+
+
+Route::post('/process-checkout', [PaymentController::class, 'processCheckout'])->name('front.processCheckout');
+Route::get('/stripeSuccess', [PaymentController::class, 'stripeSuccess'])->name('front.stripeSuccess');
+Route::get('stripe/cancel', [PaymentController::class, 'stripeCancel'])->name('stripe.cancel');
+
+
+
+
 Route::get('/order-placed', [CartController::class, 'orderPlaced'])->name('front.orderPlaced');
 Route::get('/thanks', [CartController::class, 'thankyou'])->name('front.thankyou');
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
@@ -83,6 +99,8 @@ Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name(
 
 
 Route::post('rating-saving/', action: [ShopController::class, 'productRating'])->name('front.productRating');
+
+
 Route::get('/brand/{id}', [ShopController::class, 'brandProducts'])->name('front.brandProducts');
 
 
@@ -298,6 +316,17 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/onboarding/edit/{bordedit}', [onboardingController::class, 'edit'])->name('onboarding.edit');
         Route::put('/onboarding/update/{bordupdate}', [onboardingController::class, 'update'])->name('onboarding.update');
         Route::delete('/onboarding/delete/{borddel}', [onboardingController::class, 'destroy'])->name('onboarding.delete');
+
+
+
+        // route for homepagelable
+        Route::get('homepage-labels', [HomepageLabelController::class, 'index'])->name('homepage-labels.index');
+        Route::get('homepage-labels/create', [HomepageLabelController::class, 'create'])->name('homepage-labels.create');
+        Route::post('homepage-labels', [HomepageLabelController::class, 'store'])->name('homepage-labels.store');
+        Route::get('homepage-labels/{id}/edit', [HomepageLabelController::class, 'edit'])->name('homepage-labels.edit');
+        Route::put('homepage-labels/{id}', [HomepageLabelController::class, 'update'])->name('homepage-labels.update');
+        Route::delete('homepage-labels/{id}', [HomepageLabelController::class, 'destroy'])->name('homepage-labels.delete');
+
         // added route for the chat
         Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');

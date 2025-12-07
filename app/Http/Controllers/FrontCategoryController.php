@@ -24,8 +24,6 @@ class FrontCategoryController extends Controller
         // print_r($subcategories);
         // echo '</pre>';
         // exit;
-
-
         
         return Inertia::render('Front/InnerCategaries', [
             'category' => $category,

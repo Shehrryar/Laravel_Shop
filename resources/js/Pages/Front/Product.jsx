@@ -17,7 +17,10 @@ const ProductDetails = () => {
         discounted: product.discounted_price,
         actual: product.actual_price,
         discount_value: product.discount_value,
+        baseactualprice: product.actual_price,
+        basediscountedprice: product.discounted_price,
     });
+
     const [message, setMessage] = useState({ text: "", type: "" });
     const handleSizeChange = (sizeId) => {
         setSelectedSize(sizeId);
@@ -49,46 +52,65 @@ const ProductDetails = () => {
         setQuantity(value);
         updateVariantPrice(selectedSize, selectedColor, value);
     };
+
     const updateVariantPrice = (sizeId, colorId, qty = quantity) => {
-        let basePrice = parseFloat(product.actual_price);
-        let baseDiscounted = parseFloat(product.discounted_price);
-        let discountValue = product.discount_value || 0;
-        // Add size price if available
+        // Always use product's original base price
+        const originalBasePrice = parseFloat(product.actual_price);
+        const originalDiscountedPrice = parseFloat(product.discounted_price);
+        const discountValue = product.discount_value || 0;
+
+        let finalBasePrice = originalBasePrice;
+        let finalDiscountedPrice = originalDiscountedPrice;
+
+        // Add size price if selected
         if (sizeId) {
             const size = product.size.find((s) => s.id === sizeId);
-            if (size && size.price) {
-                basePrice += parseFloat(size.price);
-                baseDiscounted += parseFloat(size.price);
+            if (size?.price) {
+                finalBasePrice += parseFloat(size.price);
+                finalDiscountedPrice += parseFloat(size.price);
             }
         }
-        // Add color price if available
+
+        // Add color price if selected
         if (colorId) {
             const color = product.color.find((c) => c.id === colorId);
-            if (color && color.price) {
-                basePrice += parseFloat(color.price);
-                baseDiscounted += parseFloat(color.price);
+            if (color?.price) {
+                finalBasePrice += parseFloat(color.price);
+                finalDiscountedPrice += parseFloat(color.price);
             }
         }
-        // Apply discount if exists
+
+        // Reapply discount on updated finalBasePrice
         if (discountValue > 0) {
-            baseDiscounted = basePrice - (basePrice * discountValue) / 100;
+            finalDiscountedPrice =
+                finalBasePrice - (finalBasePrice * discountValue) / 100;
         }
-        // Multiply by quantity
-        basePrice *= qty;
-        baseDiscounted *= qty;
+
+        // Multiply final prices by quantity
+        const finalActual = (finalBasePrice * qty).toFixed(2);
+        const finalDiscounted = (finalDiscountedPrice * qty).toFixed(2);
+
         setVariantPrice({
-            actual: basePrice.toFixed(2),
-            discounted: baseDiscounted.toFixed(2),
+            actual: finalActual,
+            discounted: finalDiscounted,
             discount_value: discountValue,
+            baseactualprice: finalBasePrice.toFixed(2),
+            basediscountedprice: finalDiscountedPrice.toFixed(2),
         });
     };
+
     const handleAddToCart = async () => {
+        const popupMessage = new bootstrap.Modal(
+            document.getElementById("popupMessage")
+        );
+
         if (product.size && product.size.length > 0) {
             if (!selectedSize) {
                 setMessage({
                     text: "Please select a size before adding to cart.",
                     type: "error",
                 });
+                popupMessage.show();
                 return;
             }
         }
@@ -98,7 +120,8 @@ const ProductDetails = () => {
                 size_id: selectedSize,
                 color_id: selectedColor, // optional
                 quantity: quantity,
-                price: variantPrice,
+                variantPrice: variantPrice,
+                page: "product",
             });
             if (
                 response.data.status === false &&
@@ -112,17 +135,20 @@ const ProductDetails = () => {
                     text: "Product added to cart successfully!",
                     type: "success",
                 });
+                popupMessage.show();
             } else {
                 setMessage({
                     text: response.data.message || "Something went wrong!",
                     type: "error",
                 });
+                popupMessage.show();
             }
         } catch (error) {
             setMessage({
                 text: "Something went wrong! Please try again.",
                 type: "error",
             });
+            popupMessage.show();
         }
         setTimeout(() => {
             setMessage({ text: "", type: "" });
@@ -133,6 +159,9 @@ const ProductDetails = () => {
     const [comment, setComment] = useState("");
     const handleStarClick = (value) => setRating(value);
     const handleSubmit = async (e) => {
+        const popupMessage = new bootstrap.Modal(
+            document.getElementById("popupMessage")
+        );
         e.preventDefault();
         try {
             const response = await axios.post(route("front.productRating"), {
@@ -149,6 +178,7 @@ const ProductDetails = () => {
                 });
                 setComment("");
                 setRating(0);
+                popupMessage.show();
 
                 router.reload({ only: ["product"] });
             } else {
@@ -158,6 +188,7 @@ const ProductDetails = () => {
                         "You have already rated this product.",
                     type: "error",
                 });
+                popupMessage.show();
             }
         } catch (error) {
             console.error("Error submitting review:", error);
@@ -165,6 +196,7 @@ const ProductDetails = () => {
                 text: "Something went wrong while submitting your review.",
                 type: "error",
             });
+            popupMessage.show();
         }
     };
 
@@ -176,7 +208,6 @@ const ProductDetails = () => {
         slidesToShow: 1,
         slidesToScroll: 1,
     };
-
 
     return (
         <>
@@ -480,22 +511,47 @@ const ProductDetails = () => {
                             >
                                 <i className="iconly-Buy icli"></i> ADD TO BAG
                             </button>
-                            {/* Message below Add to Cart */}
-                            {message.text && (
-                                <div
-                                    className={`mt-3 text-sm font-medium ${
-                                        message.type === "success"
-                                            ? "text-green-600"
-                                            : "text-red-600"
-                                    }`}
-                                >
-                                    {message.text}
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
             </section>
+
+            <div className="modal fade" id="popupMessage" aria-hidden="true">
+                <div
+                    className="modal-dialog"
+                    style={{
+                        position: "fixed",
+                        top: "20px",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        margin: 0,
+                        pointerEvents: "none",
+                    }}
+                >
+                    <div
+                        className={`alert alert-${
+                            message.type === "success" ? "success" : "danger"
+                        } d-flex align-items-center justify-content-between`}
+                        role="alert"
+                        style={{
+                            minWidth: "260px",
+                            pointerEvents: "auto", // allow clicking inside
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                        }}
+                    >
+                        <span>{message.text}</span>
+
+                        {/* Close Button */}
+                        <button
+                            type="button"
+                            className="btn-close ms-3"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                            onClick={() => setMessage({ text: "", type: "" })}
+                        ></button>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

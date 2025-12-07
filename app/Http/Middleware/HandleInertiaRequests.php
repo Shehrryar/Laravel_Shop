@@ -44,7 +44,7 @@ class HandleInertiaRequests extends Middleware
 
             ],
             'categories' => fn() => getcategories(),
-            'cart' => fn() => getcartquantityandtotal(),
+            'cartquantity' => fn() => getcartquantityandtotal(),
         ]);
     }
 }

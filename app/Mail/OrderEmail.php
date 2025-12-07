@@ -1,14 +1,11 @@
 <?php
-
 namespace App\Mail;
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-
 class OrderEmail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -20,7 +17,6 @@ class OrderEmail extends Mailable
     {
         $this->mailData = $mailData;
     }
-
     /**
      * Get the message envelope.
      */
@@ -30,7 +26,6 @@ class OrderEmail extends Mailable
             subject: $this->mailData['subject'],
         );
     }
-
     /**
      * Get the message content definition.
      */
@@ -40,7 +35,6 @@ class OrderEmail extends Mailable
             view: 'email.order',
         );
     }
-
     /**
      * Get the attachments for the message.
      *

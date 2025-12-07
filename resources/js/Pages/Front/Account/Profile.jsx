@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Slider from "react-slick";
+import BottomNav from "../Components/BottomNav";
 import { route } from "ziggy-js";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { Link, usePage } from "@inertiajs/react";
 export default function Profile() {
     const { user } = usePage().props;
@@ -102,7 +100,7 @@ export default function Profile() {
                     </li>
                     {/* Orders */}
                     <li>
-                        <Link>
+                        <Link href={route("account.orders")}>
                             <i className="iconly-Document icli"></i>
                             <div className="content">
                                 <h4>Orders</h4>
@@ -223,50 +221,7 @@ export default function Profile() {
             {/* Link section end */}
             {/* Panel space */}
             <section className="panel-space"></section>
-            <div className="bottom-panel">
-                <ul>
-                    {[
-                        {
-                            to: route("front.home"),
-                            label: "Home",
-                            icon: "Home",
-                        },
-                        {
-                            to: route("product.getCategories"),
-                            label: "Category",
-                            icon: "Category",
-                        },
-                        { to: route("front.cart"), label: "Cart", icon: "Buy" },
-                        {
-                            to: route("account.wishlist"),
-                            label: "Wishlist",
-                            icon: "Heart",
-                        },
-                        {
-                            to: route("account.profile"),
-                            label: "Profile",
-                            icon: "Profile",
-                        },
-                    ].map((item, index) => (
-                        <li
-                            className={index === 0 ? "active" : ""}
-                            key={item.label}
-                        >
-                            <Link href={item.to}>
-                                <div className="icon">
-                                    <i
-                                        className={`iconly-${item.icon.toLowerCase()} icli`}
-                                    />
-                                    <i
-                                        className={`iconly-${item.icon.toLowerCase()} icbo`}
-                                    />
-                                </div>
-                                <span>{item.label}</span>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            <BottomNav />
         </>
     );
 }

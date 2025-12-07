@@ -198,6 +198,18 @@
                         <p>Onboarding</p>
                     </a>
                 </li>
+
+
+                
+                <li class="nav-item">
+                    <a href="{{ route('homepage-labels.index') }}" class="nav-link">
+                        <i class="nav-icon far fa-file-alt"></i>
+                        <p>Homepage Label</p>
+                    </a>
+                </li>
+
+
+
                 <li class="nav-item">
                     <a href="pages.html" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>

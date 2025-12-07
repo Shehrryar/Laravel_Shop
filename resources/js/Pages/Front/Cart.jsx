@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Link, usePage, router } from "@inertiajs/react";
 import ProductSlider from "./Components/ProductSlider";
 import EmptyCart from "./Components/EmptyCart";
 import { route } from "ziggy-js";
+
 export default function CartPage() {
     const {
         cartcontent,
@@ -17,11 +18,10 @@ export default function CartPage() {
         bagsavingvalue,
     } = usePage().props;
 
-    console.log(cartcontent);
-
     const [selecteditemId, setSelectedItemId] = useState(null);
     const [selectedItemToWishlist, setSelectedItemToWishlist] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(null);
     // New states for size/color selection and dynamic price
     const [quantity, setQuantity] = useState(1);
     const [availableSizes, setAvailableSizes] = useState([]);
@@ -31,21 +31,58 @@ export default function CartPage() {
     const [priceSize, setSizePrice] = useState(null);
     const [priceColor, setColorPrice] = useState(null);
     const [message, setMessage] = useState({ text: "", type: "" });
-    // const [updatedPrice, setUpdatedPrice] = useState(null);
+
     // State for variant price
-    const [variantPrice, setVariantPrice] = useState({
-        actual: 0,
-        discounted: 0,
-        discount_value: 0,
-    });
-    const updateVariantPrice = (sizeId, colorId, qty = quantity) => {
-        if (!selectedItem) return;
-        let basePrice = parseFloat(selectedItem.product.actual_price || 0);
+    const [variantPrice, setVariantPrice] = useState([]);
+
+    useEffect(() => {
+        if (cartcontent && cartcontent.length > 0) {
+            const prices = cartcontent.map((item) => ({
+                actual: item.price,
+                discounted: item.discounted_price,
+                discount_value: item.discounted_value,
+            }));
+
+            setVariantPrice(prices);
+        }
+    }, [cartcontent]);
+
+    const totalActual = useMemo(
+        () =>
+            variantPrice.reduce(
+                (sum, p) => sum + parseFloat(p?.actual || 0),
+                0
+            ),
+        [variantPrice]
+    );
+
+    const totalDiscounted = useMemo(
+        () =>
+            variantPrice.reduce((sum, p) => {
+                const discValue = parseFloat(p?.discount_value || 0);
+                const effectiveDiscounted =
+                    discValue > 0
+                        ? parseFloat(p?.discounted || 0)
+                        : parseFloat(p?.actual || 0);
+                return sum + effectiveDiscounted;
+            }, 0),
+        [variantPrice]
+    );
+
+    const totalSavings = totalActual - totalDiscounted;
+    const hasDiscount = totalSavings > 0;
+
+    const dynamicTotalPayable =
+        totalDiscounted + parseFloat(shippingAmount || 0);
+
+    const updateVariantPrice = (item, sizeId, colorId, qty = 1, index) => {
+        let basePrice = parseFloat(item.product.actual_price || 0);
         let baseDiscounted = parseFloat(
-            selectedItem.product.discounted_price || basePrice
+            item.product.discounted_price || basePrice
         );
-        let discountValue = selectedItem.product.discount_value || 0;
-        // Add size price
+        let discountValue = item.product.discount_value || 0;
+
+        // Size price
         if (sizeId) {
             const sizeObj = sizes.find(
                 (s) => parseInt(s.id) === parseInt(sizeId)
@@ -55,7 +92,8 @@ export default function CartPage() {
                 baseDiscounted += parseFloat(sizeObj.price);
             }
         }
-        // Add color price
+
+        // Color price
         if (colorId) {
             const colorObj = colors.find(
                 (c) => parseInt(c.id) === parseInt(colorId)
@@ -65,23 +103,30 @@ export default function CartPage() {
                 baseDiscounted += parseFloat(colorObj.price);
             }
         }
+
         // Apply discount
         if (discountValue > 0) {
             baseDiscounted = basePrice - (basePrice * discountValue) / 100;
         }
+
         // Multiply by quantity
-        basePrice *= Number(qty);
-        baseDiscounted *= Number(qty);
-        //  Store as object (array-like structure)
-        setVariantPrice({
-            actual: basePrice.toFixed(2),
-            discounted: baseDiscounted.toFixed(2),
-            discount_value: discountValue,
+        basePrice *= qty;
+        baseDiscounted *= qty;
+
+        setVariantPrice((prev) => {
+            const newArr = [...prev];
+            newArr[index] = {
+                actual: basePrice.toFixed(2),
+                discounted: baseDiscounted.toFixed(2),
+                discount_value: discountValue,
+            };
+            return newArr;
         });
     };
+
     const handlesetQuantity = (q) => {
         const newQty = Number(q);
-        if (!selectedItem) return;
+        if (!selectedItem || currentIndex === null) return;
         const selectedSizeObj = sizes.find(
             (s) => parseInt(s.id) === parseInt(selectedItem.size_id)
         );
@@ -97,39 +142,78 @@ export default function CartPage() {
         setColorPrice(colorPrice);
         setQuantity(newQty);
         // Update variant price using *new values directly*
-        updateVariantPrice(selectedSize, selectedColor, newQty);
+        updateVariantPrice(
+            selectedItem,
+            selectedSize,
+            selectedColor,
+            newQty,
+            currentIndex
+        );
     };
+
     // size updation
     const handleSizeChange = (s) => {
         setSelectedSize(s.id);
         setSizePrice(s.price);
         // Recalculate price immediately
-        updateVariantPrice(s.id, selectedColor, quantity);
+        if (currentIndex !== null) {
+            updateVariantPrice(
+                selectedItem,
+                s.id,
+                selectedColor,
+                quantity,
+                currentIndex
+            );
+        }
     };
     // color updation
     const handleColorChange = (c) => {
         setSelectedColor(c.id);
         setColorPrice(c.price);
         // Recalculate price immediately
-        updateVariantPrice(selectedSize, c.id, quantity);
+        if (currentIndex !== null) {
+            updateVariantPrice(
+                selectedItem,
+                selectedSize,
+                c.id,
+                quantity,
+                currentIndex
+            );
+        }
     };
+
     const handleAddToCart = async () => {
-        if (!selectedItem) return;
+        if (!selectedItem || currentIndex === null) return;
         try {
+            const unitPrice =
+                quantity > 0
+                    ? (
+                          parseFloat(
+                              variantPrice[currentIndex]?.discounted || 0
+                          ) / quantity
+                      ).toFixed(2)
+                    : 0;
             const response = await axios.post(route("front.addToCart"), {
                 product_id: selectedItem.product_id,
                 size_id: selectedSize || 0,
                 color_id: selectedColor || 0,
                 quantity: quantity,
-                price: variantPrice,
+                price: unitPrice,
+                variantPrice: variantPrice[currentIndex] || 0,
+                page: "cart",
             });
             // Show success or error message
             setMessage({
                 text: response.data.message || "Something went wrong!",
                 type: response.data.status ? "success" : "error",
             });
-            // Hide message after 5 seconds
-            setTimeout(() => setMessage({ text: "", type: "" }), 5000);
+
+            // Show popup message
+            const popupMessage = new bootstrap.Modal(
+                document.getElementById("popupMessage")
+            );
+            popupMessage.show();
+
             // Close offcanvas manually if open
             const offcanvasIds = ["selectQty", "selectSize", "selectColor"];
             offcanvasIds.forEach((id) => {
@@ -148,14 +232,33 @@ export default function CartPage() {
             setTimeout(() => setMessage({ text: "", type: "" }), 5000);
         }
     };
+
     const handleremoveproduct = async () => {
+        const popupMessage = new bootstrap.Modal(
+            document.getElementById("popupMessage")
+        );
         try {
             const response = await axios.post(route("front.deleteitem.cart"), {
                 item_id: selecteditemId,
                 action: "removefromcart",
             });
             if (response.data.status === true) {
+                // Close offcanvas
+                const offcanvasEl = document.getElementById("removecart");
+                if (offcanvasEl) {
+                    const bsOffcanvas =
+                        bootstrap.Offcanvas.getInstance(offcanvasEl);
+                    if (bsOffcanvas) bsOffcanvas.hide();
+                }
                 router.reload({ only: ["cartcontent"] });
+
+                setMessage({
+                    text: response.data.message || "Something went wrong!",
+                    type: response.data.status ? "success" : "error",
+                });
+                popupMessage.show();
+                // Hide message after 5 seconds
+                setTimeout(() => setMessage({ text: "", type: "" }), 5000);
             }
         } catch (error) {
             console.error("Error removing item:", error);
@@ -170,6 +273,13 @@ export default function CartPage() {
                 action: "AddtoWishlist",
             });
             if (response.data.status === true) {
+                // Close offcanvas
+                const offcanvasEl = document.getElementById("removecart");
+                if (offcanvasEl) {
+                    const bsOffcanvas =
+                        bootstrap.Offcanvas.getInstance(offcanvasEl);
+                    if (bsOffcanvas) bsOffcanvas.hide();
+                }
                 router.reload({ only: ["cartcontent"] });
             }
         } catch (error) {
@@ -179,18 +289,7 @@ export default function CartPage() {
 
     const handlePlaceOrder = (e) => {
         e.preventDefault();
-        router.get(route("front.checkout"), {
-            totalcartamount: carttotalamount,
-            cartcontent: cartcontent,
-        });
-    };
-
-    const goToCoupons = () => {
-        router.visit(route("front.coupons"), {
-            data: {
-                totalPayable: totalPayable, // pass the total amount including shipping
-            },
-        });
+        router.get(route("front.checkout"));
     };
 
     return (
@@ -221,28 +320,7 @@ export default function CartPage() {
                     {/* Header End */}
                     {/* Cart Items */}
                     <section className="cart-section pt-0 top-space">
-                        {message.text && (
-                            <div
-                                className={`alert alert-${
-                                    message.type === "success"
-                                        ? "success"
-                                        : "danger"
-                                } alert-dismissible fade show text-center mx-3 mt-3`}
-                                role="alert"
-                            >
-                                {message.text}
-                                <button
-                                    type="button"
-                                    className="btn-close"
-                                    data-bs-dismiss="alert"
-                                    aria-label="Close"
-                                    onClick={() =>
-                                        setMessage({ text: "", type: "" })
-                                    }
-                                ></button>
-                            </div>
-                        )}
-                        {cartcontent.map((item) => (
+                        {cartcontent.map((item, i) => (
                             <div key={item.id}>
                                 <div className="cart-box px-15">
                                     <a href="#" className="cart-img">
@@ -260,20 +338,29 @@ export default function CartPage() {
                                         <a href="#">
                                             <h4>{item.title}</h4>
                                         </a>
+
                                         <div className="price">
-                                            {parseFloat(item.discounted_value) >
+                                            {variantPrice[i]?.discount_value >
                                             0 ? (
                                                 <h4>
-                                                    ${item.discounted_price}{" "}
+                                                    $
+                                                    {variantPrice[i].discounted}
                                                     <del className="text-muted small ms-1">
-                                                        ${item.price}
-                                                    </del>{" "}
+                                                        $
+                                                        {variantPrice[i].actual}
+                                                    </del>
                                                     <span className="text-danger ms-1">
-                                                        {item.discounted_value}%
+                                                        {
+                                                            variantPrice[i]
+                                                                .discount_value
+                                                        }
+                                                        %
                                                     </span>
                                                 </h4>
                                             ) : (
-                                                <h4>${item.price}</h4>
+                                                <h4>
+                                                    ${variantPrice[i]?.actual}
+                                                </h4>
                                             )}
                                         </div>
 
@@ -286,6 +373,7 @@ export default function CartPage() {
                                                 onClick={() => {
                                                     setQuantity(item.quantity);
                                                     setSelectedItem(item);
+                                                    setCurrentIndex(i);
                                                     setSelectedSize(
                                                         item.size_id
                                                     );
@@ -293,9 +381,11 @@ export default function CartPage() {
                                                         item.color_id
                                                     );
                                                     updateVariantPrice(
+                                                        item,
                                                         item.size_id,
                                                         item.color_id,
-                                                        item.quantity
+                                                        item.quantity,
+                                                        i
                                                     );
                                                 }}
                                             >
@@ -312,6 +402,7 @@ export default function CartPage() {
                                                     className="option"
                                                     onClick={() => {
                                                         setSelectedItem(item);
+                                                        setCurrentIndex(i);
                                                         const filteredSizes =
                                                             sizes.filter(
                                                                 (s) =>
@@ -342,7 +433,8 @@ export default function CartPage() {
                                                                     )
                                                             );
                                                         setSizePrice(
-                                                            selectedSizeObj.price
+                                                            selectedSizeObj?.price ||
+                                                                0
                                                         );
                                                         const selectedColorObj =
                                                             colors.find(
@@ -355,15 +447,18 @@ export default function CartPage() {
                                                                     )
                                                             );
                                                         setColorPrice(
-                                                            selectedColorObj.price
+                                                            selectedColorObj?.price ||
+                                                                0
                                                         );
                                                         setQuantity(
                                                             item.quantity
                                                         );
                                                         updateVariantPrice(
+                                                            item,
                                                             item.size_id,
                                                             item.color_id,
-                                                            item.quantity
+                                                            item.quantity,
+                                                            i
                                                         );
                                                     }}
                                                 >
@@ -389,6 +484,7 @@ export default function CartPage() {
                                                     className="option"
                                                     onClick={() => {
                                                         setSelectedItem(item);
+                                                        setCurrentIndex(i);
                                                         const filteredColors =
                                                             colors.filter(
                                                                 (c) =>
@@ -419,7 +515,8 @@ export default function CartPage() {
                                                                     )
                                                             );
                                                         setColorPrice(
-                                                            selectedColorObj.price
+                                                            selectedColorObj?.price ||
+                                                                0
                                                         );
                                                         const selectedSizeObj =
                                                             sizes.find(
@@ -432,15 +529,18 @@ export default function CartPage() {
                                                                     )
                                                             );
                                                         setSizePrice(
-                                                            selectedSizeObj.price
+                                                            selectedSizeObj?.price ||
+                                                                0
                                                         );
                                                         setQuantity(
                                                             item.quantity
                                                         );
                                                         updateVariantPrice(
+                                                            item,
                                                             item.size_id,
                                                             item.color_id,
-                                                            item.quantity
+                                                            item.quantity,
+                                                            i
                                                         );
                                                     }}
                                                 >
@@ -502,7 +602,8 @@ export default function CartPage() {
                     <div className="divider"></div>
                     {/* You may also like section end */}
                     {/* Coupon section */}
-                    <section className="px-15 pt-0">
+
+                    {/* <section className="px-15 pt-0">
                         <h2 className="title">Coupons:</h2>
                         <div className="coupon-section">
                             <i className="iconly-Discount icli icon-discount"></i>
@@ -513,7 +614,8 @@ export default function CartPage() {
                             <i className="iconly-Arrow-Right-2 icli icon-right"></i>
                         </div>
                     </section>
-                    <div className="divider"></div>
+                    <div className="divider"></div> */}
+
                     <section id="order-details" className="px-15 pt-0">
                         <h2 className="title">Order Details:</h2>
                         <div className="order-details">
@@ -521,31 +623,20 @@ export default function CartPage() {
                                 <li>
                                     <h4>
                                         Bag total{" "}
-                                        <span>${carttotalamount}</span>
+                                        <span>${totalActual.toFixed(2)}</span>
                                     </h4>
                                 </li>
-                                <li>
-                                    <h4>
-                                        Bag savings{" "}
-                                        <span className="text-green">
-                                            -${" "}
-                                            {
-                                                variantPrice.actual &&
-                                                variantPrice.discounted
-                                                    ? (
-                                                          parseFloat(
-                                                              variantPrice.actual
-                                                          ) -
-                                                          parseFloat(
-                                                              variantPrice.discounted
-                                                          )
-                                                      ).toFixed(2)
-                                                    : bagsavingvalue // fallback value from page load
-                                            }
-                                        </span>
-                                    </h4>
-                                </li>
-                                <li>
+                                {hasDiscount && (
+                                    <li>
+                                        <h4>
+                                            Bag savings{" "}
+                                            <span className="text-green">
+                                                -${totalSavings.toFixed(2)}
+                                            </span>
+                                        </h4>
+                                    </li>
+                                )}
+                                {/* <li>
                                     <h4>
                                         Coupon Discount{" "}
                                         <span
@@ -556,7 +647,7 @@ export default function CartPage() {
                                             Apply Coupon
                                         </span>
                                     </h4>
-                                </li>
+                                </li> */}
                                 <li>
                                     <h4>
                                         Delivery <span>${shippingAmount}</span>
@@ -565,7 +656,10 @@ export default function CartPage() {
                             </ul>
                             <div className="total-amount">
                                 <h4>
-                                    Total Amount <span>${totalPayable}</span>
+                                    Total Amount{" "}
+                                    <span>
+                                        ${dynamicTotalPayable.toFixed(2)}
+                                    </span>
                                 </h4>
                             </div>
                             <div className="delivery-info">
@@ -628,7 +722,7 @@ export default function CartPage() {
                     <div className="cart-bottom">
                         <div>
                             <div className="left-content">
-                                <h4>${totalPayable}</h4>
+                                <h4>${dynamicTotalPayable.toFixed(2)}</h4>
                                 <a
                                     href="#order-details"
                                     className="theme-color"
@@ -662,7 +756,6 @@ export default function CartPage() {
                             />
                             <button
                                 className="btn btn-solid w-100 mt-3"
-                                data-bs-dismiss="offcanvas"
                                 onClick={handleAddToCart}
                             >
                                 Add to Bag
@@ -702,11 +795,15 @@ export default function CartPage() {
                                 </ul>
                             </div>
                             <div className="price mb-3">
-                                <h4>${variantPrice.actual}</h4>
+                                <h4>
+                                    $
+                                    {variantPrice[currentIndex]
+                                        ? variantPrice[currentIndex].discounted
+                                        : 0}
+                                </h4>
                             </div>
                             <button
                                 className="btn btn-solid w-100"
-                                data-bs-dismiss="offcanvas"
                                 onClick={handleAddToCart}
                             >
                                 DONE
@@ -746,13 +843,15 @@ export default function CartPage() {
                             </div>
                             <div className="mb-3">
                                 <h5 className="mb-0">
-                                    Price: ${variantPrice.actual}
+                                    Price: $
+                                    {variantPrice[currentIndex]
+                                        ? variantPrice[currentIndex].discounted
+                                        : 0}
                                 </h5>
                             </div>
                             <button
                                 type="button"
-                                className="btn btn-success w-100"
-                                data-bs-dismiss="offcanvas"
+                                className="btn btn-solid w-100"
                                 onClick={handleAddToCart}
                             >
                                 DONE
@@ -800,6 +899,43 @@ export default function CartPage() {
             ) : (
                 <EmptyCart />
             )}
+
+            <div className="modal fade" id="popupMessage" aria-hidden="true">
+                <div
+                    className="modal-dialog"
+                    style={{
+                        position: "fixed",
+                        top: "20px",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        margin: 0,
+                        pointerEvents: "none",
+                    }}
+                >
+                    <div
+                        className={`alert alert-${
+                            message.type === "success" ? "success" : "danger"
+                        } d-flex align-items-center justify-content-between`}
+                        role="alert"
+                        style={{
+                            minWidth: "260px",
+                            pointerEvents: "auto", // allow clicking inside
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                        }}
+                    >
+                        <span>{message.text}</span>
+
+                        {/* Close Button */}
+                        <button
+                            type="button"
+                            className="btn-close ms-3"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                            onClick={() => setMessage({ text: "", type: "" })}
+                        ></button>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }

@@ -7,17 +7,35 @@ import { loadStripe } from "@stripe/stripe-js";
 const stripePromise = loadStripe("pk_test_123456789");
 
 const PaymentDetails = () => {
-    const { totalcartamount, cartcontent } = usePage().props;
+    const {
+        totalcartamount,
+        bagsavingvalue,
+        totalPayable,
+        shippingAmount,
+        couponApplied,
+        couponcode,
+        discount_coupon_amount,
+    } = usePage().props;
     // Fixed: Proper useState (no TS syntax)
     const [paymentMethod, setPaymentMethod] = useState("cod");
     const [loading, setLoading] = useState(false);
     const redirectToPrevious = (e) => {
         e.preventDefault();
-        router.get(route("front.checkout"), {
-            totalcartamount,
-            cartcontent,
+        router.get(route("front.checkout"));
+    };
+
+    const goToCoupons = () => {
+        router.visit(route("front.coupons"), {
+            data: {
+                totalcartamount: totalcartamount,
+                // totalPayable: totalcartamount,
+                shippingAmount: shippingAmount,
+                couponApplied: couponApplied,
+                couponcode: couponcode,
+            },
         });
     };
+
     const handlePaymentNow = async (e) => {
         e.preventDefault();
         if (paymentMethod === "cod") {
@@ -27,8 +45,10 @@ const PaymentDetails = () => {
                     route("front.processCheckout"),
                     {
                         totalcartamount,
-                        cartcontent,
                         paymentMethod,
+                        totalPayable,
+                        shippingAmount,
+                        discount_coupon_amount,
                     }
                 );
                 if (response.data.status) {
@@ -46,8 +66,9 @@ const PaymentDetails = () => {
                     route("front.processCheckout"),
                     {
                         totalcartamount,
-                        cartcontent,
                         paymentMethod,
+                        totalPayable,
+                        shippingAmount,
                     }
                 );
                 if (response.data.url) {
@@ -177,75 +198,6 @@ const PaymentDetails = () => {
                                 </label>
                             </div>
                         </div>
-                        <div
-                            id="two"
-                            className="collapse"
-                            aria-labelledby="h_two"
-                            data-bs-parent="#accordionExample"
-                        >
-                            {/* <div className="card-body">
-                                <form
-                                    className="pt-2"
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        handlePaymentNow(e);
-                                    }}
-                                >
-                                    <div className="form-floating mb-4">
-                                        <label htmlFor="c-name">
-                                            name on card
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="c-name"
-                                            placeholder="name on card"
-                                        />
-                                    </div>
-                                    <div className="form-floating mb-4">
-                                        <label htmlFor="c1name">
-                                            card number
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="c1name"
-                                            placeholder="card number"
-                                        />
-                                    </div>
-                                    <div className="row">
-                                        <div className="form-floating mb-4 col-8">
-                                            <label htmlFor="cname">
-                                                expiration date
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="cname"
-                                                placeholder="MM/YY"
-                                            />
-                                        </div>
-                                        <div className="form-floating mb-4 col-4">
-                                            <label htmlFor="c2name">CVV</label>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="c2name"
-                                                placeholder="CVV"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="payment-btn">
-                                        <button
-                                            type="submit"
-                                            className="btn btn-solid color1"
-                                        >
-                                            make payment
-                                        </button>
-                                    </div>
-                                </form>
-                            </div> */}
-                        </div>
                     </div>
                     {/* Wallets */}
                     <div className="card">
@@ -261,184 +213,46 @@ const PaymentDetails = () => {
                                         className="img-fluid"
                                         alt=""
                                     />
-                                    Wallets
+                                    Paypal
                                     <input
                                         type="radio"
                                         className="radio_animated"
                                         id="r_three"
                                         name="payment_method"
-                                        checked={paymentMethod === "wallet"}
+                                        checked={paymentMethod === "Paypal"}
                                         onChange={() =>
-                                            handleMethodChange("wallet")
+                                            handleMethodChange("Paypal")
                                         }
                                         required
                                     />
                                 </label>
-                            </div>
-                        </div>
-                        <div
-                            id="three"
-                            className="collapse"
-                            aria-labelledby="h_three"
-                            data-bs-parent="#accordionExample"
-                        >
-                            <div className="card-body">
-                                <form
-                                    className="wallet-section"
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        handlePaymentNow(e);
-                                    }}
-                                >
-                                    <h4 className="page-title">
-                                        Select Popular Banks
-                                    </h4>
-                                    <div>
-                                        {[
-                                            "Industrial & Commercial Bank",
-                                            "Construction Bank Corp.",
-                                            "Agricultural Bank",
-                                            "HSBC Holdings",
-                                            "Bank of America",
-                                            "JPMorgan Chase & Co.",
-                                        ].map((bank, index) => (
-                                            <div
-                                                className="form-check ps-0 mb-1"
-                                                key={index}
-                                            >
-                                                <input
-                                                    className="radio_animated"
-                                                    type="radio"
-                                                    name="exampleRadios1"
-                                                    id={`Radios${index}`}
-                                                    defaultChecked={index === 0}
-                                                />
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor={`Radios${index}`}
-                                                >
-                                                    {bank}
-                                                </label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="form-floating mt-3">
-                                        <select
-                                            className="form-select"
-                                            id="floatingSelect"
-                                            defaultValue="1"
-                                        >
-                                            <option disabled value="1">
-                                                Choose Bank...
-                                            </option>
-                                            <option value="2">ICICI</option>
-                                            <option value="3">BOB</option>
-                                        </select>
-                                        <label htmlFor="floatingSelect">
-                                            Choose Bank
-                                        </label>
-                                    </div>
-                                    <div className="payment-btn">
-                                        <button
-                                            type="submit"
-                                            className="btn btn-solid mt-4"
-                                        >
-                                            make payment
-                                        </button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
                     {/* Net Banking */}
-                    <div className="card">
-                        <div className="card-header" id="h_four">
-                            <div
-                                className="btn btn-link"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#four"
-                            >
-                                <label htmlFor="r_four">
-                                    <img
-                                        src="/assets/images/payment/4.png"
-                                        className="img-fluid"
-                                        alt=""
-                                    />
-                                    Net Banking
-                                    <input
-                                        type="radio"
-                                        className="radio_animated"
-                                        id="r_four"
-                                        name="payment_method"
-                                        checked={paymentMethod === "netbanking"}
-                                        onChange={() =>
-                                            handleMethodChange("netbanking")
-                                        }
-                                        required
-                                    />
-                                </label>
-                            </div>
-                        </div>
-                        <div
-                            id="four"
-                            className="collapse"
-                            aria-labelledby="h_four"
-                            data-bs-parent="#accordionExample"
-                        >
-                            <div className="card-body">
-                                <form
-                                    className="wallet-section"
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        handlePaymentNow(e);
-                                    }}
-                                >
-                                    <h4 className="page-title">
-                                        Select Your Wallet
-                                    </h4>
-                                    <div>
-                                        {[
-                                            "Adyen",
-                                            "Airtel Money",
-                                            "AlliedWallet",
-                                            "Apple Pay",
-                                            "Brinks",
-                                            "CardFree",
-                                        ].map((wallet, index) => (
-                                            <div
-                                                className="form-check ps-0 mb-1"
-                                                key={index}
-                                            >
-                                                <input
-                                                    className="radio_animated"
-                                                    type="radio"
-                                                    name="exampleRadios2"
-                                                    id={`exampleRadios${index}`}
-                                                    defaultChecked={index === 0}
-                                                />
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor={`exampleRadios${index}`}
-                                                >
-                                                    {wallet}
-                                                </label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="payment-btn mt-4">
-                                        <button
-                                            type="submit"
-                                            className="btn btn-solid"
-                                        >
-                                            make payment
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
+            <div className="divider"></div>
+
+            <section className="px-15 pt-0">
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <h4>Coupon Discount</h4>
+                    <span
+                        onClick={goToCoupons}
+                        className="theme-color"
+                        style={{ cursor: "pointer", fontWeight: "600" }}
+                    >
+                        Apply Coupon
+                    </span>
+                </div>
+            </section>
+
             <div className="divider"></div>
             {/* Order Details */}
             <section className="px-15 pt-0">
@@ -453,26 +267,28 @@ const PaymentDetails = () => {
                         <li>
                             <h4>
                                 Bag savings{" "}
-                                <span className="text-green">-$20.00</span>
+                                <span className="text-green">
+                                    -${bagsavingvalue}
+                                </span>
                             </h4>
                         </li>
-                        {/* <li>
-                            <h4>
-                                Coupon Discount{" "}
-                                <Link className="theme-color">
-                                    Apply Coupon
-                                </Link>
-                            </h4>
-                        </li> */}
                         <li>
                             <h4>
-                                Delivery <span>$50.00</span>
+                                Coupon Discount{" "}
+                                <span className="text-green">
+                                    -${discount_coupon_amount}
+                                </span>
+                            </h4>
+                        </li>
+                        <li>
+                            <h4>
+                                Delivery <span>${shippingAmount}</span>
                             </h4>
                         </li>
                     </ul>
                     <div className="total-amount">
                         <h4>
-                            Total Amount <span>${totalcartamount}</span>
+                            Total Amount <span>${totalPayable}</span>
                         </h4>
                     </div>
                 </div>
@@ -482,10 +298,10 @@ const PaymentDetails = () => {
             <div className="cart-bottom">
                 <div>
                     <div className="left-content">
-                        <h4>${totalcartamount}</h4>
-                        <a href="#" className="theme-color">
+                        <h4>${totalPayable}</h4>
+                        {/* <a href="#" className="theme-color">
                             View details
-                        </a>
+                        </a> */}
                     </div>
                     <Link onClick={handlePaymentNow} className="btn btn-solid">
                         Pay Now

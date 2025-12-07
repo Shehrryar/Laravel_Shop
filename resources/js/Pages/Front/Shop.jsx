@@ -14,6 +14,7 @@ const WomenCollection = () => {
         cat_slug,
         subcat_slug,
         subsubcat_slug,
+        cartquantity,
     } = usePage().props;
     const [sortValue, setSortValue] = useState("");
     const [selectedBrands, setSelectedBrands] = useState([]);
@@ -97,6 +98,7 @@ const WomenCollection = () => {
                         <li>
                             <Link href={route("front.cart")}>
                                 <i className="iconly-Buy icli"></i>
+                                <span>{cartquantity.totalQuantity}</span>
                             </Link>
                         </li>
                     </ul>
@@ -148,10 +150,12 @@ const WomenCollection = () => {
                                         </Link>
 
                                         {/* Wishlist Button */}
+
                                         <WishlistButton
                                             productId={prod.id}
                                             isWishlisted={wishlist[prod.id]}
                                         />
+
                                         {/* NEW Badge Example */}
                                         {prod.is_new && (
                                             <label className="badge bg-danger position-absolute top-0 start-0 m-2">

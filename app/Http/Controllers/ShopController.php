@@ -18,7 +18,7 @@ use App\Models\Color;
 use Inertia\Inertia;
 class ShopController extends Controller
 {
-    public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null)
+    public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null, $brandid = null)
     {
         $subcategroy_selected = "";
         $categroy_selected = "";
@@ -47,6 +47,16 @@ class ShopController extends Controller
             // $brandsArray = explode(',', $request->get('brand_id'));
             $products = $products->whereIn('brands_id', $brandsArray);
         }
+
+        if (!empty($request->get('disct_id'))) {
+            $discountId = $request->get('disct_id'); // single id
+            $discount = Discount::whereIn('id', $discountId)->first();
+            if ($discount && !empty($discount->product_ids)) {
+                $productIds = explode(',', $discount->product_ids);                // Fetch products
+                $products = $products->whereIn('id', $productIds);
+            }
+        }
+
         if ($request->get('price') != '') {
             $products = $products->whereBetween('price', [intval(value: 0), intval($request->get('price'))]);
         }
@@ -131,13 +141,29 @@ class ShopController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->firstOrFail();
+
+
+
         // Fetch related products by category
         $samcatproduct = Product::where('categories_id', $product->categories_id)
             ->with(['product_ratings', 'product_images'])
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->get();
-        $discount = Discount::where('status', 1)->get();
+
+
+
+
+        $today = now()->toDateString();
+
+        $discount = Discount::where('status', 1)
+            ->whereDate('start_at', '<=', $today)
+            ->whereDate('expires_at', '>=', $today)
+            ->get();
+
+
+
+
         $samcatproduct->transform(function ($product) use ($discount) {
             $discountData = getDiscountedPrice($product->id, $discount, $product->price);
             // If product already has a discount_value
@@ -169,10 +195,16 @@ class ShopController extends Controller
             'product_id' => $product->id,
             'user_id' => auth()->id(),
         ]);
+
+
+
+
         $getprice = getDiscountedPrice($product->id, $discount, $product->price);
         $product->discount_value = $getprice['discount_value'];
         $product->discounted_price = $getprice['discounted_price'];
         $product->actual_price = $getprice['actual_price'];
+
+
         $stockHandle = handleStock($product->id, 0, 0);
         $wishlistitems = collect();
         if (!empty(Auth::user())) {
@@ -238,51 +270,5 @@ class ShopController extends Controller
             'status' => true,
             'message' => 'Thanks for your rating!',
         ]);
-    }
-    public function brandProducts($id)
-    {
-        $brand = Brand::findOrFail($id);
-        // Fetch products and paginate first
-        $products = Product::where('brands_id', $id)
-            ->with('product_images')
-            ->withCount('product_ratings')
-            ->withSum('product_ratings', 'rating')
-            ->paginate(10);
-        // Now we can transform the paginated collection
-        $discounts = Discount::where('status', 1)->get();
-        $products->getCollection()->transform(function ($product) use ($discounts) {
-            $discountData = getDiscountedPrice($product->id, $discounts, $product->price);
-            if ($product->discount_value != "") {
-                $product->discount_value = $discountData['discount_value'];
-                $product->discounted_price = $discountData['discounted_price'];
-                $product->actual_price = $discountData['actual_price'];
-            } else {
-                $product->discount_value = $discountData['discount_value'];
-                $product->actual_price = $discountData['discounted_price'];
-                $product->discounted_price = $discountData['actual_price'];
-            }
-            return $product;
-        });
-        // Fetch wishlist if user is logged in
-        $wishlistitems = [];
-        if (Auth::check()) {
-            $wishlistitems = Wishlist::where('user_id', Auth::id())
-                ->with('product')
-                ->get()
-                ->keyBy('product_id');
-        }
-        $brands = Brand::all();
-        $sizes = Size::all();
-        $colors = Color::all();
-        $data = [
-            'brand' => $brand,
-            'products' => $products,
-            'brands' => $brands,
-            'wishlist' => $wishlistitems,
-            'sizes' => $sizes,
-            'colors' => $colors,
-            'selectedBrandId' => (int) $id,
-        ];
-        return inertia('Front/Shop', $data);
     }
 }

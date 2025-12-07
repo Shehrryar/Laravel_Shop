@@ -20,7 +20,7 @@ return new class extends Migration
             $table->double('discount',10,2)->nullable();
             $table->double('grandtotal',10,2);
 
-
+            
             $table->string('firstname');
             $table->string('lastname');
             $table->string('email');

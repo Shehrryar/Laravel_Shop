@@ -4,18 +4,14 @@ import axios from "axios";
 import { route } from "ziggy-js";
 import CustomerAddresses from "./Components/CustomerAddresses";
 const DeliveryDetails = () => {
-    const { customerAddresses, totalcartamount, cartcontent } = usePage().props;
+    const { customerAddresses, totalcartamount, totalPayable } =
+        usePage().props;
     const [message, setMessage] = useState({ text: "", type: "" });
 
     const handleProceedToPayment = async (e) => {
         e.preventDefault();
         // Redirect after success
-        router.visit(
-            route("front.payment", {
-                totalcartamount: totalcartamount,
-                cartcontent: cartcontent,
-            })
-        );
+        router.visit(route("front.payment"));
     };
     return (
         <>
@@ -109,7 +105,7 @@ const DeliveryDetails = () => {
             <div className="delivery-cart cart-bottom">
                 <div>
                     <div className="left-content">
-                        <h4>${totalcartamount}</h4>
+                        <h4>${totalPayable}</h4>
                         <a
                             data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasdetails"

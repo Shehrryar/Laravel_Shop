@@ -261,13 +261,22 @@ class AuthController extends Controller
     }
     public function wishlist()
     {
-        $wishlist = Wishlist::where('user_id', Auth::user()->id)->with('product')->get();
-        $data = [];
-        $data['wishlist'] = $wishlist;
-        $data['keyword'] = '';
+        $wishlist = Wishlist::where('user_id', Auth::user()->id)
+            ->with([
+                'product' => function ($query) {
+                    $query->with('product_images'); // eager load images
+                }
+            ])
+            ->get();
+
+        $data = [
+            'wishlist' => $wishlist,
+            'keyword' => '',
+        ];
+
         return Inertia::render('Front/Account/Wishlist', $data);
-        // return view('front.account.wishlist', $data);
     }
+
     public function remove_product_from_wishlist(Request $request)
     {
         $wishlist = Wishlist::where('user_id', Auth::user()->id)
@@ -289,11 +298,29 @@ class AuthController extends Controller
     public function order()
     {
         $user = Auth::user();
-        $orders = Order::where('user_id', $user->id)->orderby('created_at', 'DESC')->get();
+        // $orders = Order::where('user_id', $user->id)->orderby('created_at', 'DESC')->get();
+
+        $orders = Order::with('orderitems.product.product_images')
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+
+            // echo '<pre>';
+            // print_r($orders);
+            // echo '</pre>';
+
+            // exit;
+
         $data['orders'] = $orders;
         $data['keyword'] = '';
-        return view('front.account.order', $data);
+        return Inertia::render('Front/Account/OrderHistory', $data);
+
+        // return view('front.account.order', $data);
     }
+
+
+
     public function orderdetail($id)
     {
         $user = Auth::user();
@@ -306,10 +333,45 @@ class AuthController extends Controller
         $data['keyword'] = '';
         return view('front.account.orderdetail', $data);
     }
+
+
+
     public function newAddress()
     {
         $user = Auth::user();
         $countries = Country::orderBy('name', 'ASC')->get();
+        $emptyAddress = [
+            'id' => null,
+            'firstname' => $user->name ?? '',
+            'lastname' => '',
+            'email' => $user->email ?? '',
+            'mobile' => $user->phone ?? '',
+            'country_id' => '',
+            'flat' => '',
+            'area' => '',
+            'landmark' => '',
+            'city' => '',
+            'state' => '',
+            'zip' => '',
+            'pin_code' => '',
+            'address_type' => '',
+            'is_default' => 0,
+            'apartment' => '',
+            'address' => '',
+        ];
+        $data['user'] = $user;
+        $data['editdata'] = 'newForm';
+        $data['editaddress'] = $emptyAddress;
+        $data['countries'] = $countries;
+        return Inertia::render('Front/Account/Address', $data);
+    }
+    public function EditAddress($id)
+    {
+        $address = CustomerAddress::where('id', $id)->first();
+        $user = Auth::user();
+        $countries = Country::orderBy('name', 'ASC')->get();
+        $data['editdata'] = 'updateForm';
+        $data['editaddress'] = $address;
         $data['user'] = $user;
         $data['countries'] = $countries;
         return Inertia::render('Front/Account/Address', $data);
@@ -339,13 +401,61 @@ class AuthController extends Controller
             'is_default' => 'nullable|boolean',
             'landmark' => 'nullable|string|max:255',
         ]);
-        //  Create the address record
-        $address = CustomerAddress::create([
-            'user_id' => $validated['user_id'],
-            'firstname' => auth()->user()->name ?? '',
-            'lastname' => '', // Add if needed
-            'email' => auth()->user()->email ?? '',
-            'mobile' => auth()->user()->phone ?? '',
+
+        $userId = $validated['user_id'];
+        $isDefault = $request->is_default ?? 0;
+
+        // If default address selected → reset all other addresses
+        if ($isDefault == 1) {
+            CustomerAddress::where('user_id', $userId)
+                ->update(['is_default' => 0]);
+        }
+
+        // -----------------------------------
+        // CREATE NEW ADDRESS
+        // -----------------------------------
+        if ($request->editform == "newForm") {
+
+            $address = CustomerAddress::create([
+                'user_id' => $userId,
+                'firstname' => auth()->user()->name ?? '',
+                'lastname' => '',
+                'email' => auth()->user()->email ?? '',
+                'mobile' => auth()->user()->phone ?? '',
+                'country_id' => $validated['country_id'],
+                'flat' => $validated['flat'],
+                'area' => $validated['area'],
+                'landmark' => $request->landmark ?? null,
+                'city' => $validated['city'],
+                'state' => $validated['state'],
+                'zip' => $validated['pin_code'],
+                'pin_code' => $validated['pin_code'],
+                'address_type' => $validated['address_type'],
+                'is_default' => $isDefault,
+                'apartment' => $request->flat ?? null,
+                'address' => $validated['area'],
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Address added successfully!',
+                'data' => $address,
+            ]);
+        }
+
+        // -----------------------------------
+        // UPDATE EXISTING ADDRESS
+        // -----------------------------------
+        $address = CustomerAddress::find($request->id);
+
+        if (!$address) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Address not found!',
+            ]);
+        }
+
+        $address->update([
             'country_id' => $validated['country_id'],
             'flat' => $validated['flat'],
             'area' => $validated['area'],
@@ -355,17 +465,18 @@ class AuthController extends Controller
             'zip' => $validated['pin_code'],
             'pin_code' => $validated['pin_code'],
             'address_type' => $validated['address_type'],
-            'is_default' => $request->is_default ?? 0,
+            'is_default' => $isDefault,
             'apartment' => $request->flat ?? null,
             'address' => $validated['area'],
         ]);
-        //  Return success message
+
         return response()->json([
             'status' => true,
-            'message' => 'Address added successfully!',
+            'message' => 'Address updated successfully!',
             'data' => $address,
         ]);
     }
+
     public function removeAddress(Request $request)
     {
         $address = CustomerAddress::where('id', $request->id)
@@ -383,20 +494,4 @@ class AuthController extends Controller
             'message' => 'Address removed successfully.',
         ]);
     }
-
-
-
-    public function EditAddress($id)
-    {
-        $address = CustomerAddress::where('id', $id)->first();
-        $user = Auth::user();
-        $countries = Country::orderBy('name', 'ASC')->get();
-        $data['editaddress'] = $address;
-        $data['user'] = $user;
-        $data['countries'] = $countries;
-        return Inertia::render('Front/Account/Address', $data);
-    }
-
-
-
 }
