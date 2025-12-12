@@ -25,22 +25,11 @@ export default function HomePage() {
 
     const [loading, setLoading] = useState(true);
     const [activeId, setActiveId] = React.useState(homelables[0].id);
-    const [darkMode, setDarkMode] = useState(false);
-    const [rtl, setRtl] = useState(false);
     useEffect(() => {
         // simulate loader finishing
         const t = setTimeout(() => setLoading(false), 600);
         return () => clearTimeout(t);
     }, []);
-    useEffect(() => {
-        // apply dark mode class on document body
-        if (darkMode) document.body.classList.add("dark-mode");
-        else document.body.classList.remove("dark-mode");
-    }, [darkMode]);
-    useEffect(() => {
-        // apply RTL on html dir attribute
-        document.documentElement.dir = rtl ? "rtl" : "ltr";
-    }, [rtl]);
 
     // small helper to toggle sidebar
     const settings = {
@@ -194,81 +183,113 @@ export default function HomePage() {
                 <div className="product-section">
                     <div className="row gy-3">
                         {dis_products && dis_products.length > 0 ? (
-                            dis_products.map((product) => (
-                                <div className="col-12" key={product.id}>
-                                    <div className="product-inline">
-                                        <Link
-                                            href={route(
-                                                "front.product",
-                                                product.slug
-                                            )}
-                                        >
-                                            <img
-                                                src={
-                                                    product.product_images
-                                                        ?.length
-                                                        ? `/upload/products/${product.product_images[0].image}`
-                                                        : "/admin-assets/img/default-150x150.png"
-                                                }
-                                                className="img-fluid"
-                                                alt={product.title}
-                                            />
-                                        </Link>
+                            dis_products.map((product) => {
+                                const avgRating =
+                                    product.product_ratings_count > 0
+                                        ? product.product_ratings_sum_rating /
+                                          product.product_ratings_count
+                                        : 0;
 
-                                        <div className="product-inline-content">
-                                            <div>
-                                                <Link
-                                                    href={route(
-                                                        "front.product",
-                                                        product.slug
-                                                    )}
-                                                >
-                                                    <h4>{product.title}</h4>
-                                                </Link>
+                                return (
+                                    <div className="col-12" key={product.id}>
+                                        <div className="product-inline">
+                                            <Link
+                                                href={route(
+                                                    "front.product",
+                                                    product.slug
+                                                )}
+                                            >
+                                                <img
+                                                    src={
+                                                        product.product_images
+                                                            ?.length
+                                                            ? `/upload/products/${product.product_images[0].image}`
+                                                            : "/admin-assets/img/default-150x150.png"
+                                                    }
+                                                    className="img-fluid"
+                                                    alt={product.title}
+                                                />
+                                            </Link>
 
-                                                <h5>
-                                                    by{" "}
-                                                    {product.brand?.name ??
-                                                        "N/A"}
-                                                </h5>
-
-                                                <div className="price">
-                                                    <h4>
-                                                        $
-                                                        {
-                                                            product.discounted_price
-                                                        }
-                                                        {product.actual_price >
-                                                            product.discounted_price && (
-                                                            <del>
-                                                                $
-                                                                {
-                                                                    product.actual_price
-                                                                }
-                                                            </del>
+                                            <div className="product-inline-content">
+                                                <div>
+                                                    <Link
+                                                        href={route(
+                                                            "front.product",
+                                                            product.slug
                                                         )}
-                                                        {product.discount_percentage && (
-                                                            <span>
-                                                                {
-                                                                    product.discount_percentage
-                                                                }
-                                                                %
-                                                            </span>
-                                                        )}
-                                                    </h4>
+                                                    >
+                                                        <h4>{product.title}</h4>
+                                                    </Link>
+
+                                                    <div className="product_rating">
+                                                        <ul className="ratings">
+                                                            {[
+                                                                1, 2, 3, 4, 5,
+                                                            ].map((star) => (
+                                                                <li key={star}>
+                                                                    <i
+                                                                        className={`iconly-Star icbo ${
+                                                                            avgRating >=
+                                                                            star
+                                                                                ? "filled"
+                                                                                : avgRating >=
+                                                                                  star -
+                                                                                      0.5
+                                                                                ? "half"
+                                                                                : "empty"
+                                                                        }`}
+                                                                    ></i>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+
+                                                    <div className="price">
+                                                        <h4>
+                                                            {product.discount_value !=
+                                                            0 ? (
+                                                                <>
+                                                                    $
+                                                                    {
+                                                                        product.discounted_price
+                                                                    }
+                                                                    <del className="text-muted small ms-1">
+                                                                        $
+                                                                        {
+                                                                            product.actual_price
+                                                                        }
+                                                                    </del>
+                                                                    <span className="text-danger ms-1">
+                                                                        {
+                                                                            product.discount_value
+                                                                        }
+                                                                        %
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    $
+                                                                    {
+                                                                        product.actual_price
+                                                                    }
+                                                                </>
+                                                            )}
+                                                        </h4>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <WishlistButton
-                                            productId={product.id}
-                                            isWishlisted={
-                                                wishlistitems[product.id]
-                                            }
-                                        />
+                                            <WishlistButton
+                                                productId={product.id}
+                                                isWishlisted={
+                                                    wishlistitems[product.id]
+                                                }
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            ))
+                                );
+                            })
                         ) : (
                             <div className="col-12">
                                 <p>No deals available.</p>

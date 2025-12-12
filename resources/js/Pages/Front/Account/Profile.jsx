@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import BottomNav from "../Components/BottomNav";
 import { route } from "ziggy-js";
 import { Link, usePage } from "@inertiajs/react";
+import ThemeButton from "../Components/ThemeButton";
+import RtlButton from "../Components/RtlButton";
 export default function Profile() {
     const { user } = usePage().props;
     return (
@@ -45,7 +47,7 @@ export default function Profile() {
             <div className="sidebar-content">
                 <ul className="link-section">
                     {/* Dark Mode toggle */}
-                    <li>
+                    {/* <li>
                         <div>
                             <i className="iconly-Setting icli"></i>
                             <div className="content toggle-sec w-100">
@@ -58,6 +60,7 @@ export default function Profile() {
                                         type="checkbox"
                                         className="checkbox"
                                     />
+                                    <ThemeButton />
                                     <div className="knobs">
                                         <span></span>
                                     </div>
@@ -65,9 +68,9 @@ export default function Profile() {
                                 </div>
                             </div>
                         </div>
-                    </li>
+                    </li> */}
                     {/* RTL toggle */}
-                    <li>
+                    {/* <li>
                         <div>
                             <i className="iconly-Setting icli"></i>
                             <div className="content toggle-sec w-100">
@@ -75,11 +78,7 @@ export default function Profile() {
                                     <h4>RTL</h4>
                                 </div>
                                 <div className="button toggle-btn ms-auto">
-                                    <input
-                                        id="rtlButton"
-                                        type="checkbox"
-                                        className="checkbox"
-                                    />
+                                    <RtlButton />
                                     <div className="knobs">
                                         <span></span>
                                     </div>
@@ -87,7 +86,7 @@ export default function Profile() {
                                 </div>
                             </div>
                         </div>
-                    </li>
+                    </li> */}
                     {/* Pages */}
                     <li>
                         <Link>

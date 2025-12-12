@@ -72,6 +72,7 @@ class PaymentController extends Controller
                     'status' => 'pending'
                 ];
                 event(new OrderPaymentUpdateEvent($orderId, $paymentInfo, 'COD'));
+                $orderService->clearSession();
                 return response()->json([
                     'status' => true,
                     'message' => 'Order placed successfully (COD)!',

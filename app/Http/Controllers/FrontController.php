@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\App;
+use App\Services\ProductService;
+use App\Services\DiscountService;
 use App\Models\Discount;
 use App\Models\Category;
 use App\Models\ProductView;
@@ -13,105 +15,52 @@ use App\Models\HomepageLabel;
 use Inertia\Inertia;
 class FrontController extends Controller
 {
-    public function index()
-    {
-        $brands = Brand::OrderBy('name', 'ASC')->where('status', 1)->get();
-        $homelables = HomepageLabel::OrderBy('label_name', 'ASC')->where('is_active', 1)->get();
+    protected $discountService;
+    protected $productService;
 
-        $featured_products = Product::where('is_featured', 1)
-            ->where('status', 1)
-            ->withCount('product_ratings')
-            ->withSum('product_ratings', 'rating')
-            ->get();
-        $latest_product = Product::orderBy('id', 'DESC')
-            ->where('status', 1)
-            ->withCount('product_ratings')
-            ->withSum('product_ratings', 'rating')
-            ->paginate(8);
-        $today = now()->toDateString();
-        $discounts = Discount::where('status', 1)
-            ->whereDate('start_at', '<=', $today)
-            ->whereDate('expires_at', '>=', $today)
-            ->get();
-
-        $products = Product::where('status', 1)
-            ->with('product_images')        // ← load images
-            ->get()
-            ->filter(function ($product) use ($discounts) {
-
-                foreach ($discounts as $dis) {
-
-                    // Clean product_ids: remove quotes "1,2,3"
-                    $cleanIds = trim($dis->product_ids, '"');
-
-                    // Convert string → array [1,2,3]
-                    $productIds = explode(',', $cleanIds);
-
-                    // Check if product has discount
-                    if (in_array($product->id, $productIds)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            })->values();
-
-        $dis_products = $products->map(function ($product) use ($discounts) {
-
-            $priceData = getDiscountedPrice($product->id, $discounts, $product->price);
-
-            $product->discount_value = $priceData['discount_value'];
-            $product->actual_price = $priceData['actual_price'];
-            $product->discounted_price = $priceData['discounted_price'];
-            $product->discounted_price = $priceData['discounted_price'];
-
-            return $product;
-        });
-
-
-
-        $recommended_products = Product::orderBy('id', 'DESC')
-            ->where('status', 1)
-            ->withCount('product_ratings')
-            ->withSum('product_ratings', 'rating')
-            ->with('product_recommendation')->paginate(8);
-        $recommended_product_ids = ProductView::where('user_id', Auth::id())->pluck('product_id')->toArray();
-        $recommended_products = Product::orderBy('id', 'DESC')
-            ->where('status', 1)
-            ->whereIn('id', $recommended_product_ids)
-            ->withCount('product_ratings')
-            ->withSum('product_ratings', 'rating')
-            ->paginate(8);
-
-        $wishlistitems = collect();
-        if (!empty(Auth::user())) {
-            $wishlistitems = Wishlist::where('user_id', Auth::id())
-                ->with('product')
-                ->get()
-                ->keyBy('product_id');
-        }
-
-
-        $data['wishlistitems'] = $wishlistitems;
-        $data['discount'] = $discounts;
-        $data['recommended_products'] = $recommended_products;
-        $data['featured_products'] = $featured_products;
-        $data['latest_product'] = $latest_product;
-        $data['dis_products'] = $dis_products;
-        $data['brands'] = $brands;
-        $data['homelables'] = $homelables;
-
-
-        
-        return Inertia::render('Front/Index', $data);
-        // return view('front.home', $data);
+    public function __construct(
+        DiscountService $discountService,
+        ProductService $productService
+    ) {
+        $this->discountService = $discountService;
+        $this->productService = $productService;
     }
 
+    public function index()
+    {
+        $discounts = $this->discountService->getActiveDiscounts();
+        $discountedIds = $this->discountService->getDiscountedProductIds($discounts);
+        $discountedProducts = $this->discountService->applyDiscount(
+            $this->productService->discountedProducts($discountedIds),
+            $discounts
+        );
+
+        $featured = $this->discountService->applyDiscount(
+            $this->productService->featuredProducts(),
+            $discounts
+        );
 
 
+        $recommended = $this->productService->recommendedProducts();
+        $latest = $this->productService->latestProducts();
+
+        $wishlistitems = Auth::check()
+            ? Wishlist::where('user_id', Auth::id())->with('product')->get()->keyBy('product_id')
+            : collect();
+
+        return Inertia::render('Front/Index', [
+            'discount' => $discounts,
+            'featured_products' => $featured,
+            'latest_product' => $latest,
+            'dis_products' => $discountedProducts,
+            'recommended_products' => $recommended,
+            'brands' => Brand::where('status', 1)->orderBy('name')->get(),
+            'homelables' => HomepageLabel::where('is_active', 1)->orderBy('label_name')->get(),
+            'wishlistitems' => $wishlistitems,
+        ]);
+    }
     public function addToWishlist(Request $request)
     {
-
         if (Auth::check() == false) {
             session(['url.intended' => url()->previous()]);
             return response()->json([
@@ -126,7 +75,6 @@ class FrontController extends Controller
                 'message' => '<div class = "alert alert-danger">Product not found.</div>'
             ]);
         }
-
         if ($request->has('action') && $request->action == 'remove') {
             Wishlist::where('user_id', Auth::user()->id)
                 ->where('product_id', $request->product_id)

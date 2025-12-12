@@ -270,6 +270,8 @@ export default function CartPage() {
                 item_id: selectedItemToWishlist[0],
                 product_id: selectedItemToWishlist[1],
                 user_id: selectedItemToWishlist[2],
+                size_id: selectedSize || 0,
+                color_id: selectedColor || 0,
                 action: "AddtoWishlist",
             });
             if (response.data.status === true) {

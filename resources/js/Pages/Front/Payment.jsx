@@ -272,14 +272,20 @@ const PaymentDetails = () => {
                                 </span>
                             </h4>
                         </li>
-                        <li>
-                            <h4>
-                                Coupon Discount{" "}
-                                <span className="text-green">
-                                    -${discount_coupon_amount}
-                                </span>
-                            </h4>
-                        </li>
+
+                        {!!discount_coupon_amount && (
+                            <li>
+                                <h4>
+                                    Coupon Discount{" "}
+                                    <span className="text-green">
+                                        -${discount_coupon_amount}
+                                    </span>
+                                </h4>
+                            </li>
+                        )}
+
+
+                        
                         <li>
                             <h4>
                                 Delivery <span>${shippingAmount}</span>

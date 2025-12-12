@@ -2,12 +2,9 @@ import React from "react";
 import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import BottomNav from "../Components/BottomNav";
 const Wishlist = () => {
     const { wishlist } = usePage().props;
-
 
     //Handle remove item
     const handleRemove = async (productId) => {
@@ -29,24 +26,28 @@ const Wishlist = () => {
             console.error("Error removing wishlist item:", error);
         }
     };
+
     //  Handle add to cart (example)
-    const handleAddToCart = async (productId) => {
-        try {
-            const response = await axios.post(route("front.addtocart"), {
-                product_id: productId,
-                quantity: 1,
-            });
-            if (
-                response.data.status === false &&
-                response.data.userlogin === false
-            ) {
-                window.location.href = route("front.login");
-                return;
-            }
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-        }
-    };
+    // const handleAddToCart = async (productId, color_id, size_id) => {
+    //     try {
+    //         const response = await axios.post(route("front.addToCart"), {
+    //             product_id: productId,
+    //             color_id: color_id,
+    //             size_id: size_id,
+    //             page: "wishlist",
+    //         });
+    //         if (
+    //             response.data.status === false &&
+    //             response.data.userlogin === false
+    //         ) {
+    //             window.location.href = route("front.login");
+    //             return;
+    //         }
+    //     } catch (error) {
+    //         console.error("Error adding to cart:", error);
+    //     }
+    // };
+
     return (
         <>
             {/* Header */}
@@ -72,80 +73,133 @@ const Wishlist = () => {
             {/* Wishlist Items */}
             <section className="cart-section pt-0 top-space section-b-space">
                 {wishlist.length > 0 ? (
-                    wishlist.map((item) => (
-                        <React.Fragment key={item.id}>
-                            <div className="cart-box px-15">
-                                <Link
-                                    href={route("front.product", item.product.slug)}
-                                    className="cart-img"
-                                >
-                                    <img
-                                        src={
-                                            item.product?.product_images &&
-                                            item.product.product_images.length >
-                                                0
-                                                ? `/upload/products/${item.product.product_images[0].image}`
-                                                : "/admin-assets/img/default-150x150.png"
-                                        }
-                                        className="img-fluid"
-                                        alt={item.product?.title || "Product"}
-                                    />
-                                </Link>
-                                <div className="cart-content">
-                                    <Link>
-                                        <h4>
-                                            {item.product?.title ||
-                                                "Unknown Product"}
-                                        </h4>
+                    wishlist.map((item) => {
+                        // Calculate average rating BEFORE return
+                        const avgRating =
+                            item.product_ratings_count > 0
+                                ? item.product_ratings_sum_rating /
+                                  item.product_ratings_count
+                                : 0;
+
+                        return (
+                            <React.Fragment key={item.id}>
+                                <div className="cart-box px-15">
+                                    <Link
+                                        href={route("front.product", item.slug)}
+                                        className="cart-img"
+                                    >
+                                        <img
+                                            src={
+                                                item.product_images?.length
+                                                    ? `/upload/products/${item.product_images[0].image}`
+                                                    : "/admin-assets/img/default-150x150.png"
+                                            }
+                                            className="img-fluid"
+                                            alt={
+                                                item.product?.title || "Product"
+                                            }
+                                        />
                                     </Link>
-                                    <h5 className="content-color">
-                                        {item.product?.brand || "No brand"}
-                                    </h5>
-                                    <div className="price">
-                                        <h4>
-                                            ${item.product?.price || "0.00"}{" "}
-                                            {item.product?.old_price && (
-                                                <>
-                                                    <del>
-                                                        $
-                                                        {item.product.old_price}
-                                                    </del>{" "}
-                                                    <span>20%</span>
-                                                </>
-                                            )}
-                                        </h4>
-                                    </div>
-                                    <div className="cart-option">
-                                        <h5
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() =>
-                                                handleAddToCart(
-                                                    item.product?.id
-                                                )
-                                            }
-                                        >
-                                            <i className="iconly-Buy icli"></i>{" "}
-                                            Add to Cart
-                                        </h5>
-                                        <span className="divider-cls">|</span>
-                                        <h5
-                                            style={{
-                                                cursor: "pointer",
-                                                color: "red",
-                                            }}
-                                            onClick={() =>
-                                                handleRemove(item.product?.id)
-                                            }
-                                        >
-                                            <i className="iconly-Delete icli"></i>{" "}
-                                            Remove
-                                        </h5>
+
+                                    <div className="cart-content">
+                                        <Link>
+                                            <h4>
+                                                {item.title ||
+                                                    "Unknown Product"}
+                                            </h4>
+                                        </Link>
+
+                                        <div className="product_rating">
+                                            <ul className="ratings">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <li key={star}>
+                                                        <i
+                                                            className={`iconly-Star icbo ${
+                                                                avgRating >=
+                                                                star
+                                                                    ? "filled"
+                                                                    : avgRating >=
+                                                                      star - 0.5
+                                                                    ? "half"
+                                                                    : "empty"
+                                                            }`}
+                                                        ></i>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        <div className="price">
+                                            <h4>
+                                                {item.discount_value != 0 ? (
+                                                    <>
+                                                        ${item.discounted_price}
+                                                        <del className="text-muted small ms-1">
+                                                            ${item.actual_price}
+                                                        </del>
+                                                        <span className="text-danger ms-1">
+                                                            {
+                                                                item.discount_value
+                                                            }
+                                                            %
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <>${item.actual_price}</>
+                                                )}
+                                            </h4>
+                                        </div>
+
+                                        {/* Here you can use avgRating if needed */}
+                                        {/* <p>Rating: {avgRating.toFixed(1)}</p> */}
+
+                                        <div className="cart-option">
+                                            <Link
+                                                href={route(
+                                                    "front.product",
+                                                    item.slug
+                                                )}
+                                            >
+                                                <h5
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
+                                                    // onClick={() =>
+                                                    //     handleAddToCart(
+                                                    //         item.id,
+                                                    //         item.color_id,
+                                                    //         item.size_id
+                                                    //     )
+                                                    // }
+                                                >
+                                                    <i className="iconly-Buy icli"></i>{" "}
+                                                    Add to Cart
+                                                </h5>
+                                            </Link>
+
+                                            <span className="divider-cls">
+                                                |
+                                            </span>
+                                            <h5
+                                                style={{
+                                                    cursor: "pointer",
+                                                    color: "red",
+                                                }}
+                                                onClick={() =>
+                                                    handleRemove(item.id)
+                                                }
+                                            >
+                                                <i className="iconly-Delete icli"></i>{" "}
+                                                Remove
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="divider"></div>
-                        </React.Fragment>
-                    ))
+
+                                <div className="divider"></div>
+                            </React.Fragment>
+                        );
+                    })
                 ) : (
                     <div className="text-center py-5">
                         <i
@@ -162,10 +216,10 @@ const Wishlist = () => {
                     </div>
                 )}
             </section>
+
             <section className="panel-space" />
             {/* bottom panel start */}
             <BottomNav />
-
             {/* bottom panel end */}
         </>
     );

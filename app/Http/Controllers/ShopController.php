@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\ProductRating;
+use App\Services\ProductFilterService;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -9,6 +10,7 @@ use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\Wishlist;
 use App\Models\Discount;
+use App\Services\DiscountService;
 // use App\Models\ProductAttribute;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ProductView;
@@ -18,116 +20,53 @@ use App\Models\Color;
 use Inertia\Inertia;
 class ShopController extends Controller
 {
-    public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null, $brandid = null)
+    protected $discountService;
+    protected $productFilterService;
+
+    public function __construct(DiscountService $discountService, ProductFilterService $productFilterService)
     {
-        $subcategroy_selected = "";
-        $categroy_selected = "";
-        $brandsArray = [];
-        $subsubcategroy_selected = "";
-        $categories = Category::orderBy('name', 'DESC')->with('sub_category')->where('status', 1)->get();
-        $brands = Brand::orderBy('name', 'DESC')->where('status', 1)->get();
-        $products = Product::where('status', 1);
-        if (!empty($catslug)) {
-            $categroy = Category::where('slug', $catslug)->first();
-            $products = $products->where('categories_id', $categroy->id);
-            $categroy_selected = $categroy->id;
-        }
-        if (!empty($subcatslug)) {
-            $subcategroy = SubCategory::where('slug', $subcatslug)->first();
-            $products = $products->where('sub_category_id', $subcategroy->id);
-            $subcategroy_selected = $subcategroy->id;
-        }
-        if (!empty($subsubcatslug)) {
-            $subsubcategroy = SubSubCategory::where('slug', $subsubcatslug)->first();
-            $products = $products->where('sub_sub_category_id', $subsubcategroy->id);
-            $subsubcategroy_selected = $subsubcategroy->id;
-        }
-        if (!empty($request->get('brand_id'))) {
-            $brandsArray = $request->get('brand_id');
-            // $brandsArray = explode(',', $request->get('brand_id'));
-            $products = $products->whereIn('brands_id', $brandsArray);
-        }
+        $this->discountService = $discountService;
+        $this->productFilterService = $productFilterService;
+    }
 
-        if (!empty($request->get('disct_id'))) {
-            $discountId = $request->get('disct_id'); // single id
-            $discount = Discount::whereIn('id', $discountId)->first();
-            if ($discount && !empty($discount->product_ids)) {
-                $productIds = explode(',', $discount->product_ids);                // Fetch products
-                $products = $products->whereIn('id', $productIds);
-            }
-        }
+    public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null)
+    {
 
-        if ($request->get('price') != '') {
-            $products = $products->whereBetween('price', [intval(value: 0), intval($request->get('price'))]);
-        }
-        if (!empty($request->get('size_id'))) {
-            $sizeIds = (array) $request->get('size_id'); // supports single or multiple IDs
-            $products = $products->whereHas('size', function ($query) use ($sizeIds) {
-                $query->whereIn('id', $sizeIds);
-            });
-        }
-        if (!empty($request->get('color_id'))) {
-            $colorId = intval($request->get('color_id'));
-            $products = $products->whereHas('color', function ($query) use ($colorId) {
-                $query->where('id', $colorId);
-            });
-        }
-        if ($request->get('sortValue') != '') {
-            if ($request->get('sortValue') == 'latest') {
-                $products = $products->orderBy('id', 'DESC');
-            } elseif ($request->get('sortValue') == 'pricelow') {
-                $products = $products->orderBy('price', 'ASC');
-            } elseif ($request->get('sortValue') == 'pricehigh') {
-                $products = $products->orderBy('price', 'DESC');
-            }
-        }
-        // $products = $products->withCount('product_ratings')->withSum('product_ratings', 'rating')->orderBy('id', 'DESC');
-        $products = $products->with('product_images')        // fetch images
-            ->withCount('product_ratings')  // count ratings
-            ->withSum('product_ratings', 'rating')
-            ->orderBy('id', 'DESC');
-        $products = $products->paginate(100);
-        $discounts = Discount::where('status', 1)->get();
+        // Products (filtered)
+        $products = $this->productFilterService->filter($request, $catslug, $subcatslug, $subsubcatslug);
+
+        // Apply discounts
+        $discounts = $this->discountService->getActiveDiscounts();
         $products->getCollection()->transform(function ($product) use ($discounts) {
-            $discountData = getDiscountedPrice($product->id, $discounts, $product->price);
-            $product->discount_value = $discountData['discount_value'];
-            $product->discounted_price = $discountData['discounted_price'];
-            $product->actual_price = $discountData['actual_price'];
+            $data = getDiscountedPrice($product->id, $discounts, $product->price);
+            $product->discount_value = $data['discount_value'];
+            $product->discounted_price = $data['discounted_price'];
+            $product->actual_price = $data['actual_price'];
             return $product;
         });
-        $wishlist = collect();
-        if (!empty(Auth::user())) {
-            $wishlist = Wishlist::where('user_id', Auth::id())
-                ->with('product')
-                ->get()
-                ->keyBy('product_id');
-        }
-        $sizes = Size::get();
-        $colors = Color::get();
-        if (empty($request->get('price_max'))) {
-            $request->merge(['price_max' => 1000]);
-        }
-        $data['categories'] = $categories;
-        $data['brands'] = $brands;
-        $data['products'] = $products;
-        $data['subcategroy_selected'] = $subcategroy_selected;
-        $data['subsubcategroy_selected'] = $subsubcategroy_selected;
-        $data['categroy_selected'] = $categroy_selected;
-        $data['brandsArray'] = $brandsArray;
-        $data['price_max'] = intval($request->get('price_max'));
-        $data['price_min'] = intval($request->get('price_min'));
-        $data['sort'] = $request->get('sort');
-        $data['wishlist'] = $wishlist;
-        $data['discount'] = $discounts;
-        $data['sizes'] = $sizes;
-        $data['colors'] = $colors;
-        $data['cat_slug'] = $catslug;
-        $data['subcat_slug'] = $subcatslug;
-        $data['subsubcat_slug'] = $subsubcatslug;
-        $data['keyword'] = '';
-        // return view('front.shop', $data);
-        return Inertia::render('Front/Shop', $data);
+
+        $wishlist = auth()->check()
+            ? Wishlist::where('user_id', auth()->id())->with('product')->get()->keyBy('product_id')
+            : collect();
+
+        return Inertia::render('Front/Shop', [
+            'categories' => Category::with('sub_category')->where('status', 1)->orderBy('name')->get(),
+            'brands' => Brand::where('status', 1)->orderBy('name')->get(),
+            'products' => $products,
+            'wishlist' => $wishlist,
+            'discount' => $discounts,
+            'sizes' => Size::all(),
+            'colors' => Color::all(),
+            'price_min' => intval($request->price_min),
+            'price_max' => intval($request->price_max ?? 1000),
+            'brandsArray' => (array) $request->brand_id,
+            'cat_slug' => $catslug,
+            'subcat_slug' => $subcatslug,
+            'subsubcat_slug' => $subsubcatslug,
+        ]);
     }
+
+
     public function product($slug)
     {
         // Fetch product with necessary relationships
@@ -154,30 +93,9 @@ class ShopController extends Controller
 
 
 
-        $today = now()->toDateString();
+        $discount = $this->discountService->getActiveDiscounts();
 
-        $discount = Discount::where('status', 1)
-            ->whereDate('start_at', '<=', $today)
-            ->whereDate('expires_at', '>=', $today)
-            ->get();
-
-
-
-
-        $samcatproduct->transform(function ($product) use ($discount) {
-            $discountData = getDiscountedPrice($product->id, $discount, $product->price);
-            // If product already has a discount_value
-            if (!empty($product->discount_value)) {
-                $product->discount_value = $discountData['discount_value'];
-                $product->discounted_price = $discountData['discounted_price'];
-                $product->actual_price = $discountData['actual_price'];
-            } else {
-                $product->discount_value = $discountData['discount_value'];
-                $product->actual_price = $discountData['actual_price'];
-                $product->discounted_price = $discountData['discounted_price'];
-            }
-            return $product;
-        });
+        $samcatproduct = $this->discountService->applyDiscount($samcatproduct, $discount);
         // Calculate average rating
         $avg_rating = $product->product_ratings_count > 0
             ? number_format($product->product_ratings_sum_rating / $product->product_ratings_count, 2)

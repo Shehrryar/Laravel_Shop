@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { route } from "ziggy-js";
+import ThemeButton from "./ThemeButton";
+import RtlButton from "./RtlButton";
 const Sidebar = () => {
-    const [darkMode, setDarkMode] = useState(false);
-    const [rtl, setRtl] = useState(false);
     return (
         <>
             {/* Overlay */}
@@ -35,15 +35,7 @@ const Sidebar = () => {
                                         <h4 className="mb-0">Dark Mode</h4>
                                     </div>
                                     <div className="button toggle-btn ms-auto">
-                                        <input
-                                            id="darkButton"
-                                            type="checkbox"
-                                            className="checkbox"
-                                            checked={darkMode}
-                                            onChange={(e) =>
-                                                setDarkMode(e.target.checked)
-                                            }
-                                        />
+                                        <ThemeButton />
                                         <div className="knobs">
                                             <span />
                                         </div>
@@ -52,6 +44,7 @@ const Sidebar = () => {
                                 </div>
                             </div>
                         </li>
+
                         {/* RTL */}
                         <li>
                             <div>
@@ -60,16 +53,9 @@ const Sidebar = () => {
                                     <div>
                                         <h4 className="mb-0">RTL</h4>
                                     </div>
+
                                     <div className="button toggle-btn ms-auto">
-                                        <input
-                                            id="rtlButton"
-                                            type="checkbox"
-                                            className="checkbox"
-                                            checked={rtl}
-                                            onChange={(e) =>
-                                                setRtl(e.target.checked)
-                                            }
-                                        />
+                                        <RtlButton />
                                         <div className="knobs">
                                             <span />
                                         </div>
@@ -78,6 +64,7 @@ const Sidebar = () => {
                                 </div>
                             </div>
                         </li>
+
                         {/* Links */}
                         <li>
                             <a href="pages.html">

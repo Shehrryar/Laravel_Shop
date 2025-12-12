@@ -3,19 +3,29 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Services\DiscountService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Wishlist;
 use App\Models\Country;
+use App\Models\Product;
 use App\Models\CustomerAddress;
+
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 class AuthController extends Controller
 {
+    protected $discountService;
+    public function __construct(
+        DiscountService $discountService,
+    ) {
+        $this->discountService = $discountService;
+    }
     public function login()
     {
+
         // $data['keyword'] = '';
         return Inertia::render('Front/Account/Login');
         // return view('front.account.login', $data);
@@ -261,22 +271,39 @@ class AuthController extends Controller
     }
     public function wishlist()
     {
-        $wishlist = Wishlist::where('user_id', Auth::user()->id)
-            ->with([
-                'product' => function ($query) {
-                    $query->with('product_images'); // eager load images
-                }
-            ])
+        $wishlistProductIds = Wishlist::where('user_id', Auth::id())
+            ->pluck('product_id')
+            ->toArray();
+        $products = Product::where('status', 1)
+            ->whereIn('id', $wishlistProductIds)
+            ->with('product_images')
+            ->withCount('product_ratings')
+            ->withSum('product_ratings', 'rating')
             ->get();
 
+        $wishlist = Wishlist::where('user_id', Auth::id())->get();
+        $products = $products->map(function ($product) use ($wishlist) {
+            $wish = $wishlist->where('product_id', $product->id)->first();
+            $product->color_id = $wish->color_id ?? null;
+            $product->size_id = $wish->size_id ?? null;
+
+            return $product;
+        });
+
+
+
+        $discounts = $this->discountService->getActiveDiscounts();
+        $wishlistProducts = $this->discountService->applyDiscount(
+            $products,
+            $discounts
+        );
         $data = [
-            'wishlist' => $wishlist,
+            'wishlist' => $wishlistProducts,
             'keyword' => '',
         ];
-
         return Inertia::render('Front/Account/Wishlist', $data);
-    }
 
+    }
     public function remove_product_from_wishlist(Request $request)
     {
         $wishlist = Wishlist::where('user_id', Auth::user()->id)
@@ -299,28 +326,19 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         // $orders = Order::where('user_id', $user->id)->orderby('created_at', 'DESC')->get();
-
         $orders = Order::with('orderitems.product.product_images')
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'DESC')
             ->get();
-
-
-            // echo '<pre>';
-            // print_r($orders);
-            // echo '</pre>';
-
-            // exit;
-
+        // echo '<pre>';
+        // print_r($orders);
+        // echo '</pre>';
+        // exit;
         $data['orders'] = $orders;
         $data['keyword'] = '';
         return Inertia::render('Front/Account/OrderHistory', $data);
-
         // return view('front.account.order', $data);
     }
-
-
-
     public function orderdetail($id)
     {
         $user = Auth::user();
@@ -333,9 +351,6 @@ class AuthController extends Controller
         $data['keyword'] = '';
         return view('front.account.orderdetail', $data);
     }
-
-
-
     public function newAddress()
     {
         $user = Auth::user();
@@ -401,21 +416,17 @@ class AuthController extends Controller
             'is_default' => 'nullable|boolean',
             'landmark' => 'nullable|string|max:255',
         ]);
-
         $userId = $validated['user_id'];
         $isDefault = $request->is_default ?? 0;
-
         // If default address selected → reset all other addresses
         if ($isDefault == 1) {
             CustomerAddress::where('user_id', $userId)
                 ->update(['is_default' => 0]);
         }
-
         // -----------------------------------
         // CREATE NEW ADDRESS
         // -----------------------------------
         if ($request->editform == "newForm") {
-
             $address = CustomerAddress::create([
                 'user_id' => $userId,
                 'firstname' => auth()->user()->name ?? '',
@@ -435,26 +446,22 @@ class AuthController extends Controller
                 'apartment' => $request->flat ?? null,
                 'address' => $validated['area'],
             ]);
-
             return response()->json([
                 'status' => true,
                 'message' => 'Address added successfully!',
                 'data' => $address,
             ]);
         }
-
         // -----------------------------------
         // UPDATE EXISTING ADDRESS
         // -----------------------------------
         $address = CustomerAddress::find($request->id);
-
         if (!$address) {
             return response()->json([
                 'status' => false,
                 'message' => 'Address not found!',
             ]);
         }
-
         $address->update([
             'country_id' => $validated['country_id'],
             'flat' => $validated['flat'],
@@ -469,14 +476,12 @@ class AuthController extends Controller
             'apartment' => $request->flat ?? null,
             'address' => $validated['area'],
         ]);
-
         return response()->json([
             'status' => true,
             'message' => 'Address updated successfully!',
             'data' => $address,
         ]);
     }
-
     public function removeAddress(Request $request)
     {
         $address = CustomerAddress::where('id', $request->id)

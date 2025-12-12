@@ -11,8 +11,6 @@ use App\Models\Country;
 use App\Models\Shipping;
 use Carbon\Carbon;
 use App\Models\Cart;
-
-
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderEmail;
 use App\Models\Stock;
@@ -24,11 +22,23 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use App\Services\CartService;
 
 class CartController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     public function addToCart(Request $request)
     {
+        // echo '<pre>';
+        // print_r($request->all());
+        // echo '</pre>';
+        // exit;
         if ($request->color_id == null) {
             $request->color_id = 0;
         }
@@ -109,7 +119,6 @@ class CartController extends Controller
                         ->where('size_id', $request->size_id)
                         ->first();
                     if ($cartItem) {
-
                         if ($request->page == "product") {
                             $newQuantity = $request->quantity + $cartItem->quantity;
                             $price_actual = $request->variantPrice['baseactualprice'] * $newQuantity;
@@ -291,6 +300,10 @@ class CartController extends Controller
     }
     public function deleteitem(Request $request)
     {
+        // echo '<pre>';
+        // print_r($request->all());
+        // echo '</pre>';
+        // exit;
         $iteminfo = Cart::find($request->item_id);
         if ($iteminfo == null) {
             $error_message = 'item not found';
@@ -328,100 +341,38 @@ class CartController extends Controller
             }
         }
     }
-
-
-
-
     public function checkout()
     {
-        $countries = Country::orderBy('name', 'ASC')->get();
-        $customerAddresses = collect(); // empty collection by default
-        if (Auth::check()) {
-            $customerAddresses = CustomerAddress::where('user_id', Auth::id())->get();
-            $customerFirstAddresses = CustomerAddress::where('user_id', Auth::id())->first();
-        }
-        $cartcontent = Cart::where('user_id', auth()->id())
-            ->with('product')->with('size')
-            ->get();
-        $cartTotalAmount = $cartcontent->sum(function ($item) {
-            return $item->price;
-        });
-        $cartTotaldiscountAmount = $cartcontent->sum(function ($item) {
-            return $item->discounted_price;
-        });
-        $bagsavingvalue = $cartTotaldiscountAmount > 0
-            ? $cartTotalAmount - $cartTotaldiscountAmount
-            : 0;
-        $shippingAmount = 100;
-        if ($customerFirstAddresses && $customerFirstAddresses->country_id) {
-            $shipping = Shipping::where('country_id', $customerFirstAddresses->country_id)->first();
-            if ($shipping) {
-                // Apply shipping per product quantity
-                foreach ($cartcontent as $item) {
-                    $shippingAmount += $shipping->amount * $item->quantity;
-                }
-            }
-        }
-        // Total payable amount
-        $totalPayable = $cartTotalAmount + $shippingAmount;
-        $data = [
-            'countries' => $countries,
-            'customerAddresses' => $customerAddresses,
-            'totalcartamount' => $cartTotalAmount,
-            'bagsavingvalue' => $bagsavingvalue,
-            'totalPayable' => $totalPayable,
-        ];
-        return Inertia::render('Front/Delivery', $data);
+        $data = $this->cartService->calculateCartTotals();
+
+        return Inertia::render('Front/Delivery', [
+            'countries' => $data['countries'],
+            'customerAddresses' => $data['customerAddresses'],
+            'totalcartamount' => $data['cartTotalAmount'],
+            'bagsavingvalue' => $data['bagSavingValue'],
+            'shippingAmount' => $data['shippingAmount'],
+            'totalPayable' => $data['totalPayable'],
+        ]);
     }
+
     public function Payment(Request $request)
     {
-        if (Auth::check()) {
-            $customerFirstAddresses = CustomerAddress::where('user_id', Auth::id())->first();
-        }
-        $cartcontent = Cart::where('user_id', auth()->id())
-            ->with('product')->with('size')
-            ->get();
-        $cartTotalAmount = $cartcontent->sum(function ($item) {
-            return $item->price;
-        });
-        $cartTotaldiscountAmount = $cartcontent->sum(function ($item) {
-            return $item->discounted_price;
-        });
-        $bagsavingvalue = $cartTotaldiscountAmount > 0
-            ? $cartTotalAmount - $cartTotaldiscountAmount
-            : 0;
-        $shippingAmount = 100;
-        if ($customerFirstAddresses && $customerFirstAddresses->country_id) {
-            $shipping = Shipping::where('country_id', $customerFirstAddresses->country_id)->first();
-            if ($shipping) {
-                // Apply shipping per product quantity
-                foreach ($cartcontent as $item) {
-                    $shippingAmount += $shipping->amount * $item->quantity;
-                }
-            }
-        }
-        if ($request->couponApplied == true) {
-            $totalPayable = $request->newTotalcartAmount + $shippingAmount;
-        } else {
-            $totalPayable = $cartTotalAmount + $shippingAmount;
-        }
-        //total payable amount
-        $data = [
-            'totalcartamount' => $cartTotalAmount,
+        $data = $this->cartService->calculateCartTotals(
+            couponApplied: $request->couponApplied,
+            newTotal: $request->newTotalcartAmount
+        );
+
+        return Inertia::render('Front/Payment', [
+            'totalcartamount' => $data['cartTotalAmount'],
             'newTotalcartAmount' => $request->newTotalcartAmount,
-            'totalPayable' => $totalPayable,
-            'bagsavingvalue' => $bagsavingvalue,
-            'shippingAmount' => $shippingAmount,
+            'totalPayable' => $data['totalPayable'],
+            'bagsavingvalue' => $data['bagSavingValue'],
+            'shippingAmount' => $data['shippingAmount'],
             'couponApplied' => $request->couponApplied,
             'couponcode' => $request->couponcode,
-            'discount_coupon_amount' => $request->discount_coupon_amount
-        ];
-        return Inertia::render('Front/Payment', $data);
+            'discount_coupon_amount' => $request->discount_coupon_amount,
+        ]);
     }
-
-
-
-
 
     public function orderPlaced(Request $request)
     {
@@ -439,15 +390,6 @@ class CartController extends Controller
             'order_items' => $order->orderItems,
         ]);
     }
-
-
-
-
-
-
-
-
-
     public function getOrderSummary(Request $request)
     {
         $cartcontent = Cart::where('user_id', auth()->id())->get();
@@ -541,14 +483,6 @@ class CartController extends Controller
         $data['keyword'] = '';
         return view('front.thanks', $data);
     }
-
-
-
-
-
-
-
-
     public function couponPage(Request $request)
     {
         $discountCoupons = DiscountCoupon::where('status', 1)

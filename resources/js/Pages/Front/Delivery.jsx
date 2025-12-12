@@ -4,8 +4,13 @@ import axios from "axios";
 import { route } from "ziggy-js";
 import CustomerAddresses from "./Components/CustomerAddresses";
 const DeliveryDetails = () => {
-    const { customerAddresses, totalcartamount, totalPayable } =
-        usePage().props;
+    const {
+        customerAddresses,
+        totalcartamount,
+        bagsavingvalue,
+        shippingAmount,
+        totalPayable,
+    } = usePage().props;
     const [message, setMessage] = useState({ text: "", type: "" });
 
     const handleProceedToPayment = async (e) => {
@@ -133,29 +138,26 @@ const DeliveryDetails = () => {
                         <ul>
                             <li>
                                 <h4>
-                                    Bag total <span>$220.00</span>
+                                    Bag total <span>${totalcartamount}</span>
                                 </h4>
                             </li>
                             <li>
                                 <h4>
                                     Bag savings{" "}
-                                    <span className="text-green">-$20.00</span>
+                                    <span className="text-green">
+                                        -${bagsavingvalue}
+                                    </span>
                                 </h4>
                             </li>
                             <li>
                                 <h4>
-                                    Coupon Discount <span>$20.00</span>
-                                </h4>
-                            </li>
-                            <li>
-                                <h4>
-                                    Delivery <span>$50.00</span>
+                                    Delivery <span>${shippingAmount}</span>
                                 </h4>
                             </li>
                         </ul>
                         <div className="total-amount">
                             <h4>
-                                Total Amount <span>$270.00</span>
+                                Total Amount <span>${totalPayable}</span>
                             </h4>
                         </div>
                     </div>
