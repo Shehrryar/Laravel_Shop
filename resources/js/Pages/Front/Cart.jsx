@@ -324,6 +324,8 @@ export default function CartPage() {
                     <section className="cart-section pt-0 top-space">
                         {cartcontent.map((item, i) => (
                             <div key={item.id}>
+                                <div className="divider"></div>
+
                                 <div className="cart-box px-15">
                                     <a href="#" className="cart-img">
                                         <img
@@ -590,7 +592,6 @@ export default function CartPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="divider"></div>
                             </div>
                         ))}
                     </section>
@@ -725,12 +726,12 @@ export default function CartPage() {
                         <div>
                             <div className="left-content">
                                 <h4>${dynamicTotalPayable.toFixed(2)}</h4>
-                                <a
+                                {/* <a
                                     href="#order-details"
                                     className="theme-color"
                                 >
                                     View details
-                                </a>
+                                </a> */}
                             </div>
                             <button
                                 onClick={handlePlaceOrder}
@@ -854,8 +855,7 @@ export default function CartPage() {
                             <button
                                 type="button"
                                 className="btn btn-solid w-100"
-                                onClick={handleAddToCart}
-                            >
+                                onClick={handleAddToCart}>
                                 DONE
                             </button>
                         </div>
@@ -912,8 +912,7 @@ export default function CartPage() {
                         transform: "translateX(-50%)",
                         margin: 0,
                         pointerEvents: "none",
-                    }}
-                >
+                    }}>
                     <div
                         className={`alert alert-${
                             message.type === "success" ? "success" : "danger"
@@ -923,10 +922,8 @@ export default function CartPage() {
                             minWidth: "260px",
                             pointerEvents: "auto", // allow clicking inside
                             boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                        }}
-                    >
+                        }}>
                         <span>{message.text}</span>
-
                         {/* Close Button */}
                         <button
                             type="button"

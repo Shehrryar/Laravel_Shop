@@ -4,7 +4,7 @@ import { Link, usePage, router } from "@inertiajs/react";
 import { route } from "ziggy-js";
 import BottomNav from "./Components/BottomNav";
 import WishlistButton from "./Components/WishlistButton";
-const WomenCollection = () => {
+const ShopPage = () => {
     const {
         products,
         wishlist,
@@ -137,6 +137,7 @@ const WomenCollection = () => {
                                             )}
                                         >
                                             <img
+                                                style={{ height: "265px" }}
                                                 src={
                                                     prod.product_images &&
                                                     prod.product_images.length >
@@ -398,4 +399,4 @@ const WomenCollection = () => {
         </>
     );
 };
-export default WomenCollection;
+export default ShopPage;

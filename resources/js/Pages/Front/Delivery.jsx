@@ -53,33 +53,7 @@ const DeliveryDetails = () => {
                             <div className="product-inline">
                                 <Link>
                                     <img
-                                        src="/assets/images/products/1.jpg"
-                                        className="img-fluid"
-                                        alt="Pink Hoodie t-shirt full"
-                                    />
-                                </Link>
-                                <div className="product-inline-content">
-                                    <div>
-                                        <Link>
-                                            <h4 className="content-color">
-                                                Pink Hoodie t-shirt full
-                                            </h4>
-                                        </Link>
-                                        <div className="price">
-                                            <h4>
-                                                Delivery by{" "}
-                                                <span>25th July</span>
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-12">
-                            <div className="product-inline">
-                                <Link>
-                                    <img
-                                        src="/assets/images/products/2.jpg"
+                                        src="/front-assets/images/products/2.jpg"
                                         className="img-fluid"
                                         alt="Men Blue Denim Jacket"
                                     />

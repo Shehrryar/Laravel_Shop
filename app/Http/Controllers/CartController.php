@@ -23,16 +23,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use App\Services\CartService;
-
 class CartController extends Controller
 {
     protected $cartService;
-
     public function __construct(CartService $cartService)
     {
         $this->cartService = $cartService;
     }
-
     public function addToCart(Request $request)
     {
         // echo '<pre>';
@@ -183,89 +180,97 @@ class CartController extends Controller
     }
     public function Cart()
     {
-        // $cartcontent = Cart::where('user_id', auth()->id())->get();
-        $cartcontent = Cart::where('user_id', auth()->id())
-            ->with('product')->with('size')
+        $userId = Auth::id();
+        // ----------------------------
+        // 1. LOAD CART WITH RELATIONS
+        // ----------------------------
+        $cartcontent = Cart::where('user_id', $userId)
+            ->with(['product', 'size']) // eager load
             ->get();
-        $cartcontent->transform(function ($item) {
+        // Apply product discounts for each cart item
+        $cartcontent->each(function ($item) {
             if ($item->product) {
                 $item->product->applyDiscount();
             }
-            return $item;
         });
-        foreach ($cartcontent as $content) {
-            $existingProductView = ProductView::where('product_id', $content->product_id)
-                ->where('user_id', auth()->id())
-                ->first();
-            if (!$existingProductView) {
-                ProductView::create([
-                    'product_id' => $content->product_id,
-                    'user_id' => $content->user_id,
-                ]);
-            }
+        // ----------------------------
+        // 2. RECORD PRODUCT VIEWS
+        // ----------------------------
+        $productIds = $cartcontent->pluck('product_id')->unique();
+        foreach ($productIds as $productId) {
+            ProductView::firstOrCreate([
+                'product_id' => $productId,
+                'user_id' => $userId,
+            ]);
         }
-        $wishlistProductIds = Wishlist::where('user_id', Auth::id())
+        // ----------------------------
+        // 3. WISHLIST ITEMS
+        // ----------------------------
+        $wishlistProductIds = Wishlist::where('user_id', $userId)
             ->pluck('product_id');
-        $products = Product::with(['product_images', 'color', 'size'])
+        $wishlistProducts = Product::with(['product_images', 'color', 'size'])
             ->whereIn('id', $wishlistProductIds)
             ->get();
+        // Apply active discounts to wishlist products
         $today = now()->toDateString();
         $discounts = Discount::where('status', 1)
             ->whereDate('start_at', '<=', $today)
             ->whereDate('expires_at', '>=', $today)
             ->get();
-        $products->transform(function ($product) use ($discounts) {
+        $wishlistProducts->each(function ($product) use ($discounts) {
             $discountData = getDiscountedPrice($product->id, $discounts, $product->price);
             $product->discount_value = $discountData['discount_value'];
             $product->discounted_price = $discountData['discounted_price'];
             $product->actual_price = $discountData['actual_price'];
-            return $product;
         });
-        $wishlistitems = collect();
-        if (!empty(Auth::user())) {
-            $wishlistitems = Wishlist::where('user_id', Auth::id())
-                ->with('product')
-                ->get()
-                ->keyBy('product_id');
-        }
-        $cartTotalAmount = $cartcontent->sum(function ($item) {
-            return $item->price;
-        });
+        // Full wishlist with product info
+        $wishlistitems = Wishlist::where('user_id', $userId)
+            ->with('product')
+            ->get()
+            ->keyBy('product_id');
+        // ----------------------------
+        // 4. CALCULATE CART AMOUNTS
+        // ----------------------------
+        $cartTotalAmount = $cartcontent->sum('price');
+        // Discounted total
         $cartTotalDiscountAmount = $cartcontent->sum(function ($item) {
-            // Only apply discount if discounted_value > 0
-            if ($item->discounted_value > 0) {
-                return $item->discounted_price;
-            }
-            return 0; // No discount applied for this item
+            return ($item->discounted_value > 0) ? $item->discounted_price : 0;
         });
         $bagsavingvalue = $cartTotalDiscountAmount > 0
             ? $cartTotalAmount - $cartTotalDiscountAmount
             : 0;
-        $user = Auth::user();
+        // ----------------------------
+        // 5. SHIPPING CALCULATION
+        // ----------------------------
         $shippingAmount = 100;
-        $customerAddress = CustomerAddress::where('user_id', $user->id)->first();
+        $customerAddress = CustomerAddress::where('user_id', $userId)->first();
         if ($customerAddress && $customerAddress->country_id) {
             $shipping = Shipping::where('country_id', $customerAddress->country_id)->first();
             if ($shipping) {
-                // Apply shipping per product quantity
                 foreach ($cartcontent as $item) {
                     $shippingAmount += $shipping->amount * $item->quantity;
                 }
             }
         }
-        // Total payable amount
+        // ----------------------------
+        // 6. FINAL TOTAL
+        // ----------------------------
         $totalPayable = $cartTotalAmount + $shippingAmount;
-        $data['wishlist'] = $products;
-        $data['wishlistitems'] = $wishlistitems;
-        $data['cartcontent'] = $cartcontent;
-        $data['colors'] = Color::get();
-        $data['sizes'] = Size::get();
-        $data['bagsavingvalue'] = $bagsavingvalue;
-        $data['carttotalamount'] = $cartTotalAmount;
-        $data['shippingAmount'] = $shippingAmount;
-        $data['totalPayable'] = $totalPayable;
+        // ----------------------------
+        // 7. RESPONSE DATA
+        // ----------------------------
+        $data = [
+            'wishlist' => $wishlistProducts,
+            'wishlistitems' => $wishlistitems,
+            'cartcontent' => $cartcontent,
+            'colors' => Color::all(),
+            'sizes' => Size::all(),
+            'bagsavingvalue' => $bagsavingvalue,
+            'carttotalamount' => $cartTotalAmount,
+            'shippingAmount' => $shippingAmount,
+            'totalPayable' => $totalPayable,
+        ];
         return Inertia::render('Front/Cart', $data);
-        // return view('front.cart', $data);
     }
     public function updateCart(Request $request)
     {
@@ -344,7 +349,6 @@ class CartController extends Controller
     public function checkout()
     {
         $data = $this->cartService->calculateCartTotals();
-
         return Inertia::render('Front/Delivery', [
             'countries' => $data['countries'],
             'customerAddresses' => $data['customerAddresses'],
@@ -354,14 +358,12 @@ class CartController extends Controller
             'totalPayable' => $data['totalPayable'],
         ]);
     }
-
     public function Payment(Request $request)
     {
         $data = $this->cartService->calculateCartTotals(
             couponApplied: $request->couponApplied,
             newTotal: $request->newTotalcartAmount
         );
-
         return Inertia::render('Front/Payment', [
             'totalcartamount' => $data['cartTotalAmount'],
             'newTotalcartAmount' => $request->newTotalcartAmount,
@@ -373,7 +375,6 @@ class CartController extends Controller
             'discount_coupon_amount' => $request->discount_coupon_amount,
         ]);
     }
-
     public function orderPlaced(Request $request)
     {
         $order = Order::with('orderItems.product') // eager load items + product details

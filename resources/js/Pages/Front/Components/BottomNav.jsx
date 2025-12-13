@@ -15,11 +15,6 @@ const BottomNav = () => {
 
     const currentPath = new URL(url, window.location.origin).pathname.toLowerCase();
 
-    // Debug: log current path whenever it changes
-    useEffect(() => {
-        console.log("Current URL:", currentPath);
-    }, [currentPath]);
-
     return (
         <div className="bottom-panel">
             <ul>
