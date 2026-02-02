@@ -16,7 +16,7 @@ const InnerCategoryPage = () => {
                                 Categories{" "}
                                 <span>
                                     <i className="iconly-Arrow-Right-2 icli"></i>{" "}
-                                    {category.name}
+                                    {category.translated_name}
                                 </span>
                             </h2>
                         </div>
@@ -45,7 +45,7 @@ const InnerCategoryPage = () => {
                     className="category-wrap"
                 >
                     <div className="content-part">
-                        <h2>{category.name}</h2>
+                        <h2>{category.translated_name}</h2>
                         <h4>t-shirts, tops, bottoms..</h4>
                     </div>
                     <div className="img-part">
@@ -72,7 +72,7 @@ const InnerCategoryPage = () => {
                                     data-bs-toggle="collapse"
                                     data-bs-target={`#collapse-${subcategory.id}`}
                                 >
-                                    {subcategory.name}
+                                    {subcategory.translated_name}
                                 </button>
                             </h2>
                             <div
@@ -101,7 +101,7 @@ const InnerCategoryPage = () => {
                                                             }
                                                         )}
                                                     >
-                                                        {sub_sub_category.name}
+                                                        {sub_sub_category.translated_name}
                                                     </Link>
                                                 </li>
                                             )
@@ -176,7 +176,7 @@ const InnerCategoryPage = () => {
                                                 letterSpacing: "0.5px",
                                             }}
                                         >
-                                            {sub_sub_category.name}
+                                            {sub_sub_category.translated_name}
                                         </h4>
                                     </Link>
                                 </div>
@@ -209,7 +209,7 @@ const InnerCategoryPage = () => {
                                         textTransform: "uppercase",
                                     }}
                                 >
-                                    {num.name}
+                                    {num.translated_name}
                                 </h4>
                             </Link>
                         </div>

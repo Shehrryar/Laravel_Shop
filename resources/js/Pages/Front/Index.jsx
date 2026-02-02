@@ -3,34 +3,34 @@ import Slider from "react-slick";
 import { route } from "ziggy-js";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, usePage, router } from "@inertiajs/react";
 import BottomNav from "./Components/BottomNav";
 import Sidebar from "./Components/SideBar";
 import ProductSlider from "./Components/ProductSlider";
 import WishlistButton from "./Components/WishlistButton";
-
+import CountdownTimer from "./Components/CountdownTimer";
+import HomeProductTabs from "./Components/HomeProductTabs";
 export default function HomePage() {
     const {
         categories,
-        recommended_products,
         featured_products,
-        latest_products,
         wishlistitems,
         dis_products,
         discount,
         brands,
         cartquantity,
         homelables,
+        translations,
+        productsByLabel,
     } = usePage().props;
-
     const [loading, setLoading] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeId, setActiveId] = React.useState(homelables[0].id);
     useEffect(() => {
         // simulate loader finishing
         const t = setTimeout(() => setLoading(false), 600);
         return () => clearTimeout(t);
     }, []);
-
     // small helper to toggle sidebar
     const settings = {
         slidesToShow: 5,
@@ -47,31 +47,22 @@ export default function HomePage() {
     /*=====================
     03.  Header sidebar 
   ==========================*/
-    function toggleSidebar() {
-        $(".header-sidebar").addClass("show");
-        $(".overlay-sidebar").addClass("show");
-        $("body").css({
-            overflow: "hidden",
-        });
-    }
-    $(".overlay-sidebar").on("click", function () {
-        $(".header-sidebar").removeClass("show");
-        $(".overlay-sidebar").removeClass("show");
-        $("body").css({
-            overflow: "auto",
-        });
-    });
+    const openSidebar = () => {
+        setSidebarOpen(true);
+        document.body.style.overflow = "hidden";
+    };
+    const closeSidebar = () => {
+        setSidebarOpen(false);
+        document.body.style.overflow = "auto";
+    };
+
     return (
         <>
             {/* loader start */}
             {/* loader end */}
             {/* header start */}
             <header>
-                <div
-                    className="nav-bar"
-                    id="opensidebar"
-                    onClick={toggleSidebar}
-                >
+                <div className="nav-bar" id="opensidebar" onClick={openSidebar}>
                     <img
                         src="front-assets/svg/bar.svg"
                         className="img-fluid"
@@ -110,15 +101,15 @@ export default function HomePage() {
                         <li>
                             <Link href={route("front.cart")}>
                                 <i className="iconly-Buy icli" />
-                                <span>{cartquantity.totalQuantity}</span>
+                                {cartquantity.totalQuantity > 0 ? (
+                                    <span>{cartquantity.totalQuantity}</span>
+                                ) : null}
                             </Link>
                         </li>
                     </ul>
                 </div>
             </header>
-
-            <Sidebar />
-
+            <Sidebar open={sidebarOpen} onClose={closeSidebar} />
             {/* header end */}
             {/* category start */}
             <section className="category-section top-space">
@@ -133,10 +124,9 @@ export default function HomePage() {
                             >
                                 <img
                                     src={`/upload/category/${cat.image}`}
-                                    alt={cat.name}
                                     className="img-fluid"
                                 />
-                                <h4>{cat.name || "Kids"}</h4>
+                                <h4>{cat.translated_name || "Kids"}</h4>
                             </Link>
                         </li>
                     ))}
@@ -156,9 +146,17 @@ export default function HomePage() {
                             />
                             <div className="slider-content">
                                 <div>
-                                    <h2>Welcome To Multikart</h2>
-                                    <h1>Flat 50% OFF</h1>
-                                    <h6>Free Shipping Till Mid Night</h6>
+                                    <h2>
+                                        {translations["Welcome To Multikart"]}
+                                    </h2>
+                                    <h1>{translations["Flat 50% OFF"]}</h1>
+                                    <h6>
+                                        {
+                                            translations[
+                                                "Free Shipping Till Mid Night"
+                                            ]
+                                        }
+                                    </h6>
                                     <a
                                         href="shop.html"
                                         className="btn btn-solid"
@@ -172,14 +170,14 @@ export default function HomePage() {
                 </div>
             </section>
             {/* home slider end */}
-
             {/* deals section start */}
             <section className="deals-section px-15 pt-0">
                 <div className="title-part">
-                    <h2>Deals of the Day</h2>
-                    <Link href={route("front.shop")}>See All</Link>
+                    <h2>{translations["Deals of the Day"]}</h2>
+                    <Link href={route("front.shop")}>
+                        {translations["See All"]}
+                    </Link>
                 </div>
-
                 <div className="product-section">
                     <div className="row gy-3">
                         {dis_products && dis_products.length > 0 ? (
@@ -189,14 +187,13 @@ export default function HomePage() {
                                         ? product.product_ratings_sum_rating /
                                           product.product_ratings_count
                                         : 0;
-
                                 return (
                                     <div className="col-12" key={product.id}>
                                         <div className="product-inline">
                                             <Link
                                                 href={route(
                                                     "front.product",
-                                                    product.slug
+                                                    product.slug,
                                                 )}
                                             >
                                                 <img
@@ -210,18 +207,20 @@ export default function HomePage() {
                                                     alt={product.title}
                                                 />
                                             </Link>
-
                                             <div className="product-inline-content">
                                                 <div>
                                                     <Link
                                                         href={route(
                                                             "front.product",
-                                                            product.slug
+                                                            product.slug,
                                                         )}
                                                     >
-                                                        <h4>{product.title}</h4>
+                                                        <h4>
+                                                            {
+                                                                product.translated_title
+                                                            }
+                                                        </h4>
                                                     </Link>
-
                                                     <div className="product_rating">
                                                         <ul className="ratings">
                                                             {[
@@ -234,17 +233,16 @@ export default function HomePage() {
                                                                             star
                                                                                 ? "filled"
                                                                                 : avgRating >=
-                                                                                  star -
-                                                                                      0.5
-                                                                                ? "half"
-                                                                                : "empty"
+                                                                                    star -
+                                                                                        0.5
+                                                                                  ? "half"
+                                                                                  : "empty"
                                                                         }`}
                                                                     ></i>
                                                                 </li>
                                                             ))}
                                                         </ul>
                                                     </div>
-
                                                     <div className="price">
                                                         <h4>
                                                             {product.discount_value !=
@@ -279,7 +277,6 @@ export default function HomePage() {
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <WishlistButton
                                                 productId={product.id}
                                                 isWishlisted={
@@ -292,129 +289,35 @@ export default function HomePage() {
                             })
                         ) : (
                             <div className="col-12">
-                                <p>No deals available.</p>
+                                <p>{translations["No deals available."]}</p>
                             </div>
                         )}
                     </div>
                 </div>
             </section>
-
             <div className="divider" />
-            {/* deals section end */}
-            {/* tab section start */}
-            <section className="pt-0 tab-section">
-                <div className="title-section px-15">
-                    <h2>Find your Style</h2>
-                    <h3>Super Summer Sale</h3>
-                </div>
-                <div className="tab-section">
-                    <ul className="nav nav-tabs theme-tab pl-15">
-                        {homelables.map((label) => (
-                            <li key={label.id} className="nav-item">
-                                <button
-                                    type="button"
-                                    className={`nav-link ${
-                                        activeId === label.id ? "active" : ""
-                                    }`}
-                                    onClick={() => setActiveId(label.id)}
-                                >
-                                    {label.label_name}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
 
-                    <div className="tab-content px-15">
-                        <div
-                            className="tab-pane fade show active"
-                            id="trending"
-                        >
-                            <div className="row gy-3 gx-3">
-                                <div className="col-md-4 col-6">
-                                    <div className="product-box ratio_square">
-                                        <div className="img-part">
-                                            <a href="product.html">
-                                                <img
-                                                    src="front-assets/images/products/4.jpg"
-                                                    alt=""
-                                                    className="img-fluid bg-img"
-                                                />
-                                            </a>
-                                            <div className="wishlist-btn">
-                                                <i className="iconly-Heart icli" />
-                                                <i className="iconly-Heart icbo" />
-                                                <div className="effect-group">
-                                                    <span className="effect" />
-                                                    <span className="effect" />
-                                                    <span className="effect" />
-                                                    <span className="effect" />
-                                                    <span className="effect" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="product-content">
-                                            <ul className="ratings">
-                                                <li>
-                                                    <i className="iconly-Star icbo" />
-                                                </li>
-                                                <li>
-                                                    <i className="iconly-Star icbo" />
-                                                </li>
-                                                <li>
-                                                    <i className="iconly-Star icbo" />
-                                                </li>
-                                                <li>
-                                                    <i className="iconly-Star icbo" />
-                                                </li>
-                                                <li>
-                                                    <i className="iconly-Star icbo empty" />
-                                                </li>
-                                            </ul>
-                                            <a href="product.html">
-                                                <h4>Blue Denim Jacket</h4>
-                                            </a>
-                                            <div className="price">
-                                                <h4>
-                                                    $32.00 <del>$35.00</del>
-                                                    <span>20%</span>
-                                                </h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/* other tab panes can be built similarly - keeping structure concise */}
-                    </div>
-                </div>
-            </section>
-            {/* tab section end */}
+            <HomeProductTabs
+                homelables={homelables}
+                productsByLabel={productsByLabel}
+                wishlistitems={wishlistitems}
+                translations={translations}
+            />
+
+            
             {/* timer banner start */}
             <section className="banner-timer">
                 <div className="banner-bg">
                     <div className="banner-content">
                         <div>
-                            <h6>Denim Wear</h6>
-                            <h2>Sales Starts In</h2>
-                            <div className="counters">
-                                <div className="counter d-none">
-                                    <span id="days">NA</span>
-                                    <p>Days</p>
-                                </div>
-                                <div className="counter">
-                                    <span id="hours">NA</span>
-                                    <p>Hours</p>
-                                </div>
-                                <div className="counter">
-                                    <span id="minutes">NA</span>
-                                    <p>Minutes</p>
-                                </div>
-                                <div className="counter">
-                                    <span id="seconds">NA</span>
-                                    <p>Seconds</p>
-                                </div>
-                            </div>
-                            <a href="shop.html">explore now</a>
+                            <h6>{translations["Denim Wear"]}</h6>
+                            <h2>{translations["Sales Starts In"]}</h2>
+
+                            <CountdownTimer initialSeconds={3600} />
+
+                            <Link href="shop.html">
+                                {translations["explore now"]}
+                            </Link>
                         </div>
                     </div>
                     <div className="banner-img">
@@ -429,7 +332,9 @@ export default function HomePage() {
             {/* timer banner end */}
             {/* brands section start */}
             <section className="brand-section pl-15">
-                <h2 className="title">Biggest Deals on Top Brands</h2>
+                <h2 className="title">
+                    {translations["Biggest Deals on Top Brands"]}
+                </h2>
                 <Slider {...settings} className="brand-slider slick-default">
                     {brands.map((bran, i) => (
                         <div key={i}>
@@ -451,7 +356,8 @@ export default function HomePage() {
                                         textTransform: "uppercase",
                                     }}
                                 >
-                                    {bran.name}
+                                    {/* {bran.name} */}
+                                    {bran.translated_name}
                                 </h4>
                             </Link>
                         </div>
@@ -474,9 +380,8 @@ export default function HomePage() {
             </section>
             {/* kids corner section end */}
             {/* offer corner start */}
-
             <section className="offer-corner-section px-15">
-                <h2 className="title">Offer Corner</h2>
+                <h2 className="title">{translations["Offer Corner"]}</h2>
                 {discount && discount.length > 0 ? (
                     <div className="row g-3">
                         {discount.map((t, idx) => (
@@ -494,7 +399,9 @@ export default function HomePage() {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-muted">No offers available right now.</p>
+                    <p className="text-muted">
+                        {translations["No offers available right now."]}
+                    </p>
                 )}
             </section>
             {/* offer corner end */}

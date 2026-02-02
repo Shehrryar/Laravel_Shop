@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Brand;
+use App\Models\Language;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Wishlist;
@@ -13,6 +14,7 @@ use App\Models\Category;
 use App\Models\ProductView;
 use App\Models\HomepageLabel;
 use Inertia\Inertia;
+
 class FrontController extends Controller
 {
     protected $discountService;
@@ -39,8 +41,6 @@ class FrontController extends Controller
             $this->productService->featuredProducts(),
             $discounts
         );
-
-
         $recommended = $this->productService->recommendedProducts();
         $latest = $this->productService->latestProducts();
 
@@ -48,14 +48,32 @@ class FrontController extends Controller
             ? Wishlist::where('user_id', Auth::id())->with('product')->get()->keyBy('product_id')
             : collect();
 
+
+
+        $productsByLabel = [
+            'latest' => $latest,
+
+            // 'trending_now' => Product::where('status', 1)
+            //     ->orderBy('views', 'desc') // or sales count
+            //     ->limit(12)
+            //     ->get(),
+
+            'top_rated' => $this->productService->topRatedProducts(12),
+        ];
+
+
+
+
         return Inertia::render('Front/Index', [
             'discount' => $discounts,
             'featured_products' => $featured,
             'latest_product' => $latest,
             'dis_products' => $discountedProducts,
             'recommended_products' => $recommended,
+            'languages' => Language::get(),
             'brands' => Brand::where('status', 1)->orderBy('name')->get(),
             'homelables' => HomepageLabel::where('is_active', 1)->orderBy('label_name')->get(),
+            'productsByLabel' => $productsByLabel,
             'wishlistitems' => $wishlistitems,
         ]);
     }

@@ -1,0 +1,241 @@
+{
+    "Home": "Home",
+    "Category": "Category",
+    "Cart": "Cart",
+    "Wishlist": "Wishlist",
+    "Profile": "Profile",
+
+    "Deals of the Day": "Deals of the Day",
+    "See All": "See All",
+    "No deals available.": "No deals available.",
+    "Find your Style": "Find your Style",
+    "Super Summer Sale": "Super Summer Sale",
+    "Biggest Deals on Top Brands": "Biggest Deals on Top Brands",
+    "The Featured Products": "The Featured Products",
+    "Offer Corner": "Offer Corner",
+    "No offers available right now.": "No offers available right now.",
+    "Welcome To Multikart": "Welcome To Multikart",
+    "Flat 50% OFF": "Flat 50% OFF",
+    "Free Shipping Till Mid Night": "Free Shipping Till Mid Night",
+    "SHOP NOW": "SHOP NOW",
+    "Denim Wear": "Denim Wear",
+    "Sales Starts In": "Sales Starts In",
+    "explore now": "explore now",
+
+    "Hey, Login Now": "Hey, Login Now",
+    "Username or Email": "Username or Email",
+    "Password": "Password",
+    "Forgot Password?": "Forgot Password?",
+    "Sign in": "Sign in",
+    "Signing in...": "Signing in...",
+    "Or sign in with": "Or sign in with",
+    "If you are new, Create Now": "If you are new, Create Now",
+    "SKIP": "SKIP",
+
+    "Order Placed": "Order Placed",
+    "Order Successful!": "Order Successful!",
+    "Your payment was processed and your order is on the way.": "Your payment was processed and your order is on the way.",
+    "Order Details": "Order Details",
+    "Your order # is:": "Your order # is:",
+    "A receipt has been sent to your email address.": "A receipt has been sent to your email address.",
+    "Shipping Address:": "Shipping Address:",
+    "Payment Method": "Payment Method",
+    "Order Summary": "Order Summary",
+    "Color": "Color",
+    "Size": "Size",
+    "Qty": "Qty",
+    "Bag total": "Bag total",
+    "Bag saving": "Bag saving",
+    "Delivery": "Delivery",
+    "Coupon Discount": "Coupon Discount",
+    "Total Amount": "Total Amount",
+    "Track Order": "Track Order",
+    "Continue shopping": "Continue shopping",
+
+    "Dark Mode": "Dark Mode",
+    "RTL": "RTL",
+    "Pages": "Pages",
+    "Elements & Other Pages": "Elements & Other Pages",
+
+    "Offers, Top Deals, Top Brands": "Offers, Top Deals, Top Brands",
+    "Shop by Category": "Shop by Category",
+    "Men, Women, Kids, Beauty..": "Men, Women, Kids, Beauty..",
+    "Orders": "Orders",
+    "Ongoing Orders, Recent Orders..": "Ongoing Orders, Recent Orders..",
+    "Your Wishlist": "Your Wishlist",
+    "Your Saved Products": "Your Saved Products",
+    "Your Account": "Your Account",
+    "Profile, Settings, Saved Cards...": "Profile, Settings, Saved Cards...",
+    "Language": "Language",
+    "Select your Language here..": "Select your Language here..",
+    "Notification": "Notification",
+    "Offers, Order tracking messages..": "Offers, Order tracking messages..",
+    "Settings": "Settings",
+    "Dark mode, RTL, Notification": "Dark mode, RTL, Notification",
+    "About us": "About us",
+    "About Multikart": "About Multikart",
+    "Help/Customer Care": "Help/Customer Care",
+    "Customer Support, FAQs": "Customer Support, FAQs",
+
+
+
+    
+    "Shopping Cart": "Shopping Cart",
+    "Step 1 of 3": "Step 1 of 3",
+    "Move to wishlist": "Move to wishlist",
+    "Remove": "Remove",
+    "You May Like this": "You May Like this",
+    "Order Details:": "Order Details:",
+    "Bag savings": "Bag savings",
+    "No Delivery Charges applied on this order": "No Delivery Charges applied on this order",
+    "7 Day Return": "7 Day Return",
+    "24/7 Support": "24/7 Support",
+    "Secure Payment": "Secure Payment",
+    "Place Order": "Place Order",
+    "Select Quantity:": "Select Quantity:",
+    "Add to Bag": "Add to Bag",
+    "Select Size:": "Select Size:",
+    "No sizes available": "No sizes available",
+    "DONE": "DONE",
+    "Select Color:": "Select Color:",
+    "No colors available": "No colors available",
+    "Price": "Price",
+    "Remove Item:": "Remove Item:",
+    "Are you sure you want to remove or move this item from the cart?": "Are you sure you want to remove or move this item from the cart?",
+    "MOVE TO WISHLIST": "MOVE TO WISHLIST",
+    "REMOVE": "REMOVE",
+    "Something went wrong!": "Something went wrong!",
+    "Shop": "Shop",
+    "Whoops !! Cart is Empty": "Whoops !! Cart is Empty",
+    "Looks like you haven’t added anything to your cart yet. You’ll find lots of interesting products on our “Shop” page.": "Looks like you haven’t added anything to your cart yet. You’ll find lots of interesting products on our “Shop” page.",
+    "Start Shopping": "Start Shopping",
+
+
+    
+    "Unknown Product": "Unknown Product",
+    "Add to Cart": "Add to Cart",
+    "Your wishlist is empty": "Your wishlist is empty",
+    "Continue Shopping": "Continue Shopping",
+
+
+
+
+
+    "Edit": "Edit",
+    "Payment": "Payment",
+    "Saved Cards, Wallets": "Saved Cards, Wallets",
+    "Saved Address": "Saved Address",
+    "Home, office..": "Home, office..",
+    "Profile Setting": "Profile Setting",
+    "Full Name, Password..": "Full Name, Password..",
+    "Terms & Conditions": "Terms & Conditions",
+    "T&C for use of Platform": "T&C for use of Platform",
+    "Help / Customer Care": "Help / Customer Care",
+    "LOG OUT": "LOG OUT",
+
+
+
+
+
+    "Personal Details": "Personal Details",
+    "First Name": "First Name",
+    "Last Name": "Last Name",
+    "Date of Birth": "Date of Birth",
+    "Gender": "Gender",
+    "Select Gender": "Select Gender",
+    "Men": "Men",
+    "Women": "Women",
+    "Other": "Other",
+    "Mobile Number": "Mobile Number",
+    "Show": "Show",
+    "Hide": "Hide",
+    "CANCEL": "CANCEL",
+    "Save Details": "Save Details",
+
+
+
+
+
+    "Categories": "Categories",
+    "No categories available.": "No categories available.",
+
+
+
+
+
+    "Delivery Details": "Delivery Details",
+    "Step 2 of 3": "Step 2 of 3",
+    "Expected Delivery": "Expected Delivery",
+    "Delivery by": "Delivery by",
+    "View details": "View details",
+    "Proceed to Payment": "Proceed to Payment",
+
+
+
+
+    "Add a new address": "Add a new address",
+    "Select Country": "Select Country",
+    "Full Name": "Full Name",
+    "Pin Code": "Pin Code",
+    "Flat, house No., building..": "Flat, house No., building..",
+    "Area, colony, street": "Area, colony, street",
+    "Landmark (optional)": "Landmark (optional)",
+    "Town/City": "Town/City",
+    "State/Province/Region": "State/Province/Region",
+    "Type of address": "Type of address",
+    "Office": "Office",
+    "Others": "Others",
+    "Make default address": "Make default address",
+    "RESET": "RESET",
+    "Add Address": "Add Address",
+    "Saving...": "Saving...",
+    "Country is required": "Country is required",
+    "Pin Code is required": "Pin Code is required",
+    "Flat or building info is required": "Flat or building info is required",
+    "Area is required": "Area is required",
+    "City is required": "City is required",
+    "State is required": "State is required",
+    "Address added successfully!": "Address added successfully!",
+    "Something went wrong, please try again.": "Something went wrong, please try again.",
+    "Error adding address.": "Error adding address.",
+
+
+
+
+    "Payment Details": "Payment Details",
+    "Step 3 of 3": "Step 3 of 3",
+    "Offers & promotions": "Offers & promotions",
+    "Show More (5 offers)": "Show More (5 offers)",
+    "Cash On Delivery": "Cash On Delivery",
+    "Debit/Credit Card": "Debit/Credit Card",
+    "Paypal": "Paypal",
+    "Apply Coupon": "Apply Coupon",
+    "Pay Now": "Pay Now",
+    "Select Payment Method": "Select Payment Method",
+
+
+        
+    
+    
+    "Currency": "Currency",
+    "Collection": "Collection",
+    "Products": "Products",
+    "Search": "Search",
+    "Filters": "Filters",
+    "Sort By": "Sort By",
+    "Recommended": "Recommended",
+    "Popularity": "Popularity",
+    "Whats New": "What's New",
+    "Price High to Low": "Price: High to Low",
+    "Price Low to High": "Price: Low to High",
+    "Customer Rating": "Customer rating",
+    "Brand": "Brand",
+    "Colors": "Colors",
+    "Apply Filter": "Apply Filter",
+    "Rs": "Rs",
+    "NEW": "NEW"
+
+
+
+
+}

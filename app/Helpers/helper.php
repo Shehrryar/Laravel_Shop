@@ -6,6 +6,8 @@ use App\Models\Order;
 use Carbon\Carbon;
 use App\Models\ProductImage;
 use App\Models\Cart;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\File;
 use App\Models\Stock;
 function getcartquantityandtotal()
 {
@@ -146,4 +148,44 @@ function handleStockforCart($product_id, $color_id, $size_id, $quantity)
         ];
     }
 }
+
+
+
+if (!function_exists('front_translations')) {
+    function front_translations(): array
+    {
+        $locale = app()->getLocale(); // Uses the current Laravel locale (set by your language switcher)
+
+        $cacheKey = "front_translations_{$locale}";
+
+        return cache()->rememberForever($cacheKey, function () use ($locale) {
+            $langPath = resource_path("lang/front/{$locale}.json");
+
+            if (File::exists($langPath)) {
+                $content = File::get($langPath);
+                return json_decode($content, true) ?: [];
+            }
+
+            // Fallback to English if file doesn't exist
+            $fallbackPath = resource_path('lang/front/en.json');
+            if (File::exists($fallbackPath)) {
+                return json_decode(File::get($fallbackPath), true) ?: [];
+            }
+
+            return [];
+        });
+    }
+}
+
+if (!function_exists('front_trans')) {
+    function front_trans(string $key, string $fallback = null): string
+    {
+        $translations = front_translations();
+        return $translations[$key] ?? $fallback ?? $key;
+    }
+}
+
+
+
+
 ?>

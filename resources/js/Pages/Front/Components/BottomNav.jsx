@@ -3,7 +3,9 @@ import { route } from "ziggy-js";
 import { Link, usePage } from "@inertiajs/react";
 
 const BottomNav = () => {
-    const { url } = usePage(); // current full URL
+    const { url, translations = {} } = usePage().props;
+
+    const t = (key) => translations?.[key] ?? key;
 
     const navItems = [
         { to: "/", label: "Home", icon: "Home" },
@@ -13,23 +15,32 @@ const BottomNav = () => {
         { to: "/account/profile", label: "Profile", icon: "Profile" },
     ];
 
-    const currentPath = new URL(url, window.location.origin).pathname.toLowerCase();
+    const currentPath = new URL(
+        url,
+        window.location.origin,
+    ).pathname.toLowerCase();
 
     return (
         <div className="bottom-panel">
             <ul>
                 {navItems.map((item) => {
-                    const itemPath = new URL(item.to, window.location.origin).pathname.toLowerCase();
+                    const itemPath = new URL(
+                        item.to,
+                        window.location.origin,
+                    ).pathname.toLowerCase();
                     const isActive = currentPath === itemPath;
 
                     return (
-                        <li key={item.label} className={isActive ? "active" : ""}>
+                        <li
+                            key={item.label}
+                            className={isActive ? "active" : ""}
+                        >
                             <Link href={item.to}>
                                 <div className="icon">
                                     <i className={`iconly-${item.icon} icli`} />
                                     <i className={`iconly-${item.icon} icbo`} />
                                 </div>
-                                <span>{item.label}</span>
+                                <span>{t(item.label)}</span>
                             </Link>
                         </li>
                     );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, usePage, router } from "@inertiajs/react";
 import { route } from "ziggy-js";
@@ -15,6 +15,7 @@ const ShopPage = () => {
         subcat_slug,
         subsubcat_slug,
         cartquantity,
+        translations,
     } = usePage().props;
     const [sortValue, setSortValue] = useState("");
     const [selectedBrands, setSelectedBrands] = useState([]);
@@ -31,7 +32,7 @@ const ShopPage = () => {
             (prev) =>
                 prev.includes(brandId)
                     ? prev.filter((id) => id !== brandId) // remove if already selected
-                    : [...prev, brandId] // add if not selected
+                    : [...prev, brandId], // add if not selected
         );
     };
     const toggleSizeSelection = (sizeid) => {
@@ -39,7 +40,7 @@ const ShopPage = () => {
             (prev) =>
                 prev.includes(sizeid)
                     ? prev.filter((id) => id !== sizeid) // remove if already selected
-                    : [...prev, sizeid] // add if not selected
+                    : [...prev, sizeid], // add if not selected
         );
     };
     const handleApplyFilter = () => {
@@ -68,12 +69,10 @@ const ShopPage = () => {
                         modalInstance.hide();
                     }
                 },
-            }
+            },
         );
     };
-
     // console.log(products);
-
     // Toggle Wishlis
     return (
         <>
@@ -83,8 +82,11 @@ const ShopPage = () => {
                     <Link href={route("front.home")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>{cat_slug} Collection</h2>
-                            <h6>{products.data.length} Products</h6>
+                            <h2>{translations["Collection"]}</h2>
+                            <h6>
+                                {products.data.length}{" "}
+                                {translations["Products"]}
+                            </h6>
                         </div>
                     </Link>
                 </div>
@@ -98,7 +100,9 @@ const ShopPage = () => {
                         <li>
                             <Link href={route("front.cart")}>
                                 <i className="iconly-Buy icli"></i>
-                                <span>{cartquantity.totalQuantity}</span>
+                                {cartquantity.totalQuantity > 0 ? (
+                                    <span>{cartquantity.totalQuantity}</span>
+                                ) : null}
                             </Link>
                         </li>
                     </ul>
@@ -133,7 +137,7 @@ const ShopPage = () => {
                                         <Link
                                             href={route(
                                                 "front.product",
-                                                prod.slug
+                                                prod.slug,
                                             )}
                                         >
                                             <img
@@ -149,18 +153,15 @@ const ShopPage = () => {
                                                 className="img-fluid bg-img w-100 rounded-3"
                                             />
                                         </Link>
-
                                         {/* Wishlist Button */}
-
                                         <WishlistButton
                                             productId={prod.id}
                                             isWishlisted={wishlist[prod.id]}
                                         />
-
                                         {/* NEW Badge Example */}
                                         {prod.is_new && (
                                             <label className="badge bg-danger position-absolute top-0 start-0 m-2">
-                                                NEW
+                                                {translations["NEW"]}
                                             </label>
                                         )}
                                     </div>
@@ -172,7 +173,7 @@ const ShopPage = () => {
                                                         className={`iconly-Star icbo ${
                                                             i <=
                                                             Math.round(
-                                                                prod.avg_rating
+                                                                prod.avg_rating,
                                                             )
                                                                 ? ""
                                                                 : "empty"
@@ -184,11 +185,11 @@ const ShopPage = () => {
                                         <Link
                                             href={route(
                                                 "front.product",
-                                                prod.slug
+                                                prod.slug,
                                             )}
                                         >
                                             <h4 className="fw-semibold text-dark">
-                                                {prod.title}
+                                                {prod.translated_title}
                                             </h4>
                                         </Link>
                                         <div className="price">
@@ -218,9 +219,7 @@ const ShopPage = () => {
                     </div>
                 </div>
             </section>
-
             {/* Filter Modal */}
-
             <div
                 className="modal filter-modal"
                 id="filterModal"
@@ -230,7 +229,7 @@ const ShopPage = () => {
                 <div className="modal-dialog modal-fullscreen">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h2>Filters</h2>
+                            <h2>{translations["Filters"]}</h2>
                             <a data-bs-dismiss="modal">
                                 <img
                                     src="/front-assets/svg/x-dark.svg"
@@ -242,7 +241,9 @@ const ShopPage = () => {
                         <div className="modal-body">
                             {/* Sort By */}
                             <div className="filter-box">
-                                <h2 className="filter-title">Sort By:</h2>
+                                <h2 className="filter-title">
+                                    {translations["Sort By"]}:
+                                </h2>
                                 <div className="filter-content">
                                     <select
                                         className="form-select form-control form-theme"
@@ -250,27 +251,31 @@ const ShopPage = () => {
                                         value={sortValue}
                                     >
                                         <option defaultValue>
-                                            Recommended
+                                            {translations["Recommended"]}
                                         </option>
-                                        <option value="1">Popularity</option>
+                                        <option value="1">
+                                            {translations["Popularity"]}
+                                        </option>
                                         <option value="latest">
-                                            What's New
+                                            {translations["Whats New"]}
                                         </option>
                                         <option value="pricehigh">
-                                            Price: High to Low
+                                            {translations["Price High to Low"]}
                                         </option>
                                         <option value="pricelow">
-                                            Price: Low to High
+                                            {translations["Price Low to High"]}
                                         </option>
                                         <option value="byrating">
-                                            Customer rating
+                                            {translations["Customer rating"]}
                                         </option>
                                     </select>
                                 </div>
                             </div>
                             {/* Brand */}
                             <div className="filter-box">
-                                <h2 className="filter-title">Brand:</h2>
+                                <h2 className="filter-title">
+                                    {translations["Brand"]}:
+                                </h2>
                                 <div className="filter-content">
                                     <ul className="row filter-row g-3">
                                         {brands.map((brand) => (
@@ -278,19 +283,19 @@ const ShopPage = () => {
                                                 key={brand.id}
                                                 className={`col-6 ${
                                                     selectedBrands.includes(
-                                                        brand.id
+                                                        brand.id,
                                                     )
                                                         ? "active"
                                                         : ""
                                                 }`}
                                                 onClick={() =>
                                                     toggleBrandSelection(
-                                                        brand.id
+                                                        brand.id,
                                                     )
                                                 }
                                             >
                                                 <div className="filter-col">
-                                                    {brand.name}
+                                                    {brand.translated_name}
                                                 </div>
                                             </li>
                                         ))}
@@ -299,7 +304,9 @@ const ShopPage = () => {
                             </div>
                             {/* Size */}
                             <div className="filter-box">
-                                <h2 className="filter-title">Size:</h2>
+                                <h2 className="filter-title">
+                                    {translations["Size"]}:
+                                </h2>
                                 <div className="filter-content">
                                     <ul className="row filter-row g-3">
                                         {sizes.map((size) => (
@@ -307,7 +314,7 @@ const ShopPage = () => {
                                                 key={size.id}
                                                 className={`col-4 ${
                                                     selectedSizes.includes(
-                                                        size.id
+                                                        size.id,
                                                     )
                                                         ? "active"
                                                         : ""
@@ -326,7 +333,9 @@ const ShopPage = () => {
                             </div>
                             {/* Price */}
                             <div className="filter-box">
-                                <h2 className="filter-title">Price:</h2>
+                                <h2 className="filter-title">
+                                    {translations["Price"]}:
+                                </h2>
                                 <div className="filter-content text-center">
                                     <input
                                         type="range"
@@ -346,7 +355,9 @@ const ShopPage = () => {
                             </div>
                             {/* Colors */}
                             <div className="filter-box">
-                                <h2 className="filter-title">Colors:</h2>
+                                <h2 className="filter-title">
+                                    {translations["Colors"]}:
+                                </h2>
                                 <div className="filter-content">
                                     <ul className="filter-color d-flex flex-wrap gap-2">
                                         {colors.map((color) => (
@@ -378,16 +389,15 @@ const ShopPage = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className="modal-footer">
                             <a className="reset-link" data-bs-dismiss="modal">
-                                RESET
+                                {translations["RESET"]}
                             </a>
                             <button
                                 onClick={handleApplyFilter}
                                 className="btn btn-primary w-100"
                             >
-                                Apply Filter
+                                {translations["Apply Filter"]}
                             </button>
                         </div>
                     </div>

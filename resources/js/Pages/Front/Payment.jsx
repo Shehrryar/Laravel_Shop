@@ -3,9 +3,7 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 import { loadStripe } from "@stripe/stripe-js";
-
 const stripePromise = loadStripe("pk_test_123456789");
-
 const PaymentDetails = () => {
     const {
         totalcartamount,
@@ -15,6 +13,7 @@ const PaymentDetails = () => {
         couponApplied,
         couponcode,
         discount_coupon_amount,
+        translations,
     } = usePage().props;
     // Fixed: Proper useState (no TS syntax)
     const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -23,7 +22,6 @@ const PaymentDetails = () => {
         e.preventDefault();
         router.get(route("front.checkout"));
     };
-
     const goToCoupons = () => {
         router.visit(route("front.coupons"), {
             data: {
@@ -35,7 +33,6 @@ const PaymentDetails = () => {
             },
         });
     };
-
     const handlePaymentNow = async (e) => {
         e.preventDefault();
         if (paymentMethod === "cod") {
@@ -49,7 +46,8 @@ const PaymentDetails = () => {
                         totalPayable,
                         shippingAmount,
                         discount_coupon_amount,
-                    }
+                        bagsavingvalue,
+                    },
                 );
                 if (response.data.status) {
                     router.visit(route("front.orderPlaced"));
@@ -69,7 +67,32 @@ const PaymentDetails = () => {
                         paymentMethod,
                         totalPayable,
                         shippingAmount,
-                    }
+                        bagsavingvalue,
+                    },
+                );
+                if (response.data.url) {
+                    window.location.href = response.data.url; // Redirect to Stripe Checkout
+                } else {
+                    console.error("No checkout URL returned from server");
+                }
+            } catch (error) {
+                console.error("Stripe payment error:", error);
+            } finally {
+                setLoading(false);
+            }
+        } else if (paymentMethod === "Paypal") {
+            // Stripe flow
+            setLoading(true);
+            try {
+                const stripe = await stripePromise;
+                const response = await axios.post(
+                    route("front.processCheckout"),
+                    {
+                        totalcartamount,
+                        paymentMethod,
+                        totalPayable,
+                        shippingAmount,
+                    },
                 );
                 if (response.data.url) {
                     window.location.href = response.data.url; // Redirect to Stripe Checkout
@@ -95,36 +118,54 @@ const PaymentDetails = () => {
                     <Link onClick={redirectToPrevious}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>Payment Details</h2>
-                            <h6>Step 3 of 3</h6>
+                            <h2>{translations["Payment Details"]}</h2>
+                            <h6>{translations["Step 3 of 3"]}</h6>
                         </div>
                     </Link>
                 </div>
             </header>
             {/* Offer Section */}
             <section className="offer-section px-15 top-space">
-                <h2 className="page-title">Offers & promotions</h2>
+                <h2 className="page-title">
+                    {translations["Offers & promotions"]}
+                </h2>
                 <div className="offer-listing">
                     <ul className="listing">
                         <li>
-                            Get upto 25% discount on Multikart Pay using ICICI
-                            Bank Net banking or Cards
+                            {
+                                translations[
+                                    "Get upto 25% discount on Multikart Pay using ICICI"
+                                ]
+                            }
+                            {translations["Bank Net banking or Cards"]}
                         </li>
                         <li>
-                            Enjoy upto 50% off & free delivery on online orders!
+                            {
+                                translations[
+                                    "Enjoy upto 50% off & free delivery on online orders!"
+                                ]
+                            }
                         </li>
                         <li>
-                            Get upto 25% discount on Multikart Pay using ICICI
-                            Bank Net banking or Cards
+                            {
+                                translations[
+                                    "Get upto 25% discount on Multikart Pay using ICICI"
+                                ]
+                            }
+                            {translations["Bank Net banking or Cards"]}
                         </li>
                         <li>
-                            Enjoy upto 50% off & free delivery on online orders!
+                            {
+                                translations[
+                                    "Enjoy upto 50% off & free delivery on online orders!"
+                                ]
+                            }
                         </li>
                     </ul>
                     <div className="overlay-offer"></div>
                 </div>
                 <a href="#" className="show-more">
-                    Show More (5 offers)
+                    {translations["Show More (5 offers)"]}
                 </a>
             </section>
             <div className="divider"></div>
@@ -145,7 +186,7 @@ const PaymentDetails = () => {
                                         className="img-fluid"
                                         alt=""
                                     />
-                                    Cash On Delivery
+                                    {translations["Cash On Delivery"]}
                                     <input
                                         type="radio"
                                         className="radio_animated"
@@ -183,7 +224,7 @@ const PaymentDetails = () => {
                                         className="img-fluid"
                                         alt=""
                                     />
-                                    Debit/Credit Card
+                                    {translations["Debit/Credit Card"]}
                                     <input
                                         type="radio"
                                         className="radio_animated"
@@ -213,7 +254,7 @@ const PaymentDetails = () => {
                                         className="img-fluid"
                                         alt=""
                                     />
-                                    Paypal
+                                    {translations["Paypal"]}
                                     <input
                                         type="radio"
                                         className="radio_animated"
@@ -233,7 +274,6 @@ const PaymentDetails = () => {
                 </div>
             </section>
             <div className="divider"></div>
-
             <section className="px-15 pt-0">
                 <div
                     style={{
@@ -242,59 +282,57 @@ const PaymentDetails = () => {
                         alignItems: "center",
                     }}
                 >
-                    <h4>Coupon Discount</h4>
+                    <h4>{translations["Coupon Discount"]}</h4>
                     <span
                         onClick={goToCoupons}
                         className="theme-color"
                         style={{ cursor: "pointer", fontWeight: "600" }}
                     >
-                        Apply Coupon
+                        {translations["Apply Coupon"]}
                     </span>
                 </div>
             </section>
-
             <div className="divider"></div>
             {/* Order Details */}
             <section className="px-15 pt-0">
-                <h2 className="title">Order Details:</h2>
+                <h2 className="title">{translations["Order Details"]}:</h2>
                 <div className="order-details">
                     <ul>
                         <li>
                             <h4>
-                                Bag total <span>${totalcartamount}</span>
+                                {translations["Bag total"]}{" "}
+                                <span>${totalcartamount}</span>
                             </h4>
                         </li>
                         <li>
                             <h4>
-                                Bag savings{" "}
+                                {translations["Bag saving"]}{" "}
                                 <span className="text-green">
                                     -${bagsavingvalue}
                                 </span>
                             </h4>
                         </li>
-
                         {!!discount_coupon_amount && (
                             <li>
                                 <h4>
-                                    Coupon Discount{" "}
+                                    {translations["Coupon Discount"]}{" "}
                                     <span className="text-green">
                                         -${discount_coupon_amount}
                                     </span>
                                 </h4>
                             </li>
                         )}
-
-
-                        
                         <li>
                             <h4>
-                                Delivery <span>${shippingAmount}</span>
+                                {translations["Delivery"]}{" "}
+                                <span>${shippingAmount}</span>
                             </h4>
                         </li>
                     </ul>
                     <div className="total-amount">
                         <h4>
-                            Total Amount <span>${totalPayable}</span>
+                            {translations["Total Amount"]}{" "}
+                            <span>${totalPayable}</span>
                         </h4>
                     </div>
                 </div>
@@ -310,7 +348,7 @@ const PaymentDetails = () => {
                         </a> */}
                     </div>
                     <Link onClick={handlePaymentNow} className="btn btn-solid">
-                        Pay Now
+                        {translations["Pay Now"]}
                     </Link>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import { Link, usePage } from "@inertiajs/react";
 import BottomNav from "./Components/BottomNav";
 
 const CategoryPage = () => {
-    const { categories,cartquantity } = usePage().props;
+    const { translations, categories, cartquantity } = usePage().props;
     return (
         <>
             {/* Header */}
@@ -13,7 +13,7 @@ const CategoryPage = () => {
                     <Link href={route("front.home")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>Categories</h2>
+                            <h2>{translations["Categories"]}</h2>
                         </div>
                     </Link>
                 </div>
@@ -46,10 +46,7 @@ const CategoryPage = () => {
                             className="category-wrap"
                         >
                             <div className="content-part">
-                                <h2>{category.name}</h2>
-                                <h4>
-                                    {category.description || "Explore products"}
-                                </h4>
+                                <h2>{category.translated_name}</h2>
                             </div>
                             <div className="img-part">
                                 <img
@@ -65,7 +62,7 @@ const CategoryPage = () => {
                         </Link>
                     ))
                 ) : (
-                    <p className="text-center py-3">No categories available.</p>
+                    <p className="text-center py-3">{translations["No categories available."]}</p>
                 )}
             </section>
             {/* Panel Space */}

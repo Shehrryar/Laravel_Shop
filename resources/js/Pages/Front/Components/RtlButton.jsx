@@ -1,38 +1,28 @@
 import React, { useEffect, useState } from "react";
+import { applyRtlFromStorage } from "../../utils/initTheme";
 
 const RtlButton = () => {
     const [rtl, setRtl] = useState(localStorage.getItem("dir") === "rtl");
 
     useEffect(() => {
-        const rtlLink = document.getElementById("rtl-link");
-
-        if (!rtlLink) return;
-
         if (rtl) {
-            document.documentElement.setAttribute("dir", "rtl");
-            rtlLink.href = "front-assets/css/vendors/bootstrap.rtl.css";
-
             localStorage.setItem("dir", "rtl");
             localStorage.setItem(
                 "rtlcss",
-                "front-assets/css/vendors/bootstrap.rtl.css"
+                "front-assets/css/vendors/bootstrap.rtl.css",
             );
         } else {
-            document.documentElement.removeAttribute("dir");
-            rtlLink.href = "front-assets/css/vendors/bootstrap.css";
-
             localStorage.setItem("dir", "");
             localStorage.setItem(
                 "rtlcss",
-                "front-assets/css/vendors/bootstrap.css"
+                "front-assets/css/vendors/bootstrap.css",
             );
         }
+        applyRtlFromStorage();
     }, [rtl]);
 
     return (
-        <>
-            {/* RTL */}
-
+        <div className="button toggle-btn">
             <input
                 id="rtlButton"
                 type="checkbox"
@@ -40,7 +30,11 @@ const RtlButton = () => {
                 checked={rtl}
                 onChange={(e) => setRtl(e.target.checked)}
             />
-        </>
+            <div className="knobs">
+                <span></span>
+            </div>
+            <div className="layer"></div>
+        </div>
     );
 };
 

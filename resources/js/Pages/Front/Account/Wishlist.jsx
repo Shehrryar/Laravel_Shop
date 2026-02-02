@@ -4,8 +4,7 @@ import axios from "axios";
 import { route } from "ziggy-js";
 import BottomNav from "../Components/BottomNav";
 const Wishlist = () => {
-    const { wishlist } = usePage().props;
-
+    const { wishlist, translations } = usePage().props;
     //Handle remove item
     const handleRemove = async (productId) => {
         try {
@@ -26,7 +25,6 @@ const Wishlist = () => {
             console.error("Error removing wishlist item:", error);
         }
     };
-
     //  Handle add to cart (example)
     // const handleAddToCart = async (productId, color_id, size_id) => {
     //     try {
@@ -47,7 +45,6 @@ const Wishlist = () => {
     //         console.error("Error adding to cart:", error);
     //     }
     // };
-
     return (
         <>
             {/* Header */}
@@ -56,7 +53,7 @@ const Wishlist = () => {
                     <Link href={route("front.home")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>Your Wishlist ({wishlist.length})</h2>
+                            <h2>{translations["Your Wishlist"]} ({wishlist.length})</h2>
                         </div>
                     </Link>
                 </div>
@@ -80,7 +77,6 @@ const Wishlist = () => {
                                 ? item.product_ratings_sum_rating /
                                   item.product_ratings_count
                                 : 0;
-
                         return (
                             <React.Fragment key={item.id}>
                                 <div className="cart-box px-15">
@@ -100,15 +96,13 @@ const Wishlist = () => {
                                             }
                                         />
                                     </Link>
-
                                     <div className="cart-content">
                                         <Link>
                                             <h4>
-                                                {item.title ||
+                                                {item.translated_title ||
                                                     "Unknown Product"}
                                             </h4>
                                         </Link>
-
                                         <div className="product_rating">
                                             <ul className="ratings">
                                                 {[1, 2, 3, 4, 5].map((star) => (
@@ -128,7 +122,6 @@ const Wishlist = () => {
                                                 ))}
                                             </ul>
                                         </div>
-
                                         <div className="price">
                                             <h4>
                                                 {item.discount_value != 0 ? (
@@ -149,10 +142,8 @@ const Wishlist = () => {
                                                 )}
                                             </h4>
                                         </div>
-
                                         {/* Here you can use avgRating if needed */}
                                         {/* <p>Rating: {avgRating.toFixed(1)}</p> */}
-
                                         <div className="cart-option">
                                             <Link
                                                 href={route(
@@ -173,10 +164,9 @@ const Wishlist = () => {
                                                     // }
                                                 >
                                                     <i className="iconly-Buy icli"></i>{" "}
-                                                    Add to Cart
+                                                    {translations["Add to Cart"]}
                                                 </h5>
                                             </Link>
-
                                             <span className="divider-cls">
                                                 |
                                             </span>
@@ -190,12 +180,11 @@ const Wishlist = () => {
                                                 }
                                             >
                                                 <i className="iconly-Delete icli"></i>{" "}
-                                                Remove
+                                                {translations["Remove"]}
                                             </h5>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div className="divider"></div>
                             </React.Fragment>
                         );
@@ -206,17 +195,16 @@ const Wishlist = () => {
                             className="iconly-Heart icbo"
                             style={{ fontSize: "48px" }}
                         ></i>
-                        <h4 className="mt-3">Your wishlist is empty</h4>
+                        <h4 className="mt-3">{translations["Your wishlist is empty"]}</h4>
                         <Link
                             href={route("front.shop")}
                             className="btn btn-solid mt-3"
                         >
-                            Continue Shopping
+                            {translations["Continue Shopping"]}
                         </Link>
                     </div>
                 )}
             </section>
-
             <section className="panel-space" />
             {/* bottom panel start */}
             <BottomNav />

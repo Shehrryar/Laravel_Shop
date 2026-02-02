@@ -2,14 +2,20 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// use App\Models\Traits\HasJsonTranslation;
+
 use App\Models\Discount;
 class Product extends Model
 {
     use HasFactory;
     protected $fillable = [
         'title',
+        'en_title_translation',
+        'ur_title_translation',
         'slug',
         'description',
+        'en_description_translation',
+        'ur_description_translation',
         'short_description',
         'shipping_returns',
         'related_products',
@@ -25,7 +31,38 @@ class Product extends Model
         'qty',
         'status'
     ];
-    protected $appends = ['avg_rating'];
+    // protected $casts = [
+    //     'title_translations' => 'array',
+    //     'description_translations' => 'array',
+    // ];
+    protected $appends = ['avg_rating', 'translated_title', 'translated_description'];
+    
+
+
+
+    public function getTranslatedTitleAttribute()
+    {
+        $locale = app()->getLocale(); // get current app locale
+        return match ($locale) {
+            'en' => $this->en_title_translation ?: $this->title,
+            'ur' => $this->ur_title_translation ?: $this->title,
+            default => $this->title,
+        };
+    }
+
+    public function getTranslatedDescriptionAttribute()
+    {
+        $locale = app()->getLocale(); // get current app locale
+
+        return match ($locale) {
+            'en' => $this->en_description_translation ?: $this->description,
+            'ur' => $this->ur_description_translation ?: $this->description,
+            default => $this->description,
+        };
+
+    }
+
+
     public function product_images()
     {
         return $this->hasMany(ProductImage::class);

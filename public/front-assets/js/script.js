@@ -267,6 +267,11 @@
     }
   });
 
+
+
+
+
+
   $("body").attr("class", localStorage.getItem('body'));
   $("#change-link").attr("href", localStorage.getItem('layoutcss') ? localStorage.getItem('layoutcss') : 'assets/css/style.css');
   localStorage.getItem('body') ? $('#darkButton').attr('checked', true) : '';
@@ -275,6 +280,8 @@
   /*========================
    12. RTL local storage setting js
    ==========================*/
+
+
   $('#rtlButton').change(function () {
     if ($(this).is(":checked")) {
       $("html").attr("dir", "rtl");
@@ -291,6 +298,10 @@
   $("html").attr("dir", localStorage.getItem('dir'));
   $("#rtl-link").attr("href", localStorage.getItem('rtlcss') ? localStorage.getItem('rtlcss') : 'assets/css/vendors/bootstrap.css');
   localStorage.getItem('dir') ? $('#rtlButton').attr('checked', true) : '';
+
+
+
+  
 
 
   /*============================

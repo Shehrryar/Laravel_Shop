@@ -8,7 +8,6 @@ use App\Models\Cart;
 
 class OrderService
 {
-
     /** Store Order in Database  */
     function createOrder($user, $cartItems, $request, $customerAddress)
     {
@@ -17,6 +16,7 @@ class OrderService
         $shipping = $request->shippingAmount;
         $grandTotal = $request->totalPayable;
         $discount_coupon_amount = $request->discount_coupon_amount;
+        $bagsavingvalue = $request->bagsavingvalue;
 
         $orderId = session()->get('order_id');
         $order = Order::find($orderId) ?? new Order();
@@ -24,6 +24,7 @@ class OrderService
         $order->subtotal = $subtotal;
         $order->discount = 0.00;
         $order->shipping = $shipping;
+        $order->product_discount_amount = $bagsavingvalue;
         $order->grandtotal = $grandTotal;
         $order->coupon_discount_amount = $discount_coupon_amount;
         $order->payment_status = 'not paid';
@@ -31,6 +32,9 @@ class OrderService
         $order->stripe_charge_id = null;
         $order->shipping_date = null;
         $order->coupon_code = null;
+
+
+
         $order->firstname = $customerAddress->firstname;
         $order->lastname = $customerAddress->lastname;
         $order->email = $customerAddress->email;
@@ -41,6 +45,22 @@ class OrderService
         $order->state = $customerAddress->state;
         $order->zip = $customerAddress->zip;
         $order->notes = $request->order_notes ?? null;
+
+
+        // translations
+        $order->en_firstname_translation = $customerAddress->en_firstname_translation;
+        $order->ur_firstname_translation = $customerAddress->ur_firstname_translation;
+        $order->en_lastname_translation = $customerAddress->en_lastname_translation;
+        $order->ur_lastname_translation = $customerAddress->ur_lastname_translation;
+        $order->en_address_translation = $customerAddress->en_address_translation;
+        $order->ur_address_translation = $customerAddress->ur_address_translation;
+        $order->en_city_translation = $customerAddress->en_city_translation;
+        $order->ur_city_translation = $customerAddress->ur_city_translation;
+        $order->en_state_translation = $customerAddress->en_state_translation;
+        $order->ur_state_translation = $customerAddress->ur_state_translation;
+
+
+
         $order->save();
         foreach ($cartItems as $item) {
             // 1. Check if same product already exists in order_items
@@ -75,6 +95,8 @@ class OrderService
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'total' => $item->price,
+                    'discounted_price' => $item->discounted_price,
+                    'discounted_value' => $item->discounted_value,
                     'additional_attributes' => $item->additional_attributes,
                 ]);
             }

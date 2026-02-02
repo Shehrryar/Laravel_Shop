@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, usePage, router } from "@inertiajs/react";
-import axios from "axios";
-import { route } from "ziggy-js";
 
 const OrderPlaced = () => {
-    const { order, order_items } = usePage().props;
+    const { order, order_items, translations } = usePage().props;
+
     return (
         <>
             <header>
@@ -12,7 +11,7 @@ const OrderPlaced = () => {
                     <Link href={route("front.shop")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>Order Placed</h2>
+                            <h2>{translations["Order Placed"]}</h2>
                         </div>
                     </Link>
                 </div>
@@ -27,34 +26,30 @@ const OrderPlaced = () => {
                             alt="check-circle"
                         />
                     </div>
-                    <h1>Order Successful!</h1>
-                    <h2>
-                        Your payment was processed and your order is on the way.
-                    </h2>
+                    <h1>{translations["Order Successful!"]}</h1>
+                    <h2>{translations["Your payment was processed and your order is on the way."]}</h2>
                 </div>
             </section>
 
             <section className="px-15">
-                <h2 className="page-title">Order Details</h2>
+                <h2 className="page-title">{translations["Order Details"]}</h2>
                 <div className="details">
                     <ul>
                         <li className="mb-3 d-block">
                             <h4 className="fw-bold mb-1">
-                                Your order # is: {order?.id}
+                                {translations["Your order # is:"]} {order?.id}
                             </h4>
                             <h4 className="content-color">
-                                A receipt has been sent to your email address.
+                                {translations["A receipt has been sent to your email address."]}
                             </h4>
                         </li>
                         <li className="mb-3 d-block">
-                            <h4 className="fw-bold mb-1">Shipping Address:</h4>
-                            <h4 className="content-color">{order?.address}</h4>
+                            <h4 className="fw-bold mb-1">{translations["Shipping Address:"]}</h4>
+                            <h4 className="content-color">{order?.translated_address}</h4>
                         </li>
                         <li className="d-block">
-                            <h4 className="fw-bold mb-1">Payment Method</h4>
-                            <h4 className="content-color">
-                                {order?.payment_method}
-                            </h4>
+                            <h4 className="fw-bold mb-1">{translations["Payment Method"]}</h4>
+                            <h4 className="content-color">{order?.payment_method}</h4>
                         </li>
                     </ul>
                 </div>
@@ -63,40 +58,24 @@ const OrderPlaced = () => {
             <div className="divider"></div>
 
             <section className="px-15 pt-0">
-                <h2 className="page-title">Order Summary</h2>
+                <h2 className="page-title">{translations["Order Summary"]}</h2>
                 <div className="product-section">
                     <div className="row gy-3">
                         {order_items.map((item, index) => (
                             <div className="col-12" key={index}>
                                 <div className="product-inline">
-                                    {/* <Link href={route("front.product", item.product?.slug)}>
-                    <img
-                      src={item.product?.image_url}
-                      className="img-fluid"
-                      alt={item.product?.title}
-                    />
-                  </Link> */}
                                     <div className="product-inline-content">
                                         <div>
-                                            <Link
-                                                href={route(
-                                                    "front.product",
-                                                    item.product?.slug
-                                                )}
-                                            >
-                                                <h4>{item.product?.title}</h4>
+                                            <Link href={route("front.product", item.product?.slug)}>
+                                                <h4>{item.product?.translated_title}</h4>
                                             </Link>
                                             <h5 className="content-color">
                                                 {(() => {
                                                     let attrs = {};
-
                                                     try {
-                                                        attrs =
-                                                            item.additional_attributes
-                                                                ? JSON.parse(
-                                                                      item.additional_attributes
-                                                                  )
-                                                                : {};
+                                                        attrs = item.additional_attributes
+                                                            ? JSON.parse(item.additional_attributes)
+                                                            : {};
                                                     } catch (e) {
                                                         attrs = {};
                                                     }
@@ -104,44 +83,17 @@ const OrderPlaced = () => {
                                                     return (
                                                         <>
                                                             {attrs.color && (
-                                                                <span
-                                                                    style={{
-                                                                        marginRight:
-                                                                            "10px",
-                                                                    }}
-                                                                >
-                                                                    Color:{" "}
-                                                                    <strong>
-                                                                        {
-                                                                            attrs.color
-                                                                        }
-                                                                    </strong>
+                                                                <span style={{ marginRight: "10px" }}>
+                                                                    {translations["Color"]}: <strong>{attrs.color}</strong>
                                                                 </span>
                                                             )}
-
                                                             {attrs.size && (
-                                                                <span
-                                                                    style={{
-                                                                        marginRight:
-                                                                            "10px",
-                                                                    }}
-                                                                >
-                                                                    Size:{" "}
-                                                                    <strong>
-                                                                        {
-                                                                            attrs.size
-                                                                        }
-                                                                    </strong>
+                                                                <span style={{ marginRight: "10px" }}>
+                                                                    {translations["Size"]}: <strong>{attrs.size}</strong>
                                                                 </span>
                                                             )}
-
                                                             <span>
-                                                                Qty:{" "}
-                                                                <strong>
-                                                                    {
-                                                                        item.quantity
-                                                                    }
-                                                                </strong>
+                                                                {translations["Qty"]}: <strong>{item.quantity}</strong>
                                                             </span>
                                                         </>
                                                     );
@@ -149,7 +101,19 @@ const OrderPlaced = () => {
                                             </h5>
 
                                             <div className="price">
-                                                <h4>${item.price}</h4>
+                                                {item?.discounted_value > 0 ? (
+                                                    <h4>
+                                                        ${item.discounted_price}
+                                                        <del className="text-muted small ms-1">
+                                                            ${item.price}
+                                                        </del>
+                                                        <span className="text-danger ms-1">
+                                                            {item.discounted_value}%
+                                                        </span>
+                                                    </h4>
+                                                ) : (
+                                                    <h4>${item?.price}</h4>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -165,25 +129,31 @@ const OrderPlaced = () => {
                     <ul>
                         <li>
                             <h4>
-                                Bag total <span>${order?.subtotal}</span>
+                                {translations["Bag total"]} <span>${order?.subtotal}</span>
                             </h4>
                         </li>
-                        {/* <li>
-                            <h4>
-                                Delivery <span>${order?.shipping}</span>
-                            </h4>
-                        </li> */}
-
                         <li>
                             <h4>
-                                Coupon Discount{" "}
-                                <span>${order?.coupon_discount_amount}</span>
+                                {translations["Bag saving"]} <span>-${order?.product_discount_amount}</span>
                             </h4>
                         </li>
+                        <li>
+                            <h4>
+                                {translations["Delivery"]} <span>${order?.shipping}</span>
+                            </h4>
+                        </li>
+
+                        {order?.coupon_discount_amount > 0 && (
+                            <li>
+                                <h4>
+                                    {translations["Coupon Discount"]} <span>${order.coupon_discount_amount}</span>
+                                </h4>
+                            </li>
+                        )}
                     </ul>
                     <div className="total-amount">
                         <h4>
-                            Total Amount <span>${order?.grandtotal}</span>
+                            {translations["Total Amount"]} <span>${order?.grandtotal}</span>
                         </h4>
                     </div>
                 </div>
@@ -194,15 +164,10 @@ const OrderPlaced = () => {
             <div className="delivery-cart cart-bottom">
                 <div>
                     <div className="left-content">
-                        <Link
-                            // href={route("front.order.tracking", order.id)}
-                            className="title-color"
-                        >
-                            Track Order
-                        </Link>
+                        <Link className="title-color">{translations["Track Order"]}</Link>
                     </div>
                     <Link href={route("front.home")} className="btn btn-solid">
-                        Continue shopping
+                        {translations["Continue shopping"]}
                     </Link>
                 </div>
             </div>

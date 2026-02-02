@@ -1,86 +1,251 @@
-
 {
-    "ONLINE SHOP": "آن لائن شاپ",
-    "Arts": "فن",
-    "Assessories": "تازہ ترین لوازمات",
-    "Clothes": "کپڑے",
-    "Electronics": "الیکٹرانکس",
+
+
+
+    "Home": "ہوم",
+    "Category": "زمرہ",
+    "Cart": "کارٹ",
+    "Wishlist": "پسندیدہ",
+    "Profile": "پروفائل",
+
+
+
+
+    "Deals of the Day": "آج کی ڈیلز",
+    "See All": "سب دیکھیں",
+    "No deals available.": "کوئی ڈیلز دستیاب نہیں۔",
+    "Find your Style": "اپنا انداز تلاش کریں",
+    "Super Summer Sale": "سپر سمر سیل",
+    "Biggest Deals on Top Brands": "ٹاپ برانڈز پر سب سے بڑی ڈیلز",
+    "The Featured Products": "نمایاں پروڈکٹس",
+    "Offer Corner": "آفر کارنر",
+    "No offers available right now.": "اس وقت کوئی آفر دستیاب نہیں۔",
+    "Welcome To Multikart": "ملٹی کارٹ میں خوش آمدید",
+    "Flat 50% OFF": "فلیٹ 50% آف",
+    "Free Shipping Till Mid Night": "مِڈ نائٹ تک مفت شپنگ",
+    "SHOP NOW": "ابھی خریدیں",
+    "Denim Wear": "ڈینم ویئر",
+    "Sales Starts In": "سیل شروع ہو رہی ہے",
+    "explore now": "ابھی دریافت کریں",
+
+    "Hey, Login Now": "ارے، اب لاگ ان کریں",
+    "Username or Email": "یوزر نیم یا ای میل",
+    "Password": "پاس ورڈ",
+    "Forgot Password?": "پاس ورڈ بھول گئے؟",
+    "Sign in": "سائن ان کریں",
+    "Signing in...": "سائن ان ہو رہا ہے...",
+    "Or sign in with": "یا اس کے ساتھ سائن ان کریں",
+    "If you are new, Create Now": "اگر آپ نئے ہیں، تو اب اکاؤنٹ بنائیں",
+    "SKIP": "چھوڑ دیں",
+
+
+
+
+    "Order Placed": "آرڈر مکمل ہوا",
+    "Order Successful!": "آرڈر کامیاب ہو گیا!",
+    "Your payment was processed and your order is on the way.": "آپ کی ادائیگی مکمل ہو گئی ہے اور آپ کا آرڈر راستے میں ہے۔",
+    "Order Details": "آرڈر کی تفصیلات",
+    "Your order # is:": "آپ کا آرڈر نمبر ہے:",
+    "A receipt has been sent to your email address.": "رسید آپ کے ای میل پر بھیج دی گئی ہے۔",
+    "Shipping Address:": "شپنگ کا پتہ:",
+    "Payment Method": "ادائیگی کا طریقہ",
+    "Order Summary": "آرڈر کا خلاصہ",
+    "Color": "رنگ",
+    "Size": "سائز",
+    "Qty": "مقدار",
+    "Bag total": "بیگ کا کل",
+    "Bag saving": "بیگ کی بچت",
+    "Delivery": "ترسیل",
+    "Coupon Discount": "کوپن ڈسکاؤنٹ",
+    "Total Amount": "کل رقم",
+    "Track Order": "آرڈر ٹریک کریں",
+    "Continue shopping": "خریداری جاری رکھیں",
+
+
+    "Dark Mode": "ڈارک موڈ",
+    "RTL": "دائیں سے بائیں",
+    "Pages": "صفحات",
+    "Elements & Other Pages": "الیمینٹس اور دیگر صفحات",
+
+
+    "Offers, Top Deals, Top Brands": "آفرز، بہترین ڈیلز، ٹاپ برانڈز",
+    "Shop by Category": "زمرہ کے حساب سے خریداری",
+    "Men, Women, Kids, Beauty..": "مرد، خواتین، بچوں، بیوٹی...",
+    "Orders": "آرڈرز",
+    "Ongoing Orders, Recent Orders..": "جاری آرڈرز، حالیہ آرڈرز...",
+    "Your Wishlist": "آپ کی پسندیدہ مصنوعات",
+    "Your Saved Products": "آپ کی محفوظ کردہ مصنوعات",
+    "Your Account": "آپ کا اکاؤنٹ",
+    "Profile, Settings, Saved Cards...": "پروفائل، سیٹنگز، محفوظ کردہ کارڈز...",
+    "Language": "زبان",
+    "Select your Language here..": "یہاں اپنی زبان منتخب کریں..",
+    "Notification": "نوٹیفیکیشن",
+    "Offers, Order tracking messages..": "آفرز، آرڈر ٹریکنگ پیغامات...",
+    "Settings": "سیٹنگز",
+    "Dark mode, RTL, Notification": "ڈارک موڈ، RTL، نوٹیفیکیشن",
+    "About us": "ہمارے بارے میں",
+    "About Multikart": "ملٹی کارٹ کے بارے میں",
+    "Help/Customer Care": "مدد / کسٹمر کیئر",
+    "Customer Support, FAQs": "کسٹمر سپورٹ، عمومی سوالات",
+
+
+    
+    "Shopping Cart": "شاپنگ کارٹ",
+    "Step 1 of 3": "مرحلہ 1 از 3",
+    "Move to wishlist": "پسندیدہ میں منتقل کریں",
+    "Remove": "حذف کریں",
+    "You May Like this": "آپ کو یہ پسند آ سکتا ہے",
+    "Order Details:": "آرڈر کی تفصیلات:",
+    "Bag savings": "بیگ کی بچت",
+    "No Delivery Charges applied on this order": "اس آرڈر پر کوئی ترسیلی چارجز نہیں لگے",
+    "7 Day Return": "7 دن کی واپسی",
+    "24/7 Support": "24/7 سپورٹ",
+    "Secure Payment": "محفوظ ادائیگی",
+    "Place Order": "آرڈر کریں",
+    "Select Quantity:": "مقدار منتخب کریں:",
+    "Add to Bag": "بیگ میں شامل کریں",
+    "Select Size:": "سائز منتخب کریں:",
+    "No sizes available": "کوئی سائز دستیاب نہیں",
+    "DONE": "مکمل",
+    "Select Color:": "رنگ منتخب کریں:",
+    "No colors available": "کوئی رنگ دستیاب نہیں",
+    "Price": "قیمت",
+    "Remove Item:": "آئٹم حذف کریں:",
+    "Are you sure you want to remove or move this item from the cart?": "کیا آپ واقعی اس آئٹم کو کارٹ سے حذف یا پسندیدہ میں منتقل کرنا چاہتے ہیں؟",
+    "MOVE TO WISHLIST": "پسندیدہ میں منتقل کریں",
+    "REMOVE": "حذف کریں",
+    "Something went wrong!": "کچھ غلط ہو گیا!",
+    "Shop": "خریداری کریں",
+    "Whoops !! Cart is Empty": "اوہو !! کارٹ خالی ہے",
+    "Looks like you haven’t added anything to your cart yet. You’ll find lots of interesting products on our “Shop” page.": "ایسا لگتا ہے کہ آپ نے ابھی تک کچھ بھی کارٹ میں شامل نہیں کیا۔ آپ ہماری “Shop” صفحے پر بہت سے دلچسپ پروڈکٹس دیکھ سکتے ہیں۔",
+    "Start Shopping": "خریداری شروع کریں",
+
+
+
+
+
+    "Unknown Product": "نامعلوم پروڈکٹ",
+    "Add to Cart": "کارٹ میں شامل کریں",
+    "Your wishlist is empty": "آپ کی خواہشات کی فہرست خالی ہے",
+    "Continue Shopping": "خریداری جاری رکھیں",
+
+
+
+
+    
+    "Edit": "ترمیم کریں",
+    "Payment": "ادائیگی",
+    "Saved Cards, Wallets": "محفوظ شدہ کارڈز، والٹس",
+    "Saved Address": "محفوظ پتہ",
+    "Home, office..": "گھر، دفتر..",
+    "Profile Setting": "پروفائل کی ترتیبات",
+    "Full Name, Password..": "پورا نام، پاس ورڈ..",
+    "Terms & Conditions": "شرائط و ضوابط",
+    "T&C for use of Platform": "پلیٹ فارم کے استعمال کے لیے شرائط و ضوابط",
+    "Help / Customer Care": "مدد / کسٹمر کیئر",
+    "LOG OUT": "لاگ آؤٹ",
+
+
+
+
+    "Personal Details": "ذاتی تفصیلات",
+    "First Name": "پہلا نام",
+    "Last Name": "آخری نام",
+    "Date of Birth": "تاریخ پیدائش",
+    "Gender": "صنف",
+    "Select Gender": "صنف منتخب کریں",
     "Men": "مرد",
     "Women": "خواتین",
-    "Laptop": "لیپ ٹاپ",
-    "Mobile Phone": "موبائل فون",
-    "HeadPhones": "ہیڈ فون",
-    "Kids Fashion": "بچوں کی فیشن",
-    "Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam": "لورم ریبم میگنا ایمیٹ لورم میگنا ایریٹ ڈیام اسٹیٹ۔ سیڈپس ڈو اسٹیٹ ایمیٹ ایمیٹ اینڈیم ایلیٹر ایپسوم ڈیام",
-    "Womens Fashion": "خواتین کی فیشن",
-    "Shop Now": "اب خریداری کریں",
-    "Quality Product": "معیاری مصنوعات",
-    "Free Shipping": "مفت شپنگ",
-    "14-Day Return": "14 دن کی واپسی",
-    "24/7 Support": "24/7 سپورٹ",
-    "T - Shirt": "ٹی شرٹ",
-    "Shoes Jogger": "جوگر جوتے",
-    "shoes": "جوتے",
-    "Paint Hores": "پینٹ ہارس",
-    "Dr. Katrina Kutch V": "ڈاکٹر کترینہ کوچ V",
-    "Miss Annie Blick III": "مس انی بلیک III",
-    "Timothy Howe Jr.": "ٹموتھی ہووے جونیئر",
-    "Ervin Emmerich": "اروین ایمرچ",
-    "Dr. Hassan Leffler II": "ڈاکٹر حسن لیفلر II",
-    "Mr. Stephan Hirthe": "مسٹر اسٹیفن ہرتھے",
-    "Alexandria Keebler": "الگزینڈریا کیبلر",
-    "Josiah Brown": "جوسیا براؤن",
-    "Chelsey Nader": "چیلسی نادر",
-    "Horace Larson Sr.": "ہوریس لارسن سینئر",
-    "Althea Wunsch V": "التھیا ونش V",
-    "Alysa Olson": "الیسہ اولسن",
-    "Kelvin Windler": "کیلون ونڈلر",
-    "Darion Lockman DVM": "ڈیریون لاک مین ڈی وی ایم",
-    "Prof. Mable Quitzon": "پروفیسر میبل کوئٹزن",
-    "Virginia Brakus": "ورجینیا براکس",
-    "Jarret Bruen": "جیریٹ بروئن",
-    "Alanis Dach": "الانیز ڈچ",
-    "Abbigail Dicki": "ابگیل ڈکی",
-    "Astrid Ratke": "ایسٹریڈ راٹکے",
-    "Add To Cart": "کارٹ میں شامل کریں",
-    "Language": "زبانیں",
-    "English": "انگریزی",
-    "Urdu": "اردو",
-    "Latest Products": "تازہ ترین مصنوعات",
-    "Categories": "اقسام",
-    "Featured Products": "نمایاں مصنوعات",
-    "Shop": "خریداری",
+    "Other": "دیگر",
+    "Mobile Number": "موبائل نمبر",
+    "Show": "دکھائیں",
+    "Hide": "چھپائیں",
+    "CANCEL": "منسوخ کریں",
+    "Save Details": "تفصیلات محفوظ کریں",
+
+
+
+
+    "Categories": "زمرہ جات",
+    "No categories available.": "کوئی زمرہ جات دستیاب نہیں ہیں۔",
+
+
+
+    "Delivery Details": "ڈیلیوری کی تفصیلات",
+    "Step 2 of 3": "مرحلہ 2 از 3",
+    "Expected Delivery": "متوقع ترسیل",
+    "Delivery by": "کی ترسیل",
+    "View details": "تفصیلات دیکھیں",
+    "Proceed to Payment": "ادائیگی کے لیے آگے بڑھیں",
+
+
+
+
+
+    "Add a new address": "نیا پتہ شامل کریں",
+    "Select Country": "ملک منتخب کریں",
+    "Full Name": "پورا نام",
+    "Pin Code": "پن کوڈ",
+    "Flat, house No., building..": "فلیٹ، مکان نمبر، عمارت..",
+    "Area, colony, street": "علاقہ، کالونی، سڑک",
+    "Landmark (optional)": "لینڈ مارک (اختیاری)",
+    "Town/City": "شہر / ٹاؤن",
+    "State/Province/Region": "صوبہ / ریاست / علاقہ",
+    "Type of address": "پتہ کی قسم",
+    "Office": "دفتر",
+    "Others": "دیگر",
+    "Make default address": "ڈیفالٹ پتہ بنائیں",
+    "RESET": "ری سیٹ کریں",
+    "Add Address": "پتہ شامل کریں",
+    "Saving...": "محفوظ کیا جا رہا ہے...",
+    "Country is required": "ملک لازمی ہے",
+    "Pin Code is required": "پن کوڈ لازمی ہے",
+    "Flat or building info is required": "فلیٹ یا عمارت کی معلومات لازمی ہیں",
+    "Area is required": "علاقہ لازمی ہے",
+    "City is required": "شہر لازمی ہے",
+    "State is required": "صوبہ لازمی ہے",
+    "Address added successfully!": "پتہ کامیابی سے شامل ہو گیا!",
+    "Something went wrong, please try again.": "کچھ غلط ہو گیا، دوبارہ کوشش کریں۔",
+    "Error adding address.": "پتہ شامل کرنے میں خرابی۔",
+
+
+
+
+
+
+    "Payment Details": "ادائیگی کی تفصیلات",
+    "Step 3 of 3": "مرحلہ 3 میں سے 3",
+    "Offers & promotions": "آفرز اور پروموشنز",
+    "Show More (5 offers)": "مزید دیکھیں (5 آفرز)",
+    "Cash On Delivery": "نقد ادائیگی پر وصولی",
+    "Debit/Credit Card": "ڈیبٹ / کریڈٹ کارڈ",
+    "Paypal": "پے پال",
+    "Apply Coupon": "کپن لگائیں",
+    "Pay Now": "اب ادائیگی کریں",
+    "Select Payment Method": "ادائیگی کا طریقہ منتخب کریں",
+
+
+
+
+
+    "Collection": "کلیکشن",
+    "Products": "مصنوعات",
+    "Search": "تلاش کریں",
+    "Filters": "فلٹرز",
+    "Sort By": "ترتیب دیں",
+    "Recommended": "تجویز کردہ",
+    "Popularity": "مقبولیت",
+    "Whats New": "نئی کیا ہے",
+    "Price High to Low": "قیمت: زیادہ سے کم",
+    "Price Low to High": "قیمت: کم سے زیادہ",
+    "Customer Rating": "کسٹمر کی درجہ بندی",
     "Brand": "برانڈ",
-    "Price": "قیمت",
-        "J.": "جے۔",
-        "Dell": "ڈیل",
-        "Apple": "ایپل",
-        "Home": "گھر",
-        "Login to Your Account": "اپنے اکاؤنٹ میں لاگ ان کریں",
-        "Email": "ای میل",
-        "Password": "پاس ورڈ",
-        "Forgot Password?": "پاس ورڈ بھول گئے؟",
-        "Login": "لاگ ان کریں",
-        "Login with Google": "گوگل کے ساتھ لاگ ان کریں",
-        "Login with GitHub": "گٹ ہب کے ساتھ لاگ ان کریں",
-        "Sign up": "سائن اپ کریں",
-        "Don't have an account?": "آپ کا اکاؤنٹ نہیں ہے؟",
-        "Item": "شے",
-        "Quantity": "مقدار",
-        "Total": "کل",
-        "Remove": "ہٹائیں",
-        "Cart Summery": "کارٹ کا خلاصہ",
-        "Cart": "کارٹ",
-        "Subtotal": "ذیلی کل",
-        "Proceed to Checkout": "چیک آؤٹ کے لیے جاری رکھیں",
-        "Cart is empty": "کارٹ خالی ہے",
-        "Item removed successfully": "شے کامیابی سے ہٹا دی گئی",
-        "Register": "رجسٹر کریں",
-        "Register Now": "اب رجسٹر کریں",
-        "Name": "نام",
-        "Phone": "فون",
-        "Confirm Password": "پاس ورڈ کی تصدیق کریں",
-        "Already have an account?": "پہلے سے ہی اکاؤنٹ ہے؟",
-        "Login Now": "اب لاگ ان کریں"
-      }
-      
+    "Colors": "رنگ",
+    "Apply Filter": "فلٹر لگائیں",
+    "Rs": "روپے",
+    "NEW": "نیا",
+
+
+    "Currency": "Currency"
+
+}

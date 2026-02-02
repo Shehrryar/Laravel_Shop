@@ -10,9 +10,9 @@ const DeliveryDetails = () => {
         bagsavingvalue,
         shippingAmount,
         totalPayable,
+        translations,
     } = usePage().props;
     const [message, setMessage] = useState({ text: "", type: "" });
-
     const handleProceedToPayment = async (e) => {
         e.preventDefault();
         // Redirect after success
@@ -26,8 +26,8 @@ const DeliveryDetails = () => {
                     <Link href={route("front.cart")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>Delivery Details</h2>
-                            <h6>Step 2 of 3</h6>
+                            <h2>{translations["Delivery Details"]}</h2>
+                            <h6>{translations["Step 2 of 3"]}</h6>
                         </div>
                     </Link>
                 </div>
@@ -46,7 +46,7 @@ const DeliveryDetails = () => {
             <div className="divider"></div>
             {/* Expected delivery section */}
             <section className="px-15 pt-0">
-                <h2 className="page-title">Expected Delivery</h2>
+                <h2 className="page-title">{translations["Expected Delivery"]}</h2>
                 <div className="product-section">
                     <div className="row gy-3">
                         <div className="col-12">
@@ -90,14 +90,14 @@ const DeliveryDetails = () => {
                             data-bs-target="#offcanvasdetails"
                             className="theme-color"
                         >
-                            View details
+                            {translations["View details"]}
                         </a>
                     </div>
                     <Link
                         onClick={handleProceedToPayment}
                         className="btn btn-solid"
                     >
-                        Proceed to Payment
+                        {translations["Proceed to Payment"]}
                     </Link>
                 </div>
             </div>
@@ -112,12 +112,12 @@ const DeliveryDetails = () => {
                         <ul>
                             <li>
                                 <h4>
-                                    Bag total <span>${totalcartamount}</span>
+                                    {translations["Bag total"]} <span>${totalcartamount}</span>
                                 </h4>
                             </li>
                             <li>
                                 <h4>
-                                    Bag savings{" "}
+                                    {translations["Bag savings"]}{" "}
                                     <span className="text-green">
                                         -${bagsavingvalue}
                                     </span>
@@ -125,13 +125,13 @@ const DeliveryDetails = () => {
                             </li>
                             <li>
                                 <h4>
-                                    Delivery <span>${shippingAmount}</span>
+                                    {translations["Delivery"]} <span>${shippingAmount}</span>
                                 </h4>
                             </li>
                         </ul>
                         <div className="total-amount">
                             <h4>
-                                Total Amount <span>${totalPayable}</span>
+                                {translations["Total Amount"]} <span>${totalPayable}</span>
                             </h4>
                         </div>
                     </div>

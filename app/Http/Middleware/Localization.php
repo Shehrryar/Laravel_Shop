@@ -27,3 +27,6 @@ class Localization
             return $next($request);
         }
 }
+
+
+

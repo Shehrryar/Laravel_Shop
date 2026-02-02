@@ -3,20 +3,24 @@ import { Link, useForm, usePage } from "@inertiajs/react";
 import { route } from "ziggy-js";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 export default function Login() {
-    // ✅ Manage form data with Inertia
     const { data, setData, post, processing, errors } = useForm({
         email: "",
         password: "",
     });
+
     const { props } = usePage();
     const flashError = props.flash?.error;
+    const translations = props.translations;
 
     const [showPassword, setShowPassword] = React.useState(false);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("account.authenticate")); // your backend login route
+        post(route("account.authenticate"));
     };
+
     return (
         <>
             {/* Top design */}
@@ -40,14 +44,12 @@ export default function Login() {
                     />
                 </Link>
                 <Link className="skip-cls" href={route("front.home")}>
-                    SKIP
+                    {translations["SKIP"]}
                 </Link>
             </div>
             {/* Login form section */}
             <section className="form-section px-15 top-space section-b-space">
-                <h1>
-                    Hey, <br /> Login Now
-                </h1>
+                <h1>{translations["Hey, Login Now"]}</h1>
 
                 {flashError && (
                     <div className="alert alert-danger text-center mt-3">
@@ -62,33 +64,37 @@ export default function Login() {
                             type="text"
                             className="form-control"
                             id="email"
-                            placeholder="Username or Email"
+                            placeholder={translations["Username or Email"]}
                             value={data.email}
                             onChange={(e) => setData("email", e.target.value)}
                             required
                         />
-                        <label htmlFor="email">Username or Email</label>
+                        <label htmlFor="email">
+                            {translations["Username or Email"]}
+                        </label>
                         {errors.email && (
                             <div className="text-danger small mt-1">
                                 {errors.email}
                             </div>
                         )}
                     </div>
+
                     {/* Password */}
                     <div className="form-floating mb-2 position-relative">
                         <input
                             type={showPassword ? "text" : "password"}
                             className="form-control"
                             id="password"
-                            placeholder="Password"
+                            placeholder={translations["Password"]}
                             value={data.password}
                             onChange={(e) =>
                                 setData("password", e.target.value)
                             }
                             required
                         />
-                        <label htmlFor="password">Password</label>
-                        {/* Eye icon toggle */}
+                        <label htmlFor="password">
+                            {translations["Password"]}
+                        </label>
                         <span
                             onClick={() => setShowPassword(!showPassword)}
                             style={{
@@ -112,25 +118,24 @@ export default function Login() {
                             </div>
                         )}
                     </div>
-                    {/* Forgot password */}
-                    {/* <div className="text-end mb-4">
-            <Link href={route("account.forgotPassword")} className="theme-color">
-              Forgot Password?
-            </Link>
-          </div> */}
+
                     {/* Submit */}
                     <button
                         type="submit"
                         className="btn btn-solid w-100"
                         disabled={processing}
                     >
-                        {processing ? "Signing in..." : "Sign in"}
+                        {processing
+                            ? translations["Signing in..."]
+                            : translations["Sign in"]}
                     </button>
                 </form>
+
                 {/* Divider */}
                 <div className="or-divider">
-                    <span>Or sign in with</span>
+                    <span>{translations["Or sign in with"]}</span>
                 </div>
+
                 {/* Social login */}
                 <div className="social-auth">
                     <ul>
@@ -152,32 +157,16 @@ export default function Login() {
                                 />
                             </a>
                         </li>
-
-                        {/* <li className="apple-icon">
-                            <a href="#">
-                                <img
-                                    src="/front-assets/images/social/apple.png"
-                                    className="img-fluid"
-                                    alt="Apple"
-                                />
-                            </a>
-                        </li> */}
                     </ul>
                 </div>
+
                 {/* Bottom link */}
                 <div className="bottom-detail text-center mt-3">
                     <h4 className="content-color">
-                        If you are new,{" "}
-                        <Link
-                            className="title-color text-decoration-underline"
-                            href={route("account.register")}
-                        >
-                            Create Now
-                        </Link>
+                        {translations["If you are new, Create Now"]}
                     </h4>
                 </div>
             </section>
-            {/* Panel space */}
             <section className="panel-space"></section>
         </>
     );

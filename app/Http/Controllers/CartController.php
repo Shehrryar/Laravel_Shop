@@ -272,6 +272,7 @@ class CartController extends Controller
         ];
         return Inertia::render('Front/Cart', $data);
     }
+
     public function updateCart(Request $request)
     {
         $iteminfo = Cart::find($request->rowid);
@@ -381,6 +382,7 @@ class CartController extends Controller
             ->where('user_id', auth()->id())
             ->latest()
             ->first();
+
         //  If no order found, redirect safely
         if (!$order) {
             return redirect()->route('front.cart')->with('error', 'No order found.');
@@ -389,8 +391,12 @@ class CartController extends Controller
         return Inertia::render('Front/OrderPlaced', [
             'order' => $order,
             'order_items' => $order->orderItems,
+
         ]);
     }
+
+
+
     public function getOrderSummary(Request $request)
     {
         $cartcontent = Cart::where('user_id', auth()->id())->get();

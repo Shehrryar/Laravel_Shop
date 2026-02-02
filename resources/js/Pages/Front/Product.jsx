@@ -217,7 +217,7 @@ const ProductDetails = () => {
                     <Link href={route("front.home")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>{product.title}</h2>
+                            <h2>{product.translated_title}</h2>
                         </div>
                     </Link>
                 </div>
@@ -282,7 +282,7 @@ const ProductDetails = () => {
                 <div className="product-detail-box px-15 pt-2">
                     <div className="main-detail">
                         <h2 className="text-capitalize">
-                            {product.description}
+                            {product.translated_description}
                         </h2>
                         <h6 className="content-color">
                             Black, off-white and peach-coloured printed flared

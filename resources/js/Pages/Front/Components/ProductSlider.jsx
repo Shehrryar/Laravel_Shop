@@ -3,7 +3,7 @@ import Slider from "react-slick";
 import { Link } from "@inertiajs/react";
 import WishlistButton from "./WishlistButton";
 const ProductSlider = ({
-    title = "Similar Products",
+    title = "",
     products = [],
     wishlist = [],
 }) => {
@@ -92,7 +92,7 @@ const ProductSlider = ({
                                             `/product/${p.slug || p.id}`
                                         }
                                     >
-                                        <h4>{p.title}</h4>
+                                        <h4>{p.translated_title}</h4>
                                     </Link>
                                     <div className="price">
                                         <h4>

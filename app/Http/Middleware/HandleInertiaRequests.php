@@ -41,10 +41,10 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),
                 'error' => fn() => $request->session()->get('error'),
-
             ],
             'categories' => fn() => getcategories(),
             'cartquantity' => fn() => getcartquantityandtotal(),
+            'translations' => json_decode(file_get_contents(resource_path('lang/front/' . app()->getLocale() . '.json')), true)
         ]);
     }
 }

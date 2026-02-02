@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Multikart PWA App</title>
     <meta charset="UTF-8">
@@ -23,6 +24,7 @@
     @viteReactRefresh
     @routes
     @vite('resources/js/app.jsx')
+
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/slick.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/slick-theme.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/video-js.css') }}" />
@@ -41,6 +43,7 @@
     <!-- Theme css -->
     <link rel="stylesheet" id="change-link" type="text/css" href="{{ asset('front-assets/css/style.css') }}">
 </head>
+
 <body>
     @inertia
     <!-- <script src="{{ asset('front-assets/js/jquery-3.6.0.min.js') }}"></script>
@@ -65,5 +68,7 @@
     <script src="{{ asset('front-assets/js/offcanvas-popup.js') }}"></script>
     <!-- script js -->
     <!-- <script src="{{ asset('front-assets/js/script.js') }}"></script> -->
+
 </body>
+
 </html>

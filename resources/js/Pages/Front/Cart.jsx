@@ -4,7 +4,6 @@ import { Link, usePage, router } from "@inertiajs/react";
 import ProductSlider from "./Components/ProductSlider";
 import EmptyCart from "./Components/EmptyCart";
 import { route } from "ziggy-js";
-
 export default function CartPage() {
     const {
         cartcontent,
@@ -16,8 +15,8 @@ export default function CartPage() {
         shippingAmount,
         totalPayable,
         bagsavingvalue,
+        translations
     } = usePage().props;
-
     const [selecteditemId, setSelectedItemId] = useState(null);
     const [selectedItemToWishlist, setSelectedItemToWishlist] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -31,10 +30,8 @@ export default function CartPage() {
     const [priceSize, setSizePrice] = useState(null);
     const [priceColor, setColorPrice] = useState(null);
     const [message, setMessage] = useState({ text: "", type: "" });
-
     // State for variant price
     const [variantPrice, setVariantPrice] = useState([]);
-
     useEffect(() => {
         if (cartcontent && cartcontent.length > 0) {
             const prices = cartcontent.map((item) => ({
@@ -42,11 +39,9 @@ export default function CartPage() {
                 discounted: item.discounted_price,
                 discount_value: item.discounted_value,
             }));
-
             setVariantPrice(prices);
         }
     }, [cartcontent]);
-
     const totalActual = useMemo(
         () =>
             variantPrice.reduce(
@@ -55,7 +50,6 @@ export default function CartPage() {
             ),
         [variantPrice]
     );
-
     const totalDiscounted = useMemo(
         () =>
             variantPrice.reduce((sum, p) => {
@@ -68,20 +62,16 @@ export default function CartPage() {
             }, 0),
         [variantPrice]
     );
-
     const totalSavings = totalActual - totalDiscounted;
     const hasDiscount = totalSavings > 0;
-
     const dynamicTotalPayable =
         totalDiscounted + parseFloat(shippingAmount || 0);
-
     const updateVariantPrice = (item, sizeId, colorId, qty = 1, index) => {
         let basePrice = parseFloat(item.product.actual_price || 0);
         let baseDiscounted = parseFloat(
             item.product.discounted_price || basePrice
         );
         let discountValue = item.product.discount_value || 0;
-
         // Size price
         if (sizeId) {
             const sizeObj = sizes.find(
@@ -92,7 +82,6 @@ export default function CartPage() {
                 baseDiscounted += parseFloat(sizeObj.price);
             }
         }
-
         // Color price
         if (colorId) {
             const colorObj = colors.find(
@@ -103,16 +92,13 @@ export default function CartPage() {
                 baseDiscounted += parseFloat(colorObj.price);
             }
         }
-
         // Apply discount
         if (discountValue > 0) {
             baseDiscounted = basePrice - (basePrice * discountValue) / 100;
         }
-
         // Multiply by quantity
         basePrice *= qty;
         baseDiscounted *= qty;
-
         setVariantPrice((prev) => {
             const newArr = [...prev];
             newArr[index] = {
@@ -123,7 +109,6 @@ export default function CartPage() {
             return newArr;
         });
     };
-
     const handlesetQuantity = (q) => {
         const newQty = Number(q);
         if (!selectedItem || currentIndex === null) return;
@@ -150,7 +135,6 @@ export default function CartPage() {
             currentIndex
         );
     };
-
     // size updation
     const handleSizeChange = (s) => {
         setSelectedSize(s.id);
@@ -181,7 +165,6 @@ export default function CartPage() {
             );
         }
     };
-
     const handleAddToCart = async () => {
         if (!selectedItem || currentIndex === null) return;
         try {
@@ -207,13 +190,11 @@ export default function CartPage() {
                 text: response.data.message || "Something went wrong!",
                 type: response.data.status ? "success" : "error",
             });
-
             // Show popup message
             const popupMessage = new bootstrap.Modal(
                 document.getElementById("popupMessage")
             );
             popupMessage.show();
-
             // Close offcanvas manually if open
             const offcanvasIds = ["selectQty", "selectSize", "selectColor"];
             offcanvasIds.forEach((id) => {
@@ -232,7 +213,6 @@ export default function CartPage() {
             setTimeout(() => setMessage({ text: "", type: "" }), 5000);
         }
     };
-
     const handleremoveproduct = async () => {
         const popupMessage = new bootstrap.Modal(
             document.getElementById("popupMessage")
@@ -251,7 +231,6 @@ export default function CartPage() {
                     if (bsOffcanvas) bsOffcanvas.hide();
                 }
                 router.reload({ only: ["cartcontent"] });
-
                 setMessage({
                     text: response.data.message || "Something went wrong!",
                     type: response.data.status ? "success" : "error",
@@ -288,12 +267,10 @@ export default function CartPage() {
             console.error("Error removing item:", error);
         }
     };
-
     const handlePlaceOrder = (e) => {
         e.preventDefault();
         router.get(route("front.checkout"));
     };
-
     return (
         <>
             {cartcontent && cartcontent.length > 0 ? (
@@ -304,8 +281,8 @@ export default function CartPage() {
                             <Link to="/" href="/">
                                 <i className="iconly-Arrow-Left icli"></i>
                                 <div className="content">
-                                    <h2>Shopping Cart</h2>
-                                    <h6>Step 1 of 3</h6>
+                                    <h2>{translations["Shopping Cart"]}</h2>
+                                    <h6>{translations["Step 1 of 3"]}</h6>
                                 </div>
                             </Link>
                         </div>
@@ -324,8 +301,6 @@ export default function CartPage() {
                     <section className="cart-section pt-0 top-space">
                         {cartcontent.map((item, i) => (
                             <div key={item.id}>
-                                <div className="divider"></div>
-
                                 <div className="cart-box px-15">
                                     <a href="#" className="cart-img">
                                         <img
@@ -340,9 +315,8 @@ export default function CartPage() {
                                     </a>
                                     <div className="cart-content">
                                         <a href="#">
-                                            <h4>{item.title}</h4>
+                                            <h4>{item.product.translated_title}</h4>
                                         </a>
-
                                         <div className="price">
                                             {variantPrice[i]?.discount_value >
                                             0 ? (
@@ -367,7 +341,6 @@ export default function CartPage() {
                                                 </h4>
                                             )}
                                         </div>
-
                                         <div className="select-size-sec">
                                             {/* Quantity */}
                                             <Link
@@ -393,7 +366,7 @@ export default function CartPage() {
                                                     );
                                                 }}
                                             >
-                                                <h6>Qty: {item.quantity}</h6>
+                                                <h6>{translations["Qty:"]} {item.quantity}</h6>
                                                 <i className="iconly-Arrow-Down-2 icli"></i>
                                             </Link>
                                             {/* Size */}
@@ -467,14 +440,13 @@ export default function CartPage() {
                                                     }}
                                                 >
                                                     <h6>
-                                                        Size:{" "}
+                                                        {translations["Size:"]}{" "}
                                                         {item.additional_attributes
                                                             ? JSON.parse(
                                                                   item.additional_attributes
                                                               ).size || "N/A"
                                                             : "N/A"}
                                                     </h6>
-
                                                     <i className="iconly-Arrow-Down-2 icli"></i>
                                                 </Link>
                                             )}
@@ -549,14 +521,13 @@ export default function CartPage() {
                                                     }}
                                                 >
                                                     <h6>
-                                                        Color:{" "}
+                                                        {translations["Color:"]}{" "}
                                                         {item.additional_attributes
                                                             ? JSON.parse(
                                                                   item.additional_attributes
                                                               ).color || "N/A"
                                                             : "N/A"}
                                                     </h6>
-
                                                     <i className="iconly-Arrow-Down-2 icli"></i>
                                                 </Link>
                                             )}
@@ -574,7 +545,7 @@ export default function CartPage() {
                                                 }
                                             >
                                                 <i className="iconly-Heart icli"></i>{" "}
-                                                Move to wishlist
+                                                {translations["Move to wishlist"]}
                                             </h5>
                                             <span className="divider-cls">
                                                 |
@@ -587,11 +558,12 @@ export default function CartPage() {
                                                 }
                                             >
                                                 <i className="iconly-Delete icli"></i>{" "}
-                                                Remove
+                                                {translations["Remove"]}
                                             </h5>
                                         </div>
                                     </div>
                                 </div>
+                                <div className="divider"></div>
                             </div>
                         ))}
                     </section>
@@ -605,7 +577,6 @@ export default function CartPage() {
                     <div className="divider"></div>
                     {/* You may also like section end */}
                     {/* Coupon section */}
-
                     {/* <section className="px-15 pt-0">
                         <h2 className="title">Coupons:</h2>
                         <div className="coupon-section">
@@ -618,21 +589,20 @@ export default function CartPage() {
                         </div>
                     </section>
                     <div className="divider"></div> */}
-
                     <section id="order-details" className="px-15 pt-0">
-                        <h2 className="title">Order Details:</h2>
+                        <h2 className="title">{translations["Order Details:"]}</h2>
                         <div className="order-details">
                             <ul>
                                 <li>
                                     <h4>
-                                        Bag total{" "}
+                                        {translations["Bag total"]}{" "}
                                         <span>${totalActual.toFixed(2)}</span>
                                     </h4>
                                 </li>
                                 {hasDiscount && (
                                     <li>
                                         <h4>
-                                            Bag savings{" "}
+                                            {translations["Bag saving"]}{" "}
                                             <span className="text-green">
                                                 -${totalSavings.toFixed(2)}
                                             </span>
@@ -653,13 +623,13 @@ export default function CartPage() {
                                 </li> */}
                                 <li>
                                     <h4>
-                                        Delivery <span>${shippingAmount}</span>
+                                        {translations["Delivery"]} <span>${shippingAmount}</span>
                                     </h4>
                                 </li>
                             </ul>
                             <div className="total-amount">
                                 <h4>
-                                    Total Amount{" "}
+                                    {translations["Total Amount"]}{" "}
                                     <span>
                                         ${dynamicTotalPayable.toFixed(2)}
                                     </span>
@@ -672,7 +642,7 @@ export default function CartPage() {
                                     alt="Delivery Truck"
                                 />
                                 <h4>
-                                    No Delivery Charges applied on this order
+                                    {translations["No Delivery Charges applied on this order"]}
                                 </h4>
                             </div>
                         </div>
@@ -691,7 +661,7 @@ export default function CartPage() {
                                             alt="7 Day Return"
                                         />
                                     </div>
-                                    <span>7 Day Return</span>
+                                    <span>{translations["7 Day Return"]}</span>
                                 </div>
                             </div>
                             <div className="col-4">
@@ -703,7 +673,7 @@ export default function CartPage() {
                                             alt="24/7 Support"
                                         />
                                     </div>
-                                    <span>24/7 Support</span>
+                                    <span>{translations["24/7 Support"]}</span>
                                 </div>
                             </div>
                             <div className="col-4">
@@ -715,7 +685,7 @@ export default function CartPage() {
                                             alt="Secure Payment"
                                         />
                                     </div>
-                                    <span>Secure Payment</span>
+                                    <span>{translations["Secure Payment"]}</span>
                                 </div>
                             </div>
                         </div>
@@ -737,7 +707,7 @@ export default function CartPage() {
                                 onClick={handlePlaceOrder}
                                 className="btn btn-solid"
                             >
-                                Place Order
+                                {translations["Place Order"]}
                             </button>
                         </div>
                     </div>
@@ -748,7 +718,7 @@ export default function CartPage() {
                         id="selectQty"
                     >
                         <div className="offcanvas-body small">
-                            <h4>Select Quantity:</h4>
+                            <h4>{translations["Select Quantity"]}</h4>
                             <input
                                 type="number"
                                 className="form-control form-theme qty-input input-number"
@@ -761,7 +731,7 @@ export default function CartPage() {
                                 className="btn btn-solid w-100 mt-3"
                                 onClick={handleAddToCart}
                             >
-                                Add to Bag
+                                {translations["Add to Bag"]}
                             </button>
                         </div>
                     </div>
@@ -771,7 +741,7 @@ export default function CartPage() {
                         id="selectSize"
                     >
                         <div className="offcanvas-body small">
-                            <h4>Select Size:</h4>
+                            <h4>{translations["Select Size"]}</h4>
                             <div className="size-detail mb-2 mt-2">
                                 <ul className="size-select">
                                     {availableSizes.length > 0 ? (
@@ -792,7 +762,7 @@ export default function CartPage() {
                                         ))
                                     ) : (
                                         <li className="disable">
-                                            No sizes available
+                                            {translations["No sizes available"]}
                                         </li>
                                     )}
                                 </ul>
@@ -809,7 +779,7 @@ export default function CartPage() {
                                 className="btn btn-solid w-100"
                                 onClick={handleAddToCart}
                             >
-                                DONE
+                                {translations["DONE"]}
                             </button>
                         </div>
                     </div>
@@ -819,7 +789,7 @@ export default function CartPage() {
                         id="selectColor"
                     >
                         <div className="offcanvas-body small p-3">
-                            <h5 className="mb-3">Select Color:</h5>
+                            <h5 className="mb-3">{translations["Select Color"]}:</h5>
                             <div className="d-flex flex-wrap gap-2 mb-3">
                                 {availableColors.length > 0 ? (
                                     availableColors.map((c) => (
@@ -840,13 +810,13 @@ export default function CartPage() {
                                     ))
                                 ) : (
                                     <span className="text-muted">
-                                        No colors available
+                                        {translations["No colors available"]}
                                     </span>
                                 )}
                             </div>
                             <div className="mb-3">
                                 <h5 className="mb-0">
-                                    Price: $
+                                    {translations["Price"]}: $
                                     {variantPrice[currentIndex]
                                         ? variantPrice[currentIndex].discounted
                                         : 0}
@@ -855,8 +825,9 @@ export default function CartPage() {
                             <button
                                 type="button"
                                 className="btn btn-solid w-100"
-                                onClick={handleAddToCart}>
-                                DONE
+                                onClick={handleAddToCart}
+                            >
+                                {translations["DONE"]}
                             </button>
                         </div>
                     </div>
@@ -867,10 +838,9 @@ export default function CartPage() {
                     >
                         <div className="offcanvas-body small">
                             <div className="content">
-                                <h4>Remove Item:</h4>
+                                <h4>{translations["Remove Item"]}:</h4>
                                 <p>
-                                    Are you sure you want to remove or move this
-                                    item from the cart?
+                                    {translations["Are you sure you want to remove or move this item from the cart?"]}
                                 </p>
                             </div>
                             <div className="bottom-cart-panel">
@@ -882,7 +852,7 @@ export default function CartPage() {
                                             }
                                             className="title-color"
                                         >
-                                            MOVE TO WISHLIST
+                                            {translations["MOVE TO WISHLIST"]}
                                         </button>
                                     </div>
                                     <div className="col-5">
@@ -890,7 +860,7 @@ export default function CartPage() {
                                             onClick={handleremoveproduct}
                                             className="theme-color"
                                         >
-                                            REMOVE
+                                            {translations["REMOVE"]}
                                         </button>
                                     </div>
                                 </div>
@@ -901,7 +871,6 @@ export default function CartPage() {
             ) : (
                 <EmptyCart />
             )}
-
             <div className="modal fade" id="popupMessage" aria-hidden="true">
                 <div
                     className="modal-dialog"
@@ -912,7 +881,8 @@ export default function CartPage() {
                         transform: "translateX(-50%)",
                         margin: 0,
                         pointerEvents: "none",
-                    }}>
+                    }}
+                >
                     <div
                         className={`alert alert-${
                             message.type === "success" ? "success" : "danger"
@@ -922,7 +892,8 @@ export default function CartPage() {
                             minWidth: "260px",
                             pointerEvents: "auto", // allow clicking inside
                             boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                        }}>
+                        }}
+                    >
                         <span>{message.text}</span>
                         {/* Close Button */}
                         <button

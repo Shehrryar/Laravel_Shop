@@ -51,13 +51,13 @@ export default function CustomerAddresses({ customerAddresses = [] }) {
                                     ></label>
                                     <div>
                                         <h4 className="name">
-                                            {address.firstname}{" "}
-                                            {address.lastname}
+                                            {address.translated_firstname}
+                                            {address.translated_lastname}
                                         </h4>
                                         <div className="addess">
-                                            <h4>{address.address}</h4>
+                                            <h4>{address.translated_address}</h4>
                                             <h4>
-                                                {address.city}, {address.state}
+                                                {address.translated_city}, {address.translated_state}
                                             </h4>
                                             <h4>{address.zip}</h4>
                                         </div>

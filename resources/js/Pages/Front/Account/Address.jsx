@@ -3,7 +3,7 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 export default function AddAddress() {
-    const { user, countries, editaddress, editdata } = usePage().props;
+    const {translations, user, countries, editaddress, editdata } = usePage().props;
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -97,7 +97,7 @@ export default function AddAddress() {
             setLoading(false);
         }
     };
-    // ✅ Reset Form
+    // Reset Form
     const handleReset = () => {
         setFormData({
             pin_code: "",
@@ -121,7 +121,7 @@ export default function AddAddress() {
                     <Link href={route("front.cart")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>Add a new address</h2>
+                            <h2>{translations["Add a new address"]}</h2>
                         </div>
                     </Link>
                 </div>
@@ -152,7 +152,7 @@ export default function AddAddress() {
                                 }))
                             }
                         >
-                            <option value="">Select Country</option>
+                            <option value="">{translations["Select Country"]}</option>
                             {countries.map((country) => (
                                 <option
                                     key={country.id}
@@ -173,7 +173,7 @@ export default function AddAddress() {
                                 placeholder="Full Name"
                                 value={user.name}
                             />
-                            <label htmlFor="one">Full Name</label>
+                            <label htmlFor="one">{translations["Full Name"]}</label>
                         </div>
                         <div className="form-floating mb-4">
                             <input
@@ -184,7 +184,7 @@ export default function AddAddress() {
                                 placeholder="Mobile Number"
                                 value={user.phone}
                             />
-                            <label htmlFor="two">Mobile Number</label>
+                            <label htmlFor="two">{translations["Mobile Number"]}</label>
                         </div>
                         {/* Pin Code */}
                         <div className="form-floating mb-4">
@@ -196,7 +196,7 @@ export default function AddAddress() {
                                 value={formData.pin_code}
                                 onChange={handleChange}
                             />
-                            <label htmlFor="pin_code">Pin Code</label>
+                            <label htmlFor="pin_code">{translations["Pin Code"]}</label>
                             {errors.pin_code && (
                                 <small className="text-danger">
                                     {errors.pin_code}
@@ -214,7 +214,7 @@ export default function AddAddress() {
                                 onChange={handleChange}
                             />
                             <label htmlFor="flat">
-                                Flat, house No., building..
+                                {translations["Flat, house No., building.."]}
                             </label>
                             {errors.flat && (
                                 <small className="text-danger">
@@ -232,7 +232,7 @@ export default function AddAddress() {
                                 value={formData.area}
                                 onChange={handleChange}
                             />
-                            <label htmlFor="area">Area, colony, street</label>
+                            <label htmlFor="area">{translations["Area, colony, street"]}</label>
                             {errors.area && (
                                 <small className="text-danger">
                                     {errors.area}
@@ -250,7 +250,7 @@ export default function AddAddress() {
                                 onChange={handleChange}
                             />
                             <label htmlFor="landmark">
-                                Landmark (optional)
+                                {translations["Landmark (optional)"]}
                             </label>
                         </div>
                         {/* City */}
@@ -263,7 +263,7 @@ export default function AddAddress() {
                                 value={formData.city}
                                 onChange={handleChange}
                             />
-                            <label htmlFor="city">Town/City</label>
+                            <label htmlFor="city">{translations["Town/City"]}</label>
                             {errors.city && (
                                 <small className="text-danger">
                                     {errors.city}
@@ -280,7 +280,7 @@ export default function AddAddress() {
                                 value={formData.state}
                                 onChange={handleChange}
                             />
-                            <label htmlFor="state">State/Province/Region</label>
+                            <label htmlFor="state">{translations["State/Province/Region"]}</label>
                             {errors.state && (
                                 <small className="text-danger">
                                     {errors.state}
@@ -291,7 +291,7 @@ export default function AddAddress() {
                     <div className="divider"></div>
                     {/* Address Type */}
                     <div className="type-address px-15">
-                        <h2 className="page-title">Type of address</h2>
+                        <h2 className="page-title">{translations["Type of address"]}</h2>
                         <div className="d-flex flex-wrap">
                             {["home", "office", "others"].map((type) => (
                                 <div
@@ -325,7 +325,7 @@ export default function AddAddress() {
                                     onChange={handleChange}
                                 />
                                 <label htmlFor="ten" className="ms-1">
-                                    Make default address
+                                    {translations["Make default address"]}
                                 </label>
                             </div>
                         </div>
@@ -339,14 +339,14 @@ export default function AddAddress() {
                             onClick={handleReset}
                             className="title-color col-5 text-center btn btn-link"
                         >
-                            RESET
+                            {translations["RESET"]}
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
                             className="btn btn-solid col-7 text-uppercase text-center"
                         >
-                            {loading ? "Saving..." : "Add Address"}
+                            {loading ? translations["Saving..."] : translations["Add Address"]}
                         </button>
                     </div>
                 </div>

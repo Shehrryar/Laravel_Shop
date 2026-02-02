@@ -5,10 +5,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const ProfileSettings = () => {
-  const { user, errors } = usePage().props;
+  const { translations, user, errors } = usePage().props;
   const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ Local form data
+  // Local form data
   const [formData, setFormData] = useState({
     first_name: user?.first_name ?? "",
     last_name: user?.last_name ?? "",
@@ -18,19 +18,19 @@ const ProfileSettings = () => {
     password: "",
   });
 
-  // ✅ Handle input changes
+  //  Handle input changes
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  // ✅ Toggle password visibility
+  //  Toggle password visibility
   const togglePassword = (e) => {
     e.preventDefault();
     setShowPassword(!showPassword);
   };
 
-  // ✅ Submit to Laravel
+  //  Submit to Laravel
   const handleSubmit = (e) => {
     e.preventDefault();
     router.put(route("account.updateProfileData"), formData, {
@@ -48,7 +48,7 @@ const ProfileSettings = () => {
           <Link href={route("account.profile")}>
             <i className="iconly-Arrow-Left icli"></i>
             <div className="content">
-              <h2>Profile Setting</h2>
+              <h2>{translations["Profile Setting"]}</h2>
             </div>
           </Link>
         </div>
@@ -68,7 +68,7 @@ const ProfileSettings = () => {
 
       {/* Personal Details */}
       <section className="detail-form-section px-15">
-        <h2 className="page-title mb-4">Personal Details</h2>
+        <h2 className="page-title mb-4">{translations["Personal Details"]}</h2>
 
         <form onSubmit={handleSubmit}>
           {/* First Name */}
@@ -82,7 +82,7 @@ const ProfileSettings = () => {
               onChange={handleChange}
               autoComplete="given-name"
             />
-            <label htmlFor="first_name">First Name</label>
+            <label htmlFor="first_name">{translations["First Name"]}</label>
             {errors.first_name && (
               <div className="invalid-feedback d-block">
                 {errors.first_name}
@@ -101,7 +101,7 @@ const ProfileSettings = () => {
               onChange={handleChange}
               autoComplete="family-name"
             />
-            <label htmlFor="last_name">Last Name</label>
+            <label htmlFor="last_name">{translations["Last Name"]}</label>
             {errors.last_name && (
               <div className="invalid-feedback d-block">
                 {errors.last_name}
@@ -120,7 +120,7 @@ const ProfileSettings = () => {
               onChange={handleChange}
               autoComplete="bday"
             />
-            <label htmlFor="dob">Date of Birth</label>
+            <label htmlFor="dob">{translations["Date of Birth"]}</label>
             {errors.dob && (
               <div className="invalid-feedback d-block">{errors.dob}</div>
             )}
@@ -134,12 +134,12 @@ const ProfileSettings = () => {
               value={formData.gender}
               onChange={handleChange}
             >
-              <option value="">Select Gender</option>
-              <option value="male">Men</option>
-              <option value="female">Women</option>
-              <option value="other">Other</option>
+              <option value="">{translations["Select Gender"]}</option>
+              <option value="male">{translations["Men"]}</option>
+              <option value="female">{translations["Women"]}</option>
+              <option value="other">{translations["Other"]}</option>
             </select>
-            <label htmlFor="gender">Gender</label>
+            <label htmlFor="gender">{translations["Gender"]}</label>
             {errors.gender && (
               <div className="invalid-feedback d-block">{errors.gender}</div>
             )}
@@ -160,7 +160,7 @@ const ProfileSettings = () => {
               onChange={handleChange}
               autoComplete="tel"
             />
-            <label htmlFor="mobile_number">Mobile Number</label>
+            <label htmlFor="mobile_number">{translations["Mobile Number"]}</label>
             {errors.mobile_number && (
               <div className="invalid-feedback d-block">
                 {errors.mobile_number}
@@ -179,9 +179,9 @@ const ProfileSettings = () => {
               onChange={handleChange}
               autoComplete="new-password"
             />
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{translations["Password"]}</label>
             <a href="#" className="change-btn" onClick={togglePassword}>
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? translations["Hide"] : translations["Show"]}
             </a>
             {errors.password && (
               <div className="invalid-feedback d-block">{errors.password}</div>
@@ -193,14 +193,14 @@ const ProfileSettings = () => {
             <div className="d-flex w-100">
               <div className="left-content col-5">
                 <Link href={route('account.profile')} className="title-color">
-                  CANCEL
+                  {translations["CANCEL"]}
                 </Link>
               </div>
               <button
                 type="submit"
                 className="btn btn-solid col-7 text-uppercase"
               >
-                Save Details
+                {translations["Save Details"]}
               </button>
             </div>
           </div>
