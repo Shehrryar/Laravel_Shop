@@ -4,7 +4,9 @@ import { Link, usePage, router } from "@inertiajs/react";
 import { route } from "ziggy-js";
 import BottomNav from "./Components/BottomNav";
 import WishlistButton from "./Components/WishlistButton";
+import { UseCurrency } from "./Components/UseCurrency";
 const ShopPage = () => {
+    const { convertPrice, symbol } = UseCurrency();
     const {
         products,
         wishlist,
@@ -194,11 +196,17 @@ const ShopPage = () => {
                                         </Link>
                                         <div className="price">
                                             <h5 className="mb-0">
-                                                {prod.discount_value != 0 ? (
+                                                {prod.discount_value !== 0 ? (
                                                     <>
-                                                        ${prod.discounted_price}
+                                                        {symbol}
+                                                        {convertPrice(
+                                                            prod.discounted_price,
+                                                        )}
                                                         <del className="text-muted small ms-1">
-                                                            ${prod.actual_price}
+                                                            {symbol}
+                                                            {convertPrice(
+                                                                prod.actual_price,
+                                                            )}
                                                         </del>
                                                         <span className="text-danger ms-1">
                                                             {
@@ -208,7 +216,12 @@ const ShopPage = () => {
                                                         </span>
                                                     </>
                                                 ) : (
-                                                    <>${prod.actual_price}</>
+                                                    <>
+                                                        {symbol}
+                                                        {convertPrice(
+                                                            prod.actual_price,
+                                                        )}
+                                                    </>
                                                 )}
                                             </h5>
                                         </div>

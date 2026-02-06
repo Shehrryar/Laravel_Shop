@@ -33,14 +33,10 @@ class ProductFilterService
         if ($request->disct_id) {
             // Always treat as array
             $discountIds = (array) $request->disct_id;
-            $discounts = Discount::whereIn('id', $discountIds)->get();
-            $ids = [];
-            foreach ($discounts as $discount) {
-                // Remove quotes from "26"
-                $clean = trim($discount->product_ids, '"');
-                $ids[] = $clean;
-            }
-            $products->whereIn('id', $ids);
+            $discount = Discount::whereIn('id', $discountIds)->first();
+            // Remove quotes from "26"
+            $cleanid = explode(',', trim($discount->product_ids, '"'));
+            $products->whereIn('id', $cleanid);
         }
         // Price filter
         if ($request->price !== null) {

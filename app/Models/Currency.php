@@ -11,5 +11,12 @@ class Currency extends Model
         'code',
         'symbol',
         'exchange_rate',
+        'is_default'
     ];
+
+    public static function getDefaultCurrency()
+    {
+        return self::where('is_default', 1)->first();
+    }
+
 }

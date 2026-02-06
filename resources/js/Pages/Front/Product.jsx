@@ -7,7 +7,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ProductSlider from "./Components/ProductSlider";
 import ProductReviewAndRating from "./Components/ProductReviewAndRating";
+import { UseCurrency } from "./Components/UseCurrency";
 const ProductDetails = () => {
+    const { convertPrice, symbol } = UseCurrency();
     const { product, showrelatedproduct, wishlistitems } = usePage().props;
     const [selectedSize, setSelectedSize] = useState(null);
     const [selectedColor, setSelectedColor] = useState(null);
@@ -25,7 +27,7 @@ const ProductDetails = () => {
     const handleSizeChange = (sizeId) => {
         setSelectedSize(sizeId);
         const matchedColors = product.color.filter(
-            (color) => parseInt(color.size_id) === parseInt(sizeId)
+            (color) => parseInt(color.size_id) === parseInt(sizeId),
         );
         setFilteredColors(matchedColors);
         setSelectedColor(null);
@@ -101,7 +103,7 @@ const ProductDetails = () => {
 
     const handleAddToCart = async () => {
         const popupMessage = new bootstrap.Modal(
-            document.getElementById("popupMessage")
+            document.getElementById("popupMessage"),
         );
 
         if (product.size && product.size.length > 0) {
@@ -160,7 +162,7 @@ const ProductDetails = () => {
     const handleStarClick = (value) => setRating(value);
     const handleSubmit = async (e) => {
         const popupMessage = new bootstrap.Modal(
-            document.getElementById("popupMessage")
+            document.getElementById("popupMessage"),
         );
         e.preventDefault();
         try {
@@ -307,21 +309,30 @@ const ProductDetails = () => {
                                 ({product.product_ratings_count} ratings)
                             </h6>
                         </div>
+
                         <div className="price">
                             <h4>
-                                {variantPrice.discount_value != 0 ? (
+                                {variantPrice.discount_value !== 0 ? (
                                     <>
-                                        ${variantPrice.discounted}
-                                        <del>${variantPrice.actual}</del>
+                                        {symbol}
+                                        {convertPrice(variantPrice.discounted)}
+                                        <del>
+                                            {symbol}
+                                            {convertPrice(variantPrice.actual)}
+                                        </del>
                                         <span>
                                             ({variantPrice.discount_value}% off)
                                         </span>
                                     </>
                                 ) : (
-                                    <>${variantPrice.actual}</>
+                                    <>
+                                        {symbol}
+                                        {convertPrice(variantPrice.actual)}
+                                    </>
                                 )}
                             </h4>
                         </div>
+
                         <h6 className="text-green">inclusive of all taxes</h6>
                     </div>
                 </div>

@@ -188,7 +188,7 @@ export default function Profile() {
                     </li>
                     {/* Settings */}
                     <li>
-                        <Link>
+                        <Link href={route("front.settings")}>
                             <i className="iconly-Setting icli"></i>
                             <div className="content">
                                 <h4>{translations["Settings"]}</h4>
@@ -204,7 +204,7 @@ export default function Profile() {
                     </li>
                     {/* Profile setting */}
                     <li>
-                        <Link>
+                        <Link href={route("account.profileEdit")}>
                             <i className="iconly-Password icli"></i>
                             <div className="content">
                                 <h4>{translations["Profile Setting"]}</h4>

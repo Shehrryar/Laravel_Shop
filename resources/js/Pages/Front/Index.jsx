@@ -10,7 +10,9 @@ import ProductSlider from "./Components/ProductSlider";
 import WishlistButton from "./Components/WishlistButton";
 import CountdownTimer from "./Components/CountdownTimer";
 import HomeProductTabs from "./Components/HomeProductTabs";
+import { UseCurrency } from "./Components/UseCurrency";
 export default function HomePage() {
+    const { convertPrice, symbol } = UseCurrency();
     const {
         categories,
         featured_products,
@@ -22,6 +24,7 @@ export default function HomePage() {
         homelables,
         translations,
         productsByLabel,
+        current_currency,
     } = usePage().props;
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -55,7 +58,14 @@ export default function HomePage() {
         setSidebarOpen(false);
         document.body.style.overflow = "auto";
     };
-
+    useEffect(() => {
+        // Ensure scrolling is enabled whenever a page loads
+        document.body.style.overflow = "auto";
+        // Optional cleanup when component unmounts
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, []);
     return (
         <>
             {/* loader start */}
@@ -157,12 +167,11 @@ export default function HomePage() {
                                             ]
                                         }
                                     </h6>
-                                    <a
-                                        href="shop.html"
-                                        className="btn btn-solid"
-                                    >
+
+                                    <Link className="btn btn-solid"href={route("front.shop")}>
                                         SHOP NOW
-                                    </a>
+                                    </Link>
+
                                 </div>
                             </div>
                         </div>
@@ -245,18 +254,18 @@ export default function HomePage() {
                                                     </div>
                                                     <div className="price">
                                                         <h4>
-                                                            {product.discount_value !=
+                                                            {product.discount_value !==
                                                             0 ? (
                                                                 <>
-                                                                    $
-                                                                    {
-                                                                        product.discounted_price
-                                                                    }
+                                                                    {symbol}
+                                                                    {convertPrice(
+                                                                        product.discounted_price,
+                                                                    )}
                                                                     <del className="text-muted small ms-1">
-                                                                        $
-                                                                        {
-                                                                            product.actual_price
-                                                                        }
+                                                                        {symbol}
+                                                                        {convertPrice(
+                                                                            product.actual_price,
+                                                                        )}
                                                                     </del>
                                                                     <span className="text-danger ms-1">
                                                                         {
@@ -267,10 +276,10 @@ export default function HomePage() {
                                                                 </>
                                                             ) : (
                                                                 <>
-                                                                    $
-                                                                    {
-                                                                        product.actual_price
-                                                                    }
+                                                                    {symbol}
+                                                                    {convertPrice(
+                                                                        product.actual_price,
+                                                                    )}
                                                                 </>
                                                             )}
                                                         </h4>
@@ -296,15 +305,12 @@ export default function HomePage() {
                 </div>
             </section>
             <div className="divider" />
-
             <HomeProductTabs
                 homelables={homelables}
                 productsByLabel={productsByLabel}
                 wishlistitems={wishlistitems}
                 translations={translations}
             />
-
-            
             {/* timer banner start */}
             <section className="banner-timer">
                 <div className="banner-bg">
@@ -312,9 +318,7 @@ export default function HomePage() {
                         <div>
                             <h6>{translations["Denim Wear"]}</h6>
                             <h2>{translations["Sales Starts In"]}</h2>
-
                             <CountdownTimer initialSeconds={3600} />
-
                             <Link href="shop.html">
                                 {translations["explore now"]}
                             </Link>
@@ -368,14 +372,11 @@ export default function HomePage() {
             {/* brands section end */}
             {/* kids corner section start */}
             <section className="pt-0 product-slider-section overflow-hidden">
-                {/* <div className="title-section px-15">
-                    <h2>The Featured Products</h2>
-                    <h3>Clothing for your Li’l One’s</h3>
-                </div> */}
                 <ProductSlider
                     title="The Featured Products"
                     products={featured_products}
                     wishlist={wishlistitems}
+                    current_currency={current_currency} // ← ADD THIS
                 />
             </section>
             {/* kids corner section end */}

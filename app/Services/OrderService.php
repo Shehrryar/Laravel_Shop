@@ -5,6 +5,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
 use App\Models\Cart;
+use Illuminate\Support\Facades\Auth;
+
 
 class OrderService
 {
@@ -115,6 +117,19 @@ class OrderService
         Cart::where('user_id', auth()->id())->delete();   // delete cart rows for this user
         session()->forget('order_id');
         session()->forget('grand_total');
+    }
+
+
+    function orderdetails($id)
+    {
+
+        $user = Auth::user();
+        $order = Order::where('user_id', $user->id)->where('id', $id)->first();
+        $orderitems = OrderItem::where('order_id', $id)->get();
+        $orderitemscount = OrderItem::where('order_id', $id)->count();
+        $data['order'] = $order;
+        $data['orderitemscount'] = $orderitemscount;
+        $data['orderitems'] = $orderitems;
     }
 
 }

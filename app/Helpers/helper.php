@@ -59,6 +59,7 @@ function orderEmail($orderId, $userType)
 
 
 
+
 function getDiscountedPrice($product, $discounts, $price)
 {
     $discountedPrice = 0;
@@ -68,10 +69,8 @@ function getDiscountedPrice($product, $discounts, $price)
         foreach ($discounts as $dis) {
             $product_ids = explode(',', $dis->product_ids);
             if (in_array($product, $product_ids) && $dis->type == 'percentage') {
-                if (Carbon::now()->between($dis->start_at, $dis->expires_at)) {
-                    $discountValue = $dis->value;
-                    $discountedPrice = $price - ($price * ($dis->value / 100));
-                }
+                $discountValue = $dis->value;
+                $discountedPrice = $price - ($price * ($dis->value / 100));
             }
         }
     }
@@ -148,35 +147,26 @@ function handleStockforCart($product_id, $color_id, $size_id, $quantity)
         ];
     }
 }
-
-
-
 if (!function_exists('front_translations')) {
     function front_translations(): array
     {
         $locale = app()->getLocale(); // Uses the current Laravel locale (set by your language switcher)
-
         $cacheKey = "front_translations_{$locale}";
-
         return cache()->rememberForever($cacheKey, function () use ($locale) {
             $langPath = resource_path("lang/front/{$locale}.json");
-
             if (File::exists($langPath)) {
                 $content = File::get($langPath);
                 return json_decode($content, true) ?: [];
             }
-
             // Fallback to English if file doesn't exist
             $fallbackPath = resource_path('lang/front/en.json');
             if (File::exists($fallbackPath)) {
                 return json_decode(File::get($fallbackPath), true) ?: [];
             }
-
             return [];
         });
     }
 }
-
 if (!function_exists('front_trans')) {
     function front_trans(string $key, string $fallback = null): string
     {
@@ -184,8 +174,4 @@ if (!function_exists('front_trans')) {
         return $translations[$key] ?? $fallback ?? $key;
     }
 }
-
-
-
-
 ?>

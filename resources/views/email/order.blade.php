@@ -68,10 +68,20 @@
     </style>
 </head>
 
-<pre>
-{{ print_r($mailData) }}
-</pre>
+<body>
+    <h1>Thank you for your order!</h1>
 
+    <h2>Order Details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th class="text-right">Price</th>
+                <th class="text-right">Subtotal</th>
+            </tr>
+        </thead>
 
+    </table>
 
 </html>

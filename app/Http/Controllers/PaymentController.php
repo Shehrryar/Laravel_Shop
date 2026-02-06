@@ -49,7 +49,13 @@ class PaymentController extends Controller
         $order = $orderService->createOrder($user, $cartItems, $request, $customerAddress);
         $orderId = session()->get('order_id');
         $order = Order::find($orderId);
-        // Mail::to($order->email)->send(new OrderEmail($order));
+
+
+        Mail::to($order->email)->send(new OrderEmail($order));
+
+
+
+
         // event(new OrderPlacedNotificationEvent(Order::find($orderId)));
         if ($order == true) {
             if ($request->paymentMethod === 'cod') {

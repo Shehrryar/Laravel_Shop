@@ -22,20 +22,17 @@ class ShopController extends Controller
 {
     protected $discountService;
     protected $productFilterService;
-
     public function __construct(DiscountService $discountService, ProductFilterService $productFilterService)
     {
         $this->discountService = $discountService;
         $this->productFilterService = $productFilterService;
     }
-
     public function index(Request $request, $catslug = null, $subcatslug = null, $subsubcatslug = null)
     {
-
         // Products (filtered)
         $products = $this->productFilterService->filter($request, $catslug, $subcatslug, $subsubcatslug);
-
         // Apply discounts
+        
         $discounts = $this->discountService->getActiveDiscounts();
         $products->getCollection()->transform(function ($product) use ($discounts) {
             $data = getDiscountedPrice($product->id, $discounts, $product->price);
@@ -44,11 +41,9 @@ class ShopController extends Controller
             $product->actual_price = $data['actual_price'];
             return $product;
         });
-
         $wishlist = auth()->check()
             ? Wishlist::where('user_id', auth()->id())->with('product')->get()->keyBy('product_id')
             : collect();
-
         return Inertia::render('Front/Shop', [
             'categories' => Category::with('sub_category')->where('status', 1)->orderBy('name')->get(),
             'brands' => Brand::where('status', 1)->orderBy('name')->get(),
@@ -65,8 +60,6 @@ class ShopController extends Controller
             'subsubcat_slug' => $subsubcatslug,
         ]);
     }
-
-
     public function product($slug)
     {
         // Fetch product with necessary relationships
@@ -80,21 +73,13 @@ class ShopController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->firstOrFail();
-
-
-
         // Fetch related products by category
         $samcatproduct = Product::where('categories_id', $product->categories_id)
             ->with(['product_ratings', 'product_images'])
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->get();
-
-
-
-
         $discount = $this->discountService->getActiveDiscounts();
-
         $samcatproduct = $this->discountService->applyDiscount($samcatproduct, $discount);
         // Calculate average rating
         $avg_rating = $product->product_ratings_count > 0
@@ -113,16 +98,10 @@ class ShopController extends Controller
             'product_id' => $product->id,
             'user_id' => auth()->id(),
         ]);
-
-
-
-
         $getprice = getDiscountedPrice($product->id, $discount, $product->price);
         $product->discount_value = $getprice['discount_value'];
         $product->discounted_price = $getprice['discounted_price'];
         $product->actual_price = $getprice['actual_price'];
-
-
         $stockHandle = handleStock($product->id, 0, 0);
         $wishlistitems = collect();
         if (!empty(Auth::user())) {

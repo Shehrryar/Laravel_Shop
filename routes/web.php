@@ -57,6 +57,13 @@ use App\Http\Controllers\SettingsController;
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/settings', [SettingsController::class, 'index'])->name('front.settings');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
+
+
+Route::get('search', [SearchController::class, 'search'])->name('product.search');
+Route::get('/search/products', [SearchController::class, 'searchProducts'])
+    ->name('front.search.products');
+
+
 // Route::post('/shopfilter', [ShopController::class, 'filterRequest'])->name('front.shopfilter');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');
@@ -73,21 +80,34 @@ Route::get('paypal/payment', [PaymentController::class, 'payWithPaypal'])->name(
 Route::get('paypal/success', [PaymentController::class, 'paypalSuccess'])->name('paypal.success');
 Route::get('paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('paypal.cancel');
 Route::get('/order-placed', [CartController::class, 'orderPlaced'])->name('front.orderPlaced');
+
+
+
+Route::get('/order-details/{orderId}', [AuthController::class, 'orderDetails'])->name('front.orderDetails');
+Route::get('/order/invoice-html/{orderId}', [AuthController::class, 'invoiceHtml'])->name('order.invoice-html')->middleware('auth');
+
+
 Route::get('/thanks', [CartController::class, 'thankyou'])->name('front.thankyou');
 Route::post('/get-order-summery', [CartController::class, 'getOrderSummary'])->name('front.getOrderSummary');
 Route::post('/apply-coupon', [CartController::class, 'apply_discount'])->name('front.applycoupon');
 Route::post('/remove-discount', [CartController::class, 'removecoupon'])->name('front.removediscount');
 Route::get('/coupons', [CartController::class, 'couponPage'])->name('front.coupons');
 Route::post('/add-to-Wishlist', [FrontController::class, 'addToWishlist'])->name('front.addtowishlist');
+
+
 Route::get('/languages', [LocalizationController::class, 'show'])->name('account.languages');
+
+
+
 Route::get('/currency', [LocalizationController::class, 'showCurrency'])->name('front.currency');
+Route::post('/currency/change', [LocalizationController::class, 'change'])->name('currency.change');
+
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
 Route::post('rating-saving/', action: [ShopController::class, 'productRating'])->name('front.productRating');
 Route::get('/brand/{id}', [ShopController::class, 'brandProducts'])->name('front.brandProducts');
 Route::get('Categories', [FrontCategoryController::class, 'getAllCategory'])->name('product.getCategories');
 Route::get('InnerCategory/{categoryid}', [FrontCategoryController::class, 'getInnerCategory'])->name('product.getInnerCategory');
-Route::get('search', [SearchController::class, 'search'])->name('product.search');
-// Route::post('search', [SearchController::class, 'search'])->name('product.search');
+
 Route::post('color', [AttributeController::class, 'change_color'])->name('product.change_color');
 Route::post('size', [AttributeController::class, 'sizeChange'])->name('product.sizeChange');
 Route::post('getcolor', [AttributeController::class, 'getcolors'])->name('product.getcolor');

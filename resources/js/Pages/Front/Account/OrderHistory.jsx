@@ -3,13 +3,17 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 import BottomNav from "../Components/BottomNav";
-
+import { UseCurrency } from "../Components/UseCurrency";
 export default function OrderHistory({ orders }) {
     const [openOrder, setOpenOrder] = useState(null);
-
     const toggleOrder = (id) => {
-        setOpenOrder(openOrder === id ? null : id);
+        // setOpenOrder(openOrder === id ? null : id);
+        router.visit(route("front.orderDetails", { orderId: id }));
     };
+
+    const { symbol, convertPrice } = UseCurrency();
+
+
     return (
         <>
             {/* header start */}
@@ -24,7 +28,6 @@ export default function OrderHistory({ orders }) {
                 </div>
             </header>
             {/* header end */}
-
             {/* search panel start */}
             <div className="search-panel top-space px-20">
                 <div className="search-bar">
@@ -44,10 +47,8 @@ export default function OrderHistory({ orders }) {
                 </div> */}
             </div>
             {/* search panel end */}
-
             <section className="px-15">
                 <h2 className="page-title">Open Orders</h2>
-
                 <ul className="order-listing">
                     {orders.map((order) => (
                         <li key={order.id}>
@@ -59,17 +60,16 @@ export default function OrderHistory({ orders }) {
                                         <h5 className="content-color my-1">
                                             Ordered:{" "}
                                             {new Date(
-                                                order.created_at
+                                                order.created_at,
                                             ).toLocaleDateString()}
                                         </h5>
-
                                         <h5 className="content-color my-1">
                                             Name: {order.firstname}
                                         </h5>
                                         <h6 className="content-color">
-                                            Total: ${order.grandtotal}
+                                            Total: {symbol}
+                                            {convertPrice(order.grandtotal)}
                                         </h6>
-
                                         <button
                                             onClick={() =>
                                                 toggleOrder(order.id)
@@ -88,17 +88,14 @@ export default function OrderHistory({ orders }) {
                                                 : "View Details"}
                                         </button>
                                     </div>
-
                                     <span className="status-label">
                                         {order.status}
                                     </span>
                                 </div>
-
                                 {/* ORDER DETAILS (Collapsible) */}
                                 {openOrder === order.id && (
                                     <div className="delivery-status mt-3">
                                         <h5 className="mb-2">Order Items:</h5>
-
                                         {order.orderitems?.map((item) => (
                                             <div
                                                 key={item.id}
@@ -123,7 +120,6 @@ export default function OrderHistory({ orders }) {
                                                         borderRadius: 8,
                                                     }}
                                                 />
-
                                                 <div className="media-body ms-3">
                                                     <h5>
                                                         {item.product?.title}
@@ -131,18 +127,16 @@ export default function OrderHistory({ orders }) {
                                                     <h5 className="content-color">
                                                         {(() => {
                                                             let attrs = {};
-
                                                             try {
                                                                 attrs =
                                                                     item.additional_attributes
                                                                         ? JSON.parse(
-                                                                              item.additional_attributes
+                                                                              item.additional_attributes,
                                                                           )
                                                                         : {};
                                                             } catch (e) {
                                                                 attrs = {};
                                                             }
-
                                                             return (
                                                                 <>
                                                                     {attrs.color && (
@@ -160,7 +154,6 @@ export default function OrderHistory({ orders }) {
                                                                             </strong>
                                                                         </span>
                                                                     )}
-
                                                                     {attrs.size && (
                                                                         <span
                                                                             style={{
@@ -176,7 +169,6 @@ export default function OrderHistory({ orders }) {
                                                                             </strong>
                                                                         </span>
                                                                     )}
-
                                                                     <span>
                                                                         Qty:{" "}
                                                                         <strong>
@@ -191,31 +183,48 @@ export default function OrderHistory({ orders }) {
                                                     </h5>
                                                     <p className="content-color">
                                                         Qty: {item.quantity} |
-                                                        Price: ${item.price}
+                                                        Price: {symbol}
+                                                        {convertPrice(
+                                                            item.price,
+                                                        )}
                                                     </p>
                                                 </div>
                                             </div>
                                         ))}
-
                                         {/* Costs */}
                                         <div className="d-flex mt-3">
                                             <div className="me-3">
                                                 <h6 className="content-color">
                                                     Subtotal:
                                                 </h6>
-                                                <h6>${order.subtotal}</h6>
+                                                <h6>
+                                                    {symbol}
+                                                    {convertPrice(
+                                                        order.subtotal,
+                                                    )}
+                                                </h6>
                                             </div>
                                             <div className="me-3">
                                                 <h6 className="content-color">
                                                     Shipping:
                                                 </h6>
-                                                <h6>${order.shipping}</h6>
+                                                <h6>
+                                                    {symbol}
+                                                    {convertPrice(
+                                                        order.shipping,
+                                                    )}
+                                                </h6>
                                             </div>
                                             <div>
                                                 <h6 className="content-color">
                                                     Grand Total:
                                                 </h6>
-                                                <h6>${order.grandtotal}</h6>
+                                                <h6>
+                                                    {symbol}
+                                                    {convertPrice(
+                                                        order.grandtotal,
+                                                    )}
+                                                </h6>
                                             </div>
                                         </div>
                                     </div>
@@ -225,11 +234,8 @@ export default function OrderHistory({ orders }) {
                     ))}
                 </ul>
             </section>
-
             <section className="panel-space"></section>
-
             <BottomNav />
-
             {/* Review Offcanvas */}
             <div
                 className="offcanvas offcanvas-bottom h-auto"
@@ -273,7 +279,6 @@ export default function OrderHistory({ orders }) {
                     </div>
                 </div>
             </div>
-
             {/* Filter Offcanvas */}
             <div
                 className="offcanvas offcanvas-bottom h-auto"
@@ -306,7 +311,7 @@ export default function OrderHistory({ orders }) {
                                         Orders
                                     </label>
                                 </div>
-                            )
+                            ),
                         )}
                     </form>
                     <h2 className="mb-2">Time Filter</h2>

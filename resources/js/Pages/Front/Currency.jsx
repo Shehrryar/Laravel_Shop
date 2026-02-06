@@ -1,15 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
 import { route } from "ziggy-js";
 import BottomNav from "./Components/BottomNav";
+
 const Currency = () => {
-    const { translations, currency , cartquantity} =
-        usePage().props;
-    const changeCurrency = (code) => {
-        router.post(route("currency.change"), {
-            currency: code,
-        });
+    const { translations, currency, current_currency, cartquantity } = usePage().props;
+
+    // Local state for instant radio feedback
+    const [selectedCode, setSelectedCode] = useState(current_currency?.code ?? "");
+
+    // Sync state if props change (e.g., after page refresh/redirect)
+    useEffect(() => {
+        setSelectedCode(current_currency?.code ?? "");
+    }, [current_currency?.code]);
+
+    const handleCurrencyChange = (code) => {
+        // Instant UI update
+        setSelectedCode(code);
+
+        // Send request – preserve state/scroll for smoother feel
+        router.post(
+            route("currency.change"),
+            { currency: code },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                // Optional: onSuccess/onError callbacks if you want to handle flash/toast
+            }
+        );
     };
+
     return (
         <>
             {/* Header */}
@@ -38,6 +58,14 @@ const Currency = () => {
                     </ul>
                 </div>
             </header>
+
+            {/* Optional success message (uncomment if you enable flash in controller) */}
+            {/* {usePage().props.flash?.success && (
+                <div className="alert alert-success text-center">
+                    {usePage().props.flash.success}
+                </div>
+            )} */}
+
             {/* Currency List */}
             <section className="language-listing px-15 top-space pt-0">
                 <ul className="language-list">
@@ -45,10 +73,9 @@ const Currency = () => {
                         <li
                             key={cur.id}
                             className="d-flex justify-content-between align-items-center p-3 border-bottom"
-                            onClick={() => changeCurrency(cur.code)}
+                            onClick={() => handleCurrencyChange(cur.code)}
                             style={{ cursor: "pointer" }}
                         >
-                            {/* Left: Currency Info */}
                             <div className="d-flex align-items-center">
                                 <span
                                     style={{
@@ -63,22 +90,22 @@ const Currency = () => {
                                     {cur.name} ({cur.code})
                                 </span>
                             </div>
-                            {/* Right: Radio */}
                             <input
                                 type="radio"
                                 name="currency"
-                                checked={currency.code === cur.code}
-                                onChange={() => changeCurrency(cur.code)}
+                                checked={selectedCode === cur.code}
+                                readOnly
                             />
                         </li>
                     ))}
                 </ul>
             </section>
-            {/* Panel Space */}
+
             <section className="panel-space"></section>
-            {/* Bottom Panel */}
+
             <BottomNav />
         </>
     );
 };
+
 export default Currency;

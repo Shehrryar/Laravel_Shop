@@ -2,11 +2,9 @@ import React from "react";
 import Slider from "react-slick";
 import { Link } from "@inertiajs/react";
 import WishlistButton from "./WishlistButton";
-const ProductSlider = ({
-    title = "",
-    products = [],
-    wishlist = [],
-}) => {
+import { UseCurrency } from "./UseCurrency";
+const ProductSlider = ({ title = "", products = [], wishlist = [] }) => {
+    const { convertPrice, symbol } = UseCurrency();
     const settings = {
         slidesToShow: 4,
         slidesToScroll: 1,
@@ -23,6 +21,7 @@ const ProductSlider = ({
     if (!products.length) {
         return null; // or a message like <p>No products found</p>
     }
+
     return (
         <section className="pt-0 product-slider-section overflow-hidden">
             <div className="title-section px-15">
@@ -78,9 +77,9 @@ const ProductSlider = ({
                                                         avgRating >= star
                                                             ? "filled"
                                                             : avgRating >=
-                                                              star - 0.5
-                                                            ? "half"
-                                                            : "empty"
+                                                                star - 0.5
+                                                              ? "half"
+                                                              : "empty"
                                                     }`}
                                                 ></i>
                                             </li>
@@ -96,18 +95,29 @@ const ProductSlider = ({
                                     </Link>
                                     <div className="price">
                                         <h4>
-                                            {p.discount_value != 0 ? (
+                                            {p.discount_value !== 0 ? (
                                                 <>
-                                                    ${p.discounted_price}
+                                                    {symbol}
+                                                    {convertPrice(
+                                                        p.discounted_price,
+                                                    )}
                                                     <del className="text-muted small ms-1">
-                                                        ${p.actual_price}
+                                                        {symbol}
+                                                        {convertPrice(
+                                                            p.actual_price,
+                                                        )}
                                                     </del>
                                                     <span className="text-danger ms-1">
                                                         {p.discount_value}%
                                                     </span>
                                                 </>
                                             ) : (
-                                                <>${p.actual_price}</>
+                                                <>
+                                                    {symbol}
+                                                    {convertPrice(
+                                                        p.actual_price,
+                                                    )}
+                                                </>
                                             )}
                                         </h4>
                                     </div>

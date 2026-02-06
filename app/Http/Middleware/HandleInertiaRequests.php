@@ -2,6 +2,7 @@
 namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Helpers\CurrencyHelper;
 class HandleInertiaRequests extends Middleware
 {
     /**
@@ -44,7 +45,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'categories' => fn() => getcategories(),
             'cartquantity' => fn() => getcartquantityandtotal(),
-            'translations' => json_decode(file_get_contents(resource_path('lang/front/' . app()->getLocale() . '.json')), true)
+            'translations' => json_decode(file_get_contents(resource_path('lang/front/' . app()->getLocale() . '.json')), true),
+            'current_currency' => CurrencyHelper::getCurrentCurrencyData(),
         ]);
     }
 }

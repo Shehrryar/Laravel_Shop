@@ -3,6 +3,7 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { UseCurrency } from "./Components/UseCurrency";
 const stripePromise = loadStripe("pk_test_123456789");
 const PaymentDetails = () => {
     const {
@@ -110,6 +111,9 @@ const PaymentDetails = () => {
     const handleMethodChange = (method) => {
         setPaymentMethod(method);
     };
+
+
+    const { convertPrice, symbol } = UseCurrency();
     return (
         <>
             {/* Header */}
@@ -301,14 +305,14 @@ const PaymentDetails = () => {
                         <li>
                             <h4>
                                 {translations["Bag total"]}{" "}
-                                <span>${totalcartamount}</span>
+                                <span>{symbol}{convertPrice(totalcartamount)}</span>
                             </h4>
                         </li>
                         <li>
                             <h4>
                                 {translations["Bag saving"]}{" "}
                                 <span className="text-green">
-                                    -${bagsavingvalue}
+                                    -{symbol}{convertPrice(bagsavingvalue)}
                                 </span>
                             </h4>
                         </li>
@@ -317,7 +321,7 @@ const PaymentDetails = () => {
                                 <h4>
                                     {translations["Coupon Discount"]}{" "}
                                     <span className="text-green">
-                                        -${discount_coupon_amount}
+                                        -{symbol}{convertPrice(discount_coupon_amount)}
                                     </span>
                                 </h4>
                             </li>
@@ -325,14 +329,14 @@ const PaymentDetails = () => {
                         <li>
                             <h4>
                                 {translations["Delivery"]}{" "}
-                                <span>${shippingAmount}</span>
+                                <span>{symbol}{convertPrice(shippingAmount)}</span>
                             </h4>
                         </li>
                     </ul>
                     <div className="total-amount">
                         <h4>
                             {translations["Total Amount"]}{" "}
-                            <span>${totalPayable}</span>
+                            <span>{symbol}{convertPrice(totalPayable)}</span>
                         </h4>
                     </div>
                 </div>
@@ -342,7 +346,7 @@ const PaymentDetails = () => {
             <div className="cart-bottom">
                 <div>
                     <div className="left-content">
-                        <h4>${totalPayable}</h4>
+                        <h4>{symbol}{convertPrice(totalPayable)}</h4>
                         {/* <a href="#" className="theme-color">
                             View details
                         </a> */}

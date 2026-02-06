@@ -3,8 +3,12 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 import BottomNav from "../Components/BottomNav";
+import { UseCurrency } from "../Components/UseCurrency";
 const Wishlist = () => {
     const { wishlist, translations } = usePage().props;
+
+    const { symbol, convertPrice } = UseCurrency();
+
     //Handle remove item
     const handleRemove = async (productId) => {
         try {
@@ -126,9 +130,9 @@ const Wishlist = () => {
                                             <h4>
                                                 {item.discount_value != 0 ? (
                                                     <>
-                                                        ${item.discounted_price}
+                                                        {symbol}{convertPrice(item.discounted_price)}
                                                         <del className="text-muted small ms-1">
-                                                            ${item.actual_price}
+                                                            {symbol}{convertPrice(item.actual_price)}
                                                         </del>
                                                         <span className="text-danger ms-1">
                                                             {
@@ -138,7 +142,7 @@ const Wishlist = () => {
                                                         </span>
                                                     </>
                                                 ) : (
-                                                    <>${item.actual_price}</>
+                                                    <>{symbol}{convertPrice(item.actual_price)}</>
                                                 )}
                                             </h4>
                                         </div>

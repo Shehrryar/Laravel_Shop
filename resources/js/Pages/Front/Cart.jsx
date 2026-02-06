@@ -4,6 +4,7 @@ import { Link, usePage, router } from "@inertiajs/react";
 import ProductSlider from "./Components/ProductSlider";
 import EmptyCart from "./Components/EmptyCart";
 import { route } from "ziggy-js";
+import { UseCurrency } from "./Components/UseCurrency";
 export default function CartPage() {
     const {
         cartcontent,
@@ -15,8 +16,9 @@ export default function CartPage() {
         shippingAmount,
         totalPayable,
         bagsavingvalue,
-        translations
+        translations,
     } = usePage().props;
+    const { convertPrice, symbol } = UseCurrency();
     const [selecteditemId, setSelectedItemId] = useState(null);
     const [selectedItemToWishlist, setSelectedItemToWishlist] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -46,9 +48,9 @@ export default function CartPage() {
         () =>
             variantPrice.reduce(
                 (sum, p) => sum + parseFloat(p?.actual || 0),
-                0
+                0,
             ),
-        [variantPrice]
+        [variantPrice],
     );
     const totalDiscounted = useMemo(
         () =>
@@ -60,7 +62,7 @@ export default function CartPage() {
                         : parseFloat(p?.actual || 0);
                 return sum + effectiveDiscounted;
             }, 0),
-        [variantPrice]
+        [variantPrice],
     );
     const totalSavings = totalActual - totalDiscounted;
     const hasDiscount = totalSavings > 0;
@@ -69,13 +71,13 @@ export default function CartPage() {
     const updateVariantPrice = (item, sizeId, colorId, qty = 1, index) => {
         let basePrice = parseFloat(item.product.actual_price || 0);
         let baseDiscounted = parseFloat(
-            item.product.discounted_price || basePrice
+            item.product.discounted_price || basePrice,
         );
         let discountValue = item.product.discount_value || 0;
         // Size price
         if (sizeId) {
             const sizeObj = sizes.find(
-                (s) => parseInt(s.id) === parseInt(sizeId)
+                (s) => parseInt(s.id) === parseInt(sizeId),
             );
             if (sizeObj?.price) {
                 basePrice += parseFloat(sizeObj.price);
@@ -85,7 +87,7 @@ export default function CartPage() {
         // Color price
         if (colorId) {
             const colorObj = colors.find(
-                (c) => parseInt(c.id) === parseInt(colorId)
+                (c) => parseInt(c.id) === parseInt(colorId),
             );
             if (colorObj?.price) {
                 basePrice += parseFloat(colorObj.price);
@@ -113,10 +115,10 @@ export default function CartPage() {
         const newQty = Number(q);
         if (!selectedItem || currentIndex === null) return;
         const selectedSizeObj = sizes.find(
-            (s) => parseInt(s.id) === parseInt(selectedItem.size_id)
+            (s) => parseInt(s.id) === parseInt(selectedItem.size_id),
         );
         const selectedColorObj = colors.find(
-            (c) => parseInt(c.id) === parseInt(selectedItem.color_id)
+            (c) => parseInt(c.id) === parseInt(selectedItem.color_id),
         );
         const sizePrice = selectedSizeObj ? Number(selectedSizeObj.price) : 0;
         const colorPrice = selectedColorObj
@@ -132,7 +134,7 @@ export default function CartPage() {
             selectedSize,
             selectedColor,
             newQty,
-            currentIndex
+            currentIndex,
         );
     };
     // size updation
@@ -146,7 +148,7 @@ export default function CartPage() {
                 s.id,
                 selectedColor,
                 quantity,
-                currentIndex
+                currentIndex,
             );
         }
     };
@@ -161,7 +163,7 @@ export default function CartPage() {
                 selectedSize,
                 c.id,
                 quantity,
-                currentIndex
+                currentIndex,
             );
         }
     };
@@ -172,7 +174,7 @@ export default function CartPage() {
                 quantity > 0
                     ? (
                           parseFloat(
-                              variantPrice[currentIndex]?.discounted || 0
+                              variantPrice[currentIndex]?.discounted || 0,
                           ) / quantity
                       ).toFixed(2)
                     : 0;
@@ -192,7 +194,7 @@ export default function CartPage() {
             });
             // Show popup message
             const popupMessage = new bootstrap.Modal(
-                document.getElementById("popupMessage")
+                document.getElementById("popupMessage"),
             );
             popupMessage.show();
             // Close offcanvas manually if open
@@ -215,7 +217,7 @@ export default function CartPage() {
     };
     const handleremoveproduct = async () => {
         const popupMessage = new bootstrap.Modal(
-            document.getElementById("popupMessage")
+            document.getElementById("popupMessage"),
         );
         try {
             const response = await axios.post(route("front.deleteitem.cart"), {
@@ -315,17 +317,25 @@ export default function CartPage() {
                                     </a>
                                     <div className="cart-content">
                                         <a href="#">
-                                            <h4>{item.product.translated_title}</h4>
+                                            <h4>
+                                                {item.product.translated_title}
+                                            </h4>
                                         </a>
                                         <div className="price">
                                             {variantPrice[i]?.discount_value >
                                             0 ? (
                                                 <h4>
-                                                    $
-                                                    {variantPrice[i].discounted}
+                                                    {symbol}
+                                                    {convertPrice(
+                                                        variantPrice[i]
+                                                            .discounted,
+                                                    )}
                                                     <del className="text-muted small ms-1">
-                                                        $
-                                                        {variantPrice[i].actual}
+                                                        {symbol}
+                                                        {convertPrice(
+                                                            variantPrice[i]
+                                                                .actual,
+                                                        )}
                                                     </del>
                                                     <span className="text-danger ms-1">
                                                         {
@@ -337,7 +347,10 @@ export default function CartPage() {
                                                 </h4>
                                             ) : (
                                                 <h4>
-                                                    ${variantPrice[i]?.actual}
+                                                    {symbol}
+                                                    {convertPrice(
+                                                        variantPrice[i]?.actual,
+                                                    )}
                                                 </h4>
                                             )}
                                         </div>
@@ -352,21 +365,24 @@ export default function CartPage() {
                                                     setSelectedItem(item);
                                                     setCurrentIndex(i);
                                                     setSelectedSize(
-                                                        item.size_id
+                                                        item.size_id,
                                                     );
                                                     setSelectedColor(
-                                                        item.color_id
+                                                        item.color_id,
                                                     );
                                                     updateVariantPrice(
                                                         item,
                                                         item.size_id,
                                                         item.color_id,
                                                         item.quantity,
-                                                        i
+                                                        i,
                                                     );
                                                 }}
                                             >
-                                                <h6>{translations["Qty:"]} {item.quantity}</h6>
+                                                <h6>
+                                                    {translations["Qty:"]}{" "}
+                                                    {item.quantity}
+                                                </h6>
                                                 <i className="iconly-Arrow-Down-2 icli"></i>
                                             </Link>
                                             {/* Size */}
@@ -384,58 +400,58 @@ export default function CartPage() {
                                                             sizes.filter(
                                                                 (s) =>
                                                                     parseInt(
-                                                                        s.product_id
+                                                                        s.product_id,
                                                                     ) ===
                                                                     parseInt(
-                                                                        item.product_id
-                                                                    )
+                                                                        item.product_id,
+                                                                    ),
                                                             );
                                                         setAvailableSizes(
-                                                            filteredSizes
+                                                            filteredSizes,
                                                         );
                                                         setSelectedSize(
-                                                            item.size_id
+                                                            item.size_id,
                                                         );
                                                         setSelectedColor(
-                                                            item.color_id
+                                                            item.color_id,
                                                         );
                                                         const selectedSizeObj =
                                                             filteredSizes.find(
                                                                 (s) =>
                                                                     parseInt(
-                                                                        s.id
+                                                                        s.id,
                                                                     ) ===
                                                                     parseInt(
-                                                                        item.size_id
-                                                                    )
+                                                                        item.size_id,
+                                                                    ),
                                                             );
                                                         setSizePrice(
                                                             selectedSizeObj?.price ||
-                                                                0
+                                                                0,
                                                         );
                                                         const selectedColorObj =
                                                             colors.find(
                                                                 (c) =>
                                                                     parseInt(
-                                                                        c.id
+                                                                        c.id,
                                                                     ) ===
                                                                     parseInt(
-                                                                        item.color_id
-                                                                    )
+                                                                        item.color_id,
+                                                                    ),
                                                             );
                                                         setColorPrice(
                                                             selectedColorObj?.price ||
-                                                                0
+                                                                0,
                                                         );
                                                         setQuantity(
-                                                            item.quantity
+                                                            item.quantity,
                                                         );
                                                         updateVariantPrice(
                                                             item,
                                                             item.size_id,
                                                             item.color_id,
                                                             item.quantity,
-                                                            i
+                                                            i,
                                                         );
                                                     }}
                                                 >
@@ -443,7 +459,7 @@ export default function CartPage() {
                                                         {translations["Size:"]}{" "}
                                                         {item.additional_attributes
                                                             ? JSON.parse(
-                                                                  item.additional_attributes
+                                                                  item.additional_attributes,
                                                               ).size || "N/A"
                                                             : "N/A"}
                                                     </h6>
@@ -465,58 +481,58 @@ export default function CartPage() {
                                                             colors.filter(
                                                                 (c) =>
                                                                     parseInt(
-                                                                        c.product_id
+                                                                        c.product_id,
                                                                     ) ===
                                                                     parseInt(
-                                                                        item.product_id
-                                                                    )
+                                                                        item.product_id,
+                                                                    ),
                                                             );
                                                         setAvailableColors(
-                                                            filteredColors
+                                                            filteredColors,
                                                         );
                                                         setSelectedSize(
-                                                            item.size_id
+                                                            item.size_id,
                                                         );
                                                         setSelectedColor(
-                                                            item.color_id
+                                                            item.color_id,
                                                         );
                                                         const selectedColorObj =
                                                             filteredColors.find(
                                                                 (c) =>
                                                                     parseInt(
-                                                                        c.id
+                                                                        c.id,
                                                                     ) ===
                                                                     parseInt(
-                                                                        item.color_id
-                                                                    )
+                                                                        item.color_id,
+                                                                    ),
                                                             );
                                                         setColorPrice(
                                                             selectedColorObj?.price ||
-                                                                0
+                                                                0,
                                                         );
                                                         const selectedSizeObj =
                                                             sizes.find(
                                                                 (s) =>
                                                                     parseInt(
-                                                                        s.id
+                                                                        s.id,
                                                                     ) ===
                                                                     parseInt(
-                                                                        item.size_id
-                                                                    )
+                                                                        item.size_id,
+                                                                    ),
                                                             );
                                                         setSizePrice(
                                                             selectedSizeObj?.price ||
-                                                                0
+                                                                0,
                                                         );
                                                         setQuantity(
-                                                            item.quantity
+                                                            item.quantity,
                                                         );
                                                         updateVariantPrice(
                                                             item,
                                                             item.size_id,
                                                             item.color_id,
                                                             item.quantity,
-                                                            i
+                                                            i,
                                                         );
                                                     }}
                                                 >
@@ -524,7 +540,7 @@ export default function CartPage() {
                                                         {translations["Color:"]}{" "}
                                                         {item.additional_attributes
                                                             ? JSON.parse(
-                                                                  item.additional_attributes
+                                                                  item.additional_attributes,
                                                               ).color || "N/A"
                                                             : "N/A"}
                                                     </h6>
@@ -545,7 +561,11 @@ export default function CartPage() {
                                                 }
                                             >
                                                 <i className="iconly-Heart icli"></i>{" "}
-                                                {translations["Move to wishlist"]}
+                                                {
+                                                    translations[
+                                                        "Move to wishlist"
+                                                    ]
+                                                }
                                             </h5>
                                             <span className="divider-cls">
                                                 |
@@ -590,13 +610,18 @@ export default function CartPage() {
                     </section>
                     <div className="divider"></div> */}
                     <section id="order-details" className="px-15 pt-0">
-                        <h2 className="title">{translations["Order Details:"]}</h2>
+                        <h2 className="title">
+                            {translations["Order Details:"]}
+                        </h2>
                         <div className="order-details">
                             <ul>
                                 <li>
                                     <h4>
                                         {translations["Bag total"]}{" "}
-                                        <span>${totalActual.toFixed(2)}</span>
+                                        <span>
+                                            {symbol}
+                                            {convertPrice(totalActual)}
+                                        </span>
                                     </h4>
                                 </li>
                                 {hasDiscount && (
@@ -604,7 +629,8 @@ export default function CartPage() {
                                         <h4>
                                             {translations["Bag saving"]}{" "}
                                             <span className="text-green">
-                                                -${totalSavings.toFixed(2)}
+                                                -{symbol}
+                                                {convertPrice(totalSavings)}
                                             </span>
                                         </h4>
                                     </li>
@@ -623,7 +649,11 @@ export default function CartPage() {
                                 </li> */}
                                 <li>
                                     <h4>
-                                        {translations["Delivery"]} <span>${shippingAmount}</span>
+                                        {translations["Delivery"]}{" "}
+                                        <span>
+                                            {symbol}
+                                            {convertPrice(shippingAmount)}
+                                        </span>
                                     </h4>
                                 </li>
                             </ul>
@@ -631,7 +661,8 @@ export default function CartPage() {
                                 <h4>
                                     {translations["Total Amount"]}{" "}
                                     <span>
-                                        ${dynamicTotalPayable.toFixed(2)}
+                                        {symbol}
+                                        {convertPrice(dynamicTotalPayable)}
                                     </span>
                                 </h4>
                             </div>
@@ -642,7 +673,11 @@ export default function CartPage() {
                                     alt="Delivery Truck"
                                 />
                                 <h4>
-                                    {translations["No Delivery Charges applied on this order"]}
+                                    {
+                                        translations[
+                                            "No Delivery Charges applied on this order"
+                                        ]
+                                    }
                                 </h4>
                             </div>
                         </div>
@@ -685,7 +720,9 @@ export default function CartPage() {
                                             alt="Secure Payment"
                                         />
                                     </div>
-                                    <span>{translations["Secure Payment"]}</span>
+                                    <span>
+                                        {translations["Secure Payment"]}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -695,7 +732,10 @@ export default function CartPage() {
                     <div className="cart-bottom">
                         <div>
                             <div className="left-content">
-                                <h4>${dynamicTotalPayable.toFixed(2)}</h4>
+                                <h4>
+                                    {symbol}
+                                    {convertPrice(dynamicTotalPayable)}
+                                </h4>
                                 {/* <a
                                     href="#order-details"
                                     className="theme-color"
@@ -789,7 +829,9 @@ export default function CartPage() {
                         id="selectColor"
                     >
                         <div className="offcanvas-body small p-3">
-                            <h5 className="mb-3">{translations["Select Color"]}:</h5>
+                            <h5 className="mb-3">
+                                {translations["Select Color"]}:
+                            </h5>
                             <div className="d-flex flex-wrap gap-2 mb-3">
                                 {availableColors.length > 0 ? (
                                     availableColors.map((c) => (
@@ -840,7 +882,11 @@ export default function CartPage() {
                             <div className="content">
                                 <h4>{translations["Remove Item"]}:</h4>
                                 <p>
-                                    {translations["Are you sure you want to remove or move this item from the cart?"]}
+                                    {
+                                        translations[
+                                            "Are you sure you want to remove or move this item from the cart?"
+                                        ]
+                                    }
                                 </p>
                             </div>
                             <div className="bottom-cart-panel">

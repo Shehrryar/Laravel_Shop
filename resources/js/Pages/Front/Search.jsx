@@ -1,103 +1,171 @@
-import React, { useEffect, useState } from 'react';
-import Slider from "react-slick";
+import React, { useEffect, useRef, useState } from "react";
+import { Link } from "@inertiajs/react";
 import { route } from "ziggy-js";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { Link, usePage } from "@inertiajs/react";
-const Search = () => {
-  return (
-    <>
+import axios from "axios";
+import { UseCurrency } from "./Components/UseCurrency";
+import BottomNav from "./Components/BottomNav";
+import WishlistButton from "./Components/WishlistButton";
 
+const Search = ({ wishlist, latestproducts }) => {
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState([]); // search results
+    const [loading, setLoading] = useState(false);
+    const cancelSource = useRef(null);
 
-      {/* Search Panel */}
-      <div className="search-panel w-back pt-3 px-15">
-        <Link href={route('front.home')} className="back-btn">
-          <i className="iconly-Arrow-Left icli"></i>
-        </Link>
-        <div className="search-bar">
-          <input className="form-control form-theme" placeholder="Search" />
-          <i className="iconly-Search icli search-icon"></i>
-          <i className="iconly-Camera icli camera-icon"></i>
-        </div>
-      </div>
+    const { convertPrice, symbol } = UseCurrency();
 
-      {/* Recent Search */}
-      <section className="px-15 recent-search-section">
-        <h4 className="page-title">Recent Search</h4>
-        <ul>
-          {[
-            "Party Wear Jumpshuit",
-            "Pink Hoodie t-shirt full",
-            "Blue Denim Jacket",
-            "Men Blue Denim Jacket",
-          ].map((item, index) => (
-            <li key={index}>
-              <a href="#">
-                <i className="iconly-Time-Circle icli"></i> {item}
-                <img
-                  src="front-assets/svg/x.svg"
-                  className="img-fluid delete-icon"
-                  alt="Delete"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
+    // Show latest products initially
+    useEffect(() => {
+        setResults(latestproducts);
+    }, [latestproducts]);
 
-      {/* Recommended Section */}
-      <section className="px-15">
-        <h4 className="page-title">Recommended for you</h4>
-        <ul className="row filter-row g-3">
-          {["Small", "Medium", "Large", "XL", "2XL"].map((size, index) => (
-            <li className="col-4" key={index}>
-              <div className="filter-col">{size}</div>
-            </li>
-          ))}
-        </ul>
-      </section>
+    // Fetch products from backend while typing
+    useEffect(() => {
+        if (query.trim().length < 2) {
+            // Show latest products if query is empty or < 2 chars
+            setResults(latestproducts);
+            return;
+        }
 
-      {/* Trending Categories */}
-      <section className="px-15 inner-category">
-        <h4 className="page-title">Trending Category</h4>
-        <div className="row gx-3">
-          {[
-            { name: "Flowerprint", img: "front-assets/images/category/flowerprint.png" },
-            { name: "Denim", img: "front-assets/images/category/denim.png" },
-            { name: "Skirts", img: "front-assets/images/category/skirts.png" },
-          ].map((cat, index) => (
-            <div className="col-4" key={index}>
-              <Link href="shop.html">
-                <img src={cat.img} className="img-fluid" alt={cat.name} />
-                <h4>{cat.name}</h4>
-              </Link>
+        const timeout = setTimeout(() => {
+            fetchSuggestions(query);
+        }, 300); // debounce
+
+        return () => clearTimeout(timeout);
+    }, [query, latestproducts]);
+
+    const fetchSuggestions = async (value) => {
+        if (cancelSource.current) cancelSource.current.cancel();
+        cancelSource.current = axios.CancelToken.source();
+        setLoading(true);
+
+        try {
+            const res = await axios.get(route("front.search.products"), {
+                params: { q: value },
+                cancelToken: cancelSource.current.token,
+            });
+            setResults(res.data);
+        } catch (error) {
+            if (!axios.isCancel(error)) console.error("Search error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <>
+            {/* Search Bar */}
+            <div className="search-panel w-back pt-3 px-15">
+                <Link href={route("front.home")} className="back-btn">
+                    <i className="iconly-Arrow-Left icli"></i>
+                </Link>
+                <div className="search-bar">
+                    <input
+                        className="form-control form-theme"
+                        placeholder="Search products..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        autoFocus
+                    />
+                    <i className="iconly-Search icli search-icon"></i>
+                </div>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Brand Section */}
-      <section className="brand-section px-15">
-        <h4 className="page-title">Biggest Deals on Top Brands</h4>
-        <div className="row g-3">
-          {[1, 2, 3, 4, 5, 6].map((num) => (
-            <div className="col-4" key={num}>
-              <Link className="brand-box" href="shop.html">
-                <img
-                  src={`front-assets/images/brand-logos/${num}.png`}
-                  className="img-fluid"
-                  alt={`Brand ${num}`}
-                />
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
+            {/* Product Grid */}
+            <section className="px-15 lg-t-space">
+                <div className="container-fluid">
+                    {loading && <p>Searching...</p>}
+                    {!loading && results.length === 0 && <p>No products found</p>}
 
-      {/* Panel Space */}
-      <section className="panel-space"></section>
-    </>
-  );
+                    <div className="row g-3">
+                        {results.map((prod) => (
+                            <div className="col-6" key={prod.id}>
+                                <div className="product-box ratio_square shadow-sm rounded-3">
+                                    <div className="img-part position-relative">
+                                        <Link
+                                            href={route("front.product", { slug: prod.slug })}
+                                        >
+                                            <img
+                                                style={{ height: "265px" }}
+                                                src={
+                                                    prod.product_images?.length > 0
+                                                        ? `/upload/products/${prod.product_images[0].image}`
+                                                        : "/admin-assets/img/default-150x150.png"
+                                                }
+                                                alt={prod.title}
+                                                className="img-fluid bg-img w-100 rounded-3"
+                                            />
+                                        </Link>
+
+                                        <WishlistButton
+                                            productId={prod.id}
+                                            isWishlisted={wishlist[prod.id]}
+                                        />
+
+                                        {prod.is_new && (
+                                            <label className="badge bg-danger position-absolute top-0 start-0 m-2">
+                                                NEW
+                                            </label>
+                                        )}
+                                    </div>
+
+                                    <div className="product-content mt-2 text-center">
+                                        <ul className="ratings d-flex justify-content-center mb-1">
+                                            {[1, 2, 3, 4, 5].map((i) => (
+                                                <li key={i}>
+                                                    <i
+                                                        className={`iconly-Star icbo ${
+                                                            i <= Math.round(prod.avg_rating)
+                                                                ? ""
+                                                                : "empty"
+                                                        }`}
+                                                    ></i>
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <Link
+                                            href={route("front.product", { slug: prod.slug })}
+                                        >
+                                            <h4 className="fw-semibold text-dark">
+                                                {prod.title}
+                                            </h4>
+                                        </Link>
+
+                                        <div className="price">
+                                            <h5 className="mb-0">
+                                                {prod.discount_value > 0 ? (
+                                                    <>
+                                                        {symbol}
+                                                        {convertPrice(prod.discounted_price)}
+                                                        <del className="text-muted small ms-1">
+                                                            {symbol}
+                                                            {convertPrice(prod.actual_price)}
+                                                        </del>
+                                                        <span className="text-danger ms-1">
+                                                            {prod.discount_value}%
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {symbol}
+                                                        {convertPrice(prod.actual_price)}
+                                                    </>
+                                                )}
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="panel-space"></section>
+            <BottomNav />
+        </>
+    );
 };
 
 export default Search;

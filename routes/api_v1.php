@@ -31,7 +31,7 @@ Route::get('/index', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
 Route::get('/lang/{locale_id}', [LocalizationController::class, 'index'])->name('front.localizationcontroller');
-Route::post('search', [SearchController::class, 'search'])->name('product.search');
+// Route::post('search', [SearchController::class, 'search'])->name('product.search');
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
     Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');

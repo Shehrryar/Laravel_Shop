@@ -11,7 +11,7 @@ use App\Models\Wishlist;
 use App\Models\Country;
 use App\Models\Product;
 use App\Models\CustomerAddress;
-
+use PDF;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
@@ -25,7 +25,6 @@ class AuthController extends Controller
     }
     public function login()
     {
-
         // $data['keyword'] = '';
         return Inertia::render('Front/Account/Login');
         // return view('front.account.login', $data);
@@ -280,18 +279,13 @@ class AuthController extends Controller
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
             ->get();
-
         $wishlist = Wishlist::where('user_id', Auth::id())->get();
         $products = $products->map(function ($product) use ($wishlist) {
             $wish = $wishlist->where('product_id', $product->id)->first();
             $product->color_id = $wish->color_id ?? null;
             $product->size_id = $wish->size_id ?? null;
-
             return $product;
         });
-
-
-
         $discounts = $this->discountService->getActiveDiscounts();
         $wishlistProducts = $this->discountService->applyDiscount(
             $products,
@@ -302,7 +296,6 @@ class AuthController extends Controller
             'keyword' => '',
         ];
         return Inertia::render('Front/Account/Wishlist', $data);
-
     }
     public function remove_product_from_wishlist(Request $request)
     {
@@ -330,26 +323,20 @@ class AuthController extends Controller
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'DESC')
             ->get();
-        // echo '<pre>';
-        // print_r($orders);
-        // echo '</pre>';
-        // exit;
+
         $data['orders'] = $orders;
         $data['keyword'] = '';
         return Inertia::render('Front/Account/OrderHistory', $data);
         // return view('front.account.order', $data);
     }
-    public function orderdetail($id)
+    public function orderDetails($orderId)
     {
-        $user = Auth::user();
-        $order = Order::where('user_id', $user->id)->where('id', $id)->first();
-        $orderitems = OrderItem::where('order_id', $id)->get();
-        $orderitemscount = OrderItem::where('order_id', $id)->count();
+        $order = Order::with('orderItems.product.product_images') // eager load items + product details
+            ->where('user_id', auth()->id())
+            ->where('id', $orderId)
+            ->first();
         $data['order'] = $order;
-        $data['orderitemscount'] = $orderitemscount;
-        $data['orderitems'] = $orderitems;
-        $data['keyword'] = '';
-        return view('front.account.orderdetail', $data);
+        return Inertia::render('Front/OrderDetails', $data);
     }
     public function newAddress()
     {
@@ -498,5 +485,13 @@ class AuthController extends Controller
             'status' => true,
             'message' => 'Address removed successfully.',
         ]);
+    }
+    public function invoiceHtml($orderId)
+    {
+        $order = Order::with('orderItems.product')
+            ->where('user_id', auth()->id())
+            ->findOrFail($orderId);
+        // Return JSON to frontend for generating downloadable HTML
+        return response()->json($order);
     }
 }

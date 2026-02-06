@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, usePage, router } from "@inertiajs/react";
-
+import { UseCurrency } from "./Components/UseCurrency";
 const OrderPlaced = () => {
     const { order, order_items, translations } = usePage().props;
-
+    const { convertPrice, symbol } = UseCurrency();
     return (
         <>
             <header>
@@ -16,7 +16,6 @@ const OrderPlaced = () => {
                     </Link>
                 </div>
             </header>
-
             <section className="order-success-section px-15 top-space">
                 <div>
                     <div className="check-circle">
@@ -30,7 +29,6 @@ const OrderPlaced = () => {
                     <h2>{translations["Your payment was processed and your order is on the way."]}</h2>
                 </div>
             </section>
-
             <section className="px-15">
                 <h2 className="page-title">{translations["Order Details"]}</h2>
                 <div className="details">
@@ -54,9 +52,7 @@ const OrderPlaced = () => {
                     </ul>
                 </div>
             </section>
-
             <div className="divider"></div>
-
             <section className="px-15 pt-0">
                 <h2 className="page-title">{translations["Order Summary"]}</h2>
                 <div className="product-section">
@@ -79,7 +75,6 @@ const OrderPlaced = () => {
                                                     } catch (e) {
                                                         attrs = {};
                                                     }
-
                                                     return (
                                                         <>
                                                             {attrs.color && (
@@ -99,20 +94,19 @@ const OrderPlaced = () => {
                                                     );
                                                 })()}
                                             </h5>
-
                                             <div className="price">
                                                 {item?.discounted_value > 0 ? (
                                                     <h4>
-                                                        ${item.discounted_price}
+                                                        {symbol}{convertPrice(item.discounted_price)}
                                                         <del className="text-muted small ms-1">
-                                                            ${item.price}
+                                                            {symbol}{convertPrice(item.price)}
                                                         </del>
                                                         <span className="text-danger ms-1">
                                                             {item.discounted_value}%
                                                         </span>
                                                     </h4>
                                                 ) : (
-                                                    <h4>${item?.price}</h4>
+                                                    <h4>{symbol}{convertPrice(item?.price)}</h4>
                                                 )}
                                             </div>
                                         </div>
@@ -123,48 +117,44 @@ const OrderPlaced = () => {
                     </div>
                 </div>
             </section>
-
             <section className="px-15">
                 <div className="order-details">
                     <ul>
                         <li>
                             <h4>
-                                {translations["Bag total"]} <span>${order?.subtotal}</span>
+                                {translations["Bag total"]} <span>{symbol}{convertPrice(order?.subtotal)}</span>
                             </h4>
                         </li>
                         <li>
                             <h4>
-                                {translations["Bag saving"]} <span>-${order?.product_discount_amount}</span>
+                                {translations["Bag saving"]} <span>-{symbol}{convertPrice(order?.product_discount_amount)}</span>
                             </h4>
                         </li>
                         <li>
                             <h4>
-                                {translations["Delivery"]} <span>${order?.shipping}</span>
+                                {translations["Delivery"]} <span>{symbol}{convertPrice(order?.shipping)}</span>
                             </h4>
                         </li>
-
                         {order?.coupon_discount_amount > 0 && (
                             <li>
                                 <h4>
-                                    {translations["Coupon Discount"]} <span>${order.coupon_discount_amount}</span>
+                                    {translations["Coupon Discount"]} <span>{symbol}{convertPrice(order.coupon_discount_amount)}</span>
                                 </h4>
                             </li>
                         )}
                     </ul>
                     <div className="total-amount">
                         <h4>
-                            {translations["Total Amount"]} <span>${order?.grandtotal}</span>
+                            {translations["Total Amount"]} <span>{symbol}{convertPrice(order?.grandtotal)}</span>
                         </h4>
                     </div>
                 </div>
             </section>
-
             <section className="panel-space"></section>
-
             <div className="delivery-cart cart-bottom">
                 <div>
                     <div className="left-content">
-                        <Link className="title-color">{translations["Track Order"]}</Link>
+                        <Link href={route('front.orderDetails', order.id)} className="title-color">{translations["Track Order"]}</Link>
                     </div>
                     <Link href={route("front.home")} className="btn btn-solid">
                         {translations["Continue shopping"]}
@@ -174,5 +164,4 @@ const OrderPlaced = () => {
         </>
     );
 };
-
 export default OrderPlaced;

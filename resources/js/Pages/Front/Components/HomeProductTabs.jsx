@@ -6,6 +6,7 @@ const HomeProductTabs = ({
     wishlistitems = {},
     translations = {},
 }) => {
+
     // Pick first active label or fallback
     const defaultLabel = homelables.find((l) => l.is_active) || homelables[0];
     const [activeLabel, setActiveLabel] = useState(defaultLabel);

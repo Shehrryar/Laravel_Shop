@@ -14,12 +14,10 @@ use App\Models\Category;
 use App\Models\ProductView;
 use App\Models\HomepageLabel;
 use Inertia\Inertia;
-
 class FrontController extends Controller
 {
     protected $discountService;
     protected $productService;
-
     public function __construct(
         DiscountService $discountService,
         ProductService $productService
@@ -27,7 +25,6 @@ class FrontController extends Controller
         $this->discountService = $discountService;
         $this->productService = $productService;
     }
-
     public function index()
     {
         $discounts = $this->discountService->getActiveDiscounts();
@@ -36,34 +33,30 @@ class FrontController extends Controller
             $this->productService->discountedProducts($discountedIds),
             $discounts
         );
-
         $featured = $this->discountService->applyDiscount(
             $this->productService->featuredProducts(),
             $discounts
         );
         $recommended = $this->productService->recommendedProducts();
-        $latest = $this->productService->latestProducts();
-
+        $latest = $this->discountService->applyDiscount(
+            $this->productService->latestProducts(),
+            $discounts
+        );
+        $toprated = $this->discountService->applyDiscount(
+            $this->productService->topRatedProducts(12),
+            $discounts
+        );
         $wishlistitems = Auth::check()
             ? Wishlist::where('user_id', Auth::id())->with('product')->get()->keyBy('product_id')
             : collect();
-
-
-
         $productsByLabel = [
             'latest' => $latest,
-
             // 'trending_now' => Product::where('status', 1)
             //     ->orderBy('views', 'desc') // or sales count
             //     ->limit(12)
             //     ->get(),
-
-            'top_rated' => $this->productService->topRatedProducts(12),
+            'top_rated' => $toprated,
         ];
-
-
-
-
         return Inertia::render('Front/Index', [
             'discount' => $discounts,
             'featured_products' => $featured,

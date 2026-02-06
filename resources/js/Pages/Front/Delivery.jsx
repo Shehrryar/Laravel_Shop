@@ -3,6 +3,7 @@ import { Link, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { route } from "ziggy-js";
 import CustomerAddresses from "./Components/CustomerAddresses";
+import { UseCurrency } from "./Components/UseCurrency";
 const DeliveryDetails = () => {
     const {
         customerAddresses,
@@ -18,6 +19,9 @@ const DeliveryDetails = () => {
         // Redirect after success
         router.visit(route("front.payment"));
     };
+
+    const { convertPrice, symbol } = UseCurrency();
+
     return (
         <>
             {/* Header */}
@@ -46,7 +50,9 @@ const DeliveryDetails = () => {
             <div className="divider"></div>
             {/* Expected delivery section */}
             <section className="px-15 pt-0">
-                <h2 className="page-title">{translations["Expected Delivery"]}</h2>
+                <h2 className="page-title">
+                    {translations["Expected Delivery"]}
+                </h2>
                 <div className="product-section">
                     <div className="row gy-3">
                         <div className="col-12">
@@ -84,7 +90,7 @@ const DeliveryDetails = () => {
             <div className="delivery-cart cart-bottom">
                 <div>
                     <div className="left-content">
-                        <h4>${totalPayable}</h4>
+                        <h4>{symbol}{convertPrice(totalPayable)}</h4>
                         <a
                             data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasdetails"
@@ -112,26 +118,29 @@ const DeliveryDetails = () => {
                         <ul>
                             <li>
                                 <h4>
-                                    {translations["Bag total"]} <span>${totalcartamount}</span>
+                                    {translations["Bag total"]}{" "}
+                                    <span>{symbol}{convertPrice(totalcartamount)}</span>
                                 </h4>
                             </li>
                             <li>
                                 <h4>
                                     {translations["Bag savings"]}{" "}
                                     <span className="text-green">
-                                        -${bagsavingvalue}
+                                        -{symbol}{convertPrice(bagsavingvalue)}
                                     </span>
                                 </h4>
                             </li>
                             <li>
                                 <h4>
-                                    {translations["Delivery"]} <span>${shippingAmount}</span>
+                                    {translations["Delivery"]}{" "}
+                                    <span>{symbol}{convertPrice(shippingAmount)}</span>
                                 </h4>
                             </li>
                         </ul>
                         <div className="total-amount">
                             <h4>
-                                {translations["Total Amount"]} <span>${totalPayable}</span>
+                                {translations["Total Amount"]}{" "}
+                                <span>{symbol}{convertPrice(totalPayable)}</span>
                             </h4>
                         </div>
                     </div>

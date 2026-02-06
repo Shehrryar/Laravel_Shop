@@ -23,12 +23,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use App\Services\CartService;
+use App\Services\OrderService;
 class CartController extends Controller
 {
     protected $cartService;
-    public function __construct(CartService $cartService)
+    protected $orderService;
+    public function __construct(CartService $cartService, OrderService $orderService)
     {
         $this->cartService = $cartService;
+        $this->orderService = $orderService;
     }
     public function addToCart(Request $request)
     {
@@ -306,10 +309,6 @@ class CartController extends Controller
     }
     public function deleteitem(Request $request)
     {
-        // echo '<pre>';
-        // print_r($request->all());
-        // echo '</pre>';
-        // exit;
         $iteminfo = Cart::find($request->item_id);
         if ($iteminfo == null) {
             $error_message = 'item not found';
@@ -503,4 +502,8 @@ class CartController extends Controller
         $data['shippingAmount'] = $request->shippingAmount;
         return Inertia::render('Front/CouponPage', $data);
     }
+
+
+
+
 }

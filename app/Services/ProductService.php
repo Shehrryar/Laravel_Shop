@@ -31,7 +31,8 @@ class ProductService
             ->with('product_images')
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
-            ->get(8);
+            ->limit(3)
+            ->get();
     }
     public function recommendedProducts()
     {
@@ -59,5 +60,17 @@ class ProductService
             ->orderByDesc('product_ratings_count') // tie-breaker
             ->limit($limit)
             ->get();
+    }
+    public function searchProducts(string $keyword)
+    {
+
+        $products = Product::where('status', 1)
+            ->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($keyword) . '%'])
+            ->withCount('product_ratings')
+            ->withSum('product_ratings', 'rating')
+            ->limit(8)
+            ->get();
+
+            return $products;
     }
 }
