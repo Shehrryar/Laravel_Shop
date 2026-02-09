@@ -44,14 +44,13 @@ class PaymentController extends Controller
                 'message' => 'Your cart is empty.',
             ]);
         }
-        
+
         $orderService = new OrderService();
         $order = $orderService->createOrder($user, $cartItems, $request, $customerAddress);
         $orderId = session()->get('order_id');
-        $order = Order::find($orderId);
 
 
-        Mail::to($order->email)->send(new OrderEmail($order));
+
 
 
 
@@ -67,6 +66,7 @@ class PaymentController extends Controller
                     'status' => 'pending'
                 ];
                 event(new OrderPaymentUpdateEvent($orderId, $paymentInfo, 'COD'));
+                event(new OrderPlacedNotificationEvent($orderId));
                 $orderService->clearSession();
                 return response()->json([
                     'status' => true,
@@ -175,7 +175,7 @@ class PaymentController extends Controller
         return redirect()->route('stripe.cancel');
     }
 
-    
+
     function stripeCancel()
     {
         $this->transactionFailUpdateStatus('Stripe');

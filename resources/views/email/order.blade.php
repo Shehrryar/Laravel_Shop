@@ -1,87 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Email</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            padding: 20px;
-            margin: 0;
-        }
-
-        h1 {
-            color: #333;
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            color: #666;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        table thead {
-            background-color: #333;
-            color: #fff;
-        }
-
-        table th,
-        table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            font-weight: bold;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .total-row th,
-        .total-row td {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .summary {
-            margin-top: 20px;
-        }
-    </style>
 </head>
 
 <body>
-    <h1>Thank you for your order!</h1>
 
-    <h2>Order Details</h2>
-    <table>
+    <h1>Thanks for your order!</h1>
+    <h2>Your Order ID is: {{ $order->id }}</h2>
+
+    <address>
+        <strong>{{ $order->firstname }} {{ $order->lastname }}</strong><br>
+        {{ $order->address }}<br>
+        {{ $order->city }}, {{ $order->zip }}<br>
+        {{ $order->email }}
+    </address>
+
+    <h2>Products</h2>
+
+    <table width="100%" border="1" cellpadding="8" cellspacing="0">
         <thead>
             <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th class="text-right">Price</th>
-                <th class="text-right">Subtotal</th>
+                <th align="left">Name</th>
+                <th align="left">Price</th>
+                <th align="left">Quantity</th>
+                <th align="left">Amount</th>
             </tr>
         </thead>
 
+        <tbody>
+            @foreach ($order->orderItems as $item)
+                <tr>
+                    <td>{{ $item->name }}</td>
+                    <td>{{ number_format($item->price, 2) }}</td>
+                    <td>{{ $item->quantity }}</td>
+                    <td>{{ number_format($item->total, 2) }}</td>
+                </tr>
+            @endforeach
+
+            <tr>
+                <td colspan="3" align="right"><strong>Subtotal:</strong></td>
+                <td>{{ number_format($order->subtotal, 2) }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="3" align="right"><strong>Discount:</strong></td>
+                <td>{{ number_format($order->discount, 2) }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="3" align="right"><strong>Shipping:</strong></td>
+                <td>{{ number_format($order->shipping, 2) }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="3" align="right"><strong>Grand Total:</strong></td>
+                <td><strong>{{ number_format($order->grandtotal, 2) }}</strong></td>
+            </tr>
+        </tbody>
     </table>
 
+</body>
 </html>

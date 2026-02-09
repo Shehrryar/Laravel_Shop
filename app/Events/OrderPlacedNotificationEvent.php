@@ -1,28 +1,13 @@
 <?php
 namespace App\Events;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\Order;
-class OrderPlacedNotificationEvent implements ShouldQueue
+class OrderPlacedNotificationEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $order;
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(Order $order)
+    use Dispatchable, SerializesModels;
+    public int $orderId;
+    public function __construct(int $orderId)
     {
-        $this->order = $order;
+        $this->orderId = $orderId;
     }
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
 }
