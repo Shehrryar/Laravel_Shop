@@ -1,0 +1,7 @@
+torch
+pandas
+scikit-learn
+datasets
+fastapi
+uvicorn
+python-multipart

@@ -1,0 +1,36 @@
+{
+  "label_to_id": {
+    "account_help": 0,
+    "budget_products": 1,
+    "cart_checkout": 2,
+    "contact_support": 3,
+    "general_support": 4,
+    "generic_shopping_advice": 5,
+    "goodbye": 6,
+    "greeting": 7,
+    "latest_products": 8,
+    "order_cancel": 9,
+    "order_status": 10,
+    "payment_methods": 11,
+    "product_search": 12,
+    "return_refund": 13,
+    "shipping_info": 14
+  },
+  "id_to_label": {
+    "0": "account_help",
+    "1": "budget_products",
+    "2": "cart_checkout",
+    "3": "contact_support",
+    "4": "general_support",
+    "5": "generic_shopping_advice",
+    "6": "goodbye",
+    "7": "greeting",
+    "8": "latest_products",
+    "9": "order_cancel",
+    "10": "order_status",
+    "11": "payment_methods",
+    "12": "product_search",
+    "13": "return_refund",
+    "14": "shipping_info"
+  }
+}

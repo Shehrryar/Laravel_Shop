@@ -25,6 +25,7 @@ export default function HomePage() {
         translations,
         productsByLabel,
         current_currency,
+        user
     } = usePage().props;
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -98,11 +99,11 @@ export default function HomePage() {
                                 <i className="iconly-Search icli" />
                             </Link>
                         </li>
-                        <li>
+                        {/* <li>
                             <a href="notification.html">
                                 <i className="iconly-Notification icli" />
                             </a>
-                        </li>
+                        </li> */}
                         <li>
                             <Link href={route("account.wishlist")}>
                                 <i className="iconly-Heart icli" />
@@ -119,7 +120,7 @@ export default function HomePage() {
                     </ul>
                 </div>
             </header>
-            <Sidebar open={sidebarOpen} onClose={closeSidebar} />
+            <Sidebar open={sidebarOpen} onClose={closeSidebar} user={user} />
             {/* header end */}
             {/* category start */}
             <section className="category-section top-space">

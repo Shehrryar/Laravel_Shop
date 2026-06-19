@@ -233,8 +233,77 @@
     "Colors": "Colors",
     "Apply Filter": "Apply Filter",
     "Rs": "Rs",
-    "NEW": "NEW"
+    "NEW": "NEW",
 
+
+
+
+  "Inclusive of all taxes": "Inclusive of all taxes",
+  "Select Size": "Select Size",
+  "Size Chart": "Size Chart",
+  "Select Color": "Select Color",
+  "Quantity": "Quantity",
+  "Similar Products": "Similar Products",
+  "Please select a size before adding to cart.": "Please select a size before adding to cart.",
+  "Product added to cart successfully!": "Product added to cart successfully!",
+  "Something went wrong! Please try again.": "Something went wrong! Please try again.",
+  "Write a Review": "Write a Review",
+  "Submit Review": "Submit Review",
+  "Write your comment...": "Write your comment...",
+  "Review submitted successfully!": "Review submitted successfully!",
+  "You have already rated this product.": "You have already rated this product.",
+  "Something went wrong while submitting your review.": "Something went wrong while submitting your review.",
+  "ratings": "ratings",
+  "off": "off",
+  "ADD TO BAG": "ADD TO BAG",
+  "WISHLIST": "WISHLIST",
+  "Share": "Share",
+  "Back": "Back",
+
+
+
+
+
+
+  
+  "Search products...": "Search products...",
+  "Searching...": "Searching...",
+  "No products found": "No products found",
+
+
+
+
+
+
+
+  "404": "404",
+  "Page Not Found": "Page Not Found",
+  "The page you are trying to access does not exist.": "The page you are trying to access does not exist.",
+  "Back to Home": "Back to Home",
+
+
+
+
+
+  "No order found.": "No order found.",
+  "Ordered": "Ordered",
+  "Ready To Ship": "Ready To Ship",
+  "In Transit": "In Transit",
+  "Out For Delivery": "Out For Delivery",
+  "Expected delivery on Monday": "Expected delivery on Monday",
+  "Rate & Review Product": "Rate & Review Product",
+  "Need Help?": "Need Help?",
+  "Shipping Details": "Shipping Details",
+  "Phone No": "Phone No",
+  "Price Details": "Price Details",
+  "Discount": "Discount",
+  "Download Invoice": "Download Invoice",
+  "Invoice": "Invoice",
+  "Customer Information": "Customer Information",
+  "Order Items": "Order Items",
+  "Shipping Total": "Shipping Total",
+  "Grand Total": "Grand Total",
+  "Payment Status": "Payment Status"
 
 
 

@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
+use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
@@ -10,17 +11,22 @@ class LocalizationController extends Controller
 {
     public function index($locale_id)
     {
+        $language = Language::where('Isocode', $locale_id)
+            ->where('status', 1)
+            ->firstOrFail();
+        Language::where('is_default', 1)->update(['is_default' => 0]);
+        $language->is_default = 1;
+        $language->save();
         App::setLocale($locale_id);
-        //storing the locale in session to get it back in the middleware
         session()->put('locale', $locale_id);
         return redirect()->back();
     }
     public function show()
     {
-        $data = [
+        return Inertia::render('Front/Languages', [
             'languages' => Language::where('status', 1)->get(),
-        ];
-        return Inertia::render('Front/Languages', $data);
+            'default_language' => Language::where('is_default', 1)->first(),
+        ]);
     }
     public function showCurrency()
     {

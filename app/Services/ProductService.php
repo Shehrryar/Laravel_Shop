@@ -63,14 +63,31 @@ class ProductService
     }
     public function searchProducts(string $keyword)
     {
+        $keyword = strtolower(trim($keyword));
 
         $products = Product::where('status', 1)
-            ->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($keyword) . '%'])
+            ->where(function ($query) use ($keyword) {
+                $query->whereRaw('LOWER(title) LIKE ?', ['%' . $keyword . '%'])
+                    ->orWhereRaw("LOWER(COALESCE(en_title_translation, '')) LIKE ?", ['%' . $keyword . '%'])
+                    ->orWhereRaw("LOWER(COALESCE(ur_title_translation, '')) LIKE ?", ['%' . $keyword . '%'])
+                    ->orWhereRaw("LOWER(COALESCE(sku, '')) LIKE ?", ['%' . $keyword . '%'])
+                    ->orWhereHas('brand', function ($brandQuery) use ($keyword) {
+                        $brandQuery->whereRaw('LOWER(name) LIKE ?', ['%' . $keyword . '%'])
+                            ->orWhereRaw("LOWER(COALESCE(en_name_translation, '')) LIKE ?", ['%' . $keyword . '%'])
+                            ->orWhereRaw("LOWER(COALESCE(ur_name_translation, '')) LIKE ?", ['%' . $keyword . '%']);
+                    });
+
+                if (is_numeric($keyword)) {
+                    $query->orWhere('price', $keyword)
+                        ->orWhere('compare_price', $keyword);
+                }
+            })
+            ->with(['product_images', 'brand'])
             ->withCount('product_ratings')
             ->withSum('product_ratings', 'rating')
-            ->limit(8)
+            ->limit(10)
             ->get();
 
-            return $products;
+        return $products;
     }
 }

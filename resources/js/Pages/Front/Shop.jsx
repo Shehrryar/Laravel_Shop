@@ -167,8 +167,8 @@ const ShopPage = () => {
                                             </label>
                                         )}
                                     </div>
-                                    <div className="product-content mt-2 text-center">
-                                        <ul className="ratings d-flex justify-content-center mb-1">
+                                    <div className="product-content mt-2">
+                                        <ul className="ratings d-flex mb-1">
                                             {[1, 2, 3, 4, 5].map((i) => (
                                                 <li key={i}>
                                                     <i

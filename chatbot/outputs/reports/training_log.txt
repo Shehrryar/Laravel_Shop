@@ -1,0 +1,47 @@
+Training started at 2026-06-19 11:58:02.401140 | Device: cuda
+Train examples: 19087
+Test examples: 4772
+Vocab size: 2500
+Classes: ['account_help', 'budget_products', 'cart_checkout', 'contact_support', 'general_support', 'generic_shopping_advice', 'goodbye', 'greeting', 'latest_products', 'order_cancel', 'order_status', 'payment_methods', 'product_search', 'return_refund', 'shipping_info']
+Epoch 1/12 | Loss: 350.8244 | Accuracy: 0.9675
+Saved best model with accuracy: 0.9675
+Epoch 2/12 | Loss: 57.6336 | Accuracy: 0.9774
+Saved best model with accuracy: 0.9774
+Epoch 3/12 | Loss: 30.3981 | Accuracy: 0.9847
+Saved best model with accuracy: 0.9847
+Epoch 4/12 | Loss: 14.6396 | Accuracy: 0.9864
+Saved best model with accuracy: 0.9864
+Epoch 5/12 | Loss: 7.3478 | Accuracy: 0.9860
+Epoch 6/12 | Loss: 4.4836 | Accuracy: 0.9876
+Saved best model with accuracy: 0.9876
+Epoch 7/12 | Loss: 2.6153 | Accuracy: 0.9876
+Epoch 8/12 | Loss: 1.9982 | Accuracy: 0.9866
+Epoch 9/12 | Loss: 1.3419 | Accuracy: 0.9876
+Epoch 10/12 | Loss: 0.9350 | Accuracy: 0.9876
+Epoch 11/12 | Loss: 0.6220 | Accuracy: 0.9870
+Epoch 12/12 | Loss: 0.4520 | Accuracy: 0.9876
+
+Best classification report:
+                         precision    recall  f1-score   support
+
+           account_help       1.00      1.00      1.00      1040
+        budget_products       0.00      0.00      0.00         1
+          cart_checkout       0.00      0.00      0.00         1
+        contact_support       0.96      0.99      0.98       390
+        general_support       1.00      0.99      0.99       683
+generic_shopping_advice       0.00      0.00      0.00         0
+                goodbye       0.00      0.00      0.00         1
+               greeting       0.00      0.00      0.00         0
+        latest_products       0.00      0.00      0.00         1
+           order_cancel       0.99      0.89      0.94        84
+           order_status       0.98      0.99      0.99       564
+        payment_methods       1.00      0.98      0.99       751
+         product_search       0.95      0.99      0.97        73
+          return_refund       0.99      0.99      0.99       507
+          shipping_info       0.99      1.00      0.99       676
+
+               accuracy                           0.99      4772
+              macro avg       0.59      0.59      0.59      4772
+           weighted avg       0.99      0.99      0.99      4772
+
+Best accuracy: 0.9876

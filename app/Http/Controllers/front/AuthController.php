@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -323,7 +324,6 @@ class AuthController extends Controller
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'DESC')
             ->get();
-
         $data['orders'] = $orders;
         $data['keyword'] = '';
         return Inertia::render('Front/Account/OrderHistory', $data);
@@ -493,5 +493,27 @@ class AuthController extends Controller
             ->findOrFail($orderId);
         // Return JSON to frontend for generating downloadable HTML
         return response()->json($order);
+    }
+    public function searchOrders(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        $query = Order::with(['orderitems.product.product_images'])
+            ->where('user_id', $user->id);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                    ->orWhere('firstname', 'like', "%{$search}%")
+                    ->orWhere('lastname', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
+        $orders = $query->latest()->get();
+        return Inertia::render('Account/OrderHistory', [
+            'orders' => $orders, // ✅ ONLY orders
+        ]);
     }
 }

@@ -1,17 +1,14 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
+use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Language;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\App;
 use App\Services\ProductService;
 use App\Services\DiscountService;
-use App\Models\Discount;
-use App\Models\Category;
-use App\Models\ProductView;
 use App\Models\HomepageLabel;
 use Inertia\Inertia;
 class FrontController extends Controller
@@ -63,6 +60,7 @@ class FrontController extends Controller
             'latest_product' => $latest,
             'dis_products' => $discountedProducts,
             'recommended_products' => $recommended,
+            'user' => Auth::user(),
             'languages' => Language::get(),
             'brands' => Brand::where('status', 1)->orderBy('name')->get(),
             'homelables' => HomepageLabel::where('is_active', 1)->orderBy('label_name')->get(),

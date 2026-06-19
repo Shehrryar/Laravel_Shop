@@ -3,9 +3,8 @@ import { Link, usePage } from "@inertiajs/react";
 import { route } from "ziggy-js";
 import ThemeButton from "./ThemeButton";
 import RtlButton from "./RtlButton";
-const Sidebar = ({ open, onClose }) => {
-    const { props } = usePage();
-    const translations = props.translations;
+const Sidebar = ({ open, onClose, user }) => {
+    const { translations } = usePage().props;
     return (
         <>
             {/* Overlay */}
@@ -16,13 +15,13 @@ const Sidebar = ({ open, onClose }) => {
             {/* Sidebar */}
             <div className={`header-sidebar ${open ? "show" : ""}`}>
                 {/* User Panel */}
-                <Link className="user-panel">
+                <Link href={route("account.profile")} className="user-panel">
                     <img
                         src="/front-assets/images/user/1.png"
                         className="img-fluid user-img"
                         alt="user"
                     />
-                    <span>{translations["Hello"]}, Paige Turner</span>
+                    <span>{user?.name || "Guest"}</span>
                     <i className="iconly-Arrow-Right-2 icli" />
                 </Link>
                 {/* Sidebar Links */}
@@ -65,7 +64,6 @@ const Sidebar = ({ open, onClose }) => {
                             </div>
                         </li>
                         {/* Currency */}
-
                         <li>
                             <Link href={route("front.currency")}>
                                 <i className="iconly-Paper icli" />
@@ -77,9 +75,7 @@ const Sidebar = ({ open, onClose }) => {
                                 </div>
                             </Link>
                         </li>
-
                         {/*  pages */}
-
                         {/* <li>
                             <a href="pages.html">
                                 <i className="iconly-Paper icli" />
@@ -91,7 +87,6 @@ const Sidebar = ({ open, onClose }) => {
                                 </div>
                             </a>
                         </li> */}
-
                         {/* Home */}
                         <li>
                             <Link href={route("front.home")}>
@@ -189,7 +184,7 @@ const Sidebar = ({ open, onClose }) => {
                             </Link>
                         </li>
                         {/* Notification */}
-                        <li>
+                        {/* <li>
                             <a href="notification.html">
                                 <i className="iconly-Notification icli" />
                                 <div className="content">
@@ -203,9 +198,8 @@ const Sidebar = ({ open, onClose }) => {
                                     </h6>
                                 </div>
                             </a>
-                        </li>
+                        </li> */}
                         {/* Settings */}
-
                         <li>
                             <Link href={route("front.settings")}>
                                 <i className="iconly-Setting icli" />

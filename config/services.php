@@ -50,5 +50,8 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URL'),
     ],
+    'chatbot' => [
+    'url' => env('CHATBOT_API_URL', 'http://127.0.0.1:8000'),
+    ],
 
 ];

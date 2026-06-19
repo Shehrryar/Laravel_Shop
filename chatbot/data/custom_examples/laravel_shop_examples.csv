@@ -1,0 +1,62 @@
+text,intent
+hello,greeting
+hi,greeting
+salam,greeting
+can you help me,greeting
+show latest products,latest_products
+new arrivals,latest_products
+show new collection,latest_products
+recent products,latest_products
+show me products,product_search
+find mobile,product_search
+search laptop,product_search
+do you have shoes,product_search
+show samsung mobile,product_search
+find gaming mouse,product_search
+show me perfume,product_search
+show cheap products,budget_products
+budget products,budget_products
+affordable products,budget_products
+products under 1000,budget_products
+cheap mobile,budget_products
+lowest price products,budget_products
+track my order,order_status
+where is my order,order_status
+order status,order_status
+check my order,order_status
+has my order shipped,order_status
+cancel my order,order_cancel
+cancel order,order_cancel
+return policy,return_refund
+refund policy,return_refund
+exchange product,return_refund
+product is damaged,return_refund
+wrong product received,return_refund
+payment methods,payment_methods
+how can i pay,payment_methods
+cash on delivery,payment_methods
+card payment available,payment_methods
+online payment,payment_methods
+shipping information,shipping_info
+delivery time,shipping_info
+shipping charges,shipping_info
+how long delivery takes,shipping_info
+how to add to cart,cart_checkout
+checkout problem,cart_checkout
+how to buy product,cart_checkout
+how to place order,cart_checkout
+i cannot login,account_help
+forgot password,account_help
+create account,account_help
+register account,account_help
+contact support,contact_support
+talk to admin,contact_support
+customer support,contact_support
+human support,contact_support
+how to choose a good laptop,generic_shopping_advice
+how to compare products,generic_shopping_advice
+what should i check before buying online,generic_shopping_advice
+bye,goodbye
+thank you,goodbye
+thanks,goodbye
+goodbye,goodbye

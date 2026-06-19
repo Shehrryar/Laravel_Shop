@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
+use App\Http\Controllers\Controller;
 use App\Models\ProductRating;
 use App\Services\ProductFilterService;
 use Illuminate\Http\Request;

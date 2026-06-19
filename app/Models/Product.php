@@ -29,8 +29,11 @@ class Product extends Model
         'barcode',
         'track_qty',
         'qty',
-        'status'
+        'status',
+        
     ];
+
+    
     // protected $casts = [
     //     'title_translations' => 'array',
     //     'description_translations' => 'array',
@@ -103,6 +106,11 @@ class Product extends Model
             return max(0, min(5, round($avg, 2)));
         }
         return 0;
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class, 'brands_id');
     }
 
 }

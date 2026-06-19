@@ -5,16 +5,18 @@ import BottomNav from "./Components/BottomNav";
 import "flag-icons/css/flag-icons.min.css";
 
 const LanguagePage = () => {
-    const { translations, languages, cartquantity } = usePage().props;
+    const { translations, languages, cartquantity ,default_language} = usePage().props;
 
     const flagMap = {
         en: "gb", // English
         ur: "pk", // Urdu
     };
 
+
     const [currentLocale, setCurrentLocale] = useState(
-        sessionStorage.getItem("locale") || "en"
+        sessionStorage.getItem("locale") || default_language?.Isocode || "en",
     );
+
 
     const changeLanguage = (locale) => {
         setCurrentLocale(locale);
@@ -57,7 +59,7 @@ const LanguagePage = () => {
                 <ul className="language-list">
                     {languages.map((lang) => {
                         const nameTranslations = JSON.parse(
-                            lang.name_translations
+                            lang.name_translations,
                         );
 
                         const displayName =
@@ -67,9 +69,7 @@ const LanguagePage = () => {
                             <li
                                 key={lang.id}
                                 className="d-flex justify-content-between align-items-center p-3 border-bottom"
-                                onClick={() =>
-                                    changeLanguage(lang.Isocode)
-                                }
+                                onClick={() => changeLanguage(lang.Isocode)}
                                 style={{ cursor: "pointer" }}
                             >
                                 {/* Left: Flag + Name */}

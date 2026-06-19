@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
+use App\Http\Controllers\Controller;
 use App\Models\ProductAttribute;
 use App\Models\Discount;
 use App\Models\Color;
@@ -87,6 +88,5 @@ class AttributeController extends Controller
             'status' => False,
             'message' => "color for this size is not available"
         ]);
-
     }
 }

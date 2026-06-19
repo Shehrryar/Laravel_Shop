@@ -10,7 +10,7 @@ import ProductReviewAndRating from "./Components/ProductReviewAndRating";
 import { UseCurrency } from "./Components/UseCurrency";
 const ProductDetails = () => {
     const { convertPrice, symbol } = UseCurrency();
-    const { product, showrelatedproduct, wishlistitems } = usePage().props;
+    const { product, showrelatedproduct, wishlistitems,translations } = usePage().props;
     const [selectedSize, setSelectedSize] = useState(null);
     const [selectedColor, setSelectedColor] = useState(null);
     const [quantity, setQuantity] = useState(1);
@@ -22,7 +22,6 @@ const ProductDetails = () => {
         baseactualprice: product.actual_price,
         basediscountedprice: product.discounted_price,
     });
-
     const [message, setMessage] = useState({ text: "", type: "" });
     const handleSizeChange = (sizeId) => {
         setSelectedSize(sizeId);
@@ -54,16 +53,13 @@ const ProductDetails = () => {
         setQuantity(value);
         updateVariantPrice(selectedSize, selectedColor, value);
     };
-
     const updateVariantPrice = (sizeId, colorId, qty = quantity) => {
         // Always use product's original base price
         const originalBasePrice = parseFloat(product.actual_price);
         const originalDiscountedPrice = parseFloat(product.discounted_price);
         const discountValue = product.discount_value || 0;
-
         let finalBasePrice = originalBasePrice;
         let finalDiscountedPrice = originalDiscountedPrice;
-
         // Add size price if selected
         if (sizeId) {
             const size = product.size.find((s) => s.id === sizeId);
@@ -72,7 +68,6 @@ const ProductDetails = () => {
                 finalDiscountedPrice += parseFloat(size.price);
             }
         }
-
         // Add color price if selected
         if (colorId) {
             const color = product.color.find((c) => c.id === colorId);
@@ -81,17 +76,14 @@ const ProductDetails = () => {
                 finalDiscountedPrice += parseFloat(color.price);
             }
         }
-
         // Reapply discount on updated finalBasePrice
         if (discountValue > 0) {
             finalDiscountedPrice =
                 finalBasePrice - (finalBasePrice * discountValue) / 100;
         }
-
         // Multiply final prices by quantity
         const finalActual = (finalBasePrice * qty).toFixed(2);
         const finalDiscounted = (finalDiscountedPrice * qty).toFixed(2);
-
         setVariantPrice({
             actual: finalActual,
             discounted: finalDiscounted,
@@ -100,12 +92,10 @@ const ProductDetails = () => {
             basediscountedprice: finalDiscountedPrice.toFixed(2),
         });
     };
-
     const handleAddToCart = async () => {
         const popupMessage = new bootstrap.Modal(
             document.getElementById("popupMessage"),
         );
-
         if (product.size && product.size.length > 0) {
             if (!selectedSize) {
                 setMessage({
@@ -153,6 +143,7 @@ const ProductDetails = () => {
             popupMessage.show();
         }
         setTimeout(() => {
+            popupMessage.hide();
             setMessage({ text: "", type: "" });
         }, 3000);
     };
@@ -181,7 +172,6 @@ const ProductDetails = () => {
                 setComment("");
                 setRating(0);
                 popupMessage.show();
-
                 router.reload({ only: ["product"] });
             } else {
                 setMessage({
@@ -201,7 +191,6 @@ const ProductDetails = () => {
             popupMessage.show();
         }
     };
-
     const imageSliderSettings = {
         dots: true,
         infinite: true,
@@ -210,7 +199,6 @@ const ProductDetails = () => {
         slidesToShow: 1,
         slidesToScroll: 1,
     };
-
     return (
         <>
             {/* Header */}
@@ -248,10 +236,8 @@ const ProductDetails = () => {
                 </div>
             </header>
             {/* Product Section */}
-
             <section className="product-page-section top-space pt-0">
                 {/*  Main Product Image Slider */}
-
                 <div className="home-slider slick-default theme-dots ratio_asos overflow-hidden">
                     <Slider {...imageSliderSettings}>
                         {product?.product_images?.length > 0 ? (
@@ -279,7 +265,6 @@ const ProductDetails = () => {
                         )}
                     </Slider>
                 </div>
-
                 {/*  Product Details */}
                 <div className="product-detail-box px-15 pt-2">
                     <div className="main-detail">
@@ -287,6 +272,7 @@ const ProductDetails = () => {
                             {product.translated_description}
                         </h2>
                         <h6 className="content-color">
+                            
                             Black, off-white and peach-coloured printed flared
                             skirt, has zip closure, attached lining
                         </h6>
@@ -309,7 +295,6 @@ const ProductDetails = () => {
                                 ({product.product_ratings_count} ratings)
                             </h6>
                         </div>
-
                         <div className="price">
                             <h4>
                                 {variantPrice.discount_value !== 0 ? (
@@ -332,11 +317,9 @@ const ProductDetails = () => {
                                 )}
                             </h4>
                         </div>
-
-                        <h6 className="text-green">inclusive of all taxes</h6>
+                        <h6 className="text-green">{translations["Inclusive of all taxes"]}</h6>
                     </div>
                 </div>
-
                 <div className="divider"></div>
                 {/*  Size & Color Selection */}
                 <div className="product-detail-box px-15">
@@ -344,7 +327,7 @@ const ProductDetails = () => {
                         <>
                             <div className="size-detail">
                                 <h4 className="size-title">
-                                    Select Size: <a href="#">Size Chart</a>
+                                    {translations["Select Size"]}: <a href="#">{translations["Size Chart"]}</a>
                                 </h4>
                                 <ul className="size-select">
                                     {product.size.map((s) => (
@@ -366,12 +349,11 @@ const ProductDetails = () => {
                             </div>
                         </>
                     ) : null}
-
                     <div className="color-detail">
                         {/*  Show colors even if no size exists */}
                         {product.color.length > 0 && (
                             <>
-                                <h4 className="size-title">Select Color:</h4>
+                                <h4 className="size-title">{translations["Select Color"]}:</h4>
                                 <ul className="filter-color">
                                     {(product.size.length > 0
                                         ? filteredColors
@@ -404,9 +386,8 @@ const ProductDetails = () => {
                             </>
                         )}
                     </div>
-
                     <div className="size-detail">
-                        <h4 className="size-title">Quantity:</h4>
+                        <h4 className="size-title">{translations["Quantity"]}:</h4>
                         <div className="qty-counter">
                             <div className="input-group">
                                 <button
@@ -449,7 +430,7 @@ const ProductDetails = () => {
                 <div className="divider"></div>
                 {/* Add Review Section */}
                 <div className="px-15">
-                    <h4 className="page-title">Write a Review</h4>
+                    <h4 className="page-title">{translations["Write a Review"]}</h4>
                     <form onSubmit={handleSubmit} className="review-form">
                         {/* Star Rating */}
                         <div className="rating-select mb-3">
@@ -495,14 +476,14 @@ const ProductDetails = () => {
                         ></textarea>
                         {/* Submit Button */}
                         <button type="submit" className="btn btn-solid w-100">
-                            Submit Review
+                            {translations["Submit Review"]}
                         </button>
                     </form>
                 </div>
                 <div className="divider"></div>
                 {/*  Similar Products Slider */}
                 <ProductSlider
-                    title="Similar Products"
+                    title={translations["Similar Products"]}
                     products={showrelatedproduct}
                     wishlist={wishlistitems}
                 />
@@ -512,7 +493,7 @@ const ProductDetails = () => {
                     <div className="row">
                         <div className="col-6">
                             <Link href={route("account.wishlist")}>
-                                <i className="iconly-Heart icli"></i> WISHLIST
+                                <i className="iconly-Heart icli"></i> {translations["Wishlist"]}
                             </Link>
                         </div>
                         <div className="col-6">
@@ -520,13 +501,12 @@ const ProductDetails = () => {
                                 className="theme-color"
                                 onClick={handleAddToCart}
                             >
-                                <i className="iconly-Buy icli"></i> ADD TO BAG
+                                <i className="iconly-Buy icli"></i> {translations["ADD TO BAG"]}
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
-
             <div className="modal fade" id="popupMessage" aria-hidden="true">
                 <div
                     className="modal-dialog"
@@ -551,7 +531,6 @@ const ProductDetails = () => {
                         }}
                     >
                         <span>{message.text}</span>
-
                         {/* Close Button */}
                         <button
                             type="button"

@@ -1,21 +1,16 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
+use App\Http\Controllers\Controller;
+use App\Helpers\CurrencyHelper;
 use App\Models\CustomerAddress;
-use App\Models\Order;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Stripe\Coupon;
 use Stripe\Stripe;
-// use App\Jobs\SendOrderPlacedMail;
 use Stripe\Checkout\Session;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Mail;
-use App\Events\OrderCreatedEvent;
 use App\Events\OrderPaymentUpdateEvent;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use App\Services\OrderService;
-use App\Mail\OrderEmail;
 use App\Events\OrderPlacedNotificationEvent;
 class PaymentController extends Controller
 {
@@ -44,7 +39,6 @@ class PaymentController extends Controller
                 'message' => 'Your cart is empty.',
             ]);
         }
-
         $orderService = new OrderService();
         $order = $orderService->createOrder($user, $cartItems, $request, $customerAddress);
         $orderId = session()->get('order_id');
@@ -54,9 +48,19 @@ class PaymentController extends Controller
 
 
 
-
         // event(new OrderPlacedNotificationEvent(Order::find($orderId)));
         if ($order == true) {
+
+
+            $orderId = session()->get('order_id');
+            $grandTotal = session()->get('grand_total');
+            $currencyCode = strtolower(CurrencyHelper::getCurrentCode()); // stripe needs lowercase
+            $paypalCode = strtoupper(CurrencyHelper::getCurrentCode());
+            $rate = CurrencyHelper::getCurrentRate();
+
+            // Convert amount for gateways
+            $convertedAmount = round($grandTotal * $rate, 2);
+
             if ($request->paymentMethod === 'cod') {
                 // event(new OrderPlacedNotificationEvent($order));
                 $orderId = session()->get('order_id');
@@ -75,16 +79,15 @@ class PaymentController extends Controller
                 ]);
             } elseif ($request->paymentMethod === 'card') {
                 Stripe::setApiKey(env('STRIPE_SECRET'));
-                $orderId = session()->get('order_id');
-                $grandTotal = session()->get('grand_total');
+
                 $session = Session::create([
                     'payment_method_types' => ['card'],
                     'line_items' => [
                         [
                             'price_data' => [
-                                'currency' => 'usd',
+                                'currency' => $currencyCode,
                                 'product_data' => ['name' => 'Order #' . $orderId],
-                                'unit_amount' => intval($grandTotal) * 100,
+                                'unit_amount' => intval($convertedAmount * 100),
                             ],
                             'quantity' => 1,
                         ]
@@ -103,15 +106,11 @@ class PaymentController extends Controller
                     'url' => $session->url
                 ]);
             } elseif ($request->paymentMethod === 'Paypal') {
-
                 $config = $this->setPaypalConfig();
                 $provider = new PayPalClient($config);
                 $provider->getAccessToken();
-
                 $orderId = session()->get('order_id');
                 $grandTotal = session()->get('grand_total');
-
-
                 $response = $provider->createOrder([
                     'intent' => 'CAPTURE',
                     'application_context' => [
@@ -122,20 +121,18 @@ class PaymentController extends Controller
                         [
                             'reference_id' => $orderId,
                             'amount' => [
-                                'currency_code' => 'USD',
-                                'value' => $grandTotal
+                                'currency_code' => $paypalCode,
+                                'value' => $convertedAmount
                             ]
                         ]
                     ]
                 ]);
-
                 if (!isset($response['id'])) {
                     return response()->json([
                         'status' => false,
                         'message' => $response['error']['message'] ?? 'Unable to create PayPal order'
                     ], 500);
                 }
-
                 foreach ($response['links'] as $link) {
                     if ($link['rel'] === 'approve') {
                         return response()->json([
@@ -145,7 +142,6 @@ class PaymentController extends Controller
                         ]);
                     }
                 }
-
                 return response()->json([
                     'status' => false,
                     'message' => 'PayPal approval link not found'
@@ -167,6 +163,7 @@ class PaymentController extends Controller
                 'status' => 'completed'
             ];
             event(new OrderPaymentUpdateEvent($orderId, $paymentInfo, 'Stripe'));
+            event(new OrderPlacedNotificationEvent($orderId));
             $orderService = new OrderService();
             $orderService->clearSession();
             // event(new OrderPlacedNotificationEvent(Order::find($orderId)));
@@ -174,8 +171,6 @@ class PaymentController extends Controller
         }
         return redirect()->route('stripe.cancel');
     }
-
-
     function stripeCancel()
     {
         $this->transactionFailUpdateStatus('Stripe');
@@ -191,9 +186,6 @@ class PaymentController extends Controller
         ];
         OrderPaymentUpdateEvent::dispatch($orderId, $paymentInfo, $gatewayName);
     }
-
-
-
     function setPaypalConfig(): array
     {
         $config = [
@@ -216,19 +208,14 @@ class PaymentController extends Controller
         ];
         return $config;
     }
-
-
-
     function payWithPaypal()
     {
         $config = $this->setPaypalConfig();
         $provider = new PayPalClient($config);
         $provider->getAccessToken();
-
         /** calculate payable amount */
         $grandTotal = session()->get('grand_total');
         $payableAmount = round($grandTotal * config('gatewaySettings.paypal_rate'));
-
         $response = $provider->createOrder([
             'intent' => "CAPTURE",
             'application_context' => [
@@ -244,7 +231,6 @@ class PaymentController extends Controller
                 ]
             ]
         ]);
-
         if (isset($response['id']) && $response['id'] != NULL) {
             foreach ($response['links'] as $link) {
                 if ($link['rel'] === 'approve') {
@@ -256,19 +242,16 @@ class PaymentController extends Controller
         }
     }
 
+
+
     function paypalSuccess(Request $request, OrderService $orderService)
     {
         $config = $this->setPaypalConfig();
         $provider = new PayPalClient($config);
         $provider->getAccessToken();
-
         $response = $provider->capturePaymentOrder($request->token);
-
-
         if (isset($response['status']) && $response['status'] === 'COMPLETED') {
-
             $orderId = session()->get('order_id');
-
             $capture = $response['purchase_units'][0]['payments']['captures'][0];
             $paymentInfo = [
                 'transaction_id' => $capture['id'],
@@ -276,21 +259,18 @@ class PaymentController extends Controller
                 'status' => 'completed'
             ];
             /** Clear session data */
+            event(new OrderPlacedNotificationEvent($orderId));
+            OrderPaymentUpdateEvent::dispatch($orderId, $paymentInfo, 'PayPal');
             $orderService->clearSession();
-
             return redirect()->route('payment.success');
         } else {
             $this->transactionFailUpdateStatus('PayPal');
             return redirect()->route('payment.cancel')->withErrors(['error' => $response['error']['message']]);
         }
     }
-
     function paypalCancel()
     {
         $this->transactionFailUpdateStatus('PayPal');
         return redirect()->route('payment.cancel');
     }
-
-
-
 }

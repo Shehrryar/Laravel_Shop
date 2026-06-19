@@ -5021,8 +5021,8 @@ progress {
 .text-light {
   color: #f8f9fa !important; }
 
-.text-dark {
-  color: #212529 !important; }
+/* .text-dark {
+  color: #212529 !important; } */
 
 .text-white {
   color: #fff !important; }
@@ -13693,8 +13693,8 @@ textarea.form-control-lg {
 .text-light {
   color: #f8f9fa !important; }
 
-.text-dark {
-  color: #212529 !important; }
+/* .text-dark {
+  color: #212529 !important; } */
 
 .text-white {
   color: #fff !important; }

@@ -246,6 +246,84 @@
     "NEW": "نیا",
 
 
-    "Currency": "Currency"
+    "Currency": "Currency",
+
+
+
+
+
+
+    
+  "Inclusive of all taxes": "تمام ٹیکس شامل ہیں",
+  "Select Size": "سائز منتخب کریں",
+  "Size Chart": "سائز چارٹ",
+  "Select Color": "رنگ منتخب کریں",
+  "Quantity": "مقدار",
+  "Similar Products": "ملتے جلتے مصنوعات",
+
+  "Please select a size before adding to cart.": "براہ کرم کارٹ میں شامل کرنے سے پہلے سائز منتخب کریں۔",
+  "Product added to cart successfully!": "مصنوعات کامیابی کے ساتھ کارٹ میں شامل کر دی گئی!",
+  "Something went wrong! Please try again.": "کچھ غلط ہو گیا! براہ کرم دوبارہ کوشش کریں۔",
+
+  "Write a Review": "ریویو لکھیں",
+  "Submit Review": "ریویو جمع کریں",
+  "Write your comment...": "اپنا تبصرہ لکھیں...",
+
+  "Review submitted successfully!": "ریویو کامیابی کے ساتھ جمع کر دیا گیا!",
+  "You have already rated this product.": "آپ اس مصنوعات کو پہلے ہی ریٹ کر چکے ہیں۔",
+  "Something went wrong while submitting your review.": "ریویو جمع کرتے وقت کچھ غلط ہو گیا۔",
+
+  "ratings": "ریٹنگز",
+  "off": "رعایت",
+
+  "ADD TO BAG": "بیگ میں شامل کریں",
+  "WISHLIST": "پسندیدہ فہرست",
+
+  "Share": "شیئر کریں",
+  "Back": "واپس",
+
+
+
+
+
+  
+  "Search products...": "مصنوعات تلاش کریں...",
+  "Searching...": "تلاش کیا جا رہا ہے...",
+  "No products found": "کوئی مصنوعات نہیں ملیں",
+
+
+
+
+
+
+  "404": "404",
+  "Page Not Found": "صفحہ نہیں ملا",
+  "The page you are trying to access does not exist.": "جس صفحے تک آپ رسائی حاصل کرنے کی کوشش کر رہے ہیں وہ موجود نہیں ہے۔",
+  "Back to Home": "ہوم پیج پر واپس جائیں",
+
+
+
+
+
+  "No order found.": "کوئی آرڈر نہیں ملا۔",
+  "Ordered": "آرڈر دیا گیا",
+  "Ready To Ship": "بھیجنے کے لیے تیار",
+  "In Transit": "راستے میں",
+  "Out For Delivery": "ڈیلیوری کے لیے روانہ",
+  "Expected delivery on Monday": "پیر کو متوقع ڈیلیوری",
+  "Rate & Review Product": "پروڈکٹ کی درجہ بندی اور جائزہ دیں",
+  "Need Help?": "مدد چاہیے؟",
+  "Shipping Details": "ڈیلیوری کی تفصیلات",
+  "Phone No": "فون نمبر",
+  "Price Details": "قیمت کی تفصیلات",
+  "Discount": "رعایت",
+  "Download Invoice": "انوائس ڈاؤن لوڈ کریں",
+  "Invoice": "انوائس",
+  "Customer Information": "کسٹمر کی معلومات",
+  "Order Items": "آرڈر کی اشیاء",
+  "Shipping Total": "ڈیلیوری کی کل رقم",
+  "Grand Total": "کل قابل ادائیگی رقم",
+  "Payment Status": "ادائیگی کی حیثیت"
+
 
 }
