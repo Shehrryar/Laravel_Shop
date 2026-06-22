@@ -12,7 +12,7 @@ use App\Http\Controllers\front\ChatController;
 use App\Http\Controllers\front\AttributeController;
 use App\Http\Controllers\front\SettingsController;
 use App\Http\Controllers\API\ProductSearchController;
-use App\Http\Controllers\front\ChatbotController;
+use App\Http\Controllers\front\ShopChatbotController;
 use Inertia\Inertia;
 /*
 |--------------------------------------------------------------------------
@@ -27,13 +27,13 @@ use Inertia\Inertia;
 // Route::get('/test', function(){
 // });
 Route::get('/prosearch', [ProductSearchController::class, 'search']);
-Route::post('/chatbot/message', [ChatbotController::class, 'reply'])->name('front.chatbot.reply');
+Route::post('/shopbot/ask', [ShopChatbotController::class, 'ask'])->name('shopbot.ask');
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/settings', [SettingsController::class, 'index'])->name('front.settings');
 Route::get('/shop/{cat_slug?}/{subcat_slug?}/{subsubcat_slug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('search', [SearchController::class, 'search'])->name('product.search');
-Route::get('/search/products', [SearchController::class, 'searchProducts'])
-    ->name('front.search.products');
+Route::get('/search/products', [SearchController::class, 'searchProducts'])->name('front.search.products');
+Route::post('/search/products-by-image', [SearchController::class, 'searchProductsByImage'])->name('front.search.image.products');
 // Route::post('/shopfilter', [ShopController::class, 'filterRequest'])->name('front.shopfilter');
 Route::get('product/{slug}', [ShopController::class, 'product'])->name('front.product');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('front.addToCart');
@@ -112,8 +112,11 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
         Route::get('/fetch-messages/{receiverId}', [ChatController::class, 'fetchMessages'])->name('fetch.messages');
         Route::post('/mark-as-read/{receiverId}', [ChatController::class, 'markAsRead'])->name('mark.as.read');
+        Route::get('/customer-chat/messages', [ChatController::class, 'messages'])->name('customer.chat.messages');
+        Route::post('/customer-chat/send', [ChatController::class, 'sendMessage'])->name('customer.chat.send');
         Route::get('/cart', [CartController::class, 'cart'])->name('front.cart');
-    });
+        
+        });
 });
 Route::fallback(function () {
     return Inertia::render('Front/PageNotFound')

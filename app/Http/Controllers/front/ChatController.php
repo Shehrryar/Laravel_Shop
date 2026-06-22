@@ -1,64 +1,112 @@
 <?php
 
 namespace App\Http\Controllers\Front;
+
+use App\Events\ChatMessageSent;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Message;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+
 class ChatController extends Controller
 {
+    private function getAdminId()
+    {
+        return User::where('role', 2)
+            ->orderBy('id', 'asc')
+            ->value('id');
+    }
 
     public function renderchatbox(Request $request)
     {
-        $adminId = DB::table('users')
-            ->where('role', 2)
-            ->where('name', 'admin')
-            ->value('id');
-        $getchat = DB::table('messages')
-            ->where(function ($query) use ($adminId) {
-                $query->where('sender_id', Auth::id())
+        $userId = Auth::id();
+        $adminId = $this->getAdminId();
+
+        if (!$adminId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Admin user was not found.',
+                'sender_id' => $userId,
+                'receiver_id' => null,
+                'chat_message' => [],
+            ], 404);
+        }
+
+        $messages = Message::where(function ($query) use ($userId, $adminId) {
+                $query->where('sender_id', $userId)
                     ->where('receiver_id', $adminId);
             })
-            ->orWhere(function ($query) use ($adminId) {
+            ->orWhere(function ($query) use ($userId, $adminId) {
                 $query->where('sender_id', $adminId)
-                    ->where('receiver_id', Auth::id());
+                    ->where('receiver_id', $userId);
             })
-            ->orderBy('created_at', 'asc') // Optional: Order by timestamp if needed
-            ->get();
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($message) {
+                return [
+                    'id' => $message->id,
+                    'sender_id' => $message->sender_id,
+                    'receiver_id' => $message->receiver_id,
+                    'message_content' => $message->message_content,
+                    'read_status' => $message->read_status,
+                    'created_at' => $message->created_at?->format('Y-m-d H:i'),
+                ];
+            });
 
-        $data = [];
-        $data['sender_id'] = Auth::id();
-        $data['receiver_id'] = $adminId;
-        $data['chat_message'] = $getchat;
-        return response()->json($data);
-
+        return response()->json([
+            'status' => true,
+            'sender_id' => $userId,
+            'receiver_id' => $adminId,
+            'chat_message' => $messages,
+        ]);
     }
+
     public function sendMessage(Request $request)
     {
-        $adminId = DB::table('users')
-            ->where('role', 2)
-            ->where('name', 'admin')
-            ->value('id');
+        $request->validate([
+            'message_content' => 'required|string|max:1000',
+        ]);
+
+        $adminId = $this->getAdminId();
+
+        if (!$adminId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Admin user was not found.',
+            ], 404);
+        }
+
         $message = Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $adminId,
             'message_content' => $request->message_content,
+            'read_status' => 0,
         ]);
-        return response()->json($message);
+
+        broadcast(new ChatMessageSent($message));
+
+        return response()->json([
+            'id' => $message->id,
+            'sender_id' => $message->sender_id,
+            'receiver_id' => $message->receiver_id,
+            'message_content' => $message->message_content,
+            'read_status' => $message->read_status,
+            'created_at' => $message->created_at?->format('Y-m-d H:i'),
+        ]);
     }
 
     public function fetchMessages($receiverId)
     {
         $messages = Message::where(function ($query) use ($receiverId) {
-            $query->where('sender_id', Auth::id())
-                ->where('receiver_id', $receiverId);
-        })
+                $query->where('sender_id', Auth::id())
+                    ->where('receiver_id', $receiverId);
+            })
             ->orWhere(function ($query) use ($receiverId) {
                 $query->where('sender_id', $receiverId)
                     ->where('receiver_id', Auth::id());
             })
-            ->orderBy('created_at')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return response()->json($messages);
@@ -72,5 +120,4 @@ class ChatController extends Controller
 
         return response()->json(['status' => 'success']);
     }
-
 }

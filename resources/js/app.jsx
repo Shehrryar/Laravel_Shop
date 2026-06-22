@@ -1,8 +1,10 @@
+import "./bootstrap";
 import React from "react";
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 import { initGlobalSettings } from "./Pages/utils/initTheme";
 import ChatbotWidget from "./Pages/Front/Components/ChatbotWidget";
+import CustomerAdminChatWidget from "./Pages/Front/Components/CustomerAdminChatWidget";
 
 createInertiaApp({
     resolve: (name) => {
@@ -15,9 +17,9 @@ createInertiaApp({
             <>
                 <App {...props} />
                 <ChatbotWidget />
+                <CustomerAdminChatWidget />
             </>
         );
     },
 });
-
 initGlobalSettings();

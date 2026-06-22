@@ -1,62 +1,477 @@
 text,intent
 hello,greeting
 hi,greeting
+hey,greeting
+hello there,greeting
+hi there,greeting
+hey there,greeting
+good morning,greeting
+good afternoon,greeting
+good evening,greeting
 salam,greeting
+assalam o alaikum,greeting
+salam shop,greeting
+how are you,greeting
+how are you doing,greeting
+are you fine,greeting
+hope you are fine,greeting
+hello how are you,greeting
+hi how are you,greeting
+are you there,greeting
+anyone there,greeting
+anyone available,greeting
 can you help me,greeting
-show latest products,latest_products
-new arrivals,latest_products
-show new collection,latest_products
-recent products,latest_products
+can you assist me,greeting
+please help me,greeting
+i need help,greeting
+i want help,greeting
+i have a question,greeting
+i need your assistance,greeting
+start chat,greeting
+hello chatbot,greeting
+hi chatbot,greeting
+shop assistant,greeting
+customer assistant,greeting
+
 show me products,product_search
-find mobile,product_search
-search laptop,product_search
+show products,product_search
+can you show products,product_search
+show all products,product_search
+display products,product_search
+find product,product_search
+search product,product_search
+search by product name,product_search
+do you have this product,product_search
+do you have mobile,product_search
+do you have phone,product_search
+do you have laptop,product_search
 do you have shoes,product_search
-show samsung mobile,product_search
+do you have watch,product_search
+do you have perfume,product_search
+do you have clothes,product_search
+do you have electronics,product_search
+do you have accessories,product_search
+find mobile,product_search
+find phone,product_search
+find laptop,product_search
+find shoes,product_search
+find watch,product_search
 find gaming mouse,product_search
-show me perfume,product_search
+find keyboard,product_search
+find headphones,product_search
+find charger,product_search
+find dress,product_search
+find bag,product_search
+search laptop,product_search
+search mobile,product_search
+search samsung mobile,product_search
+search iphone,product_search
+search gaming products,product_search
+show samsung mobile,product_search
+show iphone products,product_search
+show laptops,product_search
+show shoes,product_search
+show watches,product_search
+show perfumes,product_search
+show dresses,product_search
+show bags,product_search
+show electronics,product_search
+show accessories,product_search
+i want to buy phone,product_search
+i want to buy laptop,product_search
+i want to buy shoes,product_search
+i want to buy watch,product_search
+i am looking for mobile,product_search
+i am looking for laptop,product_search
+i am looking for shoes,product_search
+is this product available,product_search
+product available or not,product_search
+check product availability,product_search
+is it in stock,product_search
+show available products,product_search
+show product details,product_search
+tell me about this product,product_search
+give me product information,product_search
+what is the price of this product,product_search
+show product price,product_search
+show product category,product_search
+find product by category,product_search
+
 show cheap products,budget_products
+cheap products,budget_products
 budget products,budget_products
+low price products,budget_products
 affordable products,budget_products
-products under 1000,budget_products
-cheap mobile,budget_products
 lowest price products,budget_products
+show low price items,budget_products
+show affordable items,budget_products
+show cheapest products,budget_products
+find cheap products,budget_products
+find affordable products,budget_products
+find low price products,budget_products
+budget friendly products,budget_products
+products in low price range,budget_products
+show discount products,budget_products
+show sale products,budget_products
+show offer products,budget_products
+any offer products,budget_products
+any discount available,budget_products
+products under 500,budget_products
+products under 1000,budget_products
+products under 2000,budget_products
+products under 5000,budget_products
+products below 500,budget_products
+products below 1000,budget_products
+products below 2000,budget_products
+products below 5000,budget_products
+show products under 500,budget_products
+show products under 1000,budget_products
+show products under 2000,budget_products
+show products under 5000,budget_products
+show products below 500,budget_products
+show products below 1000,budget_products
+show products below 2000,budget_products
+show products below 5000,budget_products
+best product under 1000,budget_products
+best product under 5000,budget_products
+cheap mobile,budget_products
+cheap phone,budget_products
+cheap laptop,budget_products
+cheap shoes,budget_products
+cheap watch,budget_products
+cheap electronics,budget_products
+cheap accessories,budget_products
+low budget mobile,budget_products
+low budget laptop,budget_products
+low budget phone,budget_products
+show affordable mobile,budget_products
+show affordable laptop,budget_products
+show affordable shoes,budget_products
+i need cheap product,budget_products
+i want low price item,budget_products
+i have small budget,budget_products
+find products under my budget,budget_products
+show me products in my budget,budget_products
+what is the cheapest product,budget_products
+which product is lowest price,budget_products
+
+show latest products,latest_products
+show new products,latest_products
+show new arrivals,latest_products
+show latest items,latest_products
+show recent products,latest_products
+show recently added products,latest_products
+display latest products,latest_products
+display new products,latest_products
+latest products,latest_products
+latest items,latest_products
+latest collection,latest_products
+latest stock,latest_products
+latest mobile products,latest_products
+latest laptop products,latest_products
+latest fashion products,latest_products
+latest electronics,latest_products
+new arrivals,latest_products
+new products,latest_products
+new items,latest_products
+new collection,latest_products
+new stock available,latest_products
+new products in store,latest_products
+new arrival products,latest_products
+what is new,latest_products
+what is new in shop,latest_products
+what products are new,latest_products
+what are the newest items,latest_products
+show me new items,latest_products
+show me latest products,latest_products
+show newly added items,latest_products
+show fresh products,latest_products
+show recent items,latest_products
+latest items please,latest_products
+
+add to cart,cart_checkout
+add product to cart,cart_checkout
+add this product to cart,cart_checkout
+add this item to cart,cart_checkout
+put this item in cart,cart_checkout
+put product in cart,cart_checkout
+how to add to cart,cart_checkout
+how can i add product to cart,cart_checkout
+cannot add product to cart,cart_checkout
+add to cart button not working,cart_checkout
+cart button not working,cart_checkout
+my cart is empty,cart_checkout
+cart is not working,cart_checkout
+cart page issue,cart_checkout
+cart problem,cart_checkout
+update cart,cart_checkout
+remove item from cart,cart_checkout
+delete product from cart,cart_checkout
+increase quantity in cart,cart_checkout
+decrease quantity in cart,cart_checkout
+change product quantity,cart_checkout
+how to checkout,cart_checkout
+checkout problem,cart_checkout
+checkout is not working,cart_checkout
+i cannot checkout,cart_checkout
+checkout button not working,cart_checkout
+proceed to checkout,cart_checkout
+payment page not opening,cart_checkout
+order placing problem,cart_checkout
+how to place order,cart_checkout
+place order,cart_checkout
+how can i order,cart_checkout
+how can i buy product,cart_checkout
+i want to buy this product,cart_checkout
+buy now,cart_checkout
+buy button not working,cart_checkout
+how to complete order,cart_checkout
+how to confirm order,cart_checkout
+order confirmation problem,cart_checkout
+checkout page error,cart_checkout
+
 track my order,order_status
 where is my order,order_status
 order status,order_status
 check my order,order_status
+check order status,order_status
+track order,order_status
+track delivery,order_status
+delivery status,order_status
+shipping status of my order,order_status
+my order delivery,order_status
 has my order shipped,order_status
+when will my order arrive,order_status
+when will i receive my order,order_status
+where is my parcel,order_status
+where is my package,order_status
+order tracking,order_status
+show my order,order_status
+show my orders,order_status
+my order details,order_status
+latest order status,order_status
+i placed an order,order_status
+i did not receive my order,order_status
+my order is delayed,order_status
+order not delivered,order_status
+order is still pending,order_status
+why my order is pending,order_status
+has my order been confirmed,order_status
+order confirmation status,order_status
+
 cancel my order,order_cancel
 cancel order,order_cancel
+i want to cancel order,order_cancel
+how to cancel order,order_cancel
+can i cancel my order,order_cancel
+cancel this order,order_cancel
+cancel my recent order,order_cancel
+cancel placed order,order_cancel
+order cancellation,order_cancel
+request order cancellation,order_cancel
+stop my order,order_cancel
+i ordered by mistake,order_cancel
+i want to stop delivery,order_cancel
+can i cancel before shipping,order_cancel
+cancel order before delivery,order_cancel
+
 return policy,return_refund
 refund policy,return_refund
+exchange policy,return_refund
+return product,return_refund
+refund product,return_refund
 exchange product,return_refund
+replace product,return_refund
+can i return product,return_refund
+can i exchange product,return_refund
+can i get refund,return_refund
+how to return product,return_refund
+how to exchange product,return_refund
+how to get refund,return_refund
+i want refund,return_refund
+i want to return item,return_refund
+i want to exchange item,return_refund
 product is damaged,return_refund
+product is broken,return_refund
+item is broken,return_refund
+item is damaged,return_refund
 wrong product received,return_refund
+wrong item received,return_refund
+received damaged product,return_refund
+received wrong item,return_refund
+product not working,return_refund
+item not working,return_refund
+return damaged product,return_refund
+replace damaged product,return_refund
+refund for damaged product,return_refund
+how many days for return,return_refund
+return time period,return_refund
+refund time period,return_refund
+refund status,return_refund
+where is my refund,return_refund
+
 payment methods,payment_methods
 how can i pay,payment_methods
+how to pay,payment_methods
+payment options,payment_methods
+available payment methods,payment_methods
 cash on delivery,payment_methods
+cod available,payment_methods
+is cash on delivery available,payment_methods
+do you accept card,payment_methods
 card payment available,payment_methods
+credit card payment,payment_methods
+debit card payment,payment_methods
 online payment,payment_methods
+can i pay online,payment_methods
+paypal available,payment_methods
+stripe payment,payment_methods
+bank transfer available,payment_methods
+payment failed,payment_methods
+payment not working,payment_methods
+payment problem,payment_methods
+payment error,payment_methods
+my payment is pending,payment_methods
+payment deducted but order not placed,payment_methods
+money deducted but order failed,payment_methods
+can i pay after delivery,payment_methods
+can i use card on delivery,payment_methods
+invoice issue,payment_methods
+need invoice,payment_methods
+download invoice,payment_methods
+payment receipt,payment_methods
+
 shipping information,shipping_info
+delivery information,shipping_info
+shipping details,shipping_info
+delivery details,shipping_info
 delivery time,shipping_info
-shipping charges,shipping_info
+shipping time,shipping_info
 how long delivery takes,shipping_info
-how to add to cart,cart_checkout
-checkout problem,cart_checkout
-how to buy product,cart_checkout
-how to place order,cart_checkout
+how many days for delivery,shipping_info
+when will delivery arrive,shipping_info
+do you deliver,shipping_info
+do you deliver to my area,shipping_info
+delivery available in my city,shipping_info
+shipping available in my city,shipping_info
+delivery charges,shipping_info
+shipping charges,shipping_info
+delivery fee,shipping_info
+shipping fee,shipping_info
+how much delivery fee,shipping_info
+how much shipping cost,shipping_info
+free delivery available,shipping_info
+free shipping available,shipping_info
+express delivery available,shipping_info
+same day delivery available,shipping_info
+international shipping,shipping_info
+delivery delay,shipping_info
+why delivery is late,shipping_info
+where is delivery,shipping_info
+shipping problem,shipping_info
+delivery problem,shipping_info
+
 i cannot login,account_help
+cannot login,account_help
+login problem,account_help
+login issue,account_help
+how to login,account_help
+how can i login,account_help
 forgot password,account_help
+forget password,account_help
+reset password,account_help
+change password,account_help
+password problem,account_help
+wrong password,account_help
 create account,account_help
 register account,account_help
+how to register,account_help
+how to create account,account_help
+sign up,account_help
+signup problem,account_help
+account issue,account_help
+my account is blocked,account_help
+profile update,account_help
+update profile,account_help
+change email,account_help
+change phone number,account_help
+change address,account_help
+add shipping address,account_help
+edit shipping address,account_help
+delete account,account_help
+
 contact support,contact_support
-talk to admin,contact_support
 customer support,contact_support
+talk to admin,contact_support
+talk to support,contact_support
+talk to human,contact_support
 human support,contact_support
+need support,contact_support
+i need assistance,contact_support
+i need customer care,contact_support
+contact admin,contact_support
+contact seller,contact_support
+complaint,contact_support
+i have complaint,contact_support
+report issue,contact_support
+report problem,contact_support
+help center,contact_support
+support number,contact_support
+support email,contact_support
+how to contact you,contact_support
+how can i contact support,contact_support
+connect me to support,contact_support
+live chat support,contact_support
+admin chat,contact_support
+
 how to choose a good laptop,generic_shopping_advice
+how to choose a good phone,generic_shopping_advice
+how to choose a good mobile,generic_shopping_advice
 how to compare products,generic_shopping_advice
+how to compare mobile phones,generic_shopping_advice
+how to compare laptops,generic_shopping_advice
 what should i check before buying online,generic_shopping_advice
+what should i check before buying laptop,generic_shopping_advice
+what should i check before buying mobile,generic_shopping_advice
+how to know product quality,generic_shopping_advice
+how to select best product,generic_shopping_advice
+how to choose reliable product,generic_shopping_advice
+how to buy safe online,generic_shopping_advice
+how to find best deal,generic_shopping_advice
+how to check product reviews,generic_shopping_advice
+should i buy cheap product,generic_shopping_advice
+how to choose budget phone,generic_shopping_advice
+how to choose gaming laptop,generic_shopping_advice
+what is online shopping,generic_shopping_advice
+what is warranty,generic_shopping_advice
+what is product warranty,generic_shopping_advice
+what is return warranty,generic_shopping_advice
+which laptop is best,generic_shopping_advice
+which phone is best,generic_shopping_advice
+which product should i buy,generic_shopping_advice
+recommend me a product,generic_shopping_advice
+help me choose product,generic_shopping_advice
+
 bye,goodbye
-thank you,goodbye
-thanks,goodbye
+good bye,goodbye
 goodbye,goodbye
+thanks,goodbye
+thank you,goodbye
+thank you so much,goodbye
+thanks for help,goodbye
+thanks for your help,goodbye
+ok thanks,goodbye
+okay thanks,goodbye
+done thanks,goodbye
+that is all,goodbye
+no more questions,goodbye
+i am done,goodbye
+see you,goodbye
+see you later,goodbye
+talk later,goodbye
+okay bye,goodbye
+close chat,goodbye
+end chat,goodbye
+have a nice day,goodbye
+thank you assistant,goodbye
+thanks chatbot,goodbye

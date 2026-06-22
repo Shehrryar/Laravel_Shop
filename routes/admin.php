@@ -199,6 +199,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
         Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
         Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
+        Route::post('/chat/mark-as-read/{senderId}', [adminChatController::class, 'markAsRead'])->name('admin.chat.markAsRead');
+
+
         // added route for the webservices
         // route for admin side 
         Route::get('/webservice', [ApiRoutesController::class, 'index'])->name('webservice.index');

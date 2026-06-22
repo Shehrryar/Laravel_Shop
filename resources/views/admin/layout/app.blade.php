@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
+		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Laravel Shop :: Administrative Panel</title>
 		<!-- Google Font: Source Sans Pro -->
@@ -15,7 +16,7 @@
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/dropzone/min/dropzone.min.css')}}">
 		<link rel="stylesheet" href="{{asset('admin-assets/plugins/select2/css/select2.min.css')}}">
 		<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-		<meta name="csrf-token" content="{{csrf_token()}}">
+		 @yield('customcss')
 	</head>
 	<body class="hold-transition sidebar-mini">
 		<!-- Site wrapper -->
@@ -101,6 +102,7 @@
 			});
 		});
 </script>
+		@vite(['resources/js/bootstrap.js'])
 		@yield('customjs')
 	</body>
 </html>

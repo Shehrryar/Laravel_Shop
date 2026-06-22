@@ -14,8 +14,11 @@ const Search = ({ wishlist, latestproducts, translations }) => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [imageSearching, setImageSearching] = useState(false);
+    const [imageSearchMessage, setImageSearchMessage] = useState("");
 
     const cancelSource = useRef(null);
+    const imageInputRef = useRef(null);
 
     const { convertPrice, symbol } = UseCurrency();
 
@@ -109,6 +112,63 @@ const Search = ({ wishlist, latestproducts, translations }) => {
         resetTranscript();
         setResults(latestproducts);
     };
+    const openImagePicker = () => {
+        imageInputRef.current?.click();
+    };
+
+    const handleImageSearch = async (event) => {
+        const file = event.target.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+        if (!allowedTypes.includes(file.type)) {
+            alert("Please select JPG, PNG, or WEBP image.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        setImageSearching(true);
+        setImageSearchMessage("Searching similar products by image...");
+        setQuery("");
+
+        try {
+            const response = await axios.post(
+                route("front.search.image.products"),
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            const imageResults = response.data?.data || [];
+
+            setResults(imageResults);
+
+            if (imageResults.length === 0) {
+                setImageSearchMessage("No similar products found.");
+            } else {
+                setImageSearchMessage(`Found ${imageResults.length} similar products.`);
+            }
+        } catch (error) {
+            console.error("Image search error:", error);
+
+            const backendMessage =
+                error.response?.data?.message || "Image search failed. Please try another image.";
+
+            setImageSearchMessage(backendMessage);
+        } finally {
+            setImageSearching(false);
+            event.target.value = "";
+        }
+    };
 
     return (
         <>
@@ -119,101 +179,158 @@ const Search = ({ wishlist, latestproducts, translations }) => {
                 </Link>
 
                 <div
-                    className="search-bar"
                     style={{
                         display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
+                        flexDirection: "column",
+                        flex: 1,
                     }}
                 >
-                    <input
-                        className="form-control form-theme"
-                        placeholder="Search products by name, brand, SKU, or price..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        autoFocus
-                    />
-
-                    {/* Search Icon */}
-                    <i className="iconly-Search icli search-icon"></i>
-
-                    {/* Voice Search Button */}
-                    <button
-                        type="button"
-                        onClick={listening ? stopVoiceSearch : startVoiceSearch}
-                        title="Voice Search"
+                    <div
+                        className="search-bar"
                         style={{
-                            border: "1px solid #d9d9d9",
-                            width: "48px",
-                            height: "48px",
-                            borderRadius: "4px",
-                            background: listening ? "#dcdcdc" : "#efefef",
-                            cursor: "pointer",
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "center",
-                            flexShrink: 0,
-                            padding: 0,
+                            gap: "8px",
+                            width: "100%",
                         }}
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#222"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                            <line x1="12" y1="19" x2="12" y2="23"></line>
-                            <line x1="8" y1="23" x2="16" y2="23"></line>
-                        </svg>
-                    </button>
+                        <input
+                            className="form-control form-theme"
+                            placeholder="Search products by name, brand, SKU, or price..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            autoFocus
+                        />
 
-                    {/* Clear Button */}
-                    {query && (
+                        {/* Search Icon */}
+                        <i className="iconly-Search icli search-icon"></i>
+
+                        {/* Voice Search Button */}
                         <button
                             type="button"
-                            onClick={clearSearch}
-                            title="Clear Search"
+                            onClick={listening ? stopVoiceSearch : startVoiceSearch}
+                            title="Voice Search"
                             style={{
-                                border: "none",
-                                width: "34px",
-                                height: "34px",
-                                borderRadius: "50%",
-                                background: "#eee",
-                                color: "#333",
-                                fontSize: "18px",
+                                border: "1px solid #d9d9d9",
+                                width: "48px",
+                                height: "48px",
+                                borderRadius: "4px",
+                                background: listening ? "#dcdcdc" : "#efefef",
                                 cursor: "pointer",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
                                 flexShrink: 0,
+                                padding: 0,
                             }}
                         >
-                            ×
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="#222"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" y1="19" x2="12" y2="23"></line>
+                                <line x1="8" y1="23" x2="16" y2="23"></line>
+                            </svg>
                         </button>
+
+                                                <button
+                            type="button"
+                            onClick={openImagePicker}
+                            title="Search by Image"
+                            disabled={imageSearching}
+                            style={{
+                                border: "1px solid #d9d9d9",
+                                width: "48px",
+                                height: "48px",
+                                borderRadius: "4px",
+                                background: imageSearching ? "#dcdcdc" : "#efefef",
+                                cursor: imageSearching ? "not-allowed" : "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexShrink: 0,
+                                padding: 0,
+                                fontSize: "20px",
+                            }}
+                        >
+                            📷
+                        </button>
+
+                        <input
+                            ref={imageInputRef}
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            onChange={handleImageSearch}
+                            style={{ display: "none" }}
+                        />
+
+                        {/* Clear Button */}
+                        {query && (
+                            <button
+                                type="button"
+                                onClick={clearSearch}
+                                title="Clear Search"
+                                style={{
+                                    border: "none",
+                                    width: "34px",
+                                    height: "34px",
+                                    borderRadius: "50%",
+                                    background: "#eee",
+                                    color: "#333",
+                                    fontSize: "18px",
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    flexShrink: 0,
+                                }}
+                            >
+                                ×
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Listening Message */}
+                    {listening && (
+                        <p
+                            style={{
+                                color: "#dc3545",
+                                fontSize: "13px",
+                                marginTop: "6px",
+                                marginLeft: "4px",
+                                marginBottom: "0",
+                                fontWeight: "600",
+                                lineHeight: "1.3",
+                            }}
+                        >
+                            Listening... please speak product name
+                        </p>
+                    )}
+                    {imageSearchMessage && (
+                        <p
+                            style={{
+                                color: imageSearching ? "#0d6efd" : "#198754",
+                                fontSize: "13px",
+                                marginTop: "6px",
+                                marginLeft: "4px",
+                                marginBottom: "0",
+                                fontWeight: "600",
+                                lineHeight: "1.3",
+                            }}
+                        >
+                            {imageSearchMessage}
+                        </p>
                     )}
                 </div>
-
-                {/* Listening Message */}
-                {listening && (
-                    <p
-                        style={{
-                            color: "#dc3545",
-                            fontSize: "13px",
-                            marginTop: "8px",
-                            marginLeft: "45px",
-                            fontWeight: "600",
-                        }}
-                    >
-                        Listening... please speak product name
-                    </p>
-                )}
             </div>
 
             {/* Product Grid */}
