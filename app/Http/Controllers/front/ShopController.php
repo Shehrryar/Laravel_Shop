@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Size;
 use App\Models\Color;
 use Inertia\Inertia;
+use App\Models\User;
 class ShopController extends Controller
 {
     protected $discountService;
