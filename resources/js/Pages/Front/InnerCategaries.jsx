@@ -49,8 +49,8 @@ const InnerCategoryPage = () => {
                         <h4>t-shirts, tops, bottoms..</h4>
                     </div>
                     <div className="img-part">
-                        <img
-                            src="front-assets/images/category/women.png"
+                        <img src={category.image? `/upload/category/${category.image}`: "/admin-assets/img/default-150x150.png"}
+                                alt={category.name || "Category"}
                             className="img-fluid"
                             alt=""
                         />

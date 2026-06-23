@@ -42,6 +42,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/vendors/iconly.css') }}">
     <!-- Theme css -->
     <link rel="stylesheet" id="change-link" type="text/css" href="{{ asset('front-assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('front-assets/css/category-page-fix.css') }}">
+
 </head>
 
 <body>

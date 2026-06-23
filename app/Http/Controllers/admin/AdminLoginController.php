@@ -19,34 +19,51 @@ class AdminLoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        $validater = Validator::make(
-            $request->all(),
-            [
-                'email' => 'required | email',
-                'password' => 'required'
-            ]
-        );
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        if ($validater->passes()) {
-            if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+        $credentials = $request->only('email', 'password');
 
-                $admin = Auth::guard('admin')->user();
+        if (Auth::guard('admin')->attempt($credentials)) {
+            $request->session()->regenerate();
 
+            $user = Auth::guard('admin')->user();
 
-                if ($admin->role == 2) {
-                    return redirect()->route('dashboard.index');
-                } else {
-                    $admin = Auth::guard('admin')->logout();
-                    return redirect()->route('admin.login')->with('error', 'you are not authorized to access admin panal');
-                }
+            // Allow only main admin and vendor
+            if (!in_array((int) $user->role, [2, 3])) {
+                Auth::guard('admin')->logout();
 
-
-            } else {
-                return redirect()->route('admin.login')->with('error', 'Either Email/Password is incorrect');
+                return redirect()
+                    ->back()
+                    ->with('error', 'You are not authorized to access admin panel.');
             }
-        } else {
-            return redirect()->route('admin.login')->withErrors($validater)->withInput($request->only('email'));
+
+            // Vendor must be connected with one store
+            if ((int) $user->role === 3 && empty($user->store_id)) {
+                Auth::guard('admin')->logout();
+
+                return redirect()
+                    ->back()
+                    ->with('error', 'Vendor account is not connected with any store.');
+            }
+
+            // Check active account
+            if (isset($user->status) && (int) $user->status !== 1) {
+                Auth::guard('admin')->logout();
+
+                return redirect()
+                    ->back()
+                    ->with('error', 'Your account is inactive.');
+            }
+
+            return redirect()->route('admin.dashboard');
         }
+
+        return redirect()
+            ->back()
+            ->with('error', 'Invalid email or password.');
     }
 
 }

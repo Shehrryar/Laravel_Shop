@@ -4,7 +4,8 @@ import { Link, usePage } from "@inertiajs/react";
 import BottomNav from "./Components/BottomNav";
 
 const CategoryPage = () => {
-    const { translations, categories, cartquantity } = usePage().props;
+    const { translations, categories = [], cartquantity } = usePage().props;
+
     return (
         <>
             {/* Header */}
@@ -13,10 +14,11 @@ const CategoryPage = () => {
                     <Link href={route("front.home")}>
                         <i className="iconly-Arrow-Left icli"></i>
                         <div className="content">
-                            <h2>{translations["Categories"]}</h2>
+                            <h2>{translations["Categories"] || "Categories"}</h2>
                         </div>
                     </Link>
                 </div>
+
                 <div className="header-option">
                     <ul>
                         <li>
@@ -24,52 +26,51 @@ const CategoryPage = () => {
                                 <i className="iconly-Heart icli" />
                             </Link>
                         </li>
+
                         <li>
                             <Link href={route("front.cart")}>
                                 <i className="iconly-Buy icli" />
-                                <span>{cartquantity.totalQuantity}</span>
+                                <span>{cartquantity?.totalQuantity || 0}</span>
                             </Link>
                         </li>
                     </ul>
                 </div>
             </header>
+
             {/* Category Section */}
             <section className="category-listing px-15 top-space pt-0">
-                {/* Show categories dynamically */}
-                {categories && categories.length > 0 ? (
-                    categories.map((category) => (
-                        <Link
-                            key={category.id}
-                            href={route("product.getInnerCategory", {
-                                categoryid: category.id,
-                            })}
-                            className="category-wrap"
-                        >
-                            <div className="content-part">
-                                <h2>{category.translated_name}</h2>
-                            </div>
-                            <div className="img-part">
-                                <img
-                                    src={
-                                        category.image
-                                            ? `/upload/category/${category.image}` // if you store images in public/storage
-                                            : "front-assets/images/category/default.png" // fallback
-                                    }
-                                    className="img-fluid"
-                                    alt={category.name}
-                                />
-                            </div>
-                        </Link>
-                    ))
-                ) : (
-                    <p className="text-center py-3">{translations["No categories available."]}</p>
-                )}
+                {categories.map((category) => (
+                    <Link
+                        key={category.id}
+                        href={route("product.getInnerCategory", {
+                            categoryid: category.id,
+                        })}
+                        className="category-wrap"
+                    >
+                        <div className="content-part">
+                            <h2>{category.translated_name || category.name || category.title}</h2>
+                            <h4>View products</h4>
+                        </div>
+
+                        <div className="img-part">
+                            <img
+                                src={
+                                    category.image
+                                        ? `/upload/category/${category.image}`
+                                        : "/admin-assets/img/default-150x150.png"
+                                }
+                                alt={category.name || "Category"}
+                            />
+                        </div>
+                    </Link>
+                ))}
             </section>
-            {/* Panel Space */}
+
             <section className="panel-space"></section>
-            {/* Bottom Panel */}
+
             <BottomNav />
         </>
     );
 };
+
 export default CategoryPage;

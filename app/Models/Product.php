@@ -2,6 +2,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Store;
 // use App\Models\Traits\HasJsonTranslation;
 
 use App\Models\Discount;
@@ -30,16 +31,17 @@ class Product extends Model
         'track_qty',
         'qty',
         'status',
-        
+        'store_id',
+
     ];
 
-    
+
     // protected $casts = [
     //     'title_translations' => 'array',
     //     'description_translations' => 'array',
     // ];
     protected $appends = ['avg_rating', 'translated_title', 'translated_description'];
-    
+
 
 
 
@@ -113,4 +115,9 @@ class Product extends Model
         return $this->belongsTo(Brand::class, 'brands_id');
     }
 
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
 }

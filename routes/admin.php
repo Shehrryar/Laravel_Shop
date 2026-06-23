@@ -28,6 +28,7 @@ use App\Http\Controllers\admin\promotionController;
 use App\Http\Controllers\admin\onboardingController;
 use App\Http\Controllers\admin\ThemeController;
 use App\Http\Controllers\admin\HomepageLabelController;
+use App\Http\Controllers\admin\VendorPermissionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,7 +46,18 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
-    Route::group(['middleware' => 'admin.auth'], function () {
+    Route::group(['middleware' => ['admin.auth', 'admin.vendor']], function () {
+
+        Route::group(['middleware' => ['main.admin']], function () {
+            Route::get('/vendor-permissions', [VendorPermissionController::class, 'index'])
+                ->name('vendor.permissions.index');
+
+            Route::get('/vendor-permissions/{id}/edit', [VendorPermissionController::class, 'edit'])
+                ->name('vendor.permissions.edit');
+
+            Route::put('/vendor-permissions/{id}', [VendorPermissionController::class, 'update'])
+                ->name('vendor.permissions.update');
+        });
         Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
         //Localization for admin

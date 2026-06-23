@@ -16,37 +16,66 @@ use App\Models\SubSubCategory;
 use App\Models\ProductAttribute;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Store;
+use Illuminate\Support\Facades\Auth;
+
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::latest('id')->with('product_images');
+        $admin = Auth::guard('admin')->user();
+
+        $products = Product::latest('id')
+            ->with(['product_images', 'store']);
+
+        // Vendor can see only his own store products
+        if ($admin && (int) $admin->role === 3) {
+            $products = $products->where('store_id', $admin->store_id);
+        }
+
         if (!empty($request->get('keyword'))) {
             $products = $products->where('title', 'like', '%' . $request->get('keyword') . '%');
         }
+
         $products = $products->paginate(10);
+
         $data['product'] = $products;
+
         return view('admin.products.list', $data);
     }
     public function create()
     {
-        // $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
-        // $data['subcategories'] = $subcategories;
+        $admin = Auth::guard('admin')->user();
+
         $data = [];
+
         $categories = Category::orderBy('name', 'ASC')->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
         $stocks = Stock::orderBy('id', 'ASC')->get();
         $colors = Color::orderBy('name', 'ASC')->get();
         $sizes = Size::orderBy('name', 'ASC')->get();
+
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['stocks'] = $stocks;
         $data['colors'] = $colors;
         $data['sizes'] = $sizes;
+
+        // Only main admin needs store dropdown
+        $data['stores'] = collect();
+
+        if ($admin && (int) $admin->role === 2) {
+            $data['stores'] = Store::where('status', 1)
+                ->orderBy('store_name', 'ASC')
+                ->get();
+        }
+
         return view('admin.products.create', $data);
     }
     public function store(Request $request)
     {
+        $admin = Auth::guard('admin')->user();
+
         $values = [
             'title' => 'required',
             'slug' => 'required|unique:products',
@@ -55,9 +84,24 @@ class ProductController extends Controller
             'category' => 'required|numeric',
             'is_featured' => 'required|in:1,0',
         ];
+
+        if ($admin && (int) $admin->role === 2) {
+            $values['store_id'] = 'required|exists:stores,id';
+        }
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
             $product = new Product;
+
+            $admin = Auth::guard('admin')->user();
+
+            if ($admin && (int) $admin->role === 3) {
+                // Vendor product automatically belongs to vendor store
+                $product->store_id = $admin->store_id;
+            } else {
+                // Main admin selects store from dropdown
+                $product->store_id = $request->store_id;
+            }
+
             $product->title = $request->title;
             $product->slug = $request->slug;
             $product->price = $request->price;
@@ -109,6 +153,11 @@ class ProductController extends Controller
         if (empty($product)) {
             return redirect()->route('product.index')->with('error', 'product not found');
         }
+        $admin = Auth::guard('admin')->user();
+
+        if ($admin && (int) $admin->role === 3 && (int) $product->store_id !== (int) $admin->store_id) {
+            abort(403, 'You cannot edit another vendor product.');
+        }
         if ($product != null) {
             $related_products = explode(',', $product->related_products);
             $showrelatedproduct = Product::whereIn('id', $related_products)->get();
@@ -136,11 +185,31 @@ class ProductController extends Controller
         $data['subcategories'] = $subcategories;
         $data['susubcategories'] = $susubcategories;
         $data['showrelatedproduct'] = $showrelatedproduct;
+
+        $data['stores'] = collect();
+
+        if ($admin && (int) $admin->role === 2) {
+            $data['stores'] = Store::where('status', 1)
+                ->orderBy('store_name', 'ASC')
+                ->get();
+        }
         return view('admin.products.edit', $data);
     }
     public function update($id, Request $request)
     {
         $product = Product::find($id);
+        if (empty($product)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Product not found',
+            ]);
+        }
+
+        $admin = Auth::guard('admin')->user();
+
+        if ($admin && (int) $admin->role === 3 && (int) $product->store_id !== (int) $admin->store_id) {
+            abort(403, 'You cannot update another vendor product.');
+        }
         $values = [
             'title' => 'required',
             'slug' => 'required|unique:products,slug,' . $product->id . ',id',
@@ -149,12 +218,18 @@ class ProductController extends Controller
             'category' => 'required|numeric',
             'is_featured' => 'required|in:1,0',
         ];
+        if ($admin && (int) $admin->role === 2) {
+            $values['store_id'] = 'required|exists:stores,id';
+        }
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
             if (is_numeric($request->sub_category) && is_int((int) $request->sub_category)) {
                 $subcategory_id = (int) $request->sub_category;
             } else {
                 $subcategory_id = SubCategory::where('name', $request->sub_category)->value('id');
+            }
+            if ($admin && (int) $admin->role === 2) {
+                $product->store_id = $request->store_id;
             }
             $product->title = $request->title;
             $product->slug = $request->slug;
@@ -198,6 +273,12 @@ class ProductController extends Controller
                 'notfound' => true
             ]);
         }
+        $admin = Auth::guard('admin')->user();
+
+        if ($admin && (int) $admin->role === 3 && (int) $product->store_id !== (int) $admin->store_id) {
+            abort(403, 'You cannot delete another vendor product.');
+        }
+
         // Retrieve product images
         $productImages = ProductImage::where('product_id', $id)->get();
         if (!empty($productImages)) {
@@ -216,18 +297,32 @@ class ProductController extends Controller
     }
     public function getProducts(Request $request)
     {
+        $admin = Auth::guard('admin')->user();
+
         $tempproducts = [];
+
         if ($request->term != "") {
-            $products = Product::where('title', 'like', '%' . $request->term . '%')->get();
+            $products = Product::where('title', 'like', '%' . $request->term . '%');
+
+            if ($admin && (int) $admin->role === 3) {
+                $products = $products->where('store_id', $admin->store_id);
+            }
+
+            $products = $products->get();
+
             if ($products != null) {
                 foreach ($products as $keyprod) {
-                    $tempproducts[] = array('id' => $keyprod->id, 'text' => $keyprod->title);
+                    $tempproducts[] = [
+                        'id' => $keyprod->id,
+                        'text' => $keyprod->title,
+                    ];
                 }
             }
         }
+
         return response()->json([
             'tags' => $tempproducts,
-            'status' => 'true'
+            'status' => 'true',
         ]);
     }
     function importProducts(Request $request)
@@ -246,6 +341,7 @@ class ProductController extends Controller
         $filePath = $file->getRealPath();
         $fileData = array_map('str_getcsv', file($filePath));
         $header = array_shift($fileData);
+        $admin = Auth::guard('admin')->user();
         for ($i = 0; $i < count($fileData); $i++) {
             $data = array_combine($header, $fileData[$i]);
             $data = array_map(function ($value) {
@@ -256,6 +352,9 @@ class ProductController extends Controller
             Product::updateOrCreate(
                 ['title' => $data['title']],
                 [
+                    'store_id' => ($admin && (int) $admin->role === 3)
+                        ? $admin->store_id
+                        : ($data['store_id'] ?? null),
                     'slug' => $data['slug'],
                     'description' => $data['description'],
                     'short_description' => $data['short_description'],
