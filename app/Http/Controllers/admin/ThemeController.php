@@ -3,11 +3,14 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Theme;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 class ThemeController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $themes = Theme::latest('id');
+        $themes = $this->applyStoreScope($themes);
         if (!empty($request->get('keyword'))) {
             $themes = $themes->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
@@ -28,6 +31,7 @@ class ThemeController extends Controller
             'theme_isset_status' => 'required',
         ]);
         $theme = new Theme();
+        $this->assignStoreId($theme, $request);
         $theme->theme_name = $request->theme_name;
         $theme->theme_color_code = $request->theme_color_code;
         $theme->theme_status = $request->theme_status;
@@ -42,6 +46,7 @@ class ThemeController extends Controller
     public function edit($id)
     {
         $theme = Theme::findOrFail($id);
+        $this->ensureOwnStoreRecord($theme);
         return view('admin.themes.edit', compact('theme'));
     }
     public function update(Request $request, $id)
@@ -53,6 +58,7 @@ class ThemeController extends Controller
             'theme_isset_status' => 'required',
         ]);
         $theme = Theme::findOrFail($id);
+        $this->ensureOwnStoreRecord($theme);
         $theme->theme_name = $request->theme_name;
         $theme->theme_color_code = $request->theme_color_code;
         $theme->theme_status = $request->theme_status;
@@ -67,6 +73,7 @@ class ThemeController extends Controller
     public function destroy($id)
     {
         $theme = Theme::findOrFail($id);
+        $this->ensureOwnStoreRecord($theme);
         $theme->delete();
         session()->flash('success', 'Theme deleted successfully');
         return response()->json([

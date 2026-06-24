@@ -7,12 +7,14 @@ use App\Models\Country;
 use App\Models\Shipping;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 class ShippingController extends Controller
 {
+    use VendorStoreScope;
     public function create()
     {
         $countries = Country::get();
+        $countries = $this->applyStoreScope($countries);
         $data['countries'] = $countries;
         $shipping_charges = Shipping::select('shipping_charges.*', 'countries.name')->leftJoin('countries', 'countries.id', 'shipping_charges.country_id')->get();
         $data['shipping_charges'] = $shipping_charges;
@@ -36,6 +38,7 @@ class ShippingController extends Controller
             }
 
             $shipping = new Shipping();
+            $this ->applyStoreScope($shipping);
             $shipping->country_id = $request->country;
             $shipping->amount = $request->amount;
             $shipping->save();
@@ -56,6 +59,7 @@ class ShippingController extends Controller
         $countries = Country::get();
 
         $shipping_charge = Shipping::find($id);
+        $this->ensureOwnStoreRecord($shipping_charge);
 
         $data['countries'] = $countries;
         $data['shipping_charge'] = $shipping_charge;
@@ -73,6 +77,7 @@ class ShippingController extends Controller
         if ($validator->passes()) {
 
             $shipping = Shipping::find($id);
+            $this->ensureOwnStoreRecord($shipping);
             $shipping->country_id = $request->country;
             $shipping->amount = $request->amount;
             $shipping->save();
@@ -93,7 +98,7 @@ class ShippingController extends Controller
     public function destroy($id)
     {
         $shipping_del = Shipping::find($id);
-
+        $this->ensureOwnStoreRecord($shipping_del);
         if($shipping_del == null){
             session()->flash('error', 'Shipping Not Found');
             return response()->json([
@@ -101,9 +106,7 @@ class ShippingController extends Controller
             ]);
         }
         $shipping_del->delete();
-
         session()->flash('success', 'Shipping Deleted Successfully');
-
         return response()->json([
             'status' => true,
         ]);

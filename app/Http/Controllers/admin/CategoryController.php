@@ -7,11 +7,14 @@ use App\Models\Category;
 use Illuminate\Support\Facades\File;
 use Crypt;
 use App\Models\TempImage;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 class CategoryController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $categories = Category::latest();
+        $categories = $this->applyStoreScope($categories);
         if (!empty($request->get('keyword'))) {
             $categories = $categories->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
@@ -33,6 +36,7 @@ class CategoryController extends Controller
         );
         if ($validater->passes()) {
             $category = new Category();
+            $this->assignStoreId($category, $request);
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status;
@@ -47,10 +51,10 @@ class CategoryController extends Controller
                 $category->image = $new_image_name;
                 $category->save();
             }
-            $request->session()->flash("success", "Catagorie is added");
+            $request->session()->flash("success", "Category is added");
             return response()->json([
                 'status' => true,
-                'message' => 'Catagorie is added'
+                'message' => 'Category is added'
             ]);
         } else {
             return response()->json([
@@ -73,17 +77,19 @@ class CategoryController extends Controller
     public function edit($catid, Request $request)
     {
         $catid = Crypt::decrypt($catid);
-        $cat_edit = Category::find($catid);
-        return view('admin.category.edit', compact('cat_edit'));
+        $category = Category::find($catid);
+        $this->ensureOwnStoreRecord($category);
+        return view('admin.category.edit', compact('category'));
     }
     public function update($cat_id, Request $request)
     {
         $cat_edit = Category::find($cat_id);
+        $this->ensureOwnStoreRecord($cat_edit);
         if (empty($cat_edit))
             return response()->json([
                 'status' => false,
-                'not found' => ture,
-                'message' => 'Catagorie not found'
+                'not found' => true,
+                'message' => 'Category not found'
             ]);
         $validater = Validator::make(
             $request->all(),
@@ -111,10 +117,10 @@ class CategoryController extends Controller
                 /// delete old images heree
                 File::delete(public_path() . '/upload/category/' . $oldimage);
             }
-            $request->session()->flash("success", "Catagorie updated successfully");
+            $request->session()->flash("success", "Category updated successfully");
             return response()->json([
                 'status' => true,
-                'message' => 'Catagorie updated successfully'
+                'message' => 'Category updated successfully'
             ]);
         } else {
             return response()->json([
@@ -126,19 +132,20 @@ class CategoryController extends Controller
     public function destroy($cat_id, Request $request)
     {
         $cat_del = Category::find($cat_id);
+        $this->ensureOwnStoreRecord($cat_del);
         if (empty($cat_del)) {
-            $request->session()->flash("Error", "Catagorie not found");
+            $request->session()->flash("Error", "Category not found");
             return response()->json([
                 'status' => true,
-                'message' => 'Catagorie not found'
+                'message' => 'Category not found'
             ]);
         }
         File::delete(public_path() . '/upload/category/' . $cat_del->image);
         $cat_del->delete();
-        $request->session()->flash("success", "Catagorie deleted successfully");
+        $request->session()->flash("success", "Category deleted successfully");
         return response()->json([
             'status' => true,
-            'message' => 'Catagorie deleted successfully'
+            'message' => 'Category deleted successfully'
         ]);
     }
 }

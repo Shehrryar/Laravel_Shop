@@ -5,11 +5,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Size;
 use App\Models\Product;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 class SizeController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $size = Size::latest('id');
+        $size = $this->applyStoreScope($size);
+
         if (!empty($request->get('keyword'))) {
             $size = $size->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
@@ -49,6 +53,7 @@ class SizeController extends Controller
                 }
             }
             $size = new Size();
+            $this->assignStoreId($size, $request);
             $size->name = $request->name;
             $size->code = $request->code;
             $size->product_id = $request->product_id;
@@ -70,6 +75,7 @@ class SizeController extends Controller
     public function edit($id, Request $request)
     {
         $size = Size::find($id);
+        $this->ensureOwnStoreRecord($size);
         if (empty($size)) {
             $request->session()->flash('error', 'Record not found');
             return redirect()->route('sizess.index');
@@ -89,6 +95,7 @@ class SizeController extends Controller
                 'notfound' => true
             ]);
         }
+        $this->ensureOwnStoreRecord($size_edit);
         $validater = Validator::make(
             $request->all(),
             [
@@ -132,6 +139,7 @@ class SizeController extends Controller
     public function destroy($size_id, Request $request)
     {
         $size_del = Size::find($size_id);
+        $this->ensureOwnStoreRecord($size_del);
         if (empty($size_del)) {
             $request->session()->flash("Error", "Size not found");
             return response()->json([

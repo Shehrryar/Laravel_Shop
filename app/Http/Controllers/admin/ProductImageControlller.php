@@ -5,10 +5,13 @@ use Illuminate\Http\Request;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 class ProductImageControlller extends Controller
 {
     public function update(Request $request)
     {
+        $this->ensureOwnProduct($request->product_id);
         $image = $request->image;
         $ext = $image->getClientOriginalExtension();
         $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME); // Get the original name without extension
@@ -27,6 +30,7 @@ class ProductImageControlller extends Controller
     }
     public function destroy(Request $request)
     {
+        $this->ensureOwnProduct($request->product_id);
         $deletedRows = DB::table('product_images')->where('product_id', $request->product_id)
             ->where('image', $request->file_name)->delete();
         if (empty($deletedRows)) {
@@ -40,5 +44,19 @@ class ProductImageControlller extends Controller
             'status' => true,
             'message' => 'image deleted Sucessfully'
         ]);
+    }
+    private function ensureOwnProduct($productId)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        if ($admin && (int) $admin->role === 3) {
+            $exists = Product::where('id', $productId)
+                ->where('store_id', $admin->store_id)
+                ->exists();
+
+            if (!$exists) {
+                abort(403, 'You cannot manage images of another vendor product.');
+            }
+        }
     }
 }

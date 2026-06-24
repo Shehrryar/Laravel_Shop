@@ -9,9 +9,7 @@ use App\Models\Size;
 use App\Models\Color;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
-
-
-
+use Illuminate\Support\Facades\Auth;
 class ProductAttributeController extends Controller
 {
     public function index()
@@ -53,7 +51,7 @@ class ProductAttributeController extends Controller
             // Handle file upload
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
-                $imageName = $request->product_id.'_'.$image->getClientOriginalName().'_'.time().'.' . $image->getClientOriginalExtension(); // Create a unique filename
+                $imageName = $request->product_id . '_' . $image->getClientOriginalName() . '_' . time() . '.' . $image->getClientOriginalExtension(); // Create a unique filename
                 $image->move(public_path('/upload/products/Attributes_images/'), $imageName); // Move the image to the 'public/images' directory
                 $productattribute->image = $imageName; // Store the image name in the model
             }
@@ -67,6 +65,7 @@ class ProductAttributeController extends Controller
             $productattribute->size_id = $request->size; // Assuming a relationship exists
 
             // Save the product attribute
+            $this->ensureOwnProduct($request->product_id);
             $productattribute->save();
 
             // Flash success message
@@ -91,6 +90,7 @@ class ProductAttributeController extends Controller
     {
         $data = [];
         $ProductAttribute_edit = ProductAttribute::find($id);
+        $this->ensureOwnProduct($ProductAttribute_edit->product_id);
         $products = Product::orderBy('title', 'ASC')->get();
         $colors = Color::orderBy('name', 'ASC')->get();
         $sizes = Size::orderBy('name', 'ASC')->get();
@@ -116,7 +116,7 @@ class ProductAttributeController extends Controller
             // Handle file upload
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
-                $imageName = $request->product_id.'_'.$image->getClientOriginalName().'_'.time().'.' . $image->getClientOriginalExtension(); // Create a unique filename
+                $imageName = $request->product_id . '_' . $image->getClientOriginalName() . '_' . time() . '.' . $image->getClientOriginalExtension(); // Create a unique filename
                 $image->move(public_path('/upload/products/Attributes_images/'), $imageName); // Move the image to the 'public/images' directory
                 $productattribute_up->image = $imageName; // Store the image name in the model
             }
@@ -130,6 +130,7 @@ class ProductAttributeController extends Controller
             $productattribute_up->size_id = $request->size; // Assuming a relationship exists
 
             // Save the product attribute
+            $this->ensureOwnProduct($request->product_id);
             $productattribute_up->save();
 
             // Flash success message
@@ -148,11 +149,11 @@ class ProductAttributeController extends Controller
             ]);
         }
     }
-    
+
     public function destroy($id)
     {
         $ProductAttribute_del = ProductAttribute::find($id);
-
+        $this->ensureOwnProduct($ProductAttribute_del->product_id);
         if ($ProductAttribute_del == null) {
             session()->flash('error', 'Product Attribute is Not Found');
             return response()->json([
@@ -167,4 +168,22 @@ class ProductAttributeController extends Controller
             'status' => true,
         ]);
     }
+
+    private function ensureOwnProduct($productId)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        if ($admin && (int) $admin->role === 3) {
+            $exists = Product::where('id', $productId)
+                ->where('store_id', $admin->store_id)
+                ->exists();
+
+            if (!$exists) {
+                abort(403, 'You cannot manage attributes of another vendor product.');
+            }
+        }
+    }
+
+
+
 }

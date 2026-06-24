@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\SubCategory;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 
 class SubCategoryController extends Controller
 {
+    use VendorStoreScope;   
     public function index(Request $request){
         $subcategories = SubCategory::select('sub_categories.*','categories.name as catnami')->latest('sub_categories.id')->leftJoin('categories','categories.id','sub_categories.category_id');
-
+        $subcategories = $this->applyStoreScope($subcategories);
         if(!empty($request->get('keyword'))){
             $subcategories = $subcategories->where('sub_categories.name','like','%'.$request->get('keyword').'%');
         }
@@ -38,17 +40,18 @@ class SubCategoryController extends Controller
         if($validater->passes()){
 
             $subcategory = new SubCategory();
+            $this->assignStoreId($subcategory, $request);
             $subcategory->name = $request->name;
             $subcategory->slug = $request->slug;
             $subcategory->category_id = $request->category;
             $subcategory->status = $request->status;
             $subcategory->save();
 
-            $request->session()->flash("success","sub Catagorie is added");
+            $request->session()->flash("success","sub Category is added");
 
             return response()->json([
                 'status'=>true,
-                'message'=> 'sub Catagorie is added'
+                'message'=> 'sub Category is added'
             ]);
         }
         else{
@@ -63,8 +66,9 @@ class SubCategoryController extends Controller
     public function edit($id, Request $request){
 
         $subcat = SubCategory::find($id);
+        $this->ensureOwnStoreRecord($subcat);
         if(empty($subcat)){
-            $request->session()->flash("error","sub Catagorie not found");
+            $request->session()->flash("error","sub Category not found");
             return redirect()->route('subcategories.index');
         }
         $cat_data = Category::orderBy('name','ASC')->get();
@@ -76,6 +80,7 @@ class SubCategoryController extends Controller
     public function update($id , Request $request){
 
         $subcategory = SubCategory::find($id);
+        $this->ensureOwnStoreRecord($subcategory);
 
         if(empty($subcategory)){
             return response([
@@ -99,11 +104,11 @@ class SubCategoryController extends Controller
             $subcategory->status = $request->status;
             $subcategory->save();
 
-            $request->session()->flash("success","SubCatagory is updated successfully");
+            $request->session()->flash("success","SubCategory is updated successfully");
 
             return response()->json([
                 'status'=>true,
-                'message'=> 'subcategory is updated successfully'
+                'message'=> 'SubCategory is updated successfully'
             ]);
         }
         else{
@@ -117,9 +122,10 @@ class SubCategoryController extends Controller
 
     public function destroy($id, Request $request){
 
-                $scat_del = SubCategory::find($id);
+        $scat_del = SubCategory::find($id);
+        $this->ensureOwnStoreRecord($scat_del);
         if(empty($scat_del)){
-            $request->session()->flash("Error","SubCatagory not found");
+            $request->session()->flash("Error","SubCategory not found");
                    return response()->json([
             'status'=>true,
             'notfound'=>true,
@@ -128,11 +134,11 @@ class SubCategoryController extends Controller
         
         $scat_del->delete();
 
-        $request->session()->flash("success","SubCatagory deleted successfully");
+        $request->session()->flash("success","SubCategory deleted successfully");
 
         return response()->json([
             'status'=>true,
-            'message'=> 'SubCatagory deleted successfully'
+            'message'=> 'SubCategory deleted successfully'
         ]);
 
     }

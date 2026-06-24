@@ -6,15 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\DiscountCoupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 
 class DiscountCodeController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $DiscountCoupon = DiscountCoupon::latest();
-        if(!empty($request->get('keyword'))){
-            $DiscountCoupon = $DiscountCoupon->where('name','like','%'.$request->get('keyword').'%');
+
+        $DiscountCoupon = $this->applyStoreScope($DiscountCoupon);
+
+        if (!empty($request->get('keyword'))) {
+            $DiscountCoupon = $DiscountCoupon->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
         $DiscountCoupon = $DiscountCoupon->paginate(10);
         return view('admin.discount_coupon.list', compact('DiscountCoupon'));
@@ -34,6 +38,7 @@ class DiscountCodeController extends Controller
         if ($validator->passes()) {
 
             $discountcode = new DiscountCoupon();
+            $this->applyStoreScope($discountcode);
             $discountcode->code = $request->code;
             $discountcode->name = $request->name;
             $discountcode->description = $request->description;
@@ -66,8 +71,8 @@ class DiscountCodeController extends Controller
     public function edit(Request $request, $id)
     {
         $coupon_edit = DiscountCoupon::find($id);
-
-        if($coupon_edit == null){
+        $this->ensureOwnStoreRecord($coupon_edit);
+        if ($coupon_edit == null) {
             session()->flash('error', 'Record not found');
             return redirect()->route('coupon.index');
         }
@@ -76,8 +81,8 @@ class DiscountCodeController extends Controller
     public function update(Request $request, $id)
     {
         $discountcode = DiscountCoupon::find($id);
-
-        if($discountcode == null){
+        $this->ensureOwnStoreRecord($discountcode);
+        if ($discountcode == null) {
             session()->flash('error', 'Record not found');
             return response()->json([
                 'status' => true,
@@ -123,7 +128,8 @@ class DiscountCodeController extends Controller
     public function destroy(Request $request, $id)
     {
         $discountcode = DiscountCoupon::find($id);
-        if($discountcode == null){
+        $this->ensureOwnStoreRecord($discountcode);
+        if ($discountcode == null) {
             session()->flash('error', 'Record not found');
             return response()->json([
                 'status' => true,

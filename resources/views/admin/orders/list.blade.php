@@ -1,113 +1,122 @@
 @extends('admin.layout.app')
 
 @section('content')
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <div class="container-fluid my-2">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Orders</h1>
+    @php
+        $adminUser = Auth::guard('admin')->user();
+        $isVendor = $adminUser && (int) $adminUser->role === 3;
+    @endphp
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid my-2">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    @if ($isVendor)
+                        <h1>My Store Orders</h1>
+                    @else
+                        <h1>Orders</h1>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
-    <!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-    <!-- Default box -->
-    <div class="container-fluid">
-        @include('admin.message')
-        <div class="card">
-            <form action="" method="get">
+        <!-- /.container-fluid -->
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="container-fluid">
+            @include('admin.message')
+            <div class="card">
+                <form action="" method="get">
 
-                <div class="card-header">
+                    <div class="card-header">
 
-                    <div class="card-title">
-                        <button class="btn btn-default" type="button"
-                            onclick="window.location.href='{{route("order.index")}}'">Reset</button>
-                    </div>
+                        <div class="card-title">
+                            <button class="btn btn-default" type="button"
+                                onclick="window.location.href='{{ route('order.index') }}'">Reset</button>
+                        </div>
 
 
-                    <div class="card-tools">
-                        <div class="input-group input-group" style="width: 250px;">
-                            <input type="text" value='{{Request::get("keyword")}}' name="keyword"
-                                class="form-control float-right" placeholder="Search">
+                        <div class="card-tools">
+                            <div class="input-group input-group" style="width: 250px;">
+                                <input type="text" value='{{ Request::get('keyword') }}' name="keyword"
+                                    class="form-control float-right" placeholder="Search">
 
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
+                </form>
+
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th width="60">ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Date Purchased</th>
+                                <th>Show Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if ($orders->isNotEmpty())
+                                @foreach ($orders as $order)
+                                    <tr>
+                                        <td><a href="{{ route('order.detail', $order->id) }}">{{ $order->id }}</a></td>
+                                        <td>{{ $order->name }}</td>
+                                        <td>{{ $order->email }}</td>
+                                        <td>
+                                            @if ($order->status == 'pending')
+                                                <span class="badge bg-danger">Pending</span>
+                                            @elseif($order->status == 'shipped')
+                                                <span class="badge bg-info">Shipped</span>
+                                            @elseif($order->status == 'delivered')
+                                                <span class="badge bg-success">Delivered </span>
+                                            @else
+                                                <span class="badge bg-danger">Cancelled </span>
+                                            @endif
+                                        </td>
+                                        @if ($isVendor)
+                                            <td>{{ number_format($order->vendor_total ?? 0, 2) }}</td>
+                                        @else
+                                            <td>{{ number_format($order->grandtotal, 2) }}</td>
+                                        @endif
+                                        <td>
+                                            {{ \Carbon\Carbon::parse($order->created_at)->format('d M, Y') }}
+                                        </td>
+                                        <td><a href="{{ route('order.detail', $order->id) }}">
+                                                <i class="fas fa-eye text-primary"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="5">
+                                        Record Not Found
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
+                <div class="card-footer clearfix">
 
-            </form>
-
-            <div class="card-body table-responsive p-0">
-                <table class="table table-hover text-nowrap">
-                    <thead>
-                        <tr>
-                            <th width="60">ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Amount</th>
-                            <th>Date Purchased</th>
-                            <th>Show Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        @if($orders->isNotEmpty())
-
-                        @foreach($orders as $order)
-
-
-                        <tr>
-                            <td><a href="{{route('order.detail', $order->id)}}">{{ $order->id}}</a></td>
-                            <td>{{ $order->name}}</td>
-                            <td>{{ $order->email}}</td>
-                            <td>
-                                @if ($order->status == 'pending')
-                                <span class="badge bg-danger">Pending</span>
-                                @elseif($order->status == 'shipped')
-                                <span class="badge bg-info">Shipped</span>
-                                @elseif($order->status == 'delivered')
-                                <span class="badge bg-success">Delivered </span>
-                                @else
-                                <span class="badge bg-danger">Cancelled </span>
-                                @endif
-                            </td>
-                            <td>{{number_format($order->grandtotal, 2)}}</td>
-                            <td>
-                                {{\Carbon\Carbon::parse($order->created_at)->format('d M, Y')}}
-                            </td>
-                            <td><a href="{{route('order.detail', $order->id)}}">
-                                    <i class="fas fa-eye text-primary"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                        @else
-                        <tr>
-                            <td colspan="5">
-                                Record Not Found
-                            </td>
-                        </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-            <div class="card-footer clearfix">
-
-                {{ $orders->links() }}
+                    {{ $orders->links() }}
+                </div>
             </div>
         </div>
-    </div>
-    <!-- /.card -->
-</section>
+        <!-- /.card -->
+    </section>
 
 @endsection
 

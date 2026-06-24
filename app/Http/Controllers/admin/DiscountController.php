@@ -8,11 +8,14 @@ use App\Models\Category;
 use App\Models\Discount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 class DiscountController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $Discount = Discount::latest();
+        $this->applyStoreScope($Discount);
         if(!empty($request->get('keyword'))){
             $Discount = $Discount->where('name','like','%'.$request->get('keyword').'%');
         }
@@ -40,6 +43,7 @@ class DiscountController extends Controller
         ]);
         if ($validator->passes()) {
             $discount = new Discount();
+            $this->assignStoreId($discount, $request);
             $discount->name = $request->discount_name;
             $discount->type = $request->type;
             $discount->value = $request->discount_amount;
@@ -64,6 +68,7 @@ class DiscountController extends Controller
     public function edit(Request $request, $id)
     {
         $discount_edit = Discount::find($id);    
+        $this->ensureOwnStoreRecord($discount_edit);
         if ($discount_edit == null) {
             session()->flash('error', 'Record not found');
             return redirect()->route('coupon.index');
@@ -86,6 +91,7 @@ class DiscountController extends Controller
             'status' => 'required',
         ]);
         $discount_edit = Discount::find($id);    
+        $this->ensureOwnStoreRecord($discount_edit);
         if ($validator->passes()) {
             $discount_edit->name = $request->discount_name;
             $discount_edit->type = $request->type;
@@ -112,6 +118,7 @@ class DiscountController extends Controller
     public function destroy(Request $request, $id)
     {
         $discount = Discount::find($id);
+        $this->ensureOwnStoreRecord($discount);
         if($discount == null){
             session()->flash('error', 'Record not found');
             return response()->json([

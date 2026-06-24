@@ -58,7 +58,12 @@ Route::group(['prefix' => 'admin'], function () {
             Route::put('/vendor-permissions/{id}', [VendorPermissionController::class, 'update'])
                 ->name('vendor.permissions.update');
         });
-        Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
+
+
+        Route::group(['middleware' => ['vendor.permission:dashboard']], function () {
+            Route::get('/dashboard', [HomeController::class, 'dashborad'])->name('dashboard.index');
+        });
+
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
         //Localization for admin
         // category routes
@@ -99,25 +104,39 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/language/{languageupadate}', [LanguageController::class, 'update'])->name('language.update');
         Route::delete('/language/{langdelete}', [LanguageController::class, 'destroy'])->name('language.delete');
         // these routes are for the Products
-        Route::get('/product', [ProductController::class, 'index'])->name('product.index');
-        Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
-        Route::post('/product', [ProductController::class, 'store'])->name('product.store');
-        Route::get('/product_subcatageries', [ProductSubCategoryController::class, 'index'])->name('productsubcat.index');
-        Route::get('/product_subsubcatageries', [ProductSubCategoryController::class, 'subcategory'])->name('productsubcat.subcategory');
-        Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
-        Route::put('/product/{productupadate}', [ProductController::class, 'update'])->name('product.update');
-        Route::post('/product-images/update', [ProductImageControlller::class, 'update'])->name('product-images.update');
-        Route::delete('/product-images', [ProductImageControlller::class, 'destroy'])->name('product-images.destroy');
-        Route::delete('/product/{delete}', [ProductController::class, 'delete'])->name('product.delete');
-        Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
-        Route::post('/import-products', [ProductController::class, 'importProducts'])->name('product.importProducts');
-        // Prodcut attribute Routes
-        Route::get('/productattribute', [ProductAttributeController::class, 'index'])->name('productattribute.index');
-        Route::get('/productattribute/create', [ProductAttributeController::class, 'create'])->name('productattribute.create');
-        Route::post('/productattribute/store', [ProductAttributeController::class, 'store'])->name('productattribute.store');
-        Route::get('/productattribute/edit/{id}', [ProductAttributeController::class, 'edit'])->name('productattribute.edit');
-        Route::put('/productattribute/update/{id}', [ProductAttributeController::class, 'update'])->name('productattribute.update');
-        Route::delete('/productattribute/delete/{id}', [ProductAttributeController::class, 'destroy'])->name('productattribute.delete');
+
+
+
+
+        Route::group(['middleware' => ['vendor.permission:products']], function () {
+
+            Route::get('/product', [ProductController::class, 'index'])->name('product.index');
+            Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
+            Route::post('/product', [ProductController::class, 'store'])->name('product.store');
+            Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
+            Route::put('/product/{productupadate}', [ProductController::class, 'update'])->name('product.update');
+            Route::delete('/product/{delete}', [ProductController::class, 'delete'])->name('product.delete');
+
+            Route::get('/product_subcatageries', [ProductSubCategoryController::class, 'index'])->name('productsubcat.index');
+            Route::get('/product_subsubcatageries', [ProductSubCategoryController::class, 'subcategory'])->name('productsubcat.subcategory');
+
+            Route::post('/product-images/update', [ProductImageControlller::class, 'update'])->name('product-images.update');
+            Route::delete('/product-images', [ProductImageControlller::class, 'destroy'])->name('product-images.destroy');
+
+            Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
+            Route::post('/import-products', [ProductController::class, 'importProducts'])->name('product.importProducts');
+
+            Route::get('/productattribute', [ProductAttributeController::class, 'index'])->name('productattribute.index');
+            Route::get('/productattribute/create', [ProductAttributeController::class, 'create'])->name('productattribute.create');
+            Route::post('/productattribute/store', [ProductAttributeController::class, 'store'])->name('productattribute.store');
+            Route::get('/productattribute/edit/{id}', [ProductAttributeController::class, 'edit'])->name('productattribute.edit');
+            Route::put('/productattribute/update/{id}', [ProductAttributeController::class, 'update'])->name('productattribute.update');
+            Route::delete('/productattribute/delete/{id}', [ProductAttributeController::class, 'destroy'])->name('productattribute.delete');
+        });
+
+
+
+
         // shipping Routes
         Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
         Route::post('/shipping/store', [ShippingController::class, 'store'])->name('shipping.store');
@@ -125,11 +144,13 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/shipping/{id}', [ShippingController::class, 'update'])->name('shipping.update');
         Route::delete('/shipping/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
         // Order Routes
-        Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
-        Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
-        Route::get('/orderspdf/{order_id}', [OrderController::class, 'getOrderDetailPdf'])->name('order.detailPdf');
-        Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
-        Route::post('/orders/sent-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('order.sendinvoiceemail');
+        Route::group(['middleware' => ['vendor.permission:orders']], function () {
+            Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
+            Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
+            Route::get('/orderspdf/{order_id}', [OrderController::class, 'getOrderDetailPdf'])->name('order.detailPdf');
+            Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
+            Route::post('/orders/sent-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('order.sendinvoiceemail');
+        });
         // Route for the discont coupon
         Route::get('/coupons/index', [DiscountCodeController::class, 'index'])->name('coupon.index');
         Route::get('/coupons/create', [DiscountCodeController::class, 'create'])->name('coupon.create');

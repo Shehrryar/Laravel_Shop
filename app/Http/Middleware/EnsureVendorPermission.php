@@ -20,7 +20,6 @@ class EnsureVendorPermission
         if ((int) $user->role === 2) {
             return $next($request);
         }
-
         // Vendor permission checking
         if ((int) $user->role === 3) {
             $permissions = $user->permissions ?? [];

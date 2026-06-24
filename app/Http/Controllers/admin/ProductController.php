@@ -49,11 +49,27 @@ class ProductController extends Controller
 
         $data = [];
 
-        $categories = Category::orderBy('name', 'ASC')->get();
-        $brands = Brand::orderBy('name', 'ASC')->get();
-        $stocks = Stock::orderBy('id', 'ASC')->get();
-        $colors = Color::orderBy('name', 'ASC')->get();
-        $sizes = Size::orderBy('name', 'ASC')->get();
+        $admin = Auth::guard('admin')->user();
+
+        $categories = Category::orderBy('name', 'ASC');
+        $brands = Brand::orderBy('name', 'ASC');
+        $stocks = Stock::orderBy('id', 'ASC');
+        $colors = Color::orderBy('name', 'ASC');
+        $sizes = Size::orderBy('name', 'ASC');
+
+        if ($admin && (int) $admin->role === 3) {
+            $categories->where('store_id', $admin->store_id);
+            $brands->where('store_id', $admin->store_id);
+            $stocks->where('store_id', $admin->store_id);
+            $colors->where('store_id', $admin->store_id);
+            $sizes->where('store_id', $admin->store_id);
+        }
+
+        $categories = $categories->get();
+        $brands = $brands->get();
+        $stocks = $stocks->get();
+        $colors = $colors->get();
+        $sizes = $sizes->get();
 
         $data['categories'] = $categories;
         $data['brands'] = $brands;
@@ -90,6 +106,9 @@ class ProductController extends Controller
         }
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
+            $this->ensureVendorHasStore();
+            $this->validateVendorProductReferences($request);
+
             $product = new Product;
 
             $admin = Auth::guard('admin')->user();
@@ -147,7 +166,7 @@ class ProductController extends Controller
             ]);
         }
     }
-    public function edit($id, Request $request)
+    public function edit($id)
     {
         $product = Product::find($id);
         if (empty($product)) {
@@ -160,7 +179,11 @@ class ProductController extends Controller
         }
         if ($product != null) {
             $related_products = explode(',', $product->related_products);
-            $showrelatedproduct = Product::whereIn('id', $related_products)->get();
+            $showrelatedproduct = Product::whereIn('id', $related_products);
+            if ($admin && (int) $admin->role === 3) {
+                $showrelatedproduct->where('store_id', $admin->store_id);
+            }
+            $showrelatedproduct = $showrelatedproduct->get();
         }
         $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
         $susubcategories = SubSubCategory::where('subcategory_id', $product->sub_category_id)->get();
@@ -210,6 +233,7 @@ class ProductController extends Controller
         if ($admin && (int) $admin->role === 3 && (int) $product->store_id !== (int) $admin->store_id) {
             abort(403, 'You cannot update another vendor product.');
         }
+        $this->validateVendorProductReferences($request);
         $values = [
             'title' => 'required',
             'slug' => 'required|unique:products,slug,' . $product->id . ',id',
@@ -349,12 +373,17 @@ class ProductController extends Controller
             }, $data);
             $data['is_featured'] = $data['is_featured'] === 'Yes' ? true : false;
             $data['status'] = $data['status'] === '1' ? true : false;
+            $storeId = ($admin && (int) $admin->role === 3)
+                ? $admin->store_id
+                : ($data['store_id'] ?? null);
+
             Product::updateOrCreate(
-                ['title' => $data['title']],
                 [
-                    'store_id' => ($admin && (int) $admin->role === 3)
-                        ? $admin->store_id
-                        : ($data['store_id'] ?? null),
+                    'title' => $data['title'],
+                    'store_id' => $storeId,
+                ],
+                [
+                    'store_id' => $storeId,
                     'slug' => $data['slug'],
                     'description' => $data['description'],
                     'short_description' => $data['short_description'],
@@ -379,5 +408,93 @@ class ProductController extends Controller
             'status' => true,
             'message' => 'Prodcuts are import successfully'
         ]);
+    }
+    private function adminUser()
+    {
+        return Auth::guard('admin')->user();
+    }
+
+    private function isVendor(): bool
+    {
+        $admin = $this->adminUser();
+
+        return $admin && (int) $admin->role === 3;
+    }
+
+    private function vendorStoreId()
+    {
+        return $this->adminUser()?->store_id;
+    }
+
+    private function ensureVendorHasStore()
+    {
+        if ($this->isVendor() && empty($this->vendorStoreId())) {
+            abort(403, 'Vendor account is not connected with any store.');
+        }
+    }
+
+    private function ensureOwnProduct(Product $product)
+    {
+        if ($this->isVendor() && (int) $product->store_id !== (int) $this->vendorStoreId()) {
+            abort(403, 'You cannot manage another vendor product.');
+        }
+    }
+
+    private function scopeVendorQuery($query)
+    {
+        if ($this->isVendor()) {
+            return $query->where('store_id', $this->vendorStoreId());
+        }
+
+        return $query;
+    }
+
+    private function validateVendorProductReferences(Request $request)
+    {
+        if (!$this->isVendor()) {
+            return;
+        }
+
+        $storeId = $this->vendorStoreId();
+
+        if ($request->filled('category')) {
+            $exists = Category::where('id', $request->category)
+                ->where('store_id', $storeId)
+                ->exists();
+
+            if (!$exists) {
+                abort(403, 'You cannot use another vendor category.');
+            }
+        }
+
+        if ($request->filled('sub_category')) {
+            $exists = SubCategory::where('id', $request->sub_category)
+                ->where('store_id', $storeId)
+                ->exists();
+
+            if (!$exists) {
+                abort(403, 'You cannot use another vendor sub category.');
+            }
+        }
+
+        if ($request->filled('subsub_category')) {
+            $exists = SubSubCategory::where('id', $request->subsub_category)
+                ->where('store_id', $storeId)
+                ->exists();
+
+            if (!$exists) {
+                abort(403, 'You cannot use another vendor level 3 sub category.');
+            }
+        }
+
+        if ($request->filled('brand')) {
+            $exists = Brand::where('id', $request->brand)
+                ->where('store_id', $storeId)
+                ->exists();
+
+            if (!$exists) {
+                abort(403, 'You cannot use another vendor brand.');
+            }
+        }
     }
 }

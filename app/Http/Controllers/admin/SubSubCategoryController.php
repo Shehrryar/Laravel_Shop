@@ -6,8 +6,11 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Support\Facades\Validator;
 use App\Models\SubSubCategory;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
+
 class SubSubCategoryController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $subsubcategories = SubSubCategory::select(
@@ -18,6 +21,7 @@ class SubSubCategoryController extends Controller
             ->leftJoin('sub_categories', 'sub_categories.id', '=', 'sub_sub_categories.subcategory_id')
             ->leftJoin('categories', 'categories.id', '=', 'sub_categories.category_id')
             ->latest('sub_sub_categories.id')->paginate(10);
+        $subsubcategories = $this->applyStoreScope($subsubcategories);
         if (!empty($request->get('keyword'))) {
             $subsubcategories = $subsubcategories->where('sub_categories.name', 'like', '%' . $request->get('keyword') . '%');
         }
@@ -49,6 +53,7 @@ class SubSubCategoryController extends Controller
         ]);
         if ($validater->passes()) {
             $subsubcategory = new SubSubCategory();
+            $this->assignStoreId($subsubcategory, $request);
             $subsubcategory->name = $request->name;
             $subsubcategory->slug = $request->slug;
             $subsubcategory->category_id = $request->category;
@@ -71,6 +76,7 @@ class SubSubCategoryController extends Controller
     public function edit($id, Request $request)
     {
         $subsubcat = SubSubCategory::find($id);
+        $this->ensureOwnStoreRecord($subsubcat);
         if (empty($subsubcat)) {
             $request->session()->flash("error", "level 3 Subcategory is not found");
             return redirect()->route('subsubcategories.index');
@@ -87,7 +93,7 @@ class SubSubCategoryController extends Controller
     {
 
         $subsubcategory = SubSubCategory::find($id);
-
+        $this->ensureOwnStoreRecord($subsubcategory);
         if (empty($subsubcategory)) {
             return response([
                 'status' => false,
@@ -131,6 +137,7 @@ class SubSubCategoryController extends Controller
     {
 
         $scat_del = SubSubCategory::find($id);
+        $this->ensureOwnStoreRecord($scat_del);
         if (empty($scat_del)) {
             $request->session()->flash("Error", "Level 3 SubCatagory not found");
             return response()->json([

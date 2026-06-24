@@ -6,11 +6,14 @@ use Illuminate\Http\Request;
 use App\Models\Color;
 use App\Models\Size;
 use App\Models\Product;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 class ColorController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $colors = Color::latest('id');
+        $colors = $this->applyStoreScope($colors);
         if (!empty($request->get('keyword'))) {
             $colors = $colors->where('name', 'like', '%' . $request->get('keyword') . '%');
         }
@@ -54,6 +57,7 @@ class ColorController extends Controller
             }
             $product_id = Size::where('id', $request->size_id)->value('product_id');
             $colors = new Color();
+            $this->assignStoreId($colors, $request);
             $colors->name = $request->name;
             $colors->value = $request->value;
             $colors->product_id = $product_id;
@@ -78,6 +82,7 @@ class ColorController extends Controller
         $products = Product::orderBy('title', 'ASC')->get();
         $Size = Size::orderBy('name', 'ASC')->get();
         $color = Color::find($id);
+        $this->ensureOwnStoreRecord($color);
         if (empty($color)) {
             $request->session()->flash('error', 'Record not found');
             return redirect()->route('colorss.index');
@@ -91,6 +96,7 @@ class ColorController extends Controller
     {
 
         $color_edit = Color::find($id);
+        $this->ensureOwnStoreRecord($color_edit);
         if (empty($color_edit)) {
             $request->session()->flash('error', 'Record not found');
             return response()->json([
@@ -144,6 +150,7 @@ class ColorController extends Controller
     public function destroy($color_id, Request $request)
     {
         $color_del = Color::find($color_id);
+        $this->ensureOwnStoreRecord($color_del);
         if (empty($color_del)) {
             $request->session()->flash("Error", "Color not found");
             return response()->json([

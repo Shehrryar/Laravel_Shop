@@ -8,13 +8,15 @@ use App\Models\Size;
 use App\Models\Color;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 
 class StockManagementController extends Controller
 {
+    use VendorStoreScope;
     public function index(Request $request)
     {
         $stock = Stock::latest()->with('product');
+        $stock = $this->applyStoreScope($stock);
         if(!empty($request->get('keyword'))){
             $stock = $stock->where('product_id','like','%'.$request->get('keyword').'%');
         }
@@ -74,6 +76,7 @@ class StockManagementController extends Controller
     {
 
         $stock_edit = Stock::find($id);    
+        $this->ensureOwnStoreRecord($stock_edit);
         $products = Product::orderBy('title', 'ASC')->get();
         $colors = Color::orderBy('name', 'ASC')->get();
         $sizes = Size::orderBy('name', 'ASC')->get();
@@ -96,6 +99,7 @@ class StockManagementController extends Controller
 
         if ($validator->passes()) {
             $stock_update = Stock::find($id);
+            $this->ensureOwnStoreRecord($stock_update);
             $stock_update->quantity = $request->quantity;
             $stock_update->product_id = implode(',' , $request->select_product);
             $stock_update->color_id = $request->color_id;
@@ -121,6 +125,7 @@ class StockManagementController extends Controller
     public function destroy(Request $request, $id)
     {
         $stock = Stock::find($id);
+        $this->ensureOwnStoreRecord($stock);
         if($stock == null){
             session()->flash('error', 'Record not found');
             return response()->json([
