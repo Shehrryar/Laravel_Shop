@@ -145,12 +145,23 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
         Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
         // user routes
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+
+        Route::group(['middleware' => ['vendor.permission:users']], function () {
+            Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        });
+
+
+
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{userupadate}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
+
+
+
+
         // add route for the color
         Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
         Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');

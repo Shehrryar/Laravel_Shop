@@ -58,7 +58,7 @@ class AdminLoginController extends Controller
                     ->with('error', 'Your account is inactive.');
             }
 
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('dashboard.index');
         }
 
         return redirect()

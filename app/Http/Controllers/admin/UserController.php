@@ -5,6 +5,8 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,12 +15,53 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $user = User::latest();
-        if (!empty($request->get('keyword'))) {
-            $user = $user->where('name', 'like', '%' . $request->get('keyword') . '%');
+        $admin = Auth::guard('admin')->user();
+
+        // Super Admin: see all users
+        if ($admin && (int) $admin->role === 2) {
+            $users = User::latest();
+
+            if (!empty($request->get('keyword'))) {
+                $users = $users->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->get('keyword') . '%')
+                        ->orWhere('email', 'like', '%' . $request->get('keyword') . '%')
+                        ->orWhere('phone', 'like', '%' . $request->get('keyword') . '%');
+                });
+            }
+
+            $users = $users->paginate(10);
+
+            return view('admin.users.list', compact('users'));
         }
-        $user = $user->paginate(10);
-        return view('admin.users.list', ['users' => $user]);
+
+        // Vendor: see only customers who ordered products from vendor store
+        if ($admin && (int) $admin->role === 3) {
+            $customerIds = DB::table('orders')
+                ->join('orders_items', 'orders.id', '=', 'orders_items.order_id')
+                ->join('products', 'orders_items.product_id', '=', 'products.id')
+                ->where('products.store_id', $admin->store_id)
+                ->whereNotNull('orders.user_id')
+                ->distinct()
+                ->pluck('orders.user_id');
+
+            $users = User::whereIn('id', $customerIds)
+                ->where('role', 1)
+                ->latest();
+
+            if (!empty($request->get('keyword'))) {
+                $users = $users->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->get('keyword') . '%')
+                        ->orWhere('email', 'like', '%' . $request->get('keyword') . '%')
+                        ->orWhere('phone', 'like', '%' . $request->get('keyword') . '%');
+                });
+            }
+
+            $users = $users->paginate(10);
+
+            return view('admin.users.list', compact('users'));
+        }
+
+        abort(403, 'Unauthorized access.');
     }
 
     public function create(Request $request)
@@ -63,7 +106,8 @@ class UserController extends Controller
         }
     }
 
-    public function edit($userid, Request $request){
+    public function edit($userid, Request $request)
+    {
         $user_edit = User::find($userid);
         return view('admin.users.edit', compact('user_edit'));
     }
@@ -71,18 +115,18 @@ class UserController extends Controller
     public function update(Request $request, $user_id)
     {
         $user_edit = User::find($user_id);
-        if(empty($user_edit))
-        return response()->json([
-             'status'=>false,
-             'not found'=>ture,
-             'message'=> 'User not found'
-     ]);
+        if (empty($user_edit))
+            return response()->json([
+                'status' => false,
+                'not found' => ture,
+                'message' => 'User not found'
+            ]);
 
         $validater = Validator::make(
             $request->all(),
             [
                 'name' => 'required',
-                'email' => 'required|unique:users,email,'.$user_edit->id.',id',
+                'email' => 'required|unique:users,email,' . $user_edit->id . ',id',
                 'phone' => 'required',
                 'password' => 'required',
             ]

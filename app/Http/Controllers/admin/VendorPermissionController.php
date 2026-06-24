@@ -43,7 +43,7 @@ class VendorPermissionController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('admin.vendor-permissions.index', compact('vendors'));
+        return view('admin.vendorpermissions.index', compact('vendors'));
     }
 
     public function edit($id)
@@ -54,7 +54,7 @@ class VendorPermissionController extends Controller
 
         $availablePermissions = $this->availablePermissions();
 
-        return view('admin.vendor-permissions.edit', compact('vendor', 'availablePermissions'));
+        return view('admin.vendorpermissions.edit', compact('vendor', 'availablePermissions'));
     }
 
     public function update(Request $request, $id)

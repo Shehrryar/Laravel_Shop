@@ -14,10 +14,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
-        <img src="{{ asset('admin-assets/img/AdminLTELogo.png') }}"
-            alt="AdminLTE Logo"
-            class="brand-image img-circle elevation-3"
-            style="opacity: .8">
+        <img src="{{ asset('admin-assets/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
+            class="brand-image img-circle elevation-3" style="opacity: .8">
 
         <span class="brand-text font-weight-light">LARAVEL SHOP</span>
     </a>
@@ -25,11 +23,11 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
 
                 {{-- ================= MAIN ADMIN MENU ================= --}}
                 @if ($isMainAdmin)
-
                     <li class="nav-item">
                         <a href="{{ route('dashboard.index') }}" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -85,7 +83,8 @@
                             </li>
 
                             <li class="nav-item">
-                                <a style="margin-left: 28px;" href="{{ route('productattribute.index') }}" class="nav-link">
+                                <a style="margin-left: 28px;" href="{{ route('productattribute.index') }}"
+                                    class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Product Attribute</p>
                                 </a>
@@ -221,7 +220,8 @@
 
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a style="margin-left: 28px;" href="{{ route('webservice.index') }}" class="nav-link">
+                                <a style="margin-left: 28px;" href="{{ route('webservice.index') }}"
+                                    class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>AdminSide APIS</p>
                                 </a>
@@ -249,7 +249,6 @@
                             <p>Homepage Label</p>
                         </a>
                     </li>
-
                 @endif
 
 
@@ -315,14 +314,16 @@
 
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a style="margin-left: 28px;" href="{{ route('product.index') }}" class="nav-link">
+                                    <a style="margin-left: 28px;" href="{{ route('product.index') }}"
+                                        class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Product List</p>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a style="margin-left: 28px;" href="{{ route('productattribute.index') }}" class="nav-link">
+                                    <a style="margin-left: 28px;" href="{{ route('productattribute.index') }}"
+                                        class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Product Attribute</p>
                                     </a>
@@ -397,14 +398,16 @@
 
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a style="margin-left: 28px;" href="{{ route('discount.index') }}" class="nav-link">
+                                    <a style="margin-left: 28px;" href="{{ route('discount.index') }}"
+                                        class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Discount</p>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a style="margin-left: 28px;" href="{{ route('coupon.index') }}" class="nav-link">
+                                    <a style="margin-left: 28px;" href="{{ route('coupon.index') }}"
+                                        class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Discount by Coupon</p>
                                     </a>
@@ -412,12 +415,12 @@
                             </ul>
                         </li>
                     @endif
-
+                    
                     @if ($canAccess('users'))
                         <li class="nav-item">
                             <a href="{{ route('users.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-users"></i>
-                                <p>Users</p>
+                                <p>My Customers</p>
                             </a>
                         </li>
                     @endif
@@ -479,14 +482,16 @@
 
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a style="margin-left: 28px;" href="{{ route('webservice.index') }}" class="nav-link">
+                                    <a style="margin-left: 28px;" href="{{ route('webservice.index') }}"
+                                        class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>AdminSide APIS</p>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a style="margin-left: 28px;" href="{{ route('Frontapi.index') }}" class="nav-link">
+                                    <a style="margin-left: 28px;" href="{{ route('Frontapi.index') }}"
+                                        class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>FrontSide APIS</p>
                                     </a>
