@@ -10,10 +10,12 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
+        'store_id',
         'name',
         'en_name_translation',
         'ur_name_translation',
         'slug',
+        'image',
         'status',
     ];
 

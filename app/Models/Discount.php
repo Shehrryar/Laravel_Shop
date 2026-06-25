@@ -8,7 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Discount extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'value', 'type', 'product_ids', 'category_ids'];
+    protected $fillable = [
+        'store_id',
+        'name',
+        'value',
+        'type',
+        'product_ids',
+        'category_ids',
+        'status',
+        'start_at',
+        'expires_at',
+    ];
 
     protected $casts = [
         'product_ids' => 'array',
@@ -33,4 +43,9 @@ class Discount extends Model
     {
         return in_array($categoryId, $this->category_ids ?? []);
     }
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
+
 }

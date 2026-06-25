@@ -415,7 +415,7 @@
                             </ul>
                         </li>
                     @endif
-                    
+
                     @if ($canAccess('users'))
                         <li class="nav-item">
                             <a href="{{ route('users.index') }}" class="nav-link">
@@ -429,7 +429,7 @@
                         <li class="nav-item">
                             <a href="{{ route('currency.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-dollar-sign"></i>
-                                <p>Currencies</p>
+                                <p>View Currencies</p>
                             </a>
                         </li>
                     @endif
@@ -456,7 +456,7 @@
                         <li class="nav-item">
                             <a href="{{ route('chat.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-comments"></i>
-                                <p>Chat</p>
+                                <p>My Customer Chat</p>
                             </a>
                         </li>
                     @endif

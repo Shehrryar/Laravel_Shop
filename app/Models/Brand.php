@@ -14,7 +14,9 @@ class Brand extends Model
         'en_name_translation',
         'ur_name_translation',
         'slug',
-        'status'
+        'status',
+        'store_id',
+        'image',
     ];
 
     protected $appends = ['translated_name'];
@@ -34,4 +36,11 @@ class Brand extends Model
             default => $this->name,
         };
     }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
+
+
 }

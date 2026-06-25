@@ -45,8 +45,6 @@ class ProductController extends Controller
     }
     public function create()
     {
-        $admin = Auth::guard('admin')->user();
-
         $data = [];
 
         $admin = Auth::guard('admin')->user();
@@ -185,11 +183,30 @@ class ProductController extends Controller
             }
             $showrelatedproduct = $showrelatedproduct->get();
         }
-        $subcategories = SubCategory::where('category_id', $product->categories_id)->get();
-        $susubcategories = SubSubCategory::where('subcategory_id', $product->sub_category_id)->get();
-        $categories = Category::orderBy('name', 'ASC')->get();
-        $stocks = Stock::orderBy('id', 'ASC')->get();
-        $brands = Brand::orderBy('name', 'ASC')->get();
+
+
+        $subcategories = SubCategory::where('category_id', $product->categories_id);
+        $susubcategories = SubSubCategory::where('subcategory_id', $product->sub_category_id);
+        $categories = Category::orderBy('name', 'ASC');
+        $stocks = Stock::orderBy('id', 'ASC');
+        $brands = Brand::orderBy('name', 'ASC');
+
+        if ($admin && (int) $admin->role === 3) {
+            $subcategories->where('store_id', $admin->store_id);
+            $susubcategories->where('store_id', $admin->store_id);
+            $categories->where('store_id', $admin->store_id);
+            $stocks->where('store_id', $admin->store_id);
+            $brands->where('store_id', $admin->store_id);
+        }
+
+        $subcategories = $subcategories->get();
+        $susubcategories = $susubcategories->get();
+        $categories = $categories->get();
+        $stocks = $stocks->get();
+        $brands = $brands->get();
+
+
+
         $productimage = ProductImage::where('product_id', $product->id)->get();
         $productImages = $productimage->map(function ($image) {
             $filePath = "upload/products/{$image->image}"; // Path relative to the 'public' folder
@@ -233,7 +250,6 @@ class ProductController extends Controller
         if ($admin && (int) $admin->role === 3 && (int) $product->store_id !== (int) $admin->store_id) {
             abort(403, 'You cannot update another vendor product.');
         }
-        $this->validateVendorProductReferences($request);
         $values = [
             'title' => 'required',
             'slug' => 'required|unique:products,slug,' . $product->id . ',id',
@@ -247,6 +263,7 @@ class ProductController extends Controller
         }
         $validator = Validator::make($request->all(), $values);
         if ($validator->passes()) {
+            $this->validateVendorProductReferences($request);
             if (is_numeric($request->sub_category) && is_int((int) $request->sub_category)) {
                 $subcategory_id = (int) $request->sub_category;
             } else {
@@ -377,6 +394,35 @@ class ProductController extends Controller
                 ? $admin->store_id
                 : ($data['store_id'] ?? null);
 
+            if ($admin && (int) $admin->role === 3) {
+                $categoryExists = Category::where('id', $data['categories_id'] ?? null)
+                    ->where('store_id', $storeId)
+                    ->exists();
+
+                if (!$categoryExists) {
+                    continue;
+                }
+
+                if (!empty($data['sub_category_id'])) {
+                    $subCategoryExists = SubCategory::where('id', $data['sub_category_id'])
+                        ->where('store_id', $storeId)
+                        ->exists();
+
+                    if (!$subCategoryExists) {
+                        continue;
+                    }
+                }
+
+                if (!empty($data['brands_id'])) {
+                    $brandExists = Brand::where('id', $data['brands_id'])
+                        ->where('store_id', $storeId)
+                        ->exists();
+
+                    if (!$brandExists) {
+                        continue;
+                    }
+                }
+            }
             Product::updateOrCreate(
                 [
                     'title' => $data['title'],
@@ -388,19 +434,15 @@ class ProductController extends Controller
                     'description' => $data['description'],
                     'short_description' => $data['short_description'],
                     'shipping_returns' => $data['shipping_returns'],
-                    'related_products' => $data['related_products'],
-                    'saling_price' => $data['price'],
-                    // 'compare_price' => $data['compare_price'],
+                    'related_products' => $data['related_products'] ?? '',
+                    'price' => $data['price'],
                     'categories_id' => $data['categories_id'],
                     'sub_category_id' => $data['sub_category_id'],
-                    // 'sub_sub_category_id' => $data['sub_sub_category_id'],
                     'brands_id' => $data['brands_id'],
-                    'is_featured' => $data['is_featured'] === 'Yes' ? true : false,
+                    'is_featured' => $data['is_featured'],
                     'sku' => $data['sku'],
                     'barcode' => $data['barcode'],
-                    // 'track_qty' => $data['track_qty'] === 'Yes' ? true : false,
-                    // 'qty' => $data['qty'],
-                    'status' => $data['status'] === '1' ? true : false,
+                    'status' => $data['status'],
                 ]
             );
         }
@@ -457,6 +499,10 @@ class ProductController extends Controller
 
         $storeId = $this->vendorStoreId();
 
+        if (empty($storeId)) {
+            abort(403, 'Vendor account is not connected with any store.');
+        }
+
         if ($request->filled('category')) {
             $exists = Category::where('id', $request->category)
                 ->where('store_id', $storeId)
@@ -494,6 +540,18 @@ class ProductController extends Controller
 
             if (!$exists) {
                 abort(403, 'You cannot use another vendor brand.');
+            }
+        }
+
+        if ($request->filled('related_product') && is_array($request->related_product)) {
+            $relatedProductIds = array_map('intval', $request->related_product);
+
+            $count = Product::whereIn('id', $relatedProductIds)
+                ->where('store_id', $storeId)
+                ->count();
+
+            if ($count !== count($relatedProductIds)) {
+                abort(403, 'You cannot use another vendor related product.');
             }
         }
     }

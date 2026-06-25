@@ -89,13 +89,21 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/subsubcategory/{subcatedit}/edit', [SubSubCategoryController::class, 'edit'])->name('subsubcategory.edit');
         Route::put('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'update'])->name('subsubcategory.update');
         Route::delete('/subsubcategory/{subcategory}', [SubSubCategoryController::class, 'destroy'])->name('subsubcategory.delete');
+
+
+
         // these route for the brand
-        Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
-        Route::get('/brands/create', [BrandController::class, 'create'])->name('brands.create');
-        Route::post('/brands/store', [BrandController::class, 'store'])->name('brands.store');
-        Route::get('/brands/{brandedit}/edit', [BrandController::class, 'edit'])->name('brands.edit');
-        Route::put('/brands/{brandupadate}', [BrandController::class, 'update'])->name('brands.update');
-        Route::delete('/brands/{brandelete}', [BrandController::class, 'destroy'])->name('brands.delete');
+        Route::group(['middleware' => ['vendor.permission:brands']], function () {
+            Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
+            Route::get('/brands/create', [BrandController::class, 'create'])->name('brands.create');
+            Route::post('/brands/store', [BrandController::class, 'store'])->name('brands.store');
+            Route::get('/brands/{brandedit}/edit', [BrandController::class, 'edit'])->name('brands.edit');
+            Route::put('/brands/{brandupadate}', [BrandController::class, 'update'])->name('brands.update');
+            Route::delete('/brands/{brandelete}', [BrandController::class, 'destroy'])->name('brands.delete');
+        });
+
+
+
         //these routes is for creating languages
         Route::get('/language', [LanguageController::class, 'index'])->name('language.index');
         Route::get('/language/create', [LanguageController::class, 'create'])->name('language.create');
@@ -103,11 +111,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/language/{languageedit}/edit', [LanguageController::class, 'edit'])->name('language.edit');
         Route::put('/language/{languageupadate}', [LanguageController::class, 'update'])->name('language.update');
         Route::delete('/language/{langdelete}', [LanguageController::class, 'destroy'])->name('language.delete');
+
+
+
+
         // these routes are for the Products
-
-
-
-
         Route::group(['middleware' => ['vendor.permission:products']], function () {
 
             Route::get('/product', [ProductController::class, 'index'])->name('product.index');
@@ -151,72 +159,109 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('/orders/change_status/{id}', [OrderController::class, 'changeOrderStatus'])->name('order.changeorderstatus');
             Route::post('/orders/sent-email/{id}', [OrderController::class, 'sendInvoiceEmail'])->name('order.sendinvoiceemail');
         });
+
+
+
         // Route for the discont coupon
-        Route::get('/coupons/index', [DiscountCodeController::class, 'index'])->name('coupon.index');
-        Route::get('/coupons/create', [DiscountCodeController::class, 'create'])->name('coupon.create');
-        Route::post('/coupons/store', [DiscountCodeController::class, 'store'])->name('coupon.store');
-        Route::get('/coupons/{id}/edit', [DiscountCodeController::class, 'edit'])->name('coupon.edit');
-        Route::put('/coupons/{id}/update', [DiscountCodeController::class, 'update'])->name('coupon.update');
-        Route::delete('/coupons/{id}/delete', [DiscountCodeController::class, 'destroy'])->name('coupon.delete');
-        // Route for the discounts
-        Route::get('/discount/index', [DiscountController::class, 'index'])->name('discount.index');
-        Route::get('/discount/create', [DiscountController::class, 'create'])->name('discount.create');
-        Route::post('/discount/store', [DiscountController::class, 'store'])->name('discount.store');
-        Route::get('/discount/{id}/edit', [DiscountController::class, 'edit'])->name('discount.edit');
-        Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
-        Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
+        Route::group(['middleware' => ['vendor.permission:discount']], function () {
+            // Discount Coupons
+            Route::get('/coupons/index', [DiscountCodeController::class, 'index'])->name('coupon.index');
+            Route::get('/coupons/create', [DiscountCodeController::class, 'create'])->name('coupon.create');
+            Route::post('/coupons/store', [DiscountCodeController::class, 'store'])->name('coupon.store');
+            Route::get('/coupons/{id}/edit', [DiscountCodeController::class, 'edit'])->name('coupon.edit');
+            Route::put('/coupons/{id}/update', [DiscountCodeController::class, 'update'])->name('coupon.update');
+            Route::delete('/coupons/{id}/delete', [DiscountCodeController::class, 'destroy'])->name('coupon.delete');
+
+            // Product Discounts
+            Route::get('/discount/index', [DiscountController::class, 'index'])->name('discount.index');
+            Route::get('/discount/create', [DiscountController::class, 'create'])->name('discount.create');
+            Route::post('/discount/store', [DiscountController::class, 'store'])->name('discount.store');
+            Route::get('/discount/{id}/edit', [DiscountController::class, 'edit'])->name('discount.edit');
+            Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
+            Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
+        });
+
         // user routes
-
-
+        // Users / My Customers
+        // Super admin can see all users.
+        // Vendor can see only customers who bought from vendor store.
         Route::group(['middleware' => ['vendor.permission:users']], function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
         });
 
-
-
-        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
-        Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
-        Route::put('/users/{userupadate}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
-
+        // Only super admin can create, edit, update, and delete users.
+        Route::group(['middleware' => ['main.admin']], function () {
+            Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+            Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+            Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::put('/users/{userupadate}', [UserController::class, 'update'])->name('users.update');
+            Route::delete('/users/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
+        });
 
 
 
         // add route for the color
-        Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
-        Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
-        Route::post('/colorss/store', [ColorController::class, 'store'])->name('colorss.store');
-        Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
-        Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
-        Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
+        Route::group(['middleware' => ['vendor.permission:colors']], function () {
+            Route::get('/colorss', [ColorController::class, 'index'])->name('colorss.index');
+            Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
+            Route::post('/colorss/store', [ColorController::class, 'store'])->name('colorss.store');
+            Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
+            Route::put('/colorss/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
+            Route::delete('/colorss/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
+        });
+
+
+        // add route for the themes
         Route::get('/themes/index', [ThemeController::class, 'index'])->name('themes.index');
         Route::get('/themes/create', [ThemeController::class, 'create'])->name('themes.create');
         Route::post('/themes/store', [ThemeController::class, 'store'])->name('themes.store');
         Route::get('/themes/{themeedit}/edit', [ThemeController::class, 'edit'])->name('themes.edit');
         Route::put('/themes/{themeupdate}/update', [ThemeController::class, 'update'])->name('themes.update');
         Route::delete('/themes/{themedelete}/delete', [ThemeController::class, 'destroy'])->name('themes.delete');
+
+
         // add route for the size
-        Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
-        Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
-        Route::post('/sizes/store', [SizeController::class, 'store'])->name('sizes.store');
-        Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
-        Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
-        Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
+        Route::group(['middleware' => ['vendor.permission:sizes']], function () {
+            Route::get('/sizes', [SizeController::class, 'index'])->name('sizes.index');
+            Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
+            Route::post('/sizes/store', [SizeController::class, 'store'])->name('sizes.store');
+            Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
+            Route::put('/sizes/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
+            Route::delete('/sizes/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
+        });
+
+
         // add route for the Stock
-        Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
-        Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
-        Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
-        Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
-        Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
-        Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+        Route::group(['middleware' => ['vendor.permission:stock']], function () {
+            Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
+            Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
+            Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
+            Route::get('/stock/{sizeedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
+            Route::put('/stock/{sizeupadate}', [StockManagementController::class, 'update'])->name('stock.update');
+            Route::delete('/stock/{sizeelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+        });
+
+
+
         // added route for the currencies
-        Route::get('/currencies', [CurrencyController::class, 'index'])->name('currency.index');
-        Route::get('/currencies/create', [CurrencyController::class, 'create'])->name('currency.create');
-        Route::post('/currencies/store', [CurrencyController::class, 'store'])->name('currency.store');
-        Route::get('/currencies/edit/{currenedit}', [CurrencyController::class, 'edit'])->name('currency.edit');
-        Route::put('/currencies/update/{currenedit}', [CurrencyController::class, 'update'])->name('currency.update');
-        Route::delete('/currencies/delete/{currenedit}', [CurrencyController::class, 'delete'])->name('currency.delete');
+        // Currency view
+        // Super admin can view.
+        // Vendor can view only if currencies permission is enabled.
+        Route::group(['middleware' => ['vendor.permission:currencies']], function () {
+            Route::get('/currencies', [CurrencyController::class, 'index'])->name('currency.index');
+        });
+
+        // Currency management
+        // Only super admin can add/edit/delete.
+        Route::group(['middleware' => ['main.admin']], function () {
+            Route::get('/currencies/create', [CurrencyController::class, 'create'])->name('currency.create');
+            Route::post('/currencies/store', [CurrencyController::class, 'store'])->name('currency.store');
+            Route::get('/currencies/edit/{currenedit}', [CurrencyController::class, 'edit'])->name('currency.edit');
+            Route::put('/currencies/update/{currenedit}', [CurrencyController::class, 'update'])->name('currency.update');
+            Route::delete('/currencies/delete/{currenedit}', [CurrencyController::class, 'delete'])->name('currency.delete');
+        });
+
+
         // added route for the promotions
         Route::get('/promotions', [promotionController::class, 'index'])->name('promotion.index');
         Route::get('/promotions/create', [promotionController::class, 'create'])->name('promotion.create');
@@ -224,6 +269,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/promotions/edit/{promoedit}', [promotionController::class, 'edit'])->name('promotion.edit');
         Route::put('/promotions/update/{promoedit}', [promotionController::class, 'update'])->name('promotion.update');
         Route::delete('/promotions/delete/{promoedit}', [promotionController::class, 'destroy'])->name('promotion.delete');
+
+
+
         // added route for the onboarding
         Route::get('/onboarding', [onboardingController::class, 'index'])->name('onboarding.index');
         Route::get('/onboarding/create', [onboardingController::class, 'create'])->name('onboarding.create');
@@ -231,6 +279,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/onboarding/edit/{bordedit}', [onboardingController::class, 'edit'])->name('onboarding.edit');
         Route::put('/onboarding/update/{bordupdate}', [onboardingController::class, 'update'])->name('onboarding.update');
         Route::delete('/onboarding/delete/{borddel}', [onboardingController::class, 'destroy'])->name('onboarding.delete');
+
+
         // route for homepagelable
         Route::get('homepage-labels', [HomepageLabelController::class, 'index'])->name('homepage-labels.index');
         Route::get('homepage-labels/create', [HomepageLabelController::class, 'create'])->name('homepage-labels.create');
@@ -238,13 +288,19 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('homepage-labels/{id}/edit', [HomepageLabelController::class, 'edit'])->name('homepage-labels.edit');
         Route::put('homepage-labels/{id}', [HomepageLabelController::class, 'update'])->name('homepage-labels.update');
         Route::delete('homepage-labels/{id}', [HomepageLabelController::class, 'destroy'])->name('homepage-labels.delete');
-        // added route for the chat
-        Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
-        Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
-        Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
-        Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
-        Route::post('/chat/mark-as-read/{senderId}', [adminChatController::class, 'markAsRead'])->name('admin.chat.markAsRead');
 
+
+        // added route for the chat
+        Route::group(['middleware' => ['vendor.permission:chat']], function () {
+            Route::get('/chat-view', [adminChatController::class, 'index'])->name('chat.index');
+            Route::post('/message', [adminChatController::class, 'chatDisplayBox'])->name('chat.chatdisplaybox');
+            Route::post('/send-text', [adminChatController::class, 'sendMessage'])->name('chat.sentmessage');
+            Route::post('/chat/mark-as-read/{senderId}', [adminChatController::class, 'markAsRead'])->name('admin.chat.markAsRead');
+        });
+        // Keep socket testing page only for super admin
+        Route::group(['middleware' => ['main.admin']], function () {
+            Route::get('/checkSocket', [adminChatController::class, 'checkSocketMessage'])->name('chat.checkSocketMessage');
+        });
 
         // added route for the webservices
         // route for admin side 

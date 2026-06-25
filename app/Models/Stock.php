@@ -9,10 +9,13 @@ class Stock extends Model
     protected $table = 'stocks';  // This is not necessary if the table name follows the convention, but explicitly setting it can help
     // Specify the fields that are mass assignable
     protected $fillable = [
+        'store_id',
         'product_id',
         'quantity',
         'remaining_quantity',
         'sold_quantity',
+        'color_id',
+        'size_id',
         'status',
     ];
     // A stock belongs to a product
@@ -29,4 +32,9 @@ class Stock extends Model
     {
         return $this->hasMany(Size::class, 'product_id');
     }
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
+
 }

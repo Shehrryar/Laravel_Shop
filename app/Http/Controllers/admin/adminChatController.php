@@ -8,12 +8,83 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class adminChatController extends Controller
 {
+    private function adminUser()
+    {
+        return Auth::guard('admin')->user() ?? Auth::user();
+    }
+
     private function adminId()
     {
         return Auth::guard('admin')->id() ?? Auth::id();
+    }
+
+    private function isMainAdmin(): bool
+    {
+        $admin = $this->adminUser();
+
+        return $admin && (int) $admin->role === 2;
+    }
+
+    private function isVendor(): bool
+    {
+        $admin = $this->adminUser();
+
+        return $admin && (int) $admin->role === 3;
+    }
+
+    private function vendorStoreId()
+    {
+        return $this->adminUser()?->store_id;
+    }
+
+    private function vendorCustomerIds(): array
+    {
+        if (!$this->isVendor()) {
+            return [];
+        }
+
+        if (empty($this->vendorStoreId())) {
+            return [];
+        }
+
+        return DB::table('orders')
+            ->join('orders_items', 'orders.id', '=', 'orders_items.order_id')
+            ->join('products', 'orders_items.product_id', '=', 'products.id')
+            ->where('products.store_id', $this->vendorStoreId())
+            ->whereNotNull('orders.user_id')
+            ->distinct()
+            ->pluck('orders.user_id')
+            ->map(fn ($id) => (int) $id)
+            ->toArray();
+    }
+
+    private function ensureVendorCanChatWithCustomer($customerId): void
+    {
+        if (!$this->isVendor()) {
+            return;
+        }
+
+        if (empty($this->vendorStoreId())) {
+            abort(403, 'Vendor account is not connected with any store.');
+        }
+
+        $allowedCustomerIds = $this->vendorCustomerIds();
+
+        if (!in_array((int) $customerId, $allowedCustomerIds, true)) {
+            abort(403, 'You cannot chat with another vendor customer.');
+        }
+
+        $customerExists = User::where('id', $customerId)
+            ->where('role', 1)
+            ->exists();
+
+        if (!$customerExists) {
+            abort(403, 'Vendor can chat only with customers.');
+        }
     }
 
     public function index(Request $request)
@@ -22,7 +93,25 @@ class adminChatController extends Controller
         $keyword = $request->keyword;
 
         $usersQuery = User::query()
-            ->where('role', '!=', 2);
+            ->where('role', 1);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Vendor Chat Filter
+        |--------------------------------------------------------------------------
+        | Vendor can see only customers who bought products from vendor store.
+        */
+        $allowedCustomerIds = [];
+
+        if ($this->isVendor()) {
+            if (empty($this->vendorStoreId())) {
+                abort(403, 'Vendor account is not connected with any store.');
+            }
+
+            $allowedCustomerIds = $this->vendorCustomerIds();
+
+            $usersQuery->whereIn('id', $allowedCustomerIds);
+        }
 
         if (!empty($keyword)) {
             $usersQuery->where(function ($query) use ($keyword) {
@@ -59,6 +148,8 @@ class adminChatController extends Controller
         return view('admin.chats.list', [
             'chatUsers' => $chatUsers,
             'adminId' => $adminId,
+            'isVendor' => $this->isVendor(),
+            'allowedCustomerIds' => $allowedCustomerIds,
         ]);
     }
 
@@ -69,7 +160,9 @@ class adminChatController extends Controller
         ]);
 
         $adminId = $this->adminId();
-        $userId = $request->receiver_id;
+        $userId = (int) $request->receiver_id;
+
+        $this->ensureVendorCanChatWithCustomer($userId);
 
         $messages = $this->getConversationMessages($adminId, $userId);
 
@@ -93,10 +186,13 @@ class adminChatController extends Controller
         ]);
 
         $adminId = $this->adminId();
+        $receiverId = (int) $request->receiverId;
+
+        $this->ensureVendorCanChatWithCustomer($receiverId);
 
         $message = Message::create([
             'sender_id' => $adminId,
-            'receiver_id' => $request->receiverId,
+            'receiver_id' => $receiverId,
             'message_content' => $request->message_content,
             'read_status' => 0,
         ]);
@@ -134,11 +230,19 @@ class adminChatController extends Controller
 
     public function checkSocketMessage(Request $request)
     {
+        if (!$this->isMainAdmin()) {
+            abort(403, 'Only super admin can access socket testing page.');
+        }
+
         return view('admin.chats.create');
     }
 
     public function markAsRead($senderId)
     {
+        $senderId = (int) $senderId;
+
+        $this->ensureVendorCanChatWithCustomer($senderId);
+
         $adminId = $this->adminId();
 
         Message::where('sender_id', $senderId)

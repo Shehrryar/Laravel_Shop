@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
 use Illuminate\Support\Facades\File;
 use Crypt;
+use Illuminate\Support\Str;
 use App\Models\TempImage;
 use App\Http\Controllers\admin\Traits\VendorStoreScope;
 class CategoryController extends Controller
@@ -27,41 +28,66 @@ class CategoryController extends Controller
     }
     public function store(Request $request)
     {
-        $validater = Validator::make(
+        // If slug is empty, generate it on the server side.
+        // This prevents validation failure when the JavaScript slug event does not run.
+        $request->merge([
+            'slug' => $request->slug ?: Str::slug($request->name),
+            'status' => $request->status ?? 1,
+        ]);
+
+        $validator = Validator::make(
             $request->all(),
             [
                 'name' => 'required',
-                'slug' => 'required|unique:categories',
+                'slug' => 'required|unique:categories,slug',
+                'status' => 'required|in:0,1',
             ]
         );
-        if ($validater->passes()) {
+
+        if ($validator->passes()) {
             $category = new Category();
             $this->assignStoreId($category, $request);
+
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status;
+            $category->image = null;
+
+            // IMPORTANT: save first so category ID exists.
+            // Your old code saved only inside the image block, so categories without image were never saved.
+            $category->save();
+
             if (!empty($request->image_id)) {
                 $tempimage = TempImage::find($request->image_id);
-                $extarray = explode('.', $tempimage->name);
-                $ext = last($extarray);
-                $new_image_name = $category->id . '.' . $ext;
-                $spath = public_path() . '/temp/' . $tempimage->name;
-                $dpath = public_path() . '/upload/category/' . $new_image_name;
-                File::copy($spath, $dpath);
-                $category->image = $new_image_name;
-                $category->save();
+
+                if (!empty($tempimage)) {
+                    $extarray = explode('.', $tempimage->name);
+                    $ext = last($extarray);
+
+                    $new_image_name = $category->id . '-' . time() . '.' . $ext;
+                    $spath = public_path() . '/temp/' . $tempimage->name;
+                    $dpath = public_path() . '/upload/category/' . $new_image_name;
+
+                    if (File::exists($spath)) {
+                        File::copy($spath, $dpath);
+                        $category->image = $new_image_name;
+                        $category->save();
+                    }
+                }
             }
-            $request->session()->flash("success", "Category is added");
+
+            $request->session()->flash('success', 'Category is added');
+
             return response()->json([
                 'status' => true,
-                'message' => 'Category is added'
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validater->errors()
+                'message' => 'Category is added',
             ]);
         }
+
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors(),
+        ]);
     }
     public function slug_function(Request $request)
     {
