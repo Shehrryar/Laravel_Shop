@@ -11,6 +11,8 @@ class Language extends Model
 
     protected $fillable = [
         'name',
+        'slug',
+        'Isocode',
         'en_name_translation',
         'ur_name_translation',
         'is_default',

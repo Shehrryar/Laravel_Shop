@@ -19,6 +19,7 @@ class Category extends Model
         'status',
     ];
 
+
     protected $appends = ['translated_name'];
 
     /**
@@ -43,5 +44,9 @@ class Category extends Model
     public function sub_category()
     {
         return $this->hasMany(SubCategory::class, 'category_id', 'id');
+    }
+        public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
     }
 }

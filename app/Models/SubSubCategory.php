@@ -10,9 +10,11 @@ class SubSubCategory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'store_id',
         'name',
         'en_name_translation',
         'ur_name_translation',
+        'category_id',
         'subcategory_id',
         'slug',
         'status'
@@ -39,8 +41,16 @@ class SubSubCategory extends Model
     /**
      * Relationship to subcategory
      */
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
     public function subCategory()
     {
         return $this->belongsTo(SubCategory::class, 'subcategory_id');
+    }
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
     }
 }

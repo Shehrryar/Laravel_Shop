@@ -5,7 +5,11 @@
         <div class="container-fluid my-2">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Create Category</h1>
+                    @if (Auth::guard('admin')->user()?->role == 3)
+                        <h1>Create My Store Category</h1>
+                    @else
+                        <h1>Create Category</h1>
+                    @endif
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href='{{ route('categories.index') }}' class="btn btn-primary">Back</a>
@@ -80,9 +84,9 @@
             $("#getFormValuesButton").click(function(event) {
                 event.preventDefault();
 
-                // Clear old errors
                 $('#para_name').html('');
                 $('#para_slug').html('');
+                $('#para_status').html('');
 
                 var formDataArray = $("#category_from").serializeArray();
 
@@ -113,9 +117,9 @@
                         }
                     },
 
-                    error: function(jqXHR, exception) {
-                        console.log("Something went wrong");
+                    error: function(jqXHR) {
                         console.log(jqXHR.responseText);
+                        alert('Something went wrong while saving category.');
                     }
                 });
             });
@@ -138,8 +142,6 @@
 
                         if (response.status === true) {
                             $("#slug").val(response.slug);
-                        } else {
-                            console.log("There is no response");
                         }
                     },
 

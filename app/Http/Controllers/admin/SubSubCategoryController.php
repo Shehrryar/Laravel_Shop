@@ -1,116 +1,245 @@
 <?php
+
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Controllers\admin\Traits\VendorStoreScope;
 use App\Models\Category;
 use App\Models\SubCategory;
-use Illuminate\Support\Facades\Validator;
 use App\Models\SubSubCategory;
-use App\Http\Controllers\admin\Traits\VendorStoreScope;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class SubSubCategoryController extends Controller
 {
     use VendorStoreScope;
+
+    private function categoriesForForm()
+    {
+        $categories = Category::orderBy('name', 'ASC');
+
+        if ($this->isVendor()) {
+            $categories->where('store_id', $this->vendorStoreId());
+        }
+
+        return $categories->get();
+    }
+
+    private function subcategoriesForForm()
+    {
+        $subcategories = SubCategory::orderBy('name', 'ASC');
+
+        if ($this->isVendor()) {
+            $subcategories->where('store_id', $this->vendorStoreId());
+        }
+
+        return $subcategories->get();
+    }
+
+    private function ensureOwnCategory($categoryId): void
+    {
+        if (!$this->isVendor()) {
+            return;
+        }
+
+        $exists = Category::where('id', $categoryId)
+            ->where('store_id', $this->vendorStoreId())
+            ->exists();
+
+        if (!$exists) {
+            abort(403, 'You cannot use another vendor category.');
+        }
+    }
+
+    private function ensureOwnSubCategory($subcategoryId, $categoryId = null): void
+    {
+        if (!$this->isVendor()) {
+            return;
+        }
+
+        $query = SubCategory::where('id', $subcategoryId)
+            ->where('store_id', $this->vendorStoreId());
+
+        if (!empty($categoryId)) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if (!$query->exists()) {
+            abort(403, 'You cannot use another vendor sub category.');
+        }
+    }
+
+    private function subCategoryStoreId($subcategoryId)
+    {
+        return SubCategory::where('id', $subcategoryId)->value('store_id');
+    }
+
     public function index(Request $request)
     {
         $subsubcategories = SubSubCategory::select(
-            'sub_sub_categories.*',
-            'sub_categories.name as subcatname',
-            'categories.name as catnami'
-        )
+                'sub_sub_categories.*',
+                'categories.name as category_name',
+                'sub_categories.name as subcategory_name'
+            )
+            ->leftJoin('categories', 'categories.id', '=', 'sub_sub_categories.category_id')
             ->leftJoin('sub_categories', 'sub_categories.id', '=', 'sub_sub_categories.subcategory_id')
-            ->leftJoin('categories', 'categories.id', '=', 'sub_categories.category_id')
-            ->latest('sub_sub_categories.id')->paginate(10);
-        $subsubcategories = $this->applyStoreScope($subsubcategories);
-        if (!empty($request->get('keyword'))) {
-            $subsubcategories = $subsubcategories->where('sub_categories.name', 'like', '%' . $request->get('keyword') . '%');
+            ->latest('sub_sub_categories.id');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Vendor Filter
+        |--------------------------------------------------------------------------
+        | Vendor can see only own store level 3 categories.
+        */
+        if ($this->isVendor()) {
+            $subsubcategories->where('sub_sub_categories.store_id', $this->vendorStoreId());
         }
+
         if (!empty($request->get('keyword'))) {
-            $subsubcategories = $subsubcategories->orwhere('categories.name', 'like', '%' . $request->get('keyword') . '%');
+            $keyword = $request->get('keyword');
+
+            $subsubcategories->where(function ($query) use ($keyword) {
+                $query->where('sub_sub_categories.name', 'like', '%' . $keyword . '%')
+                    ->orWhere('sub_sub_categories.slug', 'like', '%' . $keyword . '%')
+                    ->orWhere('categories.name', 'like', '%' . $keyword . '%')
+                    ->orWhere('sub_categories.name', 'like', '%' . $keyword . '%');
+            });
         }
-        if (!empty($request->get('keyword'))) {
-            $subsubcategories = $subsubcategories->orwhere('sub_sub_categories.name', 'like', '%' . $request->get('keyword') . '%');
-        }
+
+        $subsubcategories = $subsubcategories->paginate(10);
+
         return view('admin.subsubcategory.list', compact('subsubcategories'));
     }
+
     public function create()
     {
-        $data = [];
-        $cat_data = Category::orderBy('name', 'ASC')->get();
-        $subcat_data = SubCategory::orderBy('name', 'ASC')->get();
-        $data['cat_data'] = $cat_data;
-        $data['subcat_data'] = $subcat_data;
-        return view('admin.subsubcategory.create', $data);
+        $cat_data = $this->categoriesForForm();
+        $subcat_data = $this->subcategoriesForForm();
+
+        return view('admin.subsubcategory.create', compact('cat_data', 'subcat_data'));
     }
+
     public function store(Request $request)
     {
+        $request->merge([
+            'slug' => $request->slug ?: Str::slug($request->name),
+            'status' => $request->status ?? 1,
+        ]);
+
         $validater = Validator::make($request->all(), [
             'name' => 'required',
-            'slug' => 'required|unique:sub_sub_categories',
-            'category' => 'required',
-            'subcategory' => 'required',
-            'status' => 'required',
+            'slug' => 'required|unique:sub_sub_categories,slug',
+            'category' => 'required|exists:categories,id',
+            'subcategory' => 'required|exists:sub_categories,id',
+            'status' => 'required|in:0,1',
         ]);
+
         if ($validater->passes()) {
+            /*
+            |--------------------------------------------------------------------------
+            | Vendor Protection
+            |--------------------------------------------------------------------------
+            | Vendor cannot create level 3 category under another vendor category/subcategory.
+            */
+            $this->ensureOwnCategory($request->category);
+            $this->ensureOwnSubCategory($request->subcategory, $request->category);
+
             $subsubcategory = new SubSubCategory();
-            $this->assignStoreId($subsubcategory, $request);
+            $subsubcategory->store_id = $this->subCategoryStoreId($request->subcategory);
             $subsubcategory->name = $request->name;
             $subsubcategory->slug = $request->slug;
             $subsubcategory->category_id = $request->category;
             $subsubcategory->subcategory_id = $request->subcategory;
             $subsubcategory->status = $request->status;
             $subsubcategory->save();
-            $request->session()->flash("success", "Sub SubCatagory is added");
+
+            $request->session()->flash('success', 'Sub Sub Category is added');
+
             return response()->json([
                 'status' => true,
-                'message' => 'Sub SubCatagory is added'
-            ]);
-        } else {
-            return response([
-                'status' => false,
-                'error' => $validater->errors()
+                'message' => 'Sub Sub Category is added',
             ]);
         }
+
+        return response()->json([
+            'status' => false,
+            'errors' => $validater->errors(),
+        ]);
     }
 
     public function edit($id, Request $request)
     {
         $subsubcat = SubSubCategory::find($id);
-        $this->ensureOwnStoreRecord($subsubcat);
+
         if (empty($subsubcat)) {
-            $request->session()->flash("error", "level 3 Subcategory is not found");
+            $request->session()->flash('error', 'Sub Sub Category not found');
+
             return redirect()->route('subsubcategories.index');
         }
-        $cat_data = Category::orderBy('name', 'ASC')->get();
-        $subcat_data = SubCategory::orderBy('name', 'ASC')->get();
-        $data['cat_data'] = $cat_data;
-        $data['subcat_data'] = $subcat_data;
-        $data['subsubcat'] = $subsubcat;
-        return view('admin.subsubcategory.edit', $data);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Vendor Protection
+        |--------------------------------------------------------------------------
+        | Vendor cannot edit another vendor level 3 category.
+        */
+        $this->ensureOwnStoreRecord($subsubcat);
+
+        $cat_data = $this->categoriesForForm();
+        $subcat_data = $this->subcategoriesForForm();
+
+        return view('admin.subsubcategory.edit', [
+            'cat_data' => $cat_data,
+            'subcat_data' => $subcat_data,
+            'subsubcat' => $subsubcat,
+        ]);
     }
 
     public function update($id, Request $request)
     {
-
         $subsubcategory = SubSubCategory::find($id);
-        $this->ensureOwnStoreRecord($subsubcategory);
+
         if (empty($subsubcategory)) {
-            return response([
+            return response()->json([
                 'status' => false,
                 'notfound' => true,
+                'message' => 'Sub Sub Category not found',
             ]);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Vendor Protection
+        |--------------------------------------------------------------------------
+        | Vendor cannot update another vendor level 3 category.
+        */
+        $this->ensureOwnStoreRecord($subsubcategory);
+
+        $request->merge([
+            'slug' => $request->slug ?: Str::slug($request->name),
+            'status' => $request->status ?? 1,
+        ]);
 
         $validater = Validator::make($request->all(), [
             'name' => 'required',
             'slug' => 'required|unique:sub_sub_categories,slug,' . $subsubcategory->id . ',id',
-            'category' => 'required',
-            'subcategory' => 'required',
-            'status' => 'required',
+            'category' => 'required|exists:categories,id',
+            'subcategory' => 'required|exists:sub_categories,id',
+            'status' => 'required|in:0,1',
         ]);
+
         if ($validater->passes()) {
+            /*
+            |--------------------------------------------------------------------------
+            | Vendor Protection
+            |--------------------------------------------------------------------------
+            | Vendor cannot move level 3 category to another vendor category/subcategory.
+            */
+            $this->ensureOwnCategory($request->category);
+            $this->ensureOwnSubCategory($request->subcategory, $request->category);
 
-
+            $subsubcategory->store_id = $this->subCategoryStoreId($request->subcategory);
             $subsubcategory->name = $request->name;
             $subsubcategory->slug = $request->slug;
             $subsubcategory->category_id = $request->category;
@@ -118,42 +247,49 @@ class SubSubCategoryController extends Controller
             $subsubcategory->status = $request->status;
             $subsubcategory->save();
 
-            $request->session()->flash("success", "Level 3 SubCatagory is updated successfully");
+            $request->session()->flash('success', 'Sub Sub Category is updated successfully');
 
             return response()->json([
                 'status' => true,
-                'message' => 'Level 3 SubCatagory is updated successfully'
-            ]);
-        } else {
-            return response([
-                'status' => false,
-                'error' => $validater->errors()
+                'message' => 'Sub Sub Category is updated successfully',
             ]);
         }
 
+        return response()->json([
+            'status' => false,
+            'errors' => $validater->errors(),
+        ]);
     }
 
     public function destroy($id, Request $request)
     {
+        $subsubcat = SubSubCategory::find($id);
 
-        $scat_del = SubSubCategory::find($id);
-        $this->ensureOwnStoreRecord($scat_del);
-        if (empty($scat_del)) {
-            $request->session()->flash("Error", "Level 3 SubCatagory not found");
+        if (empty($subsubcat)) {
+            $request->session()->flash('error', 'Sub Sub Category not found');
+
             return response()->json([
-                'status' => true,
+                'status' => false,
                 'notfound' => true,
+                'message' => 'Sub Sub Category not found',
             ]);
         }
 
-        $scat_del->delete();
+        /*
+        |--------------------------------------------------------------------------
+        | Vendor Protection
+        |--------------------------------------------------------------------------
+        | Vendor cannot delete another vendor level 3 category.
+        */
+        $this->ensureOwnStoreRecord($subsubcat);
 
-        $request->session()->flash("success", "Level 3 SubCatagory deleted successfully");
+        $subsubcat->delete();
+
+        $request->session()->flash('success', 'Sub Sub Category deleted successfully');
 
         return response()->json([
             'status' => true,
-            'message' => 'Level 3 SubCatagory deleted successfully'
+            'message' => 'Sub Sub Category deleted successfully',
         ]);
-
     }
 }

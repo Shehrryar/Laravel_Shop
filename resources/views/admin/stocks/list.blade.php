@@ -55,7 +55,7 @@
                                 <th>Product</th>
                                 <th>Color</th>
                                 <th>Size</th>
-                                <th>Remanining Quantity</th>
+                                <th>Available Quantity</th>
                                 <th>Sold Quantity</th>
                                 <th>Status</th>
                                 <th>Action</th>

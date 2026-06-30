@@ -107,12 +107,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/brands/update/{brandupadate}', [BrandController::class, 'update'])->name('brands.update');
         Route::delete('/brands/delete/{brandelete}', [BrandController::class, 'destroy'])->name('brands.delete');
         //these routes is for creating languages
-        Route::get('/language', [LanguageController::class, 'index'])->name('language.index');
-        Route::get('/language/create', [LanguageController::class, 'create'])->name('language.create');
-        Route::post('/language/store', [LanguageController::class, 'store'])->name('language.store');
-        Route::get('/language/{languageedit}/edit', [LanguageController::class, 'edit'])->name('language.edit');
-        Route::put('/language/update/{languageupadate}', [LanguageController::class, 'update'])->name('language.update');
-        Route::delete('/language/delete/{langdelete}', [LanguageController::class, 'destroy'])->name('language.delete');
+        Route::get('/admin/language', [LanguageController::class, 'index'])->name('api.language.index');
+        Route::get('/admin/language/create', [LanguageController::class, 'create'])->name('api.language.create');
+        Route::post('/admin/language/store', [LanguageController::class, 'store'])->name('api.language.store');
+        Route::get('/admin/language/{languageedit}/edit', [LanguageController::class, 'edit'])->name('api.language.edit');
+        Route::put('/admin/language/update/{languageupadate}', [LanguageController::class, 'update'])->name('api.language.update');
+        Route::delete('/admin/language/delete/{langdelete}', [LanguageController::class, 'destroy'])->name('api.language.delete');
         // these routes are for the Products
         Route::get('/product', [ProductController::class, 'index'])->name('product.index');
         Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
@@ -127,11 +127,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.getProducts');
         Route::post('/import-products', [ProductController::class, 'importProducts'])->name('product.importProducts');
         // shipping Routes
-        Route::get('/shipping/create', [ShippingController::class, 'create'])->name('shipping.create');
-        Route::post('/shipping/store', [ShippingController::class, 'store'])->name('shipping.store');
-        Route::get('/shipping/{id}', [ShippingController::class, 'edit'])->name('shipping.edit');
-        Route::put('/shipping/update/{id}', [ShippingController::class, 'update'])->name('shipping.update');
-        Route::delete('/shipping/delete/{id}', [ShippingController::class, 'destroy'])->name('shipping.delete');
+        Route::get('/admin/shipping/create', [ShippingController::class, 'create'])->name('api.shipping.create');
+        Route::post('/admin/shipping/store', [ShippingController::class, 'store'])->name('api.shipping.store');
+        Route::get('/admin/shipping/{id}', [ShippingController::class, 'edit'])->name('api.shipping.edit');
+        Route::put('/admin/shipping/update/{id}', [ShippingController::class, 'update'])->name('api.shipping.update');
+        Route::delete('/admin/shipping/delete/{id}', [ShippingController::class, 'destroy'])->name('api.shipping.delete');
         // Order Routes
         Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
         Route::get('/orders/{order_id}', [OrderController::class, 'detail'])->name('order.detail');
@@ -152,40 +152,40 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/discount/{id}/update', [DiscountController::class, 'update'])->name('discount.update');
         Route::delete('/discount/{id}/delete', [DiscountController::class, 'destroy'])->name('discount.delete');
         // user routes
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
-        Route::get('/users/{useredit}/edit', [UserController::class, 'edit'])->name('users.edit');
-        Route::put('/users/update/{userupadate}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/delete/{userelete}', [UserController::class, 'destroy'])->name('users.delete');
+        Route::get('/admin/users', [UserController::class, 'index'])->name('api.users.index');
+        Route::get('/admin/users/create', [UserController::class, 'create'])->name('api.users.create');
+        Route::post('/admin/users/store', [UserController::class, 'store'])->name('api.users.store');
+        Route::get('/admin/users/{useredit}/edit', [UserController::class, 'edit'])->name('api.users.edit');
+        Route::put('/admin/users/update/{userupadate}', [UserController::class, 'update'])->name('api.users.update');
+        Route::delete('/admin/users/delete/{userelete}', [UserController::class, 'destroy'])->name('api.users.delete');
         // add route for the color
-        Route::get('/colorss/index', [ColorController::class, 'index'])->name('colorss.index');
-        Route::get('/colorss/create', [ColorController::class, 'create'])->name('colorss.create');
-        Route::post('/colorss/store', [ColorController::class, 'store'])->name('colorss.store');
-        Route::get('/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('colorss.edit');
-        Route::put('/colorss/update/{colorsupadate}', [ColorController::class, 'update'])->name('colorss.update');
-        Route::delete('/colorss/delete/{colorselete}', [ColorController::class, 'destroy'])->name('colorss.delete');
+        Route::get('/admin/colorss/index', [ColorController::class, 'index'])->name('api.colorss.index');
+        Route::get('/admin/colorss/create', [ColorController::class, 'create'])->name('api.colorss.create');
+        Route::post('/admin/colorss/store', [ColorController::class, 'store'])->name('api.colorss.store');
+        Route::get('/admin/colorss/{colorsedit}/edit', [ColorController::class, 'edit'])->name('api.colorss.edit');
+        Route::put('/admin/colorss/update/{colorsupadate}', [ColorController::class, 'update'])->name('api.colorss.update');
+        Route::delete('/admin/colorss/delete/{colorselete}', [ColorController::class, 'destroy'])->name('api.colorss.delete');
         // add route for the theme
-        Route::get('/themes/index', [ThemeController::class, 'index'])->name('themes.index');
-        Route::get('/themes/create', [ThemeController::class, 'create'])->name('themes.create');
-        Route::post('/themes/store', [ThemeController::class, 'store'])->name('themes.store');
-        Route::get('/themes/{themeedit}/edit', [ThemeController::class, 'edit'])->name('themes.edit');
-        Route::put('/themes/{themeupdate}/update', [ThemeController::class, 'update'])->name('themes.update');
-        Route::delete('/themes/{themedelete}/delete', [ThemeController::class, 'destroy'])->name('themes.delete');
+        Route::get('/admin/themes/index', [ThemeController::class, 'index'])->name('api.themes.index');
+        Route::get('/admin/themes/create', [ThemeController::class, 'create'])->name('api.themes.create');
+        Route::post('/admin/themes/store', [ThemeController::class, 'store'])->name('api.themes.store');
+        Route::get('/admin/themes/{themeedit}/edit', [ThemeController::class, 'edit'])->name('api.themes.edit');
+        Route::put('/admin/themes/{themeupdate}/update', [ThemeController::class, 'update'])->name('api.themes.update');
+        Route::delete('/admin/themes/{themedelete}/delete', [ThemeController::class, 'destroy'])->name('api.themes.delete');
         // add route for the size
-        Route::get('/sizes/index', [SizeController::class, 'index'])->name('sizes.index');
-        Route::get('/sizes/create', [SizeController::class, 'create'])->name('sizes.create');
-        Route::post('/sizes/store', [SizeController::class, 'store'])->name('sizes.store');
-        Route::get('/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('sizes.edit');
-        Route::put('/sizes/update/{sizeupadate}', [SizeController::class, 'update'])->name('sizes.update');
-        Route::delete('/sizes/delete/{sizeelete}', [SizeController::class, 'destroy'])->name('sizes.delete');
+        Route::get('/admin/sizes/index', [SizeController::class, 'index'])->name('api.sizes.index');
+        Route::get('/admin/sizes/create', [SizeController::class, 'create'])->name('api.sizes.create');
+        Route::post('/admin/sizes/store', [SizeController::class, 'store'])->name('api.sizes.store');
+        Route::get('/admin/sizes/{sizeedit}/edit', [SizeController::class, 'edit'])->name('api.sizes.edit');
+        Route::put('/admin/sizes/update/{sizeupadate}', [SizeController::class, 'update'])->name('api.sizes.update');
+        Route::delete('/admin/sizes/delete/{sizeelete}', [SizeController::class, 'destroy'])->name('api.sizes.delete');
         // add route for the Stock managment
-        Route::get('/stock', [StockManagementController::class, 'index'])->name('stock.index');
-        Route::get('/stock/create', [StockManagementController::class, 'create'])->name('stock.create');
-        Route::post('/stock/store', [StockManagementController::class, 'store'])->name('stock.store');
-        Route::get('/stock/{stockedit}/edit', [StockManagementController::class, 'edit'])->name('stock.edit');
-        Route::put('/stock/update/{stockupadate}', [StockManagementController::class, 'update'])->name('stock.update');
-        Route::delete('/stock/delete/{stockelete}', [StockManagementController::class, 'destroy'])->name('stock.delete');
+        Route::get('/admin/stock', [StockManagementController::class, 'index'])->name('api.stock.index');
+        Route::get('/admin/stock/create', [StockManagementController::class, 'create'])->name('api.stock.create');
+        Route::post('/admin/stock/store', [StockManagementController::class, 'store'])->name('api.stock.store');
+        Route::get('/admin/stock/{stockedit}/edit', [StockManagementController::class, 'edit'])->name('api.stock.edit');
+        Route::put('/admin/stock/update/{stockupadate}', [StockManagementController::class, 'update'])->name('api.stock.update');
+        Route::delete('/admin/stock/delete/{stockelete}', [StockManagementController::class, 'destroy'])->name('api.stock.delete');
         // dashboard
         Route::get('/onboarding', [onboardingController::class, 'index'])->name('onboarding.index');
         Route::get('/onboarding/create', [onboardingController::class, 'create'])->name('onboarding.create');

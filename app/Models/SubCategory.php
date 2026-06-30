@@ -10,6 +10,7 @@ class SubCategory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'store_id',
         'name',
         'en_name_translation',
         'ur_name_translation',
@@ -50,5 +51,9 @@ class SubCategory extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
+    }
+        public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
     }
 }

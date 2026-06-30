@@ -1,152 +1,160 @@
-
 @extends('admin.layout.app')
 
-@section('content') 
+@section('content')
+    <section class="content-header">
+        <div class="container-fluid my-2">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Edit Language</h1>
+                </div>
+                <div class="col-sm-6 text-right">
+                    <a href="{{ route('language.index') }}" class="btn btn-primary">Back</a>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="container-fluid">
+            <form name="editlanguageform" id="editlanguageform" method="POST">
 
-<section class="content-header">					
-	<div class="container-fluid my-2">
-		<div class="row mb-2">
-			<div class="col-sm-6">
-				<h1>Edit Language</h1>
-			</div>
-			<div class="col-sm-6 text-right">
-				<a href="{{route('language.index')}}" class="btn btn-primary">Back</a>
-			</div>
-		</div>
-	</div>
-	<!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-	<!-- Default box -->
-	<div class="container-fluid">
-		<form name="editlanguageform" id="editlanguageform" method="POST">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name">Name</label>
+                                    <input value="{{ $language->name }}" type="text" name="name" id="name"
+                                        class="form-control" placeholder="Name">
+                                </div>
+                                <p id="para_name"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="slug">Slug</label>
+                                    <input readonly type="text" name="slug" id="slug" class="form-control"
+                                        placeholder="Slug" value="{{ $language->slug }}">
+                                </div>
+                                <p id="para_slug"></p>
+                            </div>
 
-			<div class="card">
-				<div class="card-body">								
-					<div class="row">
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="name">Name</label>
-				<input value="{{$language->name}}" type="text" name="name" id="name" class="form-control" placeholder="Name">	
-							</div>
-							<p id="para_name"></p>
-						</div>
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="slug">Slug</label>
-								<input readonly type="text" name="slug" id="slug" class="form-control" placeholder="Slug" value="{{$language->slug}}">	
-							</div>
-							<p id="para_slug"></p>
-						</div>
-						
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="Isocode">ISO code</label>
-								<input type="text" name="Isocode" id="Isocode" class="form-control" placeholder="Isocode" value="{{$language->Isocode}}">	
-							</div>
-							<p id="para_isocode"></p>
-						</div>	
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="Isocode">ISO code</label>
+                                    <input type="text" name="isocode" id="isocode" class="form-control"
+                                        placeholder="ISO Code" value="{{ $language->Isocode }}">
+                                </div>
+                                <p id="para_isocode"></p>
+                            </div>
 
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="status">Status</label>
-								<select name="status" id="status" class="form-control" >
-<option {{($language->status == 1) ? 'selected' : ''}} value="1">Active</option>
-<option {{($language->status == 0) ? 'selected' : ''}} value="0">Block</option>
-									
-								</select>
-							</div>
-							<p id="para_slug"></p>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="status">Status</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option {{ $language->status == 1 ? 'selected' : '' }} value="1">Active
+                                        </option>
+                                        <option {{ $language->status == 0 ? 'selected' : '' }} value="0">Block
+                                        </option>
 
-						</div>								
-					</div>
-				</div>							
-			</div>
-			<div class="pb-5 pt-3">
-				<button id="getFormValuesButton" type="submit" class="btn btn-primary">Update</button>
-				<a href="{{route('language.index')}}" class="btn btn-outline-dark ml-3">Cancel</a>
-			</div>
+                                    </select>
+                                </div>
+                                <p id="para_status"></p>
 
-		</form>
-	</div>
-	<!-- /.card -->
-</section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pb-5 pt-3">
+                    <button id="getFormValuesButton" type="submit" class="btn btn-primary">Update</button>
+                    <a href="{{ route('language.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+        <!-- /.card -->
+    </section>
 @endsection
 
-@section('customjs') 
-<script >
+@section('customjs')
+    <script>
+        $(document).ready(function() {
 
-	$(document).ready(function(){
+            $("#getFormValuesButton").click(function(event) {
+                event.preventDefault();
+                var formDataArray = $("#editlanguageform").serializeArray();
+                $.ajax({
+                    url: '{{ route('language.update', $language->id) }}',
+                    type: 'PUT',
+                    data: formDataArray, // Use correct form ID
+                    dataType: 'json', // 'datatype' should be 'dataType'
+                    success: function(response) {
+                        if (response['status'] == true) {
+                            window.location.href = "{{ route('language.index') }}";
+                        } else {
+                            if (response['notfound'] == true) {
+                                window.location.href = "{{ route('language.index') }}";
 
-		$("#getFormValuesButton").click(function(event){
-			event.preventDefault();
-			var formDataArray = $("#editlanguageform").serializeArray();
-			$.ajax({
-				url: '{{route("language.update", $language->id)}}',
-				type: 'PUT',
-    data: formDataArray, // Use correct form ID
-    dataType: 'json', // 'datatype' should be 'dataType'
-    success: function(response) {
-    	if(response['status']==true){
-    	window.location.href= "{{route('language.index')}}";
-    	}
-    	else{
-    		if(response['notfound']==true){
-    	window.location.href= "{{route('language.index')}}";
+                            }
 
-    		}
+                            var errors = response.errors || {};
+                            if (errors.name) {
+                                $('#para_name').html(errors.name[0] ?? errors.name);
+                            }
 
-    		var error = response['error'];
-    		if(error['name']){
-    			$('#para_name').html(error['name']);
+                            if (errors.slug) {
+                                $('#para_slug').html(errors.slug[0] ?? errors.slug);
+                            }
 
-    		}
-    		if(error['slug']){
-    			$('#para_slug').html(error['slug']);
-    		}
-			if(error['Isocode']){
-    			$('#para_isocode').html(error['Isocode']);
-    		}
-    	}
+                            if (errors.isocode) {
+                                $('#para_isocode').html(errors.isocode[0] ?? errors.isocode);
+                            }
 
-
-    },
-    error: function(jqXHR, exception) {
-    	console.log("Something went wrong");
-    }
-});   
-        // Further logic here
-		});
+                            if (errors.status) {
+                                $('#para_status').html(errors.status[0] ?? errors.status);
+                            }
+                        }
 
 
-		$("#name").change(function(){
+                    },
+                    error: function(jqXHR, exception) {
+                        console.log("Something went wrong");
+                    }
+                });
+                // Further logic here
+            });
 
-			var element = $(this).val();
 
-			$("button[type=submit]").prop('disabled',true);
+            $("#name").change(function() {
+
+                var element = $(this).val();
+
+                $("button[type=submit]").prop('disabled', true);
 
 
-			$.ajax({
-				url: '{{route("getslug")}}',
-				type: 'get',
-    data: {title:element}, // Use correct form ID
-    dataType: 'json', // 'datatype' should be 'dataType'
-    success: function(response) {
-    	$("button[type=submit]").prop('disabled',false);
-    	
-    	if(response['status']==true){
-    		
-    		$("#slug").val(response['slug']);
-    	}else{
-    		console.log("there is not response");
-    	}
-    },
+                $.ajax({
+                    url: '{{ route('getslug') }}',
+                    type: 'get',
+                    data: {
+                        title: element
+                    }, // Use correct form ID
+                    dataType: 'json', // 'datatype' should be 'dataType'
+                    success: function(response) {
+                        $("button[type=submit]").prop('disabled', false);
 
-}); 
+                        if (response['status'] == true) {
 
-		});
-	});
-</script>
-<!-- /.content -->
+                            $("#slug").val(response['slug']);
+                        } else {
+                            console.log("there is not response");
+                        }
+                    },
+
+                });
+
+            });
+        });
+    </script>
+    <!-- /.content -->
 @endsection

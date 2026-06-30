@@ -78,10 +78,16 @@ class OrderService
                 ->where('size_id', $item->size_id)
                 ->where('status', 1)
                 ->first();
+
+            if (!$stock || $stock->quantity < $item->quantity) {
+                throw new \Exception('Stock not available for product: ' . $item->title);
+            }
+
             DB::table('stocks')->where('id', $stock->id)->update([
                 'quantity' => $stock->quantity - $item->quantity,
                 'sold_quantity' => $stock->sold_quantity + $item->quantity,
             ]);
+
             if ($existingOrderItem) {
                 // 3. Update quantity and total
                 $existingOrderItem->quantity += $item->quantity;

@@ -1,172 +1,180 @@
-
 @extends('admin.layout.app')
 
-@section('content') 
-<!-- Content Header (Page header) -->
-<!-- Content Header (Page header) -->
-<section class="content-header">					
-	<div class="container-fluid my-2">
-		<div class="row mb-2">
-			<div class="col-sm-6">
-				<h1>Edit Sub Category</h1>
-			</div>
-			<div class="col-sm-6 text-right">
-				<a href="{{route('subcategories.index')}}" class="btn btn-primary">Back</a>
-			</div>
-		</div>
-	</div>
-	<!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-	<!-- Default box -->
-	<div class="container-fluid">
-		<form name="subcategoryform" id="subcategoryform">
-			<div class="card">
-				<div class="card-body">								
-					<div class="row">
-						<div class="col-md-12">
-							<div class="mb-3">
-								<label for="name">Category</label>
-								<select name="category" id="category" class="form-control">
-									<option value="">Select a Category</option>
-									@if($cat_data->isNotEmpty())
-									@foreach($cat_data as $cati_data)
-									<option {{($subcat->category_id==$cati_data->id)?'selected':''}} value="{{$cati_data->id}}">{{$cati_data->name}}</option>
-									@endforeach
-									@endif
+@section('content')
+    <!-- Content Header (Page header) -->
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid my-2">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    @if (Auth::guard('admin')->user()?->role == 3)
+                        <h1>Edit My Store Sub Category</h1>
+                    @else
+                        <h1>Edit Sub Category</h1>
+                    @endif
+                </div>
+                <div class="col-sm-6 text-right">
+                    <a href="{{ route('subcategories.index') }}" class="btn btn-primary">Back</a>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="container-fluid">
+            <form name="subcategoryform" id="subcategoryform">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="name">Category</label>
+                                    <select name="category" id="category" class="form-control">
+                                        <option value="">Select a Category</option>
+                                        @if ($cat_data->isNotEmpty())
+                                            @foreach ($cat_data as $cati_data)
+                                                <option {{ $subcat->category_id == $cati_data->id ? 'selected' : '' }}
+                                                    value="{{ $cati_data->id }}">{{ $cati_data->name }}</option>
+                                            @endforeach
+                                        @endif
 
-								</select>
-							</div>
-							<p id="para_cat"></p>
+                                    </select>
+                                </div>
+                                <p id="para_cat"></p>
 
 
-						</div>
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="name">Name</label>
-								<input value="{{$subcat->name}}" type="text" name="name" id="name" class="form-control" placeholder="Name">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name">Name</label>
+                                    <input value="{{ $subcat->name }}" type="text" name="name" id="name"
+                                        class="form-control" placeholder="Name">
 
-							</div>
-							<p id="para_name"></p>
-						</div>
+                                </div>
+                                <p id="para_name"></p>
+                            </div>
 
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="email">Slug</label>
-								<input value="{{$subcat->slug}}" type="text" name="slug" id="slug" class="form-control" placeholder="Slug">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email">Slug</label>
+                                    <input value="{{ $subcat->slug }}" type="text" name="slug" id="slug"
+                                        class="form-control" placeholder="Slug">
 
-							</div>
-							<p id="para_slug"></p>
+                                </div>
+                                <p id="para_slug"></p>
 
-						</div>		
-						<div class="col-md-6">
-							<div class="mb-3">
-								<label for="status">Status</label>
-								<select id="status" name="status" class="form-control">
-									@if($subcat->status == 1)
-									<option value="1" >Active</option>
-									@else
-									<option value="0" >Block</option>
-									@endif
-								</select>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="status">Status</label>
+                                    <select id="status" name="status" class="form-control">
+                                        <option value="1" {{ $subcat->status == 1 ? 'selected' : '' }}>Active</option>
+                                        <option value="0" {{ $subcat->status == 0 ? 'selected' : '' }}>Block</option>
+                                    </select>
+                                    <p id="para_status"></p>
 
-							</div>
-						</div>								
-					</div>
-				</div>							
-			</div>
-			<div class="pb-5 pt-3">
-				<button id="getFormValuesButton" type="submit" class="btn btn-primary">Update</button>
-				<a href="{{route('subcategories.index')}}" class="btn btn-outline-dark ml-3">Cancel</a>
-			</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pb-5 pt-3">
+                    <button id="getFormValuesButton" type="submit" class="btn btn-primary">Update</button>
+                    <a href="{{ route('subcategories.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
+                </div>
 
-		</form>
-	</div>
-	<!-- /.card -->
-</section>
-<!-- /.content -->
+            </form>
+        </div>
+        <!-- /.card -->
+    </section>
+    <!-- /.content -->
 @endsection
 
-@section('customjs') 
-<script >
+@section('customjs')
+<script>
+    $(document).ready(function() {
+        $("#getFormValuesButton").click(function(event) {
+            event.preventDefault();
 
-	$(document).ready(function(){
+            $('#para_name').html('');
+            $('#para_slug').html('');
+            $('#para_cat').html('');
+            $('#para_status').html('');
 
-		$("#getFormValuesButton").click(function(event){
-			event.preventDefault();
-			var formDataArray = $("#subcategoryform").serializeArray();
-			$.ajax({
-				url: '{{route("subcategory.update", $subcat->id)}}',
-				type: 'PUT',
-	data: formDataArray, // Use correct form ID
-	dataType: 'json', // 'datatype' should be 'dataType'
-	success: function(response) {
+            var formDataArray = $("#subcategoryform").serializeArray();
 
-	// window.location.href= "{{route('categories.index')}}";
-		if(response['status']==true){
-			window.location.href= "{{route('subcategories.index')}}";
-		}
-		else{
-			var errors= response['error'];
-			if(errors['name']){
-	// $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
+            $.ajax({
+                url: '{{ route("subcategory.update", $subcat->id) }}',
+                type: 'PUT',
+                data: formDataArray,
+                dataType: 'json',
 
-				$('#para_name').html(errors['name']);
+                success: function(response) {
+                    if (response.status === true) {
+                        window.location.href = "{{ route('subcategories.index') }}";
+                        return;
+                    }
 
-			}
-			if(errors['slug']){
-	// $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
+                    if (response.notfound === true) {
+                        window.location.href = "{{ route('subcategories.index') }}";
+                        return;
+                    }
 
-				$('#para_slug').html(errors['slug']);
-			}
+                    var errors = response.errors || {};
 
-			if(errors['category']){
-	// $('#name').addClass('is-valid').siblings('p').addClass('invalid-feedback').html(errors['name']);
+                    if (errors.name) {
+                        $('#para_name').html(errors.name[0] ?? errors.name);
+                    }
 
-				$('#para_cat').html(errors['category']);
-			}
+                    if (errors.slug) {
+                        $('#para_slug').html(errors.slug[0] ?? errors.slug);
+                    }
 
+                    if (errors.category) {
+                        $('#para_cat').html(errors.category[0] ?? errors.category);
+                    }
 
-		}
+                    if (errors.status) {
+                        $('#para_status').html(errors.status[0] ?? errors.status);
+                    }
+                },
 
+                error: function(jqXHR) {
+                    console.log(jqXHR.responseText);
+                    alert('Something went wrong while updating subcategory.');
+                }
+            });
+        });
 
-	},
-	error: function(jqXHR, exception) {
-		console.log("Something went wrong");
-	}
-});   
-	// Further logic here
-		});
+        $("#name").change(function() {
+            var element = $(this).val();
 
-		$("#name").change(function(){
+            $("button[type=submit]").prop('disabled', true);
 
-			var element = $(this).val();
+            $.ajax({
+                url: '{{ route("getslug") }}',
+                type: 'GET',
+                data: {
+                    title: element
+                },
+                dataType: 'json',
 
-			$("button[type=submit]").prop('disabled',true);
+                success: function(response) {
+                    $("button[type=submit]").prop('disabled', false);
 
+                    if (response.status === true) {
+                        $("#slug").val(response.slug);
+                    }
+                },
 
-			$.ajax({
-				url: '{{route("getslug")}}',
-				type: 'get',
-	data: {title:element}, // Use correct form ID
-	dataType: 'json', // 'datatype' should be 'dataType'
-	success: function(response) {
-		$("button[type=submit]").prop('disabled',false);
-
-		if(response['status']==true){
-
-			$("#slug").val(response['slug']);
-		}else{
-			console.log("there is not response");
-		}
-	},
-
-}); 
-
-		});
-	});
+                error: function() {
+                    $("button[type=submit]").prop('disabled', false);
+                    console.log("Slug generation failed");
+                }
+            });
+        });
+    });
 </script>
-<!-- /.content -->
 @endsection
-

@@ -26,13 +26,13 @@ class VendorPermissionController extends Controller
             'discount' => 'Discount',
             'users' => 'Users',
             'currencies' => 'Currencies',
-            'language' => 'Language',
+            'language' => 'View Languages',
             'promotions' => 'Promotions',
             'chat' => 'Chat',
             'sockets_chat' => 'Sockets Chat',
             'web_services' => 'Web Services',
             'onboarding' => 'Onboarding',
-            'homepage_labels' => 'Homepage Label',
+            'homepage_labels' => 'Homepage Labels',
         ];
     }
 

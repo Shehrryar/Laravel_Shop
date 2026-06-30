@@ -438,7 +438,7 @@
                         <li class="nav-item">
                             <a href="{{ route('language.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-globe"></i>
-                                <p>Language</p>
+                                <p>View Languages</p>
                             </a>
                         </li>
                     @endif
@@ -447,7 +447,7 @@
                         <li class="nav-item">
                             <a href="{{ route('promotion.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-bullhorn"></i>
-                                <p>Promotions</p>
+                                <p> My Promotions</p>
                             </a>
                         </li>
                     @endif
@@ -504,7 +504,7 @@
                         <li class="nav-item">
                             <a href="{{ route('onboarding.index') }}" class="nav-link">
                                 <i class="nav-icon far fa-file-alt"></i>
-                                <p>Onboarding</p>
+                                <p> My Onboarding</p>
                             </a>
                         </li>
                     @endif
@@ -513,7 +513,7 @@
                         <li class="nav-item">
                             <a href="{{ route('homepage-labels.index') }}" class="nav-link">
                                 <i class="nav-icon far fa-file-alt"></i>
-                                <p>Homepage Label</p>
+                                <p>My Homepage Labels</p>
                             </a>
                         </li>
                     @endif

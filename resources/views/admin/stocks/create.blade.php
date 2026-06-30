@@ -35,13 +35,7 @@
                                     <p id="para_quantity"></p>
                                 </div>
                             </div>
-                            <!-- <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="slug">Description</label>
-                                    <textarea class="form-control" name="description" id="description" cols="30" rows="5"></textarea>
-                                    <p id="para_description"></p>
-                                </div>
-                            </div> -->
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="select_product">Select Products</label>
@@ -98,23 +92,6 @@
                                         @endif
                                     </select>
                                     <p id="para_products"></p>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="remaning_quantity">Remaining Quantity</label>
-                                    <input type="number" name="remaning_quantity" id="remaning_quantity"
-                                        class="form-control" placeholder="Remaining Quantity">
-                                    <p id="para_remaning_quantity"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="sold_quantity">Sold Quantity</label>
-                                    <input type="number" name="sold_quantity" id="sold_quantity" class="form-control"
-                                        placeholder="Sold Quantity">
-                                    <p id="para_sold_quantity"></p>
                                 </div>
                             </div>
                             <div class="col-md-6">

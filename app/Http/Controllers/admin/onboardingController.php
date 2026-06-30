@@ -1,129 +1,254 @@
 <?php
+
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Onboarding;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Crypt;
+use Illuminate\Support\Facades\Validator;
+
 class onboardingController extends Controller
 {
+    private function adminUser()
+    {
+        return Auth::guard('admin')->user();
+    }
+
+    private function isVendor(): bool
+    {
+        $admin = $this->adminUser();
+
+        return $admin && (int) $admin->role === 3;
+    }
+
+    private function vendorStoreId()
+    {
+        return $this->adminUser()?->store_id;
+    }
+
+    private function ensureVendorHasStore(): void
+    {
+        if ($this->isVendor() && empty($this->vendorStoreId())) {
+            abort(403, 'Vendor account is not connected with any store.');
+        }
+    }
+
+    private function assignStoreId(Onboarding $onboarding): void
+    {
+        if ($this->isVendor()) {
+            $onboarding->store_id = $this->vendorStoreId();
+        }
+    }
+
+    private function ensureOwnOnboarding(Onboarding $onboarding): void
+    {
+        if (!$this->isVendor()) {
+            return;
+        }
+
+        if ((int) $onboarding->store_id !== (int) $this->vendorStoreId()) {
+            abort(403, 'You cannot manage another vendor onboarding.');
+        }
+    }
+
     public function index(Request $request)
     {
-        $onboarding = Onboarding::latest();
-        if (!empty($request->get('keyword'))) {
-            $onboarding = $onboarding->where('title', 'like', '%' . $request->get('keyword') . '%');
+        $this->ensureVendorHasStore();
+
+        $onboarding = Onboarding::latest('id');
+
+        if ($this->isVendor()) {
+            $onboarding->where('store_id', $this->vendorStoreId());
         }
+
+        if (!empty($request->get('keyword'))) {
+            $keyword = $request->get('keyword');
+
+            $onboarding->where(function ($query) use ($keyword) {
+                $query->where('title', 'like', '%' . $keyword . '%')
+                    ->orWhere('subtitle', 'like', '%' . $keyword . '%');
+            });
+        }
+
         $onboarding = $onboarding->paginate(10);
+
         return view('admin.onboarding.list', compact('onboarding'));
     }
+
     public function create()
     {
+        $this->ensureVendorHasStore();
+
         return view('admin.onboarding.create');
     }
+
     public function store(Request $request)
     {
-        $validater = Validator::make(
-            $request->all(),
-            [
-                'title' => 'required',
-                'subtitle' => 'required',
-            ]
-        );
-        if ($validater->passes()) {
-            $Onboarding = new Onboarding();
-            $Onboarding->title = $request->title;
-            $Onboarding->subtitle = $request->subtitle;
+        $this->ensureVendorHasStore();
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:500',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+        ]);
+
+        if ($validator->passes()) {
+            $onboarding = new Onboarding();
+
+            $this->assignStoreId($onboarding);
+
+            $onboarding->title = $request->title;
+            $onboarding->subtitle = $request->subtitle;
+
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $imageName = time() . '_' . preg_replace('/\s+/', '_', $image->getClientOriginalName());
+
                 $destinationPath = public_path('upload/onboarding/');
+
                 if (!File::exists($destinationPath)) {
                     File::makeDirectory($destinationPath, 0755, true);
                 }
+
                 $image->move($destinationPath, $imageName);
-                $Onboarding->image = $imageName;
+
+                $onboarding->image = $imageName;
             }
-            $Onboarding->save();
-            $request->session()->flash("success", "Onboarding is added");
+
+            $onboarding->save();
+
+            session()->flash('success', 'Onboarding added successfully');
+
             return response()->json([
                 'status' => true,
-                'message' => 'Onboarding is added'
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validater->errors()
+                'message' => 'Onboarding added successfully',
             ]);
         }
+
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors(),
+        ]);
     }
-    public function edit($catid, Request $request)
+
+    public function edit($id, Request $request)
     {
-        $onboard_edit = Onboarding::find($catid);
+        $this->ensureVendorHasStore();
+
+        $onboard_edit = Onboarding::find($id);
+
+        if (empty($onboard_edit)) {
+            $request->session()->flash('error', 'Onboarding not found');
+
+            return redirect()->route('onboarding.index');
+        }
+
+        $this->ensureOwnOnboarding($onboard_edit);
+
         return view('admin.onboarding.edit', compact('onboard_edit'));
     }
-    public function update($onbord_id, Request $request)
+
+    public function update($id, Request $request)
     {
-        $onbord_edit = Onboarding::find($onbord_id);
-        if (empty($onbord_edit))
+        $this->ensureVendorHasStore();
+
+        $onboard_edit = Onboarding::find($id);
+
+        if (empty($onboard_edit)) {
             return response()->json([
                 'status' => false,
-                'not found' => true,
-                'message' => 'onboarding not found'
+                'notfound' => true,
+                'message' => 'Onboarding not found',
             ]);
-        $validater = Validator::make(
-            $request->all(),
-            [
-                'title' => 'required',
-                'subtitle' => 'required',
-            ]
-        );
-        if ($validater->passes()) {
-            $onbord_edit->title = $request->title;
-            $onbord_edit->subtitle = $request->subtitle;
-            // $onbord_edit->save();
-            $oldimage = $onbord_edit->image;
+        }
+
+        $this->ensureOwnOnboarding($onboard_edit);
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:500',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+        ]);
+
+        if ($validator->passes()) {
+            $onboard_edit->title = $request->title;
+            $onboard_edit->subtitle = $request->subtitle;
+
+            $oldimage = $onboard_edit->image;
+
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $imageName = time() . '_' . preg_replace('/\s+/', '_', $image->getClientOriginalName());
+
                 $destinationPath = public_path('upload/onboarding/');
+
                 if (!File::exists($destinationPath)) {
                     File::makeDirectory($destinationPath, 0755, true);
                 }
+
                 $image->move($destinationPath, $imageName);
-                $onbord_edit->image = $imageName;
+
+                $onboard_edit->image = $imageName;
+
                 if (!empty($oldimage)) {
-                    File::delete(public_path() . '/upload/onboarding/' . $oldimage);
+                    $oldImagePath = public_path('upload/onboarding/' . $oldimage);
+
+                    if (File::exists($oldImagePath)) {
+                        File::delete($oldImagePath);
+                    }
                 }
             }
-            $onbord_edit->save();
-            $request->session()->flash("success", "onboarding updated successfully");
+
+            $onboard_edit->save();
+
+            session()->flash('success', 'Onboarding updated successfully');
+
             return response()->json([
                 'status' => true,
-                'message' => 'onboarding updated successfully'
+                'message' => 'Onboarding updated successfully',
             ]);
-        } else {
+        }
+
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors(),
+        ]);
+    }
+
+    public function destroy($id, Request $request)
+    {
+        $this->ensureVendorHasStore();
+
+        $onboarding = Onboarding::find($id);
+
+        if (empty($onboarding)) {
+            $request->session()->flash('error', 'Onboarding not found');
+
             return response()->json([
                 'status' => false,
-                'errors' => $validater->errors()
+                'message' => 'Onboarding not found',
             ]);
         }
-    }
-    public function destroy($onbord_id, Request $request)
-    {
-        $onbord_del = Onboarding::find($onbord_id);
-        if (empty($onbord_del)) {
-            $request->session()->flash("Error", "onboarding not found");
-            return response()->json([
-                'status' => true,
-                'message' => 'onboarding not found'
-            ]);
+
+        $this->ensureOwnOnboarding($onboarding);
+
+        if (!empty($onboarding->image)) {
+            $imagePath = public_path('upload/onboarding/' . $onboarding->image);
+
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
         }
-        File::delete(public_path() . '/upload/onboarding/' . $onbord_del->image);
-        $onbord_del->delete();
+
+        $onboarding->delete();
+
+        $request->session()->flash('success', 'Onboarding deleted successfully');
+
         return response()->json([
             'status' => true,
-            'message' => 'onboarding deleted successfully'
+            'message' => 'Onboarding deleted successfully',
         ]);
     }
 }
